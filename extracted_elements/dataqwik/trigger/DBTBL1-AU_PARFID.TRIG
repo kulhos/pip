@@ -1,0 +1,22 @@
+//DO NOT MODIFY  After update supertype information|0|0|0|0|1|0|PARFID|||
+	//----------------------------------------------------------------------
+	// Copy data item info from supertype file to descendant files
+	//----------------------------------------------------------------------
+	
+	/*
+	-----Revision History--------------------------------------------------
+	04/29/04 - RussellDS - CR9172
+		   Cleaned up variable scoping
+
+	*/
+	
+	type Public String FID
+	
+	type String nparfid,oparfid
+	
+	set nparfid=dbtbl1.parfid              // Supertype file name
+	set oparfid=dbtbl1.parfid.oldVal       // Original name
+	if oparfid'="" do PARDEL^DBSDF(oparfid,FID)    // Delete old data
+	if nparfid'="" do PARCOPY^DBSDF(nparfid,FID)   // Create new data
+	
+	quit 

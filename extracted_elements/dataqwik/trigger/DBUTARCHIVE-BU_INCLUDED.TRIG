@@ -1,0 +1,56 @@
+//DO NOT MODIFY  Before Update on INCLUDED|0|1|0|0|0|0|ARCHWITH|||
+	// Before Update Trigger on INCLUDED
+	
+	/*
+	Validate that for any table name entered in the Include With column it
+	is a related table, i.e., that it uses a different global, the key
+	structure of both tables match exactly (datatype and length), and it
+	has a filer, and it doesn't appear in DBUTARCHIVE as either a primary
+	or included table for any other entries.
+	
+	Also, prevent a table from being removed from the included list if it
+	already has archived data.
+	
+	---- Revision History -------------------------------------------------
+	03/01/07 - RussellDS - CR26386
+		   Created.
+
+	-----------------------------------------------------------------------
+	*/
+
+	type public Boolean ER
+	type public String RM
+	
+	if 'dbutarchive.included.isNull() set RM = $$INCLUDEDCHK^DBARCHIVE(dbutarchive.archtbl, dbutarchive.included)
+	
+	if 'RM.isNull() set ER = 1
+
+	// Check any deleted tables
+	if 'ER do {
+	
+		type List newTbls, oldTbls
+		type Number i
+		
+		set newTbls = {List}(dbutarchive.included)
+		set oldTbls = {List}(dbutarchive.included)
+		
+		for i = 1:1:oldTbls.count() do { quit:'RM.isNull()
+			
+			type String TBL
+			
+			set TBL = oldTbls.elementAt(i)
+			
+			if 'newTbls.contains(TBL) do {
+			
+				#ACCEPT Date=03/08/07; Pgm=RussellDS; CR=25675; Group=BYPASS
+				#BYPASS
+				if $D(^DBARCHX(TBL)) set ER=1
+				#ENDBYPASS
+				
+				// Cannot delete ~p1 - already has archived data
+				if ER set RM = $$^MSG(6899, TBL)
+			}
+		}
+	}
+	
+	quit

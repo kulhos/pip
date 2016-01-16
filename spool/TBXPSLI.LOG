@@ -1,0 +1,42 @@
+
+Export Definitions - Interactive PSL and SQL
+Created On 01/25/2008  03:57 PM
+  ** Library SYSDEV
+Version Number: V5.0
+
+
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+Import Source Date        Current Date
+
+          EXPORT       TBXPSLI                      
+          PROC         TBXINTERP                    
+          ROUTINE      MRPC121          11/05/2007             ** New **
+          ROUTINE      TBXDQSVR         12/19/2007            01/17/2008 ??
+          PROC         MRPC155                      
+          GLOBAL       ^SCATBL(5,155                 
+Export Definitions - Interactive PSL and SQL|Created On 01/25/2008  03:57 PM|SYSDEV|V5.0
+
+
+
+
+
+--------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------
+
+
+ ****** Delete Old Definitions ******
+
+        EXPORT: TBXPSLI
+          PROC: TBXINTERP
+       ROUTINE: MRPC121
+       ROUTINE: TBXDQSVR
+          PROC: MRPC155
+
+****** Create Definitions ******
+
+^DBTBL("SYSDEV",17,"TBXPSLI"
+^DBTBL("SYSDEV",25,"MRPC155"
+^DBTBL("SYSDEV",25,"TBXINTERP"
+^SCATBL(5,155

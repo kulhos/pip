@@ -1,0 +1,34 @@
+
+         *** NAMES ***
+ Global                             Region
+ ------------------------------------------------------------------------------
+ *                                  DEFAULT
+
+                                *** REGIONS ***
+                                 Dynamic                          Def    Rec   Key Null       Standard
+ Region                          Segment                         Coll   Size  Size Subs       NullColl  Journal
+ing
+ --------------------------------------------------------------------------------------------------------------
+----
+ DEFAULT                         DEFAULT                            0   4080   255 NEVER      N         N
+
+                                *** SEGMENTS ***
+ Segment                         File (def ext: .dat)Acc Typ Block      Alloc Exten Options
+ -------------------------------------------------------------------------------------------
+ DEFAULT                         $PIP_DB             BG  DYN  4096       4000  1000 GLOB=2048
+                                                                                    LOCK=  40
+                                                                                    RES =   0
+                                                                                    ENCR=OFF
+
+                                  *** MAP ***
+   -  -  -  -  -  -  -  -  -  - Names -  -  - -  -  -  -  -  -  -
+ From                            Up to                            Region / Segment / File(def ext: .dat)
+ --------------------------------------------------------------------------------------------------------------
+---------------------
+ %                               ...                              REG = DEFAULT
+                                                                  SEG = DEFAULT
+                                                                  FILE = $PIP_DB
+ LOCAL LOCKS                                                      REG = DEFAULT
+                                                                  SEG = DEFAULT
+                                                                  FILE = $PIP_DB
+

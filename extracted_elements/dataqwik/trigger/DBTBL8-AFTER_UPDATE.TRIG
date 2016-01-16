@@ -1,0 +1,30 @@
+//DO NOT MODIFY  After insert/update|0|0|0|1|1|0||||
+	/*
+	Super type file
+	Copy this index to descendants
+	*/
+	
+	/*
+	-----Revision History--------------------------------------------------
+	04/29/04 - RussellDS - CR9172
+		   Cleaned up variable scoping
+
+	*/
+	
+	type String ZFID,IDXNM,subfid
+	
+	set ZFID=dbtbl8.fid
+	set IDXNM=dbtbl8.indexnm
+
+	// Copy super type index information into sub type file
+
+	type RecordDBTBL8 sub=dbtbl8.copy()
+ 	
+	type ResultSet rs=Db.select("FID","DBTBL1","%LIBS='SYSDEV' AND PARFID=:ZFID") 
+	if rs.isEmpty() quit
+	while rs.next() do {
+        	set subfid=rs.getCol(1)
+        	set sub.fid=subfid
+        	do sub.save()
+		}
+	quit

@@ -1,0 +1,24 @@
+//DO NOT MODIFY  Before Insert|1|0|0|0|0|0||||
+
+	/* ----- Revision History ---------------------------------------------
+	
+	11/19/05 - RussellDS - CR18065
+		   Move code previously in after insert trigger that was doing
+		   updates and deletes here.
+	*/
+
+        // Default global name
+
+	if dbtbl1.global.isNull() do {
+
+		if $E(dbtbl1.fid,1,4)="UTBL"!($E(dbtbl1.fid,1,5)="ZUTBL") set dbtbl1.global="UTBL"
+		else  if $E(dbtbl1.fid,1,4)="STBL"!($E(dbtbl1.fid,1,5)="ZSTBL") set dbtbl1.global="STBL" 
+		else  if $E(dbtbl1.fid,1,4)="CTBL"!($E(dbtbl1.fid,1,5)="ZCTBL") set dbtbl1.global="CTBL" 
+	}
+	
+	// Reset full global reference
+	
+	set dbtbl1.glref = "^"_dbtbl1.global_"("_dbtbl1.acckeys
+	
+	quit
+	

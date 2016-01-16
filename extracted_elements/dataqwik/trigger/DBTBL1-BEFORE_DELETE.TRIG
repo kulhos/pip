@@ -1,0 +1,5 @@
+//DO NOT MODIFY  Before Delete|0|0|1|0|0|0||||
+	// Delete data items
+	
+	do Db.delete("DBTBL1D","%LIBS='SYSDEV' AND FID=:FID")
+	

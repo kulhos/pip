@@ -1,0 +1,3 @@
+^DBTBL("SYSDEV",2,"SCAUSR1")="System User Input (With CIF Restrict)"
+^DBTBL("SYSDEV",2,"SCAUSR1",-1)="SCAUSR|SCAUSTAT|SCAUR|"
+^DBTBL("SYSDEV",2,"SCAUSR1",0)="SCAU||||||||System User Input (With CIF Restrict)|4.3||||VT220,BPS||||||||1"

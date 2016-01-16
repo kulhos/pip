@@ -1,0 +1,37 @@
+//DO NOT MODIFY  After Insert|0|0|0|1|0|0||||
+
+	/*
+	-----Revision History--------------------------------------------------
+	11/19/05 - RussellDS - CR18065
+		   Eliminate Db.update and insert.  Move code for GLREF to
+		   before insert trigger.
+	
+	04/29/04 - RussellDS - CR9172
+		   Cleaned up variable scoping
+	*/
+	
+	type Number i
+	type String ACCKEYS, FID, KEY
+
+	set ACCKEYS = dbtbl1.acckeys
+	set FID = dbtbl1.fid
+
+	// Create missing access keys in DBTBL1D
+
+	for i = 1:1:ACCKEYS.length(",") do {
+		
+		set KEY = ACCKEYS.piece(",", i)
+		
+		type RecordDBTBL1D dbtbl1d = Class.new("RecordDBTBL1D", "%LIBS='SYSDEV',FID=:FID,DI=:KEY")
+		
+		set dbtbl1d.nod = i_"*"
+		set dbtbl1d.des = KEY
+		set dbtbl1d.rhd = KEY
+		set dbtbl1d.len = 12
+		set dbtbl1d.typ = "N"
+		set dbtbl1d.req = 1
+		
+		do dbtbl1d.save()
+	}
+
+	quit 

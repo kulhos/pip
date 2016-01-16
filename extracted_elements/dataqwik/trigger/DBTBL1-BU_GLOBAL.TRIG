@@ -1,0 +1,7 @@
+//DO NOT MODIFY  Change GLREF field|0|1|0|0|0|0|GLOBAL|||
+	
+	new gbl
+	set gbl=dbtbl1.glref                			// Old reference
+	set dbtbl1.glref=$C(94)_dbtbl1.global_"("_$P(gbl,"(",2) // New reference
+	quit 
+	

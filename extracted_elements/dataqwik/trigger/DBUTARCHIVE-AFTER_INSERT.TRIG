@@ -1,0 +1,23 @@
+//DO NOT MODIFY  After Insert Trigger|0|0|0|1|0|0||||
+	// DBUTARCHIVE After Insert Trigger
+	
+	/*
+	Rebuild filers for archive and included tables, and rebuild DBARCHIVE.
+	
+	---- Revision History -------------------------------------------------
+	04/15/07 - RussellDS - CR26386
+		   Created.
+
+	-----------------------------------------------------------------------
+	*/
+	
+	type Number i
+	type String tbl
+	
+	do COMPILE^DBSFILB(dbutarchive.archtbl)
+	
+	for i = 1:1 set tbl = dbutarchive.included.piece(",", i) quit:tbl.isNull()  do COMPILE^DBSFILB(tbl)
+	
+	do COMPILE^DBSPROC("DBARCHIVE")
+
+	quit

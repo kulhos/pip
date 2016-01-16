@@ -1,0 +1,4 @@
+^DBTBL("SYSDEV",2,"DBTBL1D")="Data Item Definition "
+^DBTBL("SYSDEV",2,"DBTBL1D",-1)="DBTBL1E|DBTBL1F|"
+^DBTBL("SYSDEV",2,"DBTBL1D",0)="DBTBL1D,DBTBL1||||||||Data Item Definition |5.0||||||||||||1"
+^DBTBL("SYSDEV",2,"DBTBL1D",0,101)=" ;"

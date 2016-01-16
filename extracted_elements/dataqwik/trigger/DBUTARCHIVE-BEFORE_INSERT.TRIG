@@ -1,0 +1,21 @@
+//DO NOT MODIFY  Before Insert Trigger|1|0|0|0|0|0||||
+	// DBUTARCHIVE Before Insert Trigger
+	
+	/*
+	---- Revision History -------------------------------------------------
+	03/01/07 - RussellDS - CR26386
+		   Created.
+
+	-----------------------------------------------------------------------
+	*/
+
+	type public Boolean ER
+	type public String RM
+	
+	set RM = $$ARCHTBLCHK^DBARCHIVE(dbutarchive.archtbl)
+	
+	if RM.isNull(), 'dbutarchive.included.isNull() set RM = $$INCLUDEDCHK^DBARCHIVE(dbutarchive.archtbl, dbutarchive.included)
+	
+	if 'RM.isNull() set ER = 1
+	
+	quit

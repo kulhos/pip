@@ -1,0 +1,14 @@
+//DO NOT MODIFY  Before  Update|0|1|0|0|0|0||||
+	/*
+	---------- Revision History ------------------------------------------
+	07/30/07 - RussellDS - CR28507
+		   Eliminated upate of user and date columns.  This is managed
+		   by the audit function of the filer.
+		   
+		   Note that this trigger is not obsoleted since may be needed
+		   in the future.
+		   
+		   Removed old revision history.
+	*/
+
+	quit

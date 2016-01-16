@@ -1,0 +1,77 @@
+//DO NOT MODIFY  After Update|0|0|0|0|1|0||||
+	/* ---- Revision History------------------------------------------------
+	04/25/06 - RussellDS - CR20967
+		   Changed DSTMDD call from obsolete DBSMDD to DBSDF.
+	
+	02/15/06 - CR19556
+		   Add coding to deal with logicals now being required and
+		   having a default value.
+		   
+	11/19/05 - RussellDS - CR18065
+		   Eliminate use of obsolete table DBTBLMDD.
+		   
+		   Fix various PSL warnings.
+		   
+		   Removed old revision history.
+	*/
+
+	type public String DI, FID
+
+	type String ZDI, ZFID, ZVAL
+	
+	type RecordDBTBL1 dbtbl1 = Db.getRecord("DBTBL1", "%LIBS='SYSDEV',FID=:FID")
+	
+	set dbtbl1.ltd = %CurrentDate
+	
+	// Add or remove from the required data item list
+	if (dbtbl1d.di '= " "), (dbtbl1d.req.oldVal '= dbtbl1d.req) do {
+		
+		// Required list
+		set ZVAL=dbtbl1.listreq
+		
+		if dbtbl1d.req ! (dbtbl1d.typ = "L") do {
+			
+			do additem(dbtbl1d.di,.ZVAL)
+		}
+		else  do remitem(dbtbl1d.di,.ZVAL)
+		
+		set dbtbl1.listreq = ZVAL
+	}
+	
+	// Add or remove from the default list
+	if (dbtbl1d.di '= " "), (dbtbl1d.dft.oldVal '= dbtbl1d.dft) do {
+		
+		set ZVAL=dbtbl1.listdft
+		
+		if 'dbtbl1d.dft.isNull() ! (dbtbl1d.typ = "L") do {
+		
+			do additem(dbtbl1d.di,.ZVAL)
+		}
+		else  do remitem(dbtbl1d.di,.ZVAL)
+		
+		set dbtbl1.listdft=ZVAL
+	}
+		
+	do dbtbl1.save()
+	
+	// If this is a Master Dictionary, distribute changes to everyone
+	type ResultSet rs = Db.select("MDD", "DBTBL1D", "%LIBS='SYSDEV' AND MDDFID=:FID AND MDD=:DI") 
+
+	if rs.next() do DSTMDD^DBSDF(FID,DI)
+
+       // Copy this data item to its descendants
+ 
+	set ZFID = dbtbl1d.fid
+	set ZDI = dbtbl1d.di
+ 
+	type RecordDBTBL1D sub = dbtbl1d.copy()
+ 
+	type ResultSet rs2 = Db.select("FID","DBTBL1","%LIBS='SYSDEV' AND PARFID=:ZFID")
+	
+	while rs2.next()  do {
+		
+		set sub.fid = rs2.getCol("FID")    // copy data item to sub file
+		do sub.save()
+	}	
+
+	quit

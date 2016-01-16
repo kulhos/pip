@@ -1,0 +1,43 @@
+//DO NOT MODIFY  After Update ARCHTBL or INCLUDED|0|0|0|0|1|0|ARCHTBL,INCLUDED|||
+	// DBUTARCHIVE After Update Trigger on ARCHTBL and INCLUDED
+	
+	/*
+	Rebuild filers for archive and included tables, and rebuild DBARCHIVE
+	if archive or included tables have changed.
+	
+	---- Revision History -------------------------------------------------
+	04/15/07 - RussellDS - CR26386
+		   Created.
+
+	-----------------------------------------------------------------------
+	*/
+
+	type Boolean wasChange = false
+	type List newTbls, oldTbls
+	type Number i
+	
+	if dbutarchive.archtbl '= dbutarchive.archtbl.oldVal do {
+	
+		do COMPILE^DBSFILB(dbutarchive.archtbl)
+		set wasChange = true
+	}
+	
+	set newTbls = {List}(dbutarchive.included)
+	set oldTbls = {List}(dbutarchive.included.oldVal)
+		
+	for i = 1:1:newTbls.count() do {
+			
+		type String TBL
+			
+		set TBL = newTbls.elementAt(i)
+			
+		if 'oldTbls.contains(TBL) do {
+		
+			do COMPILE^DBSFILB(TBL)
+			set wasChange = true
+		}
+	}
+	
+	if wasChange do COMPILE^DBSPROC("DBARCHIVE")
+
+	quit

@@ -1,0 +1,27 @@
+//DO NOT MODIFY  Before Delete|0|0|1|0|0|0||||
+	// Before Delete trigger
+
+	/* This trigger will  prevent an entry from being deleted if data has
+	   already been archived, based on entries in the archive index.
+
+	---- Revision History -------------------------------------------------
+	03/01/07 - RussellDS - CR26386
+		   Created.
+
+	-----------------------------------------------------------------------
+	*/
+
+	type public Boolean ER
+	type public String RM
+	
+	type String ARCHTBL = dbutarchive.archtbl
+	
+	#ACCEPT Date=03/08/07; Pgm=RussellDS; CR=25675; Group=BYPASS
+	#BYPASS
+	if $D(^DBARCHX(ARCHTBL)) set ER=1
+	#ENDBYPASS
+	
+	// Cannot delete ~p1 - already has archived data
+	if ER set RM = $$^MSG(6899, ARCHTBL)
+
+	quit

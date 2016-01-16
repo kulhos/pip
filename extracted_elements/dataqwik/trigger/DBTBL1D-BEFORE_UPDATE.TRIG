@@ -1,0 +1,70 @@
+//DO NOT MODIFY  Before Insert/Update|1|1|0|0|0|0||||
+	/*
+	---- Revision History ------------------------------------------------
+	07/30/07 - RussellDS - CR28507
+		   Eliminated upate of user and date columns.  This is managed
+		   by the audit function of the filer.
+		   
+		   Removed old revision history.
+		   
+	08/31/06 - RussellDS - CR22719
+		   Add code to ensure that if a non-literal default value is
+		   provided, the table has a filer.  Otherwise, it's an error.
+		   
+	02/16/06 - RussellDS - CR19065
+		   Remove references to obsolete column DBTBL1D.DEL.
+	
+	02/13/06 - RussellDS - CR19556
+		   Added logic to set default value and required for logicals.
+	*/
+	
+	type public String FID, RM
+	type public Number ER
+	
+	type RecordDBTBL1 dbtbl1=Db.getRecord("DBTBL1","%LIBS='SYSDEV',FID=:FID")
+	
+	if (dbtbl1d.typ.oldVal'=dbtbl1d.typ)!((dbtbl1d.len.oldVal'=dbtbl1d.len)) do FKEYCHK(.dbtbl1d) quit:ER 
+	
+	/* In the past, logical data types could have values of 0, 1, or null.
+	   This has created problems for database indepedence, so we've made a
+	   change to require logicals to be either 0 or 1, be required, and have
+	   a default value.  Because there are old column definitions, we will
+	   leave those alone in this regard.  However, new definitions or changes
+	   in data type to logical must meet these requirements.  UCXDD.proc has
+	   been modified to return logicals as required and with a default,
+	   regardless of the schema definition for older columns.
+	*/
+	if (dbtbl1d.typ = "L"),((%ProcessMode = 0) ! (dbtbl1d.typ.oldVal '= "L")) do {
+	
+		set dbtbl1d.req = 1
+		if dbtbl1d.dft.isNull() set dbtbl1d.dft = 0
+	}
+	
+	if 'dbtbl1d.dft.isNull(), 'dbtbl1d.dft.isLiteral(), dbtbl1.udfile.isNull() do {
+		
+		set ER = 1
+		set RM = "Non-literal default values require a filer for the table"
+	}
+	
+	quit
+	
+
+FKEYCHK(RecordDBTBL1D dbtbl1d, RecordDBTBL1 dbtbl1) // check foreign key relationship
+
+	type Public String DI,FID,RM
+	type Public Number ER
+
+	type String FKEYS,TESTDI,X
+	
+	set TESTDI=","_DI_","
+
+	type ResultSet rs=Db.select("FID,TBLREF,FKEYS","DBTBL1F","( TBLREF=:FID OR FID=:FID ) AND %LIBS='SYSDEV'")
+
+	while rs.next()  set FKEYS=rs.getRow()  do { quit:ER  
+		set FKEYS=","_$TR(FKEYS,$C(9),",")_","
+		if FKEYS'[TESTDI quit 
+		set ER=1
+		if $P(FKEYS,",",2)'=FID set RM=$$^MSG(3963,$P(FKEYS,",",2))
+		else  set RM=$$^MSG(3963,$P(FKEYS,",",3))
+		}
+	quit 

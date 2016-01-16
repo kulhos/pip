@@ -1,0 +1,70 @@
+ZTEST76	;Private;Test MRPC076
+	;;Copyright(c)2003 Sanchez Computer Associates, Inc.  All Rights Reserved - 05/20/03 19:50:01 - RUSSELL
+	; ORIG:	RUSSELL - 04/30/03
+	; DESC:	Test MRPC012
+	;
+	;	  1   BRCD     Branch code
+	;	  2   TPD      Teller Posting date
+	;	  3   ACN      Account number  (CID)
+	;	  4   ETC      Transaction code
+	;	  5   TAMT     Transaction amount
+	;	  6   TRC      Client transaction #
+	;	 *7   CRCD     Currency code info
+	;	  8   EFD      Effective date
+	;	  9   VDT      Value date
+	;	*10   SPV      Supervisor auth.
+	;	*11   QLF      Transaction qualifiers
+	;	*12   PSI      Payment system instr.
+	;	*13   MSC      Miscellaneous info.
+	;	 14   TCMT     Transaction comment
+	;	 15   HISTN    Transaction notes
+	;	*16   CKREG    Check Register Info
+	;	 17   SYSBASE  System Base Equiv. Amt.
+	;
+	new TLO,%TOKEN,TR,TR1,TR2,TSSPMSG,%UCLS,%UID,vzstfflg
+	;
+	do SYSVAR^SCADRV0()
+	;
+	set %LOGID="DSR"
+	set vzstfflg=0
+	;
+	set TLO=$$TLO^UTLO
+	set %TOKEN=$O(^TOKEN(""))
+	set %UID=1
+	set %UCLS=$P(^SCAU(1,%UID),"|",5)
+	;
+	;set BRCD=$O(^UTBL("BRCD",""))
+	set BRCD=0
+	set TPD=TJD
+	;
+	; Build transaction
+	set TR(1)=BRCD
+	set TR(2)=TPD
+	set TR(3)=$$GETACCT("D","DDA",1,"USD")
+	set TR(4)="ZDSRDW"
+	set TR(5)=123.45
+	set TR(6)=568001
+	set TR(7)=$$V2LV^MSG("USD|1|USD|1","|",0)
+	set TR(8)=^CUVAR(2)-5
+	set TR(9)=$$V2LV^MSG("*|9999|SQATEST","|",0)
+	;
+	set TR1=$$V2LV^MSG(.TR,,1)
+	;
+	set TSSPMSG=$$V2LV^MSG(TR1)
+	;
+	set ET=$$^MRPC076(.RETURN,1,TSSPMSG)
+	;
+	quit
+	;
+GETACCT(CLS,GRP,BAL,CRCD)	; Get account with balance over BAL
+	new CID,HIT,TYPE
+	;
+	set (CID,HIT,TYPE)=""
+	for  set TYPE=$O(^XCLS(CLS,GRP,TYPE)) quit:TYPE=""  do  quit:HIT
+	.	for  set CID=$O(^XCLS(CLS,GRP,TYPE,CID)) quit:CID=""  do  quit:HIT
+	..		quit:$G(^ACN(CID,51))'>BAL
+	..		quit:$P($G(^ACN(CID,50)),"|",12)'=CRCD
+	..		set HIT=CID
+	;
+	quit HIT
+

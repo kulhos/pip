@@ -1,0 +1,440 @@
+^DBTBL("SYSDEV",2,"DBTBL1F")="Files Definition (Structure Definition)"
+^DBTBL("SYSDEV",2,"DBTBL1F",-5)="1|1|0|64,0,0,0,0,0|10|11|39|6|47|1;0;2||0|80"
+^DBTBL("SYSDEV",2,"DBTBL1F",0)="DBTBL1D,DBTBL1|||0|0|0|0|1|Files Definition (Structure Definition)|7.0|DBS|DBS||VT220||0|1|0||||1"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1)=$C(9)_"if fDBTBL1D.nod.isLike(""%*%"") do PROTECT^DBSMACRO(""ALL"") quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.001)=$C(9)_"if (fDBTBL1D.typ = ""M"") ! (fDBTBL1D.typ = ""B"") do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.002)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.POS"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.003)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.ISMASTER"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.004)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.CMP"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.005)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.SFT"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.006)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.SFD1"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.007)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.SFD2"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.008)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.SFP"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.009)=$C(9,9)_"if (%ProcessMode = 0), (fDBTBL1.rectyp = 1) do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.01)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.011)=$C(9,9,9)_"type String key, keys"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.012)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.013)=$C(9,9,9)_"set keys = fDBTBL1.acckeys"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.014)=$C(9,9,9)_"set key = keys.piece("","", keys.length("",""))"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.015)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.016)=$C(9,9,9)_"do DEFAULT^DBSMACRO(""DBTBL1D.NOD"", key)"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.017)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.018)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.019)=$C(9)_"if (+fDBTBL1.rectyp = 0) do PROTECT^DBSMACRO(""ALL"") quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.02)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.021)=$C(9)_"if (fDBTBL1.del.isNull()) do PROTECT^DBSMACRO(""DBTBL1D.POS"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.022)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.023)=$C(9)_"if 'fDBTBL1.parfid.isNull(), Db.isDefined(""DBTBL1D"", ""%LIBS='SYSDEV',FID=:fDBTBL1.parfid,DI=:fDBTBL1D.di"") do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.024)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.025)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.NOD"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.026)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.027)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.028)=$C(9)_"if (%ProcessMode = 0), (fDBTBL1.rectyp = 1) do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.029)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.03)=$C(9,9)_"type String key, keys"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.031)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.032)=$C(9,9)_"set keys = fDBTBL1.acckeys"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.033)=$C(9,9)_"set key = keys.piece("","", keys.length("",""))"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.034)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.035)=$C(9,9)_"do DEFAULT^DBSMACRO(""DBTBL1D.NOD"", key)"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.036)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.037)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,1.038)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,21)=$C(9)_"type public Boolean ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,22)=$C(9)_"type public String RM"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,23)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,24)=$C(9)_"quit:'fDBTBL1D.sfd.isNull()"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,25)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,26)=$C(9)_"quit:(fDBTBL1D.nod.isNull() ! fDBTBL1D.pos.isNull())"_$C(9)_"// Computed"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,27)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,28)=$C(9)_"type ResultSet rs = Db.select(""DI"", ""DBTBL1D"", ""%LIBS='SYSDEV' AND FID=:fDBTBL1D.fid AND NOD=:fDBTBL1D.nod AND POS=:fDBTBL1D.pos AND DI<>:fDBTBL1D.di"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,29)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,30)=$C(9)_"if rs.next() do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,31)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,32)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,33)=$C(9,9)_"// Sub-record ID and column already assigned to ~p1"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,34)=$C(9,9)_"set RM = $$^MSG(251, rs.getCol(""DI""))"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,35)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",0,36)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",0,37)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",1)="1001*#65,0,0,0,0,0,0|*|||@T1|||||T|                 Data Item Definition (Structure Definition)                    "
+^DBTBL("SYSDEV",2,"DBTBL1F",2)="3015*#64,0,0,0,0,0,0|*|||@ooe2|||||T|File Name:"
+^DBTBL("SYSDEV",2,"DBTBL1F",3)="3026*#66,0,0,0,0,0,0|@ooe2|12||[SYSDEV,DBTBL1D]FID|[DBTBL1]|X?1A.AN!(X?1""%"".AN)!(X?.A.""_"".E)|||U||1||||||T|||124|2"
+^DBTBL("SYSDEV",2,"DBTBL1F",4)="4015*#64,0,0,0,0,0,0|*|||@ooe4|||||T|Data Item:"
+^DBTBL("SYSDEV",2,"DBTBL1F",5)="4026*#66,0,0,0,0,0,0|@ooe4|12||[SYSDEV,DBTBL1D]DI||X?1""%"".AN!(X?.A.""_"".E)|||U||1||||||T|||124|3"
+^DBTBL("SYSDEV",2,"DBTBL1F",6)="4040*#66,0,0,0,0,0,0||40||[SYSDEV,DBTBL1D]DES|||||T||1|||||||||124|10"
+^DBTBL("SYSDEV",2,"DBTBL1F",7)="6011*#64,0,0,0,0,0,0|*|||@ooe7|||||T|Sub Record ID:"
+^DBTBL("SYSDEV",2,"DBTBL1F",8)="6026#66,0,0,0,0,0,0|DI|26||[SYSDEV,DBTBL1D]NOD|||1||T||0||||0|||||124|1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21)=$C(9)_"type public Boolean ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.001)=$C(9)_"type public String RM, X"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.002)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.003)=$C(9)_"type Boolean isMB"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.004)=$C(9)_"type String FID"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.005)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.006)=$C(9)_"if ((fDBTBL1D.typ = ""M"") ! (fDBTBL1D.typ = ""B"")) set isMB = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.007)=$C(9)_"else  set isMB = 0"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.008)=$C(9)_"set FID = fDBTBL1D.fid"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.009)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.01)=$C(9)_"// For memo/blob, ensure only one per node"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.011)=$C(9)_"if isMB do { quit:ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.012)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.013)=$C(9,9)_"if X.isNull() do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.014)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.015)=$C(9,9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.016)=$C(9,9,9)_"// Data required"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.017)=$C(9,9,9)_"set RM = $$^MSG(741)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.018)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.019)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.02)=$C(9,9)_"type ResultSet rs = Db.select(""DI,TYP"", ""DBTBL1D"", ""%LIBS='SYSDEV' AND FID=:FID AND NOD=:X AND (TYP='B' OR TYP='M')"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.021)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.022)=$C(9,9)_"if rs.next() do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.023)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.024)=$C(9,9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.025)=$C(9,9,9)_"set RM = ""Node already in use by column ""_rs.getCol(""DI"")_"" data type ""_rs.getCol(""TYP"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.026)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.027)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.028)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.029)=$C(9)_"if 'isMB, 'X.isNull(), fDBTBL1D.pos.isNull() do DEFAULT^DBSMACRO(""DBTBL1D.POS"", $$DFTPOS(fDBTBL1, X))"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.03)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.031)=$C(9)_"// Reserved for Z data items (NODE>999)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.032)=$C(9)_"if fDBTBL1D.di.beginsWith(""Z""), (X?1N.N), ({Number}X < 999) do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.033)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.034)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.035)=$C(9,9)_"// Option not available for this field"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.036)=$C(9,9)_"set RM = $$^MSG(4913)_"" ""_DI"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.037)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.038)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.039)=$C(9)_"if X.isNull() do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.04)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.041)=$C(9,9)_"do DELETE^DBSMACRO(""DBTBL1D.POS"", 1)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.042)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.POS"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.043)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.FCR"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.044)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.LEN"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.045)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.ISMASTER"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.046)=$C(9,9)_"do UNPROT^DBSMACRO(""DBTBL1D.CMP"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.047)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.048)=" "
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.049)=$C(9)_"if 'isMB do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.05)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.051)=$C(9,9)_"if 'fDBTBL1.del.isNull() do UNPROT^DBSMACRO(""DBTBL1D.POS"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.052)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.053)=$C(9,9)_"do UNPROT^DBSMACRO(""DBTBL1D.FCR"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.054)=$C(9,9)_"do UNPROT^DBSMACRO(""DBTBL1D.LEN"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.055)=$C(9,9)_"do UNPROT^DBSMACRO(""DBTBL1D.ISMASTER"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.056)=$C(9,9)_"do PROTECT^DBSMACRO(""DBTBL1D.CMP"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.057)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.058)=$C(9,9)_"// Find default position for this node"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.059)=$C(9,9)_"if (FID = ""ACN"")  do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.06)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.061)=$C(9,9,9)_"type Number POS"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.062)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.063)=$C(9,9,9)_"type ResultSet rs = Db.select(""MAX(POS)"", ""DBTBL1D"", ""(FID='DEP' OR FID='LN') AND NOD=:X"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.064)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.065)=$C(9,9,9)_"if rs.next() set POS = rs.getCol(1) + 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.066)=$C(9,9,9)_"else  set POS = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.067)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.068)=$C(9,9,9)_"set fDBTBL1D.pos = POS"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.069)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.07)=$C(9,9,9)_"if (%ProcessMode = 0) do DEFAULT^DBSMACRO(""DBTBL1D.POS"", POS, 1, 0)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.071)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.072)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.073)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.074)=$C(9)_"if (FID '= ""ACN"") do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.075)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.076)=$C(9,9)_"type Number RECTYP"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.077)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.078)=$C(9,9)_"if (X?1N1""*"") do GOTO^DBSMACRO(""END"") quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.079)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.08)=$C(9,9)_"set RECTYP = fDBTBL1.rectyp"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.081)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.082)=$C(9,9)_"if (+RECTYP = 0) do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.083)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.084)=$C(9,9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.085)=$C(9,9,9)_"// Invalid for record type ~p1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.086)=$C(9,9,9)_"set RM = $$^MSG(1348, RECTYP)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.087)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.088)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.089)=$C(9,9)_"if (RECTYP = 1) do { quit:ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.09)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.091)=$C(9,9,9)_"type String key, keys"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.092)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.093)=$C(9,9,9)_"set keys = fDBTBL1.acckeys"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.094)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.095)=$C(9,9,9)_"quit:keys.isLike(""%""""%"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.096)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.097)=$C(9,9,9)_"set key = keys.piece("","", keys.length("",""))"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.098)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.099)=$C(9,9,9)_"if (X '= key) do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.1)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.101)=$C(9,9,9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.102)=$C(9,9,9,9)_"// Invalid for record type ~p1, use ~p2"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.103)=$C(9,9,9,9)_"set RM = $$^MSG(1349, RECTYP, key)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.104)=$C(9,9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.105)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.106)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.107)=$C(9,9)_"if X.beginsWith(""["") do { quit:ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.108)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.109)=$C(9,9,9)_"type String di, fid"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.11)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.111)=$C(9,9,9)_"set fid = X.piece(""["", 2).piece(""]"", 1)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.112)=$C(9,9,9)_"set di = X.piece(""]"", 2)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.113)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.114)=$C(9,9,9)_"if (fid.isNull() ! di.isNull()) set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.115)=$C(9,9,9)_"else  if 'Db.isDefined(""DBTBL1D"", ""%LIBS='SYSDEV',FID=:fid,DI=:di"") set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.116)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.117)=$C(9,9,9)_"// Invalid syntax"_$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.118)=$C(9,9,9)_"if ER set RM = $$^MSG(1475)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.119)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.12)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.121)=$C(9,9)_"set RM = fDBTBL1.glref"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.122)=$C(9,9)_"if (X?1N.E) set RM = RM_"",""_X_"")"""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.123)=$C(9,9)_"else  set RM = RM_"")"""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.124)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.125)=$C(9,9)_"if 'X.beginsWith(""%""), (X?.E1C.E) do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.126)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.127)=$C(9,9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.128)=$C(9,9,9)_"// Alphanumeric format only"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.129)=$C(9,9,9)_"set RM = $$^MSG(248)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.13)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.131)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.132)=$C(9,9)_"if 'isMB, 'fDBTBL1D.cmp.isNull() do DELETE^DBSMACRO(""DBTBL1D.CMP"", 0)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.133)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.134)=$C(9,9)_"if 'isMB, (%ProcessMode = 0) do DEFAULT^DBSMACRO(""DBTBL1D.POS"", $$DFTPOS(fDBTBL1, X), 1, 0)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.135)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.136)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.137)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.138)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.139)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.14)="DFTPOS(RecordDBTBL1 fDBTBL1,"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.141)="       String NOD)"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.142)="       "
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.143)=$C(9)_"/*"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.144)=$C(9)_"Return the next column on this node"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.145)=$C(9)_"*/"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.146)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.147)=$C(9)_"type public String V"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.148)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.149)=$C(9)_"type Number POS"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.15)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.151)=$C(9)_"if fDBTBL1.del.isNull() quit """""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.152)=$C(9)_"if NOD.isNull() quit """""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.153)=$C(9)_"if V.isLike(""%*%"") quit """""
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.154)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.155)=$C(9)_"type ResultSet rs = Db.select(""MAX(POS)"", ""DBTBL1D"", ""FID=:fDBTBL1.fid AND NOD=:NOD"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.156)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.157)=$C(9)_"if rs.next() set POS = rs.getCol(1) + 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.158)=$C(9)_"else  set POS = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.159)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",8,21.16)=$C(9)_"quit POS"
+^DBTBL("SYSDEV",2,"DBTBL1F",9)="6057*#64,0,0,0,0,0,0|*|||@ooe9|||||T|Column:"
+^DBTBL("SYSDEV",2,"DBTBL1F",10)="6065#66,0,0,0,0,0,0|DI|2||[SYSDEV,DBTBL1D]POS|||1|1|N||0||||0|||||124|21"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1)="        // Display columns by position"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.001)=" "
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.002)="        type public Number X"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.003)="        type public String I(), nodpos()"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.004)=" "
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.005)="        if X.isNull() set X = $$DFTPOS(fDBTBL1, fDBTBL1D.nod)"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.006)=" "
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.007)="        kill nodpos"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.008)=" "
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.009)="        type ResultSet rs = Db.select(""POS,DI,DES"", ""DBTBL1D"", ""%LIBS='SYSDEV' AND FID=:fDBTBL1.fid AND NOD=:NOD AND SFD IS NULL"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.01)=" "
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.011)="        while rs.next() do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.012)="        "_$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.013)="        "_$C(9)_"type String DIPAD"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.014)="        "_$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.015)="        "_$C(9)_"set DIPAD = rs.getCol(""DI"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.016)="        "_$C(9)_"set DIPAD = DIPAD.justify(14, -1)"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.017)="        "_$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.018)="        "_$C(9)_"set nodpos(rs.getCol(""POS"")) = DIPAD_rs.getCol(""DES"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.019)="        }"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.02)=" "
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.021)="        set I(3) = ""nodpos("""
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.022)=" "
+^DBTBL("SYSDEV",2,"DBTBL1F",10,1.023)="        quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,21)=$C(9)_"type public Boolean ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,22)=$C(9)_"type public Number X"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,23)=$C(9)_"type public String RM"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,24)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",10,25)=$C(9)_"quit:((fDBTBL1D.typ = ""M"") ! (fDBTBL1D.typ = ""B""))"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,26)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",10,27)=$C(9)_"quit:fDBTBL1D.nod.isNull()"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,28)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",10,29)=$C(9)_"if 'fDBTBL1.del.isNull(), X.isNull() do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,30)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",10,31)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,32)=$C(9,9)_"// Data required"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,33)=$C(9,9)_"set RM = $$^MSG(741)"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,34)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,35)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",10,36)=$C(9)_"do CHANGE^DBSMACRO(""TBL"", """")"
+^DBTBL("SYSDEV",2,"DBTBL1F",10,37)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",10,38)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",11)="7012*#64,0,0,0,0,0,0|*|||@ooe11|||||T|Master Field:"
+^DBTBL("SYSDEV",2,"DBTBL1F",12)="7026#66,0,0,0,0,0,0|@ooe11|1||[SYSDEV,DBTBL1D]ISMASTER|||1||L||0|||||||||124|17"
+^DBTBL("SYSDEV",2,"DBTBL1F",12,21)=$C(9)_"type public Boolean ER, X"
+^DBTBL("SYSDEV",2,"DBTBL1F",12,22)=$C(9)_"type public String RM"
+^DBTBL("SYSDEV",2,"DBTBL1F",12,23)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",12,24)=$C(9)_"quit:'X"
+^DBTBL("SYSDEV",2,"DBTBL1F",12,25)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",12,26)=$C(9)_"type ResultSet rs = Db.select(""DI"", ""DBTBL1D"", ""%LIBS='SYSDEV' AND FID=:fDBTBL1D.fid AND NOD=:fDBTBL1D.nod AND POS=:fDBTBL1D.pos AND ISMASTER=1"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",12,27)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",12,28)=$C(9)_"if rs.next() do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",12,29)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",12,30)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",12,31)=$C(9,9)_"set RM = ""Masterfield column ""_rs.getCol(""DI"")_"" already assigned to this sub-record ID and column"""
+^DBTBL("SYSDEV",2,"DBTBL1F",12,32)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",12,33)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",12,34)=$C(9)_"do GOTO^DBSMACRO(""END"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",12,35)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",12,36)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",13)="8018*#66,0,0,0,0,0,0|*|||@TCOMP|||||T|           Computed Expression"
+^DBTBL("SYSDEV",2,"DBTBL1F",14)="10002#66,0,0,0,0,0,0||254||[SYSDEV,DBTBL1D]CMP|||1||T||0|||||||||124|16"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21)=$C(9)_"type public Boolean ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.001)=$C(9)_"type public String RM, X"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.002)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.003)=$C(9)_"quit:((fDBTBL1D.typ = ""M"") ! (fDBTBL1D.typ = ""B""))"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.004)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.005)=$C(9)_"quit:(X.isNull() & (fDBTBL1.filetyp = 5))"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.006)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.007)=$C(9)_"// See if this is an MDD file"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.008)=$C(9)_"type ResultSet rs = Db.select(""SYSSN"", ""SCASYS"", ""DBSMDD=:fDBTBL1D.fid"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.009)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.01)=$C(9)_"quit:rs.next()"_$C(9,9,9)_"// Is MDD"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.011)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.012)=$C(9)_"if X.isNull(), fDBTBL1D.nod.isNull(), (fDBTBL1.rectyp > 0) do CHANGE^DBSMACRO(""REQ"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.013)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.014)=$C(9)_"// Validate computed expression"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.015)=$C(9)_"set ER = $$VALIDCMP^DBSDF(fDBTBL1D.fid, fDBTBL1D.di, .X, .RM)"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.016)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.017)=$C(9)_"if 'X.isNull() do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.018)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.019)=$C(9,9)_"if (fDBTBL1D.di.length() > 8) do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.02)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.021)=$C(9,9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.022)=$C(9,9,9)_"// Computed column name must be 8 characters or less"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.023)=$C(9,9,9)_"set RM = $$^MSG(4476)"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.024)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.025)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.026)=$C(9,9)_"/* Should not be possible, currently, to have an underscore in"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.027)=$C(9,9)_"   a column name, but have left this in as it will be important"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.028)=$C(9,9)_"   if we add that capability in the future."
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.029)=$C(9,9)_"*/"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.03)=$C(9,9)_"if fDBTBL1D.di.isLike(""%_%"") do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.031)=$C(9,9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.032)=$C(9,9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.033)=$C(9,9,9)_"// Computed column name cannot contain an ""_"""
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.034)=$C(9,9,9)_"set RM = $$^MSG(4477)"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.035)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.036)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.037)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",14,21.038)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",15)="13001*#192,0,0,0,0,0,0|*|||@ooe15|||||T|lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqk"
+^DBTBL("SYSDEV",2,"DBTBL1F",16)="14001*#192,0,0,0,0,0,0|*|||@ooe16|||||T|x"
+^DBTBL("SYSDEV",2,"DBTBL1F",17)="14025*#66,0,0,0,0,0,0|*|||@ooe17|||||T|Special Sub-Field Definitions"
+^DBTBL("SYSDEV",2,"DBTBL1F",18)="14080*#192,0,0,0,0,0,0|*|||@ooe18|||||T|x"
+^DBTBL("SYSDEV",2,"DBTBL1F",19)="15001*#192,0,0,0,0,0,0|*|||@ooe19|||||T|x"
+^DBTBL("SYSDEV",2,"DBTBL1F",20)="15080*#192,0,0,0,0,0,0|*|||@ooe20|||||T|x"
+^DBTBL("SYSDEV",2,"DBTBL1F",21)="16001*#192,0,0,0,0,0,0|*|||@ooe21|||||T|x"
+^DBTBL("SYSDEV",2,"DBTBL1F",22)="16047*#65,0,0,0,0,0,0|*|||@ooe22|||||T|      Delimiters        Position"
+^DBTBL("SYSDEV",2,"DBTBL1F",23)="16080*#192,0,0,0,0,0,0|*|||@ooe23|||||T|x"
+^DBTBL("SYSDEV",2,"DBTBL1F",24)="17001*#192,0,0,0,0,0,0|*|||@ooe24|||||T|x"
+^DBTBL("SYSDEV",2,"DBTBL1F",25)="17011*#64,0,0,0,0,0,0|*|||@ooe25|||||T|Sub-field Tag:"
+^DBTBL("SYSDEV",2,"DBTBL1F",26)="17026#66,0,0,0,0,0,0|DI|12||[SYSDEV,DBTBL1D]SFT|||1||U||0||||0||T|~126~~1|12|124|18"
+^DBTBL("SYSDEV",2,"DBTBL1F",26,21)=$C(9)_"type public Boolean ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",26,22)=$C(9)_"type public String RM, X"
+^DBTBL("SYSDEV",2,"DBTBL1F",26,23)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",26,24)=$C(9)_"quit:X.isNull()"
+^DBTBL("SYSDEV",2,"DBTBL1F",26,25)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",26,26)=$C(9)_"type ResultSet rs = Db.select(""DI"", ""DBTBL1D"", ""%LIBS='SYSDEV' AND FID=:fDBTBL1D.fid AND NOD=:fDBTBL1D.nod AND POS=:fDBTBL1D.pos AND ISMASTER=1"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",26,27)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",26,28)=$C(9)_"if rs.isEmpty() do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",26,29)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",26,30)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",26,31)=$C(9,9)_"set RM = ""Cannot assign a subfield to a non-masterfield column"""
+^DBTBL("SYSDEV",2,"DBTBL1F",26,32)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",26,33)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",26,34)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",27)="17047*#64,0,0,0,0,0,0|*|||@ooe27|||||T|Prefix:"
+^DBTBL("SYSDEV",2,"DBTBL1F",28)="17055#66,0,0,0,0,0,0|DI|3||[SYSDEV,DBTBL1D]SFD1|[DBCTLDELIM]||1||N||0|1|255||0|||~126~~2|3|124|18"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21)=$C(9)_"type public Boolean ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.001)=$C(9)_"type public Number X"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.002)=$C(9)_"type public String RM"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.003)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.004)=$C(9)_"if 'X.isNull() do { quit:ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.005)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.006)=$C(9,9)_"type ResultSet rs = Db.select(""DI"", ""DBTBL1D"", ""%LIBS='SYSDEV' AND FID=:fDBTBL1D.fid AND NOD=:fDBTBL1D.nod AND POS=:fDBTBL1D.pos AND ISMASTER=1"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.007)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.008)=$C(9,9)_"if rs.isEmpty() do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.009)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.01)=$C(9,9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.011)=$C(9,9,9)_"set RM = ""Cannot assign a subfield to a non-masterfield column"""
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.012)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.013)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.014)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.015)=$C(9)_"if X.isNull(), 'fDBTBL1D.sft.isNull() do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.016)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.017)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.018)=$C(9,9)_"// Data required"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.019)=$C(9,9)_"set RM = $$^MSG(741)"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.02)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.021)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.022)=$C(9)_"if 'X.isNull(), (X = fDBTBL1.del) do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.023)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.024)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.025)=$C(9,9)_"// Invalid file delimiter (i.e., cannot be file delimiter)"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.026)=$C(9,9)_"set RM = $$^MSG(416)"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.027)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.028)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",28,21.029)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",29)="17060*#64,0,0,0,0,0,0|*|||@ooe29|||||T|Suffix:"
+^DBTBL("SYSDEV",2,"DBTBL1F",30)="17068#66,0,0,0,0,0,0|@ooe29|3||[SYSDEV,DBTBL1D]SFD2|[DBCTLDELIM]||1||N||0|||||||||124|18"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21)=$C(9)_"type public Boolean ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.001)=$C(9)_"type public Number X"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.002)=$C(9)_"type public String RM"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.003)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.004)=$C(9)_"type String MFCOL"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.005)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.006)=$C(9)_"if 'X.isNull() do { quit:ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.007)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.008)=$C(9,9)_"type ResultSet rs = Db.select(""DI"", ""DBTBL1D"", ""%LIBS='SYSDEV' AND FID=:fDBTBL1D.fid AND NOD=:fDBTBL1D.nod AND POS=:fDBTBL1D.pos AND ISMASTER=1"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.009)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.01)=$C(9,9)_"if rs.isEmpty() do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.011)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.012)=$C(9,9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.013)=$C(9,9,9)_"set RM = ""Cannot assign a subfield to a non-masterfield column"""
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.014)=$C(9,9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.015)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.016)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.017)=$C(9)_"if X.isNull(), 'fDBTBL1D.sft.isNull() do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.018)=$C(9,9)
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.019)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.02)=$C(9,9)_"// Data required"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.021)=$C(9,9)_"set RM = $$^MSG(741)"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.022)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.023)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.024)=$C(9)_"if 'X.isNull(), (X = fDBTBL1.del) do { quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.025)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.026)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.027)=$C(9,9)_"// Invalid file delimiter (i.e., cannot be file delimiter)"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.028)=$C(9,9)_"set RM = $$^MSG(416)"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.029)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.03)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",30,21.031)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",31)="17077#66,0,0,0,0,0,0||2||[SYSDEV,DBTBL1D]SFP|||1||N||0|||||||||124|18"
+^DBTBL("SYSDEV",2,"DBTBL1F",31,21)=$C(9)_"type public Boolean ER"
+^DBTBL("SYSDEV",2,"DBTBL1F",31,22)=$C(9)_"type public String RM, X"
+^DBTBL("SYSDEV",2,"DBTBL1F",31,23)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",31,24)=$C(9)_"quit:X.isNull()"
+^DBTBL("SYSDEV",2,"DBTBL1F",31,25)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",31,26)=$C(9)_"type ResultSet rs = Db.select(""DI"", ""DBTBL1D"", ""%LIBS='SYSDEV' AND FID=:fDBTBL1D.fid AND NOD=:fDBTBL1D.nod AND POS=:fDBTBL1D.pos AND ISMASTER=1"")"
+^DBTBL("SYSDEV",2,"DBTBL1F",31,27)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",31,28)=$C(9)_"if rs.isEmpty() do {"
+^DBTBL("SYSDEV",2,"DBTBL1F",31,29)=""
+^DBTBL("SYSDEV",2,"DBTBL1F",31,30)=$C(9,9)_"set ER = 1"
+^DBTBL("SYSDEV",2,"DBTBL1F",31,31)=$C(9,9)_"set RM = ""Cannot assign a subfield to a non-masterfield column"""
+^DBTBL("SYSDEV",2,"DBTBL1F",31,32)=$C(9)_"}"
+^DBTBL("SYSDEV",2,"DBTBL1F",31,33)=$C(9)
+^DBTBL("SYSDEV",2,"DBTBL1F",31,34)=$C(9)_"quit"
+^DBTBL("SYSDEV",2,"DBTBL1F",32)="17080*#192,0,0,0,0,0,0|*|||@ooe32|||||T|x"
+^DBTBL("SYSDEV",2,"DBTBL1F",33)="18001*#192,0,0,0,0,0,0|*|||@ooe33|||||T|mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqj"

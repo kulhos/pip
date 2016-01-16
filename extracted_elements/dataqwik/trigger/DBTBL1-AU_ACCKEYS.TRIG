@@ -1,0 +1,59 @@
+//DO NOT MODIFY  After update accecc keys|0|0|0|0|1|0|ACCKEYS|||
+	/*
+	---------- Revision History ------------------------------------------
+	10/28/04 - RussellDS - CR8058
+		   Fix logic errors that are not correctly renumbering keys.
+		   
+		   Revise code to use current PSL methods.
+		   
+		   Remove old revision history.
+		   
+	04/29/04 - RussellDS - CR9172
+		   Cleaned up variable scoping
+	----------------------------------------------------------------------
+	*/
+	
+	type Public String FID
+	
+	type Number KEYNUM
+	type String GBLREF, KEYNAME, NEWKEYS(), OLDKEYS
+	
+	set OLDKEYS = dbtbl1.acckeys.oldVal		// Old access keys
+	set NEWKEYS = dbtbl1.acckeys			// New access keys
+
+	// Reset global reference
+	set GBLREF = "^"_dbtbl1.global_"("_NEWKEYS
+	do Db.update("DBTBL1", "GLREF=:GBLREF", "%LIBS='SYSDEV' AND FID=:FID")
+	
+	for KEYNUM = 1:1:NEWKEYS.length(",") set NEWKEYS(NEWKEYS.piece(",", KEYNUM)) = KEYNUM
+	
+	// If old key is no longer new key, delete it
+	for KEYNUM = 1:1:OLDKEYS.length(",") do {
+		set KEYNAME = OLDKEYS.piece(",", KEYNUM)
+		if 'NEWKEYS(KEYNAME).exists() do Db.delete("DBTBL1D", "%LIBS='SYSDEV' AND FID=:FID AND DI=:KEYNAME")
+	}
+	
+	// For new keys, if already existed, update key number, otherwise add key
+	set KEYNAME = ""
+	for  set KEYNAME = NEWKEYS(KEYNAME).order() quit:KEYNAME.isNull()  do {
+		set KEYNUM = NEWKEYS(KEYNAME)
+		
+		type RecordDBTBL1D dbtbl1d = Db.getRecord("DBTBL1D", "%LIBS='SYSDEV',FID=:FID,DI=:KEYNAME", 1)
+		
+		if dbtbl1d.nod '= (KEYNUM_"*") do {
+		
+			set dbtbl1d.nod = KEYNUM_"*"
+			
+			if 'dbtbl1d.getMode()  do {			// New key
+				set dbtbl1d.typ = "N"
+				set dbtbl1d.len = 12
+				set dbtbl1d.des = KEYNAME
+				set dbtbl1d.rhd = KEYNAME
+				set dbtbl1d.req = 1
+			}
+			
+			do dbtbl1d.save()
+		}
+	}
+			
+	quit
