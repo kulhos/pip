@@ -1,5 +1,4 @@
-# pip_v01
-FIS-PIP v 0.1 code (GPLv2 version)
+FIS-PIP code (GPLv2 version)
 
-This is a code extracted from FIS-PIP v0.1 ( http://sourceforge.net/projects/pip/files/PIP/V0.1/ ). The extracted DataQwik elements are in the extracted_elements directory.
+This is a code extracted from FIS-PIP ( http://sourceforge.net/projects/pip/files/PIP/). The extracted DataQwik elements are in the extracted_elements directory.
 
