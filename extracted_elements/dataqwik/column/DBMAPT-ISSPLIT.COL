@@ -1,0 +1,34 @@
+NOD=TBL
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Is Split Table
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=2
+RHD=Is Split@Table
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+A indicator (Y/N) as to whether this is a split table.  A split table is a
+single table in DATA-QWIK that is split into multiple tables in an RDB.  DEP
+and LN are examples.

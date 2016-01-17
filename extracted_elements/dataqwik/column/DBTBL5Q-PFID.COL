@@ -1,0 +1,78 @@
+NOD=0
+LEN=60
+DFT=
+DOM=
+TBL=[DBTBL1]:LIST
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Data Files
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Data Files
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+         ACCESS FILE(S)
+
+             Enter the file or files to be used for the report.
+
+             To use more than one file, enter the name of the PRIMARY file
+             first, then enter the name or names of secondary files.  Separate
+             each file name with a comma.  The access key of a secondary file
+             must be an access key or data item in the primary file or in
+             a preceding secondary file for a valid primary/secondary file
+             relationship.
+
+             The system will verify the Primary/Secondary file relationship.
+             If the relationship is not valid, one of the following error
+             messages will display:
+
+                   * Invalid File ID
+                   * Select "FILE" for Primary File ID
+                   * Invalid Files Relationship
+
+         _____________________________________________________________________
+         Example of Valid File Relationship - XCLS,DEP,MADDR,LADDR
+
+             Access Files | Related Access Keys/Data Items
+             -------------+--------------------------------
+                  XCLS    | CID*
+                  DEP     | CID*  MSEQ   LSEQ
+                  MADDR   |       MSEQ*
+                  LADDR   |              LSEQ*
+
+                           *=Access key for this file
+
+         _____________________________________________________________________
+         Example of Valid File Relationship - DEP,CIF
+
+             Access Files | Related Access Keys/Data Items
+             -------------+--------------------------------
+                  DEP     | CID*  ACN
+                  CIF     |       ACN*
+
+
+         _____________________________________________________________________
+         Example of Valid File Relationship - HIST,DEP
+
+             Access Files | Related Access Keys/Data Items
+             -------------+--------------------------------
+                  HIST    | CID*  TSEQ*
+                  DEP     | CID*

@@ -1,0 +1,21 @@
+//DO NOT MODIFY  Before Update Where Columns|0|0|0|0|1|0||||
+
+	/* ----- Revision History ---------------------------------------------
+	
+	01/13/2008 - RussellDS - CR30801
+		Created.
+	*/
+	
+	/* Delete the row for the applicable table/userclass if all privileges
+	   are set to false and there is a PUBLIC entry for the table.  In this
+	   case, the PUBLIC values apply, and there is no reason to retain the
+	   userclass row. */
+	   
+	if ((this.insertrts = 0) & (this.updaterts = 0) & (this.deleterts = 0) & (this.selectrts = 0)) do {
+	   
+		type ResultSet rs = Db.select("COUNT(TABLENAME)", "DBACCRTS", "TABLENAME=:this.tablename AND USERCLASS=:this.userclass")
+	
+		if rs.next(), (rs.getCol(1) = 1) do Db.delete("DBACCRTS", "TABLENAME=:this.tablename AND USERCLASS=:this.userclass")
+	}
+	
+	quit

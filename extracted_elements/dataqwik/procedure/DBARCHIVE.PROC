@@ -35,6 +35,13 @@ DBARCHIVE
 	/*                                               
 
 	---- Revision History -------------------------------------------------
+	01/20/2008 - RussellDS - CR30801
+		* Eliminate reference to filer program.  This project requires
+		  filers for all tables, with names following a convention.
+		* Modified getArchiveTable to ignore archiving considerations
+		  during bootstrap.
+		* Modified getPSLTable methods to use level 0
+	
 	03/01/07 - RussellDS - CR26386
 		   Created.
 
@@ -163,7 +170,7 @@ public ARCHIVE( String ARCHTBL,		// Table to be archived
         
         // Select top-level keys and pass to ARCHIVE^filerPGM to archive
         
-        type PSLTable tblDes = PSL.getPSLTable(ARCHTBL)
+        type PSLTable tblDes = PSL.getPSLTable(ARCHTBL, 0)
         
         set keys = {String}(tblDes.primaryKeys)
         set archkey = tblDes.getArchiveKey()
@@ -354,6 +361,14 @@ private getArchiveTable( PSLTable tblDes)	// table descriptor
 	     = null otherwise
 	*/
 	
+	/* restrictionlevel = -1 indicates that we're building an M copy
+	   of this procedure for distribution for bootstrap and upgrades.
+	   In that case, we ignore archive handling during the initial phase,
+	   until this procedure is recompiled on-site. */
+	
+	#IF (PSL.getSetting("boot","restrictionlevel") = -1)
+	quit ""		// Ignore archive building when building the compiler
+	#ELSE
 	type String ArchTbl, TBL
 	
 	set TBL = tblDes.table
@@ -369,7 +384,7 @@ private getArchiveTable( PSLTable tblDes)	// table descriptor
 		
 		type RecordDBUTARCHIVE dbutarchive = ds.getRecord("DBUTARCHIVE")
 		
-		type PSLTable archDes = PSL.getPSLTable(dbutarchive.archtbl)
+		type PSLTable archDes = PSL.getPSLTable(dbutarchive.archtbl, 0)
 		
 		// Sub-table
 		if ({List}$$getArchiveSubs(archDes)).contains(TBL) set ArchTbl = dbutarchive.archtbl
@@ -390,7 +405,7 @@ private getArchiveTable( PSLTable tblDes)	// table descriptor
 					
 					set incltbl = included.elementAt(i)
 					
-					type PSLTable inclDes = PSL.getPSLTable(incltbl)
+					type PSLTable inclDes = PSL.getPSLTable(incltbl, 0)
 					
 					// Sub-table of related table
 					if ({List}$$getArchiveSubs(inclDes)).contains(TBL) set ArchTbl = dbutarchive.archtbl
@@ -400,6 +415,7 @@ private getArchiveTable( PSLTable tblDes)	// table descriptor
 	}
 	
 	quit ArchTbl
+	#ENDIF
 	
 	
 private getArchivable( PSLTable tblDes)	// Table descriptor of table to check
@@ -449,7 +465,7 @@ private getArchivable( PSLTable tblDes)	// Table descriptor of table to check
 		
 		set FID = rs.getCol("FID")
 		
-		type PSLTable fidDes = PSL.getPSLTable(rs.getCol("FID"))
+		type PSLTable fidDes = PSL.getPSLTable(rs.getCol("FID"), 0)
 		
 		if ({List}$$getArchiveSubs(fidDes)).contains(ARCHTBL), $$getArchivable(fidDes) set isArchivable = false
 	}
@@ -525,7 +541,7 @@ private getArchiveKey( PSLTable tblDes,	// Table descriptor of table to check
 		
 		if 'table.isNull() do {
 		
-			type PSLTable td = PSL.getPSLTable(table)
+			type PSLTable td = PSL.getPSLTable(table, 0)
 			
 			set primkeys = td.primaryKeys
 		}
@@ -654,7 +670,7 @@ private ARCHTBLCHK( String ARCHTBL)	// Archive Table Name
 	   therefore, one of these conditions must exist.
 	*/
 	
-	type SchemaTable tblDes = Db.getSchemaTable(ARCHTBL)
+	type PSLTable tblDes = PSL.getPSLTable(ARCHTBL, 0)
 	
 	/* Archivable table cannot have a query (DBTBL1.QID1) associated with it
 	   Note that this check and the next are here, even though also in the
@@ -669,14 +685,6 @@ private ARCHTBLCHK( String ARCHTBL)	// Archive Table Name
 	   cannot be a sub-table of another archivable table 
 	*/
 	if '$$getArchivable(tblDes) quit $$^MSG(6891)
-	
-	/* Validate that the table has a filer program defined (DBTBL1.UDFILE).
-	   Because archivable tables will require code generated as part of their
-	   filers, such tables require a filer program.
-	*/
-		
-	// Table ~p1 must have a filer
-	if tblDes.filerPGM.isNull() quit $$^MSG(6894, ARCHTBL)
 	
 	quit ERRMSG
 	
@@ -709,7 +717,7 @@ private INCLUDEDCHK( String ARCHTBL,	// Archive table name
 	set ERR = 0
 	set ERRMSG = ""
 	
-	type PSLTable archDes = PSL.getPSLTable(ARCHTBL)
+	type PSLTable archDes = PSL.getPSLTable(ARCHTBL, 0)
 	
 	set archkey = $$getArchiveKey(archDes, false)
 	set archkeys = {List}(archDes.primaryKeys)
@@ -721,7 +729,7 @@ private INCLUDEDCHK( String ARCHTBL,	// Archive table name
 		
 		set TBL = INCLUDED.elementAt(i)
 		
-		type PSLTable inclDes = PSL.getPSLTable(TBL)
+		type PSLTable inclDes = PSL.getPSLTable(TBL, 0)
 		
 		// Archive Table and Included Table must use different globals
 		if archDes.global.piece("(", 1) = inclDes.global.piece("(", 1) set ERRMSG = $$^MSG(6895) quit

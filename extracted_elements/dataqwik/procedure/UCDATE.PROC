@@ -14,10 +14,13 @@
 	RecordUTBLNBD and Cache.getRecord()
 		Used in subroutine isBusDat (in code generated for method
 		Date.isBusDate())
-	commands("mask","Date")
+	PSLParser.getSetting("PSL","DateMask")
 		Used to generate code for Date.toString()
 
 	---- Revision History --------------------------------------------------
+	03/30/07 - Frans S.C. Witte - CR: 27800
+		Replaced commands(,) by $$xxxPSLSetting^UCGM()
+
 	09/19/06 - Frans S.C. Witte - CRs: 22720 / 22274
 		Modified dayOfYr and datToEOY to tokenize arguments passed to
 		PSL.mExpr().
@@ -31,7 +34,7 @@
 		the end of the generated subroutine)
 
 	12/27/05 - Frans S.C. Witte - CRs: 18727 / 18728
-		%MSKD replaced by commands("mask","Date")
+		%MSKD replaced by pslPrsr("mask","Date")
 
 	10/24/05 - Frans S.C. Witte - CRs: 17937 / 15593
 		Corrected problem when %MSKD not defined.
@@ -83,93 +86,92 @@
 		   Retrofit of changes made in v7.0 up to this date into Profile01
 		   as well as release for v7.0
 	*/
-	//I18N=QUIT
+	#PACKAGE  framework.psl
+	#OPTIMIZE FUNCTIONS OFF
 
-	#warn FUNCTION ON
-	#optimize FUNCTIONS OFF
+	//I18N=QUIT
 
 	/* no main entry */
 	quit
 
 	// ---------------------------------------------------------------------
-private day	// method Date.day()
+day	// method Date.day()
 	// Returns (String) day of month
-	
+	#ACCEPT CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte;GROUP=DEPRECATED
 	if PSL.objectName.isLiteral() set PSL.return=$ZD(PSL.objectName,"DD")
 	else  set PSL.return="$ZD("_PSL.objectName_",""DD"")"
 	quit
 
 	// ---------------------------------------------------------------------
-private dayOfM	// method Date.dayOfMonth()
+dayOfM	// method Date.dayOfMonth()
 	// Returns (Number) day of month
-	
+	#ACCEPT CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte;GROUP=DEPRECATED
 	if PSL.objectName.isLiteral() set PSL.return=+$ZD(PSL.objectName,"DD")
 	else  set PSL.return="+$ZD("_PSL.objectName_",""DD"")"
 	quit
 
 	// ---------------------------------------------------------------------
-private month	// method Date.month()
+month	// method Date.month()
 	// Returns String month
-	
+	#ACCEPT CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte;GROUP=DEPRECATED
 	if PSL.objectName.isLiteral() set PSL.return=$ZD(PSL.objectName,"MM")
+	#ACCEPT CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte;GROUP=DEPRECATED
 	else  set PSL.return="$ZD("_PSL.objectName_",""MM"")"
 	quit
 
 	// ---------------------------------------------------------------------
-private monthOfY	// method Date.monthOfYear()
+monthOfY	// method Date.monthOfYear()
 	// Returns Number month
-	
+	#ACCEPT CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte;GROUP=DEPRECATED
 	if PSL.objectName.isLiteral() set PSL.return=+$ZD(PSL.objectName,"MM")
 	else  set PSL.return="+$ZD("_PSL.objectName_",""MM"")"
 	quit
 
 	// ---------------------------------------------------------------------
-private year	// method Date.year()
+year	// method Date.year()
 	// Returns int year
-	
+	#ACCEPT CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte;GROUP=DEPRECATED
 	if PSL.objectName.isLiteral() set PSL.return=$ZD(PSL.objectName,"YEAR")
 	else  set PSL.return="$ZD("_PSL.objectName_",""YEAR"")"
 	quit
 
 	// ---------------------------------------------------------------------
-private daysInMo	// method Date.daysInMonth
+daysInMo	// method Date.daysInMonth
 	// Returns Number of days in the month
-	
-	type String label="vdatDIM"
+	type literal String label="vdatDIM"
 
 	if 'PSL.subrouExists(label) do {
-		
-		type PSLBuffer buf=PSL.openBuffer("(Date object)","Date.daysInMonth")
+		type PSLBuffer buf=PSL.openBuffer("(Date vo)","Date.daysInMonth")
 
-		do buf.add("type Number month=object.month()")
+		do buf.add("type Number month=vo.month()")
 		do buf.add("type Number return=""31,28,31,30,31,30,31,31,30,31,30,31"".piece("","",month)")
-		do buf.add("if month=2,object.isLeapYear() set return=return+1")
+		do buf.add("if month=2,vo.isLeapYear() set return=return+1")
 		do buf.add("quit return")
-		do buf.insert(label)
+		do buf.insert(label, "Number")
 	}
 
 	set PSL.return="$$"_label_"("_PSL.objectName_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private dayOfYr	// method: Date.dayOfYear()
-
+dayOfYr	// method: Date.dayOfYear()
+	//
 	type String tkn = $$tokenPush^UCPATCH( PSL.objectName)
 	set PSL.return = "("_ tkn_ "+1-(""01/01/""_"_ tkn_ ".year()).toDate())"
 	set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr(PSL.return), 1)
 	quit
 
 	// ---------------------------------------------------------------------
-private daysToEOY	// method: Date.daysToEOY()
-
+daysToEOY	// method: Date.daysToEOY()
+	//
 	type String tkn = $$tokenPush^UCPATCH( PSL.objectName)
 	set PSL.return = "((""12/31/""_"_ tkn_ ".year()).toDate()-"_ tkn_ ")"
 	set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr(PSL.return), 1)
 	quit
 
 	// ---------------------------------------------------------------------
-private isBusDat	// method: Date.isBusDate(String Calendar)
-
+isBusDat	// method: Date.isBusDate(String Calendar)
+	//
 	if PSL.actual(1).isNull(1) set PSL.actual(1)="IBS".addQuotes()
 
 	if PSL.objectName.isLiteral(),PSL.actual(1).isLiteral() do { quit
@@ -180,13 +182,12 @@ private isBusDat	// method: Date.isBusDate(String Calendar)
 	type literal String label = "vdatBD"
 
 	if 'PSL.subrouExists(label) do {
-		
-		type PSLBuffer buf=PSL.openBuffer("(Date object,String p1)","Date.isBusDate")
+		type PSLBuffer buf=PSL.openBuffer("(Date vo,String v1)","Date.isBusDate")
 
 		do buf.add("#OPTIMIZE")
 		// Added default values for parameters P01 - 8074
-		do buf.add("if object.get().isNull() set object=%SystemDate")
-		do buf.add("if p1.get().isNull() set p1=""IBS""")
+		do buf.add("if vo.get().isNull() set vo=%SystemDate")
+		do buf.add("if v1.get().isNull() set v1=""IBS""")
 		do buf.add("")
 
 		/* Add catch-block to transform %PSL-E-RECNOFL error that might be
@@ -194,17 +195,17 @@ private isBusDat	// method: Date.isBusDate(String Calendar)
 		   %PSL-E-BUSDATE.
 		   NOTE: This code is still commented out because the AMR05 does
 		   not support CATCH commands inside a PSLBuffer. */
-		/* ======== COMMENTED OUT BEGIN ========
+		// ======== COMMENTED OUT BEGIN ========
 		do buf.add("catch vRecErr {")
 		do buf.add("  if vRecErr.type=""%PSL-E-RECNOFL"" set vRecErr.type=""%PSL-E-BUSDATE""")
 		do buf.add("  throw vRecErr")
 		do buf.add("}")
-		======== COMMENTED OUT END ======== */
-		
+		//======== COMMENTED OUT END ======== */
+
 		/* Add code protected by catch block */
 		do buf.add("type Public Cache %CACHE()")
-		do buf.add("type RecordUTBLNBD rec=%CACHE(""UTBLNBD"").getRecord(""UTBLNBD"",""NBDC=:p1"")")
-		do buf.add("type Number n=(object#7)")
+		do buf.add("type RecordUTBLNBD rec=%CACHE(""UTBLNBD"").getRecord(""UTBLNBD"",""NBDC=:v1"")")
+		do buf.add("type Number n=(vo#7)")
 		do buf.add("if n=0,rec.thu quit 0")
 		do buf.add("if n=1,rec.fri quit 0")
 		do buf.add("if n=2,rec.sat quit 0")
@@ -213,36 +214,39 @@ private isBusDat	// method: Date.isBusDate(String Calendar)
 		do buf.add("if n=5,rec.tue quit 0")
 		do buf.add("if n=6,rec.wed quit 0")
 		do buf.add("")
-	
-		/* The code below violates the use of the %CACHE() array as
-		   documented. However, the structure used to store the UTBLNBD1
-		   existance of a date (for a specific calendar) is such that it
-		   does not conflict with Record cache usage.
+
+		/* The code below violated the use of the %CACHE() array as
+		   documented, even though the structure used to store the
+		   UTBLNBD1 existance of a date (for a specific calendar) was
+		   such that it did not conflict with Record cache usage.
 		   The %CACHE("UTBLNBD").getRecord() will ensure that
 		   %CACHE("UTBLNBD",NBCD) contains a valid UTBLNBD record.
 		   The stucture used by the M code below uses descendant nodes
 		   %CACHE("UTBLNBD",NBCD,date) to contain additional data.
-		   (counting)
-		   */
-		do buf.add("type Boolean x=%CACHE(""UTBLNBD"",p1,object).get()")
+		   However, now that the record mode value is stored in the
+		   cache as well, the violation becomes serious.
+		do buf.add("type Boolean x=%CACHE(""UTBLNBD"",v1,vo).get()")
 		do buf.add("if x.isNull() do {")
-		do buf.add(" set x='Db.isDefined(""UTBLNBD1"",""NBDC=:p1,NBD=:object"")")
-		do buf.add(" set %CACHE(""UTBLNBD"",p1,object)=x")
+		do buf.add(" set x='Db.isDefined(""UTBLNBD1"",""NBDC=:v1,NBD=:vo"")")
+		do buf.add(" set %CACHE(""UTBLNBD"",v1,vo)=x")
 		do buf.add(" #bypass")
 		do buf.add(" if $G(%CACHE(""UTBLNBD""))>100 kill %CACHE(""UTBLNBD"")")
 		do buf.add(" set %CACHE(""UTBLNBD"")=$G(%CACHE(""UTBLNBD""))+1")
 		do buf.add(" #endbypass")
 		do buf.add(" }")
 		do buf.add("quit x")
-		do buf.insert(label)
+		   */
+
+		do buf.add("quit '%CACHE(""UTBLNBD1"").isDefined(""UTBLNBD1"",""NBDC=:v1,NBD=:vo"")")
+		do buf.insert(label, "Boolean")
 	}
 
 	set PSL.return="$$"_label_"("_PSL.objectName_","_PSL.actual(1)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private nxBusDat	// method: Date.nextBusDate(Number numberDays, String Calendar)
-
+nxBusDat	// method: Date.nextBusDate(Number numberDays, String Calendar)
+	//
 	if PSL.actual(1).isNull(1) set PSL.actual(1)=1
 	if PSL.actual(2).isNull(1) set PSL.actual(2)="IBS".addQuotes()
 
@@ -251,23 +255,22 @@ private nxBusDat	// method: Date.nextBusDate(Number numberDays, String Calendar)
 		set PSL.return=obj2Date.nextBusDate(PSL.actual(1).stripQuotes(),PSL.actual(2).stripQuotes())
 	}
 
-	type String label="vdatNBD"
+	type literal String label="vdatNBD"
 
 	if 'PSL.subrouExists(label) do {
-		
-		type PSLBuffer buf=PSL.openBuffer("(Date object,Number p1,String p2)","Date.nextBusDate")
+		type PSLBuffer buf=PSL.openBuffer("(Date vo,Number v1,String v2)","Date.nextBusDate")
 
-		do buf.add("for object=object+1:1 if object.isBusDate(p2) set p1=p1-1 quit:p1<1")
-		do buf.add("quit object")
-		do buf.insert(label)
+		do buf.add("for vo=vo+1:1 if vo.isBusDate(v2) set v1=v1-1 quit:v1<1")
+		do buf.add("quit vo")
+		do buf.insert(label, "Date")
 	}
 
 	set PSL.return="$$"_label_"("_PSL.objectName_","_PSL.actual(1)_","_PSL.actual(2)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private prBusDat	// method: Date.prevBusDate(Number numberDays, String Calendar)
-
+prBusDat	// method: Date.prevBusDate(Number numberDays, String Calendar)
+	//
 	if PSL.actual(1).isNull(1) set PSL.actual(1)=1
 	if PSL.actual(2).isNull(1) set PSL.actual(2)="IBS".addQuotes()
 
@@ -276,69 +279,69 @@ private prBusDat	// method: Date.prevBusDate(Number numberDays, String Calendar)
 		set PSL.return=obj2Date.prevBusDate(PSL.actual(1).stripQuotes(),PSL.actual(2).stripQuotes())
 	}
 
-	type String label="vdatPBD"
+	type literal String label="vdatPBD"
 
 	if 'PSL.subrouExists(label) do {
-		
-		type PSLBuffer buf=PSL.openBuffer("(Date object,Number p1,String p2)","Date.prevBusDate")
+		type PSLBuffer buf=PSL.openBuffer("(Date vo,Number v1,String v2)","Date.prevBusDate")
 
-		do buf.add("for object=object-1:-1 if object.isBusDate(p2) set p1=p1-1 quit:p1<1")
-		do buf.add("quit object")
-		do buf.insert(label)
+		do buf.add("for vo=vo-1:-1 if vo.isBusDate(v2) set v1=v1-1 quit:v1<1")
+		do buf.add("quit vo")
+		do buf.insert(label, "Date")
 	}
 
 	set PSL.return="$$"_label_"("_PSL.objectName_","_PSL.actual(1)_","_PSL.actual(2)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private isLeapYr	// method Date.isLeapYear - returns Boolean (date is leap year)
-	
+isLeapYr	// method Date.isLeapYear - returns Boolean (date is leap year)
+	//
 	if PSL.objectName.isLiteral() do { quit
 
+		#ACCEPT CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte;GROUP=DEPRECATED
 		set PSL.return=$ZD(PSL.objectName,"YEAR")
 		set PSL.return=PSL.return#4=0&('(PSL.return#100=0)!(PSL.return#400=0))
 	}
 
-	type String label="vdatILY"
+	type literal String label="vdatILY"
 
 	if 'PSL.subrouExists(label) do {
-		
-		type PSLBuffer buf=PSL.openBuffer("(Date object)","Date.isLeapYear")
+		type PSLBuffer buf=PSL.openBuffer("(Date vo)","Date.isLeapYear")
 
-		do buf.add("type Number year=object.year()")
+		do buf.add("type Number year=vo.year()")
 		do buf.add("quit year#4=0&('(year#100=0)!(year#400=0))")
-		do buf.insert(label)
+		do buf.insert(label, "Boolean")
 	}
 
 	set PSL.return="$$"_label_"("_PSL.objectName_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private toString	// method Date.toString(String mask) - return formatted date
+toString	// method Date.toString(String mask) - return formatted date
 	/* ---------------------------------------------------------------------
 	INPUTS:
-	. commands("mask","Date") = default date mask for this site.
-		The variable will be present at compile time (UCGM ensures that),
-		and contains the mask to use in case the mask is absent (or "").
+	. PSL.getSetting("PSL","DateMask") = default date mask for this site.
+		The variable will be present at compile time (PSLParser ensures
+		that), and contains the mask to use in case the mask is absent
+		(or "").
 
 	NOTES:
 	. Because this element belongs to the PSL Compiler System Group, it must
 		compile against the latest Profile AMR. Because PSL.isVariable()
 		is not part of the AMR05, this subroutine cannot yet use it.
 	*/
-	type public String commands(,)
+	type public PSLParser pslPrsr
 
 	type String mask = PSL.actual(1)
 
-	if mask.isNull() set mask = commands( "mask","Date").addQuotes()
+	if mask.isNull() set mask = pslPrsr.getSetting( "PSL", "DateMask").addQuotes()
 	set PSL.return = ""
 	
 	if mask.isLiteral(), PSL.objectName.isLiteral() do {
-		
 		// both values are literal, resolve at compile time
 		type Date d = {Date}(PSL.objectName.stripQuotes())
 		set PSL.return = d.toString( mask.stripQuotes()).addQuotes()
 	}
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	else  if $$isVar^UCGM(PSL.objectName) do {
 		/* 'PSL.objectName' will be referenced twice in the generated
 		   $SELECT(). This is only safe if PSL.objectName is a (local)
@@ -353,29 +356,36 @@ private toString	// method Date.toString(String mask) - return formatted date
 		type literal String label="vdat2str"
 
 		if 'PSL.subrouExists(label) do {
-		
-			type PSLBuffer buf=PSL.openBuffer("(Date object, String mask)","Date.toString")
+			type PSLBuffer buf=PSL.openBuffer("(Date vo, String mask)","Date.toString")
 
-			do buf.add("if object.isNull() quit """"")
-			do buf.add("if mask.isNull() set mask="_ commands( "mask", "Date").addQuotes()))
+			do buf.add("if vo.isNull() quit """"")
+			do buf.add("if mask.isNull() set mask="_ pslPrsr.getSetting( "PSL", "DateMask").addQuotes())
 		
 			//code for "DL"/"DS"/"ML"/"MS"
 			do buf.add("type String cc,lday,lmon")
 			do buf.add("if mask=""DL""!(mask=""DS"") do {	// Long or short weekday")
+			do buf.add("  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL")
 			do buf.add("  set cc=^DBCTL(""SYS"",""DVFM"").get()	// Country code")
 			do buf.add("  if cc.isNull() set cc=""US""")
+			do buf.add("  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL")
 			do buf.add("  set lday=^DBCTL(""SYS"",""*DVFM"",cc,""D"",mask).get()")
 			do buf.add("  set mask=""DAY""	// Day of the week")
 			do buf.add("}")
 			do buf.add("if mask=""ML""!(mask=""MS"") do {	// Long or short month")
+			do buf.add("  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL")
 			do buf.add("  set cc=^DBCTL(""SYS"",""DVFM"").get()	// Country code")
 			do buf.add("  if cc.isNull() set cc=""US""")
+			do buf.add("  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL")
 			do buf.add("  set lmon=^DBCTL(""SYS"",""*DVFM"",cc,""D"",mask).get()")
 			do buf.add("  set mask=""MON""	// Month of the year")
 			do buf.add("}")
-			do buf.add("quit $ZD(object,mask,lmon.get(),lday.get())")
+			do buf.add("#ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS")
+			do buf.add("#BYPASS")
+			do buf.add("set cc=$ZD(vo,mask,$G(lmon),$G(lday))")
+			do buf.add("#ENDBYPASS")
+			do buf.add("quit cc")
 
-			do buf.insert(label)
+			do buf.insert(label, "String")
 		}
 
 		set PSL.return = "$$"_label_"("_PSL.objectName_","_mask_")"
@@ -403,15 +413,14 @@ private toString	// method Date.toString(String mask) - return formatted date
 	======== end old code */
 
 	// ---------------------------------------------------------------------
-private nxFreDat	// method: Date.nextFregDate(String frequency,Number AF,String control)
-
-	/*  Returns next/previous date based upon valid PROFILE frequency
+nxFreDat	// method: Date.nextFregDate(String frequency,Number AF,String control)
+	/* ---------------------------------------------------------------------
+	Returns next/previous date based upon valid PROFILE frequency
 	This method is a wrapper method to the M function $$NJD^UFRE
 	As such, it incorporates the existing 'caching' logic which
 	stores previously retrieved lookups in the array SVFRE.  The
 	second paramater 'AF' is typically passed by reference.
 	*/
-
 	if PSL.actual(1).isNull() set PSL.actual(1)=PSL.actual(1).addQuotes()
 	if PSL.actual(3).isNull() set PSL.actual(3)=PSL.actual(3).addQuotes()
 	
@@ -420,23 +429,20 @@ private nxFreDat	// method: Date.nextFregDate(String frequency,Number AF,String 
 		set PSL.return=obj2Date.nextFreqDate(PSL.actual(1).stripQuotes(),,PSL.actual(3).stripQuotes())
 	}
 
-	type String label="vdatFre"
+	type literal String label="vdatFre"
 
 	if 'PSL.subrouExists(label) do {
-		
-		type PSLBuffer buf=PSL.openBuffer("(Date object,String p1,Number p2,String p3)","Date.Next Frequency")
+		type PSLBuffer buf=PSL.openBuffer("(Date vo,String v1,ret Number v2,String v3)","Date.Next Frequency")
 
-		do buf.add("if object.isNull()!p1.isNull() quit """"")
-		do buf.add("type Public String SVFRE(,,)")
-		do buf.add("if p3.get().isNull() set p3=0")
-		do buf.add("type String x=SVFRE(p1,object,p3).get()")
-		do buf.add("if x.isNull() quit $$NJD^UFRE(object,p1,.p2,p3)")
-		do buf.add("set p2=x.piece(""|"",2) quit x.piece(""|"",1)")
-		do buf.add("quit")
-		do buf.insert(label)
+		do buf.add("if vo.isNull()!v1.isNull() quit """"")
+		do buf.add("type public String SVFRE(,,)")
+		do buf.add("if v3.get().isNull() set v3=0")
+		do buf.add("type String x=SVFRE(v1,vo,v3).get()")
+		do buf.add("if x.isNull() quit $$NJD^UFRE(vo,v1,.v2,v3)")
+		do buf.add("set v2=x.piece(""|"",2) quit x.piece(""|"",1)")
+		do buf.insert(label, "Date")
 	}
 
 	// if 'PSL.actual(2).isNull(),'PSL.actual(2).isLiteral(),attrib(2).piece(tab,3) set PSL.actual(2)="."_PSL.actual(2)
 	set PSL.return="$$"_label_"("_PSL.objectName_","_PSL.actual(1)_","_PSL.actual(2)_","_PSL.actual(3)_")"
-
 	quit

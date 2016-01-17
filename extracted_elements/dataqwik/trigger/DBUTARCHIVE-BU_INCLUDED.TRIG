@@ -1,4 +1,4 @@
-//DO NOT MODIFY  Before Update on INCLUDED|0|1|0|0|0|0|ARCHWITH|||
+//DO NOT MODIFY  Before Update on INCLUDED|0|1|0|0|0|0|INCLUDED|||
 	// Before Update Trigger on INCLUDED
 	
 	/*
@@ -12,6 +12,9 @@
 	already has archived data.
 	
 	---- Revision History -------------------------------------------------
+	06/30/2008 - RussellDS - CR30801
+		Modified to be on column INCLUDED.
+	
 	03/01/07 - RussellDS - CR26386
 		   Created.
 

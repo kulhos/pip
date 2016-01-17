@@ -1,0 +1,33 @@
+NOD=JRNID
+LEN=5
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Effective-Dated Option
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=Effective-Dated@Option
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+Yes or No prompt to determine whether or not the table will be updated via
+effective dated transactions.

@@ -1,0 +1,33 @@
+NOD=JRNID
+LEN=10
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Transaction Type
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=Transaction@Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+Yes or No prompts to determine whether table entry will be updated via
+financial, online, or batch transactions.

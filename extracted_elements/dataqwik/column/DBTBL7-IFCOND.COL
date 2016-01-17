@@ -1,0 +1,43 @@
+NOD=TRGID
+LEN=255
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Execute #IF condition
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=40
+DEL=
+POS=12
+RHD=Execute #IF condition
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Code to allow conditional compilation of the journal into the filer.  If there
+is code in this field, and, at compile time, the execution of this code is
+true, then this journal will be included in the filer.  If the execution of
+this code is false, then the journal will not be included in the filer.
+
+The code will be executed as an IF statement, i.e., an IF will be added to the
+front of the statement, it will be passed to the PSL compiler, and the
+resulting code executed.  There are restrictions to the form the code may take.
+It may reference CUVAR, reference an extrinsic function, or be a valid PSL
+expression that does not generate multi-line code.
+ 
+If no code is present, the journal will always be included in the filer.

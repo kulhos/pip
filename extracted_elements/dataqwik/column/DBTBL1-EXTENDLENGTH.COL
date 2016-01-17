@@ -1,0 +1,38 @@
+NOD=10
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Extended File and Column Names Allowed
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=14
+RHD=Extended File and@Column Names Allowed
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+ This logical field is an indicator that Column and Table names may be
+ created with lengths greater then 12 and may contain underscore characters
+ within the name. The field must be set to 'Y' at the time of creation of a
+ new table in versions prior to V6.3. This requirement is based on the
+ PSL compiler being used for filers for these tables. The PSL compiler is
+ the only compiler that may access these tables correctly. Therefore
+ screens and reports will not support tables having this flag set to "Y".

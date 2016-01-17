@@ -1,0 +1,33 @@
+NOD=BCHID
+LEN=2
+DFT=10
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Scheduler Timeout (seconds)
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=17
+RHD=Sched Timeout
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The time-out (in seconds) for the scheduler when no buffers are available to
+send a message.

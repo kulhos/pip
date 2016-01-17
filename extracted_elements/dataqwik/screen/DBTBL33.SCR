@@ -14,7 +14,7 @@
 ^DBTBL("SYSDEV",2,"DBTBL33",11)="4080*#192,0,0,0,0,0,0|*|||@ooe11|||||T|x"
 ^DBTBL("SYSDEV",2,"DBTBL33",12)="5001*#192,0,0,0,0,0,0|*|||@ooe12|||||T|x"
 ^DBTBL("SYSDEV",2,"DBTBL33",13)="5010*#65,0,0,0,0,0,0|*|||@ooe13|||||T| Run-time Routine:"
-^DBTBL("SYSDEV",2,"DBTBL33",14)="5029#66,0,0,0,0,0,0|BCHID|8||[SYSDEV,DBTBL33]PGM|||1|1|U||1||||0||T|||124|2"
+^DBTBL("SYSDEV",2,"DBTBL33",14)="5029#66,0,0,0,0,0,0|@ooe13|8||[SYSDEV,DBTBL33]PGM|||1|1|U||1||||||T|||124|2"
 ^DBTBL("SYSDEV",2,"DBTBL33",14,1)=$C(9)_"type public Boolean zproc"
 ^DBTBL("SYSDEV",2,"DBTBL33",14,2)=""
 ^DBTBL("SYSDEV",2,"DBTBL33",14,3)=$C(9)_"if zproc.get().isNull(), (%ProcessMode < 2) do DEFAULT^DBSMACRO(""@zproc"", 1)"

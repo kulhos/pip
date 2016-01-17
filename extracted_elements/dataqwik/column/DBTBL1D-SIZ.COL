@@ -1,0 +1,36 @@
+NOD=DI
+LEN=3
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Field Display Size
+ITP=
+MIN=1
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=3
+DEL=
+POS=19
+RHD=Size
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The display size (window) that is used for screen layouts and default
+report layouts.  If the size of a field value exceeds the display size,
+DATA-QWIK will display the field within the display window and indicate
+the overflow with a special character (graphic <>).  Fields can be edited
+that exceed the display window through horizontal scrolling.

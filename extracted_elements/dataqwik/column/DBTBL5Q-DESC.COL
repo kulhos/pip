@@ -1,0 +1,58 @@
+NOD=QRID
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Description
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Description
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         DESCRIPTION
+
+             Enter a brief description to identify the report.
+             Spaces and punctuation characters are permitted.
+             This description will appear at the top of the
+             report when it is printed.
+
+         ____________________________________________________________________
+         Example
+
+           Report Definition ---------------------------------------------
+           |
+           |         Description: One Day Interest By Branch
+           |      Access File(s): DEP
+           |        Data Item(s): BOO,CID,BAL,LNM
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           | NorthEastern States Bank            <----- Institution ID
+           | One Day Interest By Branch          <----- Description
+           |
+           |
+           |               Account       Account    Report         One Day
+           |  Branch        Number       Balance  Short Name      Interest
+           |  ------  ------------  ------------  ----------  ------------

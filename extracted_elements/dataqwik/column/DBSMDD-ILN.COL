@@ -1,0 +1,41 @@
+NOD=
+LEN=4
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Length of Internal Field Size
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Intrnl@Length
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The length of the field (number of characters) from the starting position.  For
+example, if the ITC2 data item redefines a portion of the ITC data item, the
+[DBSMDD]ILN data item contains the length of the ITC2 data item (e.g., length
+of the ITC2 data item is 1 as shown in the following diagram).
+
+                                        <-- ITC -->
+
+                     ^HIST(CID,TSEQ)=...|011011100|...
+                                          ^
+                                          |____ ITC2

@@ -1,0 +1,34 @@
+NOD=0
+LEN=1
+DFT=
+DOM=
+TBL=,C#Currency,D#Distance,V#Volume,W#Weight
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Unit of Measure
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=16
+RHD=Unit of@Measure
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The unit of measure in which the system maintains values entered for data items
+within this user-defined data type.  Examples include currency, distance,
+volume, and weight.

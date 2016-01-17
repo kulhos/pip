@@ -1,0 +1,58 @@
+NOD=0
+LEN=1
+DFT=1
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Print Detail
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=4
+RHD=Print@Detail
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         PRINT DETAIL (Y/N)
+
+             With this option set to NO, detail lines do not print;
+             only the report page header, column headings, and
+             summary information print.
+
+         _____________________________________________________________________
+         Example - Not Printing Detail Lines
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP,CIF
+           |       Data Item(s): CID,BAL,LNM,TAXID
+           |    Report Order By:
+           |           Break On:
+           |
+           |       Print Detail: N
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           |      Account       Account    Report               Tax
+           |       Number       Balance  Short Name            Number
+           | ------------  ------------  --------------------  -----------
+           |               ============  ====================
+           |                  81,260.00                    28

@@ -1,0 +1,36 @@
+NOD=0
+LEN=6
+DFT=<<$$VERSION^DBSRWDRV>>
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Version Number
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=10
+RHD=Version@Number
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+        VERSION                                        Supplied by System
+
+           System version number.
+
+           For informational purposes.

@@ -1,0 +1,48 @@
+NOD=0
+LEN=2
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Label Option
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=9
+RHD=Label@Option
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+      One-Up Mailing Label
+
+           Report Run ----------------------------------------------------
+           |
+           |    100 JOHN DOE
+           |    1234 MAIN ST.
+           |    NEW YORK, NY 19234
+           |
+
+      Two-Up Mailing Label
+
+           Report Run ----------------------------------------------------
+           |
+           |    100 JOHN DOE                    200 JACK SMITH
+           |    1234 MAIN ST.                   999 MARKET ST.
+           |    NEW YORK, NY 19234              PHILA., PA 19555
+           |

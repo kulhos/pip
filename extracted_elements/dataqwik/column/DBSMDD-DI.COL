@@ -1,0 +1,41 @@
+NOD=
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=(X?1"""".AN1"""")!(X?1"%".AN)!(X?.A."_".E)!(X?.NN)
+XPO=
+XPR=
+TYP=U
+DES=Data Item
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=20
+DEL=
+POS=
+RHD=Data item
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The data item name assigned to this master data dictionary data item
+definition.  Data items from other files are defined by this data item
+definition if their Master Dictionary Reference ([DBTBL1D]MDD) contains the
+value from the [DBSMDD]DI data item.
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+definition ([CRCD]MINRATE) specifies the value RATE as its Master Dictionary
+Reference ([DBTBL1D]MDD), the [CRCD]MINRATE data item receives all of its
+attributes from the master data dictionary definition associated with the
+[DBSMDD]DI data item.

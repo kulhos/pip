@@ -9,6 +9,8 @@
 		this unit.
 
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -28,7 +30,7 @@
 	quit
 
 	// ---------------------------------------------------------------------
-private open	// method IO.open
+open	// method IO.open
 	/* ---------------------------------------------------------------------
 	The generated code for IO.open() needs two additional parameters
 	compared to the method declarion in OBJECTMET:
@@ -41,7 +43,7 @@ private open	// method IO.open
 	quit
 
 	// ---------------------------------------------------------------------
-private read	// method IO.read
+read	// method IO.read
 	/* ---------------------------------------------------------------------
 	The code to be generated for IO.read() depends on the presence or
 	"absence" of an actual parameter.
@@ -53,14 +55,15 @@ private read	// method IO.read
 		set PSL.return = "$$read^UCIO("_ PSL.objectName_ ")"
 	}
 	else  do {	// use error variable (deprecated)
-		do WARNDEP^UCGM("IO.read(.ETYP) - use IO.read() and catch Exception")
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do WARNDEP^UCGM( 2.7, 0,"IO.read(.ETYP) - use IO.read() and catch Exception")
 		set PSL.return = "$$^%ZREAD($P(vobj("_ PSL.objectName_ ",1),""|"",6),"_ PSL.actual(1)_ ")"
 	}
 
 	quit
 
 	// ---------------------------------------------------------------------
-private write	// method IO.write
+write	// method IO.write
 	/* ---------------------------------------------------------------------
 	First parameter shall not be missing
 	If second parameter is missing, do not pass in call.

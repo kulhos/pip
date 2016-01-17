@@ -1,0 +1,33 @@
+NOD=INDEXNM
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Global Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=40
+DEL=
+POS=2
+RHD=Global@Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+  The name of the data file that is used to store this index file
+  information.

@@ -82,7 +82,7 @@
 ^DBTBL("SYSDEV",2,"DBTBL2",49,29)=$C(9)
 ^DBTBL("SYSDEV",2,"DBTBL2",49,30)=$C(9)_"quit"
 ^DBTBL("SYSDEV",2,"DBTBL2",50)="15055*#64,0,0,0,0,0,0|*|||@ooe50|||||T|Clear Option:"
-^DBTBL("SYSDEV",2,"DBTBL2",51)="15069#66,0,0,0,0,0,0|0|1|1|[SYSDEV,DBTBL2]SCRCLR|,0#Clear to end of page,1#Clear entire page||||N||0|||||||||124|8"
+^DBTBL("SYSDEV",2,"DBTBL2",51)="15069#66,0,0,0,0,0,0|@ooe52|1|1|[SYSDEV,DBTBL2]SCRCLR|,0#Clear to end of page,1#Clear entire page||||N||0|||||||||124|8"
 ^DBTBL("SYSDEV",2,"DBTBL2",52)="15080*#192,0,0,0,0,0,0|*|||@ooe52|||||T|x"
 ^DBTBL("SYSDEV",2,"DBTBL2",53)="16001*#192,0,0,0,0,0,0|*|||@ooe53|||||T|x"
 ^DBTBL("SYSDEV",2,"DBTBL2",54)="16080*#192,0,0,0,0,0,0|*|||@ooe54|||||T|x"
@@ -90,7 +90,7 @@
 ^DBTBL("SYSDEV",2,"DBTBL2",56)="17004*#64,0,0,0,0,0,0|*|||@ooe56|||||T|Application Name:"
 ^DBTBL("SYSDEV",2,"DBTBL2",57)="17022#66,0,0,0,0,0,0|@ooe58|3||[SYSDEV,DBTBL2]APL|[STBLSCASYS]||||T||N|||||||||124|11"
 ^DBTBL("SYSDEV",2,"DBTBL2",58)="17032*#64,0,0,0,0,0,0|*|||@ooe58|||||T|System Name:"
-^DBTBL("SYSDEV",2,"DBTBL2",59)="17045#66,0,0,0,0,0,0|0|8||[SYSDEV,DBTBL2]SYS|[STBLSCASYS]||||T||N|||||||||124|12"
+^DBTBL("SYSDEV",2,"DBTBL2",59)="17045#66,0,0,0,0,0,0|@ooe60|8||[SYSDEV,DBTBL2]SYS|[STBLSCASYS]||||T||N|||||||||124|12"
 ^DBTBL("SYSDEV",2,"DBTBL2",60)="17058*#64,0,0,0,0,0,0|*|||@ooe60|||||T|Project #:"
 ^DBTBL("SYSDEV",2,"DBTBL2",61)="17069#66,0,0,0,0,0,0|@ooe62|6||[SYSDEV,DBTBL2]PROJ|||||N||N|||||||||124|13"
 ^DBTBL("SYSDEV",2,"DBTBL2",62)="17080*#192,0,0,0,0,0,0|*|||@ooe62|||||T|x"

@@ -8,6 +8,9 @@
 	functions previously located in UCUTIL and %ZS
 
 	---- Revision History --------------------------------------------------
+	05/30/07 - Frans S.C. Witte - CR: 27800
+		Removed keyword 'public' from fp declaration of array.
+
 	10/12/06 - Frans S.C. Witte - CRs: 22719 / 20613
 		Modified AUDIT to support new -100 tree structure and use
 		column delimiter in audit().
@@ -73,6 +76,9 @@
 		NOTE that support for CR1390 is not yet fully implemented.
 		This change just brings PSL in line across the versions.
 	*/
+	#PACKAGE framework.psl
+	#OPTION  ResultClass ON
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -91,11 +97,13 @@
 	// *******************************************************************
 	quit
 
-public AUDIT(	local Record obj,	// The Record descendant
-		public String audit(),	// audit array		/MECH=REFARR:W
-		local Number rectyp,	// recordType (ignored)
-		local String dlm)	// column delimiter
-	/*
+	// ---------------------------------------------------------------------
+public void AUDIT( Record obj		// The Record descendant
+		, String audit()	// audit array		/MECH=REFARR:W
+		, Number rectyp		// recordType (ignored)
+		, String dlm		// column delimiter
+		)	// copy the modified columns into the supplied audit() array
+	/* ---------------------------------------------------------------------
 	Convert vobj(obj,-100,...) into audit(column)
 	This function replaces AUDIT^UCUTIL
 
@@ -106,6 +114,7 @@ public AUDIT(	local Record obj,	// The Record descendant
 
 	OUTPUTS:
 	. audit(column)=oldValue dlm newValue
+	. vobj(1,-100,node)=1
 	
 	EXAMPLE:
 		vobj(1,-100,52,"BOO") = "N0012"
@@ -156,7 +165,7 @@ public AUDIT(	local Record obj,	// The Record descendant
 			// if pos>0,(nod'["*")!(nod="0*") set new = new.piece(del,pos)
 			if pos>0 set nvl = nvl.piece( dlm, pos)
 			if 'sfd.isNull() do {
-				type String d2 = $S(dlm="~":";",1:"~")
+				type String d2 = $select(dlm="~":";",1:"~")
 				set nvl = $$getSf^UCCOLSF( nvl, sfd.piece( d2), sfd.piece( d2, 2), sfd.piece( d2, 3), sfd.piece(d2,4))
 			}
 
@@ -187,7 +196,7 @@ public AUDIT(	local Record obj,	// The Record descendant
 	quit
 
 	// ---------------------------------------------------------------------
-public initPar( local String insert) // filer parameters to insert into default list
+public String initPar( String insert) // filer parameters to insert into default list
 	/* ---------------------------------------------------------------------
 	Intialize filer parameters.
 
@@ -201,8 +210,8 @@ public initPar( local String insert) // filer parameters to insert into default 
 	quit $$setPar("/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/", insert.get())
 
 	// ---------------------------------------------------------------------
-public setPar(	local String parList,
-		local String insert)
+public String setPar( String parList,
+		String insert)
 	/* ---------------------------------------------------------------------
 	Intialize filer parameters
 
@@ -218,7 +227,7 @@ public setPar(	local String parList,
 		If conflicting parameters are inserted, then the rightmost
 		insert will take precedence.
 	*/
-	type Public String vpar()
+	type public String vpar()
 
 	type Number c,i
 	type String z

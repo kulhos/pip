@@ -1,0 +1,37 @@
+NOD=3*
+LEN=4
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Sequence Number
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=SEQ
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+A sequence number that identifies different procedures of the same method.
+
+Certain methods will generate different procedures based on the data input.
+For example, a Select procedure (for Db.select or a ResultSet) is based on
+the tables and columns selected.  The sequence number provides a means to
+differentiate these procedures under the same method.

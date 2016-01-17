@@ -1,0 +1,51 @@
+NOD=1
+LEN=1
+DFT=Y
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Protect Maximum Field Length
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=3
+RHD=Prot@MaxLen
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+An indicator which specifies whether (Y) or not (N) the system allows users to
+change the value in the Maximum Field Length data item in file definitions
+([DBTBL1D]LEN) referencing this user-defined data type.  The value in the
+Maximum Field Length data item in the user-defined data type definition
+([DBSDOM]LEN) defaults as the [DBTBL1D]LEN value for data items referencing the
+user-defined data type.
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+definition ([CRCD]MINRATE) specifies a user-defined data type of RATE, and the
+RATE data type specifies a maximum field length of 12, the system defaults 12
+in the Maximum Field Length attribute ([DBTBL1D]LEN) associated with the
+[CRCD]MINRATE data item.
+
+If Y (Yes), the user can modify the [DBTBL1D]LEN value for the data item
+referencing this data type (e.g., the user can modify the value in the
+Maximum Field Length attribute associated with the [CRCD]MINRATE data item).
+
+If N (No), the user cannot modify the [DBTBL1D]LEN value for the data item
+referencing this data type (e.g., the user cannot modify the defaulted value of
+12 for the field length associated with the [CRCD]MINRATE data item).

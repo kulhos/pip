@@ -1,0 +1,44 @@
+NOD=DI
+LEN=12
+DFT=
+DOM=
+TBL=@SELDI^DBSFUN($$MDD^DBSDF(FID),.X)
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Master Dictionary Reference
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=27
+RHD=MDD@Reference
+SRL=
+CNV=
+LTD=
+USER=
+MDD=MDD
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+References this data item to a data item in the master dictionary
+table. Data items which reference other data items inherit the
+parameters of the referenced item except for (CMP,CNV,DFT,FCR,NOD,POS,
+REQ,SFD1,SFD2,SFP,SFT).
+
+Changes made to a referenced data item will automatically propogate to
+the data items which reference it (with the above noted exceptions).
+
+A data item definition can be added to the master dictionary by using
+the following syntax *[name].  The name defaults to the current data
+item name.
+
+The master table name is keyed by application in the table SCASYS.

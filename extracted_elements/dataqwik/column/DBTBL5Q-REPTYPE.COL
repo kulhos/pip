@@ -1,0 +1,70 @@
+NOD=0
+LEN=6
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Report Type
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=20
+RHD=Report@Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+  REPORT  Columnar Report
+         _____________________________________________________________________
+         Example - Columnar Report
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): DEP
+           |     Data Item(s): CID,LNM,BAL
+           |  Report Order By:
+           |         Break On:
+
+
+           Report Run ----------------------------------------------------
+           |
+           |    100 JOHN DOE         10,000.58
+           |    105 JACK SMITH          500.00
+
+  FIXED   Fixed Length Record (Tape Format)
+
+           Report Run ----------------------------------------------------
+           |
+           | 000100 JOHN DOE          01000058
+           | 000105 JACK SMITH        00050000
+
+  EXPORT  Export File Format
+
+           Report Run ----------------------------------------------------
+           |
+           | 100,"JOHN DOE",10000.58
+           | 105,"JACK SMITH",500
+
+ LABEL   Mailing label
+
+           Report Run ----------------------------------------------------
+           |
+           |    100 JOHN DOE
+           |    1234 MAIN ST.
+           |    NEW YORK, NY 19234
+           |

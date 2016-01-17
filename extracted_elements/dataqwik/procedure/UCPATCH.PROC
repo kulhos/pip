@@ -26,6 +26,16 @@
 	patch(token) = msrc_$C(6)_Expression	Original expression
 
 	---------- Revision History ------------------------------------------
+	2009-02-25, Frans S.C. Witte, CRs: 35741/38252/38491
+		Corrected issue with finding code patterns affected by patch().
+
+	2008-10-01, Frans S.C. Witte, CRs 35741/35918/35922
+		Adapted to signature of vCloseRDBOpt.
+
+	03/30/07 - Frans S.C. Witte - CR: 27800
+		* Replaced commands(,) by PSL.getSetting(,,)
+		* Modified tokenPush and tokenPop
+
 	10/17/06 - Frans S.C. Witte CRs: 22719 / 20613
 		* Modified ResultSet to deal with new RDB code layout
 		* PATCHCHAR changed from $C(9) to $C(6), and added $$isPatch()
@@ -61,7 +71,7 @@
 		DbSet.
 		Modified calls to VIEW^UCDB() and $$getGbl^UCDB()
 		Modified subroutine copyDiff (to reflect changes in UCRECORD!)
-		Added public function $$varSub^UCPATCH()
+		Added public function $$VarSub^UCPATCH()
 		Removed subroutine save (not called)
 		Modified copySame (to reflect changes in UCRECORD), and ResultSet
 		Modified computed to discard optimization for RDB
@@ -124,6 +134,8 @@
 		     Move Profile04 version to Profile01 to support single code
 		     base for PSL.
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -142,18 +154,17 @@
 	// * generated M code.                                               *
 	// *******************************************************************
 
-	type public Primitive commands(,)
 	type public String patch(,,,,)
 
-	type Boolean optFlag = {Boolean}commands("OPTIMIZE","OBJECTS").get(0)
+	type Boolean optFlag = {Boolean}(PSL.getSetting("OPTIMIZE","OBJECTS", false))
 	type String  subRou = ""
 
 	for  set subRou = patch(0,subRou).order() quit:subRou.isNull()  do procOrd(subRou,optFlag)
 	quit
 
 	// ---------------------------------------------------------------------
-private getPar( local String expr,	// PSL method call or DO argument
-		local Number pos)	// position of parameter to extract
+getPar( String expr,	// PSL method call or DO argument
+		Number pos)	// position of parameter to extract
 	/* ---------------------------------------------------------------------
 	Return parameter num
 
@@ -162,15 +173,18 @@ private getPar( local String expr,	// PSL method call or DO argument
 		ins2me^UCREC4OP
 	*/
 	type String ER, lits	// ER returned by $$TOKEN^%ZS()
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set expr = $$TOKEN^%ZS( expr, .lits)
 	set expr = expr.piece( "(", 2, 999)		// strip call name and (
 	set expr = expr.extract( 1, expr.length() - 1)	// strip )
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	quit $$UNTOK^%ZS( expr.piece( ",", pos), lits).trim()
 
 	// ---------------------------------------------------------------------
-private getSym( local String subRou,	// subroutine where lvn will be scoped
-		local String prefix)	// prefix
+getSym( String subRou,	// subroutine where lvn will be scoped
+		String prefix)	// prefix
 	/* ---------------------------------------------------------------------
 	Return the next lvn that uses var as prefix.
 
@@ -188,7 +202,7 @@ private getSym( local String subRou,	// subroutine where lvn will be scoped
 	quit lvn
 
 	// ---------------------------------------------------------------------
-private hasPatch( String data)	// arbitrary data
+hasPatch( String data)	// arbitrary data
 	/* ---------------------------------------------------------------------
 	Helper function that returns 1 if data contains code that resulted from
 	calls to $$patch(), and returns 0 otherwise.
@@ -201,7 +215,7 @@ private hasPatch( String data)	// arbitrary data
 	quit 0
 
 	// ---------------------------------------------------------------------
-private isPatch( String data)	// arbitrary data
+isPatch( String data)	// arbitrary data
 	/* ---------------------------------------------------------------------
 	Helper function that returns 1 if data satisfies the code that resulted
 	from a call to $$patch(), and returns 0 otherwise.
@@ -212,9 +226,9 @@ private isPatch( String data)	// arbitrary data
 	quit 0
 
 	// ---------------------------------------------------------------------
-patchTkn( local String code,	// source string
-	local String oVal,	// old value
-	local String nVal) 	// new value
+private patchTkn( String code,	// source string
+		String oVal,	// old value
+		String nVal) 	// new value
 	/* ---------------------------------------------------------------------
 	Replace all occurrences of token in code.
 	This is a simplified version of String.replace(). It uses the fact that
@@ -222,15 +236,15 @@ patchTkn( local String code,	// source string
 	replaced, regardless of the context.
 
 	NOTES:
-	. if oVal and nVal must be replaced at M lvn boundaries, then $$varSub()
+	. if oVal and nVal must be replaced at M lvn boundaries, then $$VarSub()
 		shall be called.
 	*/
 	for  quit:code'[oVal  set code = code.piece( oVal)_ nVal_ code.piece( oVal, 2, code.length())
 	quit code
 
 	// ---------------------------------------------------------------------
-procOrd( local String subRou,
-	local String optFlag)
+private procOrd( String subRou,
+		String optFlag)
 	/* ---------------------------------------------------------------------
 	Order and process by instantiation order.
 	The order of declaration is important if an object is passing
@@ -251,7 +265,7 @@ procOrd( local String subRou,
 
 	// Step 1: re-order
 	for  set var = patch(0,subRou,var).order() quit:var.isNull()  do {
-		for  set newPtr=$O(patch(0,subRou,var,newPtr)) quit:newPtr.isNull()  set order(+newPtr,var) = ""
+		for  set newPtr=patch(0,subRou,var,newPtr).order() quit:newPtr.isNull()  set order(+newPtr,var) = ""
 	}
 
 	// Step 2: Process variables in the order in which they are declared
@@ -262,26 +276,41 @@ procOrd( local String subRou,
 	quit
 
 	// ---------------------------------------------------------------------
-private tokenPop( local String code,	// source string
-		local Number count)	// number of tokens to pop
+tokenPop( String code,	// source string
+		Number count)	// number of tokens to pop
 	/* ---------------------------------------------------------------------
 	Replace the top count occurrences of pslToken() in code, and remove
 	them from the token stack.
 	*/
 	type literal String TKNPREFIX = "vtkn"
 
-	type public String pslToken(), type(,)
+	type public String pslToken()
 
 	type Number top = pslToken( "").order( -1)
+	type String exp, var
 
 	for top = top:-1:top-count+1 do {
-		set code = $$varSub( code, TKNPREFIX_ top, pslToken( top))
-		kill pslToken( top), type( PSL.level, TKNPREFIX_ top)
+		set exp = pslToken( top), var = TKNPREFIX_ top
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		if '$$isSingle^UCGM(exp) set exp="("_exp_")"
+		set code = $$VarSub( code, var, exp)
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		kill pslToken( top) do typeDrop^UCGM( var)
+
+		#ACCEPT GROUP=BYPASS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		#BYPASS
+		IF $$isVar^UCGM(exp) MERGE dbAcc(subRou,exp)=dbAcc(subRou,var) KILL dbAcc(subRou,var)
+		#ENDBYPASS
 	}
 	quit code
 
 	// ---------------------------------------------------------------------
-private tokenPush( PSLExpression expr, String class)	// intermediate expressions
+tokenPush( PSLExpression exp	// expression to push
+		, String cls		// class of exp
+		, Boolean bForce	// force push of simple vlaues
+		)	// push intermediate expression on the pslToken stack
 	/* ---------------------------------------------------------------------
 	Add the supplied intermediate expression to the pslToken stack, and to
 	the symbol table (using the supplied class) and return the token.
@@ -303,24 +332,26 @@ private tokenPush( PSLExpression expr, String class)	// intermediate expressions
 
 	type Number top = pslToken( "").order( -1) + 1
 
-	set pslToken(top) = expr
+	set pslToken(top) = exp, bForce = bForce.get( false)
 
-	if expr.isVariable() quit expr
-	if expr.isLiteral() quit expr
+	if exp.isVariable(),'bForce quit exp
+	if exp.isLiteral(),'bForce quit exp
 
 	/* Need to replace by lvn token
 	   */
 	type String lvn = TKNPREFIX_ top
 
-	do setScope^UCGM( lvn, "", "", "NEW", class.get( "String"))
-	do setInst^UCGM( lvn, "", expr)
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do setScope^UCGM( lvn, "", "", "NEW", cls.get( "String"))
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do setInst^UCGM( lvn, "", exp)
 
 	quit lvn
 
 	// ---------------------------------------------------------------------
-private varSub( local String str,	// source string
-		local String oVar,	// old variable name (*2)
-		local String nVar) 	// new variable name (*3)
+VarSub( String str,	// source string
+		String oVar,	// old variable name (*2)
+		String nVar) 	// new variable name (*3)
 	/* ---------------------------------------------------------------------
 	Replace oVar with nVar in str.
 
@@ -348,6 +379,8 @@ private varSub( local String str,	// source string
 	type String dels = " +-*/\#_'=><[]()!&,?@:"
 	type String lit
 	type Number y
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set str = $$TOKEN^%ZS( str, .lit), y = 0
 
 	for  set y = str.find( oVar, y) quit:y=0  do {
@@ -356,6 +389,7 @@ private varSub( local String str,	// source string
 		set y = y + nVar.length() - oVar.length()
 	}
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	quit $$UNTOK^%ZS(str,.lit)
 
 	/* ****************************************************************** */
@@ -363,7 +397,7 @@ private varSub( local String str,	// source string
 	/* ****************************************************************** */
 	
 	// ---------------------------------------------------------------------
-procPtr(subRou,var,newPtr,optFlag) ;local void; Proces this variable pointer
+private procPtr(subRou,var,newPtr,optFlag) // Proces this variable pointer
 	/* ---------------------------------------------------------------------
 	NOTES:
 	. This subroutine shall be prepared to handle instantiations of variables
@@ -374,33 +408,36 @@ procPtr(subRou,var,newPtr,optFlag) ;local void; Proces this variable pointer
 	type literal String PATCHCHAR = 6.char()
 
 	type public String msrc(), patch(,,,,), tab
+	type static PSLClass
 
-	new class,code,expr,flag,lptr,record,token,x,z
+	type Boolean flag
+	type Number  lptr
+	type String  class,code,expr,record,token,x,z
 
-	set z=$G(patch(0,subRou,var,newPtr))
-	set class=$P(z,tab,1)
+	set z=patch(0,subRou,var,newPtr).get()
+	set class=z.piece(tab,1)
 
 	set flag='optFlag 				; Global
-	if 'flag set flag=$P(z,tab,10)			; Optimize flag
-	if 'flag,$P(z,tab,3)'="NEW" set flag=1		; Only optimize new scope
+	if 'flag set flag=z.piece(tab,10)			; Optimize flag
+	if 'flag,z.piece(tab,3)'="NEW" set flag=1		; Only optimize new scope
 
 	if class="ResultSet" do ResultSet(subRou,var,newPtr,flag) quit
 	if class="DbSet" do ResultSet(subRou,var,newPtr,flag) quit
-	if 'flag,$$isRecord^UCGM(class) set flag=$$paNeedVobj^UCREC4OP( subRou, var, newPtr)
+	if 'flag, PSLClass.isRecord(class) > 0 set flag=$$paNeedVobj^UCREC4OP( subRou, var, newPtr)
 
 	set token=""
-	for  set token=$O(patch(0,subRou,var,newPtr,token)) quit:token=""  do {
-		set x=patch(token),lptr=$P(x,PATCHCHAR,1),expr=$P(x,PATCHCHAR,2,999)
+	for  set token=patch(0,subRou,var,newPtr,token).order() quit:token=""  do {
+		set x=patch(token),lptr=x.piece(PATCHCHAR,1),expr=x.piece(PATCHCHAR,2,999)
 		set z=PATCHCHAR_token_PATCHCHAR,code=msrc(lptr)
 		if '(code[z) quit	// *** Find out why this can occur (FRS)
-		if flag set code=$P(code,z,1)_expr_$P(code,z,2,$L(code))
+		if flag set code=code.piece(z,1)_expr_code.piece(z,2,code.length())
 		else  set code=$$patchparse(code,expr,var,newPtr)
 		set msrc(lptr)=code
 	}
 	quit
 
 	// ---------------------------------------------------------------------
-patchparse(code,expr,var,newPtr) ; parse and patch code
+private patchparse(code,expr,var,newPtr) ; parse and patch code
 	/* ---------------------------------------------------------------------
 	ARGUMENTS:
 	. String code = M code containing token to replace	/MECH=VAL
@@ -417,34 +454,40 @@ patchparse(code,expr,var,newPtr) ; parse and patch code
 
 	type public String patch(,,,,), struct(,,,), subRou, tab, token
 
-	new i,x,y,z
-	set z = PATCHCHAR_ token_ PATCHCHAR
+	quit:code'[PATCHCHAR code
 
-	// Treat vClose() redirection separately
-	if expr=("vClose(+$G("_var_"))") do { quit code
+	type Number i
+	type String x, y, z = PATCHCHAR_ token_ PATCHCHAR
+
+	// Make sure TABs (at the start of the line) are replaced by spaces
+	// because we need to check for a command-word preceeded by a space.
+	set code = code.translate( 9.char(), " ")
+
+	// Treat vCloseRDB() redirection separately
+	if expr=($$XvCloseName^UCDBR_"(+$G("_var_"))") do { quit code
 
 		// If this ResultSet happens to be against M tables, remove call
-		if '$P(struct("s",subRou,newPtr,var),tab,8) do { quit
-			set x="D "_z_" "
-			if code[x set code=$P(code,x,1)_$P(code,x,2) quit
+		if 'struct("s",subRou,newPtr,var).piece(tab,8) do { quit
+			set x=" D "_z_" "
+			if code[x set code=code.piece(x,1)_" "_code.piece(x,2) quit
 			set x=z_","
-			if code[x set code=$P(code,x,1)_$P(code,x,2) quit
+			if code[x set code=code.piece(x,1)_code.piece(x,2) quit
 			set x=","_z
-			if code[x set code=$P(code,x,1)_$P(code,x,2) quit
-			if code["D:" set i=0 for  set i=$F(code,"D:",i) quit:i=0  do {
-				set x="D:"_$p($e(code,i,1000)," ",1)_" "_z
-				if code[x set code=$P(code,x,1)_$E($P(code,x,2),2,$L(code))
+			if code[x set code=code.piece(x,1)_code.piece(x,2) quit
+			if code[" D:" set i=0 for  set i=code.find(" D:",i) quit:i=0  do {
+				set x=" D:"_code.extract(i,1000).piece(" ",1)_" "_z
+				if code[x set code=code.piece(x,1)_" "_code.piece(x,2).extract(2,code.length())
 			}
 		}
 
 		// add the vCloseR() subroutine if needed
-		new label,p0,p1
+		type String label,p0,p1
 		set label=$$XvCloseC^UCDBR()
 
 		// Replace by returned label.
 		set p0=patch(-3,subRou,var,newPtr,0)	; state = vobj(,0)
 		set p1=patch(-3,subRou,var,newPtr,1)	; curId = vobj(,1)
-		set code=$p(code,z)_label_"(."_p0_","_p1_")"_$p(code,z,2)
+		set code=code.piece(z)_label_"("_p1_",."_p0_")"_code.piece(z,2)
 	}
 
 	/* Look for "vobj(" related patches. If expr does not contain that,
@@ -452,29 +495,29 @@ patchparse(code,expr,var,newPtr) ; parse and patch code
 	set y = PSL.oLvn_ "("
 	if expr'[y quit $$patchTkn( code, z, expr)
 
-	if '(expr["-150") set x=$P($P(expr,y,2,3),")",1)
-	else  set x=$P($P(expr,y,3,4),")",1)
+	if '(expr["-150") set x=expr.piece(y,2,3).piece(")",1)
+	else  set x=expr.piece(y,3,4).piece(")",1)
 
 	if x=("+$G("_var) do {				// Kill syntax
 		/* The assumption is that all patched occurrences of K vobj(var)
 		   can be removed. This is based on the assumption that optimize
 		   will be turned off for all declarations that need vobj().
 		   */
-		set x="K "_z_" "
-		if code[x set code=$P(code,x,1)_$P(code,x,2) quit
+		set x=" K "_z_" "
+		if code[x set code=code.piece(x,1)_" "_code.piece(x,2) quit
 		set x=z_","
-		if code[x set code=$P(code,x,1)_$P(code,x,2) quit
+		if code[x set code=code.piece(x,1)_code.piece(x,2) quit
 		set x=","_z
-		if code[x set code=$P(code,x,1)_$P(code,x,2) quit
-		if code["K:" set i=0 for  set i=$F(code,"K:",i) quit:i=0  do {
-			set x="K:"_$p($e(code,i,1000)," ",1)_" "_z
-			if code[x set code=$P(code,x,1)_$E($P(code,x,2),2,$L(code))
+		if code[x set code=code.piece(x,1)_code.piece(x,2) quit
+		if code[" K:" set i=0 for  set i=code.find(" K:",i) quit:i=0  do {
+			set x=" K:"_code.extract(i,1000).piece(" ",1)_" "_z
+			if code[x set code=code.piece(x,1)_" "_code.piece(x,2).extract(2,code.length())
 		}
 	}
 	else  do {
-		new lvn,nod
+		type String lvn, nod
 
-		set nod=$P(x,",",2,999)
+		set nod=x.piece(",",2,999)
 
 		if nod="" set lvn=var
 	
@@ -494,38 +537,37 @@ patchparse(code,expr,var,newPtr) ; parse and patch code
 
 		set x= PSL.oLvn_ "("_ x_ ")"
 
-		if expr[x set expr=$P(expr,x,1)_lvn_$P(expr,x,2)
+		if expr[x set expr=expr.piece(x,1)_lvn_expr.piece(x,2)
 		set code=$$patchTkn(code,z,expr)
 	}
 	quit code
 
 	// ---------------------------------------------------------------------
-private patchNew(var,new,newPtr) // private void; Patch list new command line
+patchNew(var,newLst,newPtr) // private void; Patch list new command line
 	/* ---------------------------------------------------------------------
 	NOTE:
 	. called by selectDyn^UCDB
 	*/
 	type public String msrc()
 
-	if var["(" b
-	new f,z
-	set z=msrc(newPtr),f="N "_var	; N var syntax
+	type String f, z
+	set z=msrc(newPtr),f="N "_var	// N var syntax
 
 	if '(z["N ") do { quit
 		set f="S "_var
-		set z=$P(z,f,1)_"N "_$E(new,2,$L(new))_f_$P(z,f,2,99)
+		set z=z.piece(f,1)_"N "_newLst.extract(2,newLst.length())_f_z.piece(f,2,99)
 		set msrc(newPtr)=z
 	}
 	if '(z[f) do {			; N x,var syntax instead
 		set f=","_var
-		if '(z[f) set new=" N "_$E(new,2,$L(new))
+		if '(z[f) set newLst=" N "_newLst.extract(2,newLst.length())
 	}
-	set z=$P(z,f,1)_f_new_$P(z,f,2,999)
+	set z=z.piece(f,1)_f_newLst_z.piece(f,2,999)
 	set msrc(newPtr)=z
 	quit
 
 	// ---------------------------------------------------------------------
-private patch(subRou,var,newLevel,expr) // Patch msrc for 'potential' object reduction
+patch(subRou,var,newLevel,expr) // Patch msrc for 'potential' object reduction
 	/* ---------------------------------------------------------------------
 	If the following conditions are all true, this object instance can be
 	optimized as local variable(s):
@@ -579,25 +621,29 @@ private patch(subRou,var,newLevel,expr) // Patch msrc for 'potential' object red
 
 	type String class
 	type Number newPtr
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set newPtr=$$getNew^UCGM(var,.newLevel) if newPtr="" quit expr
 
 	/* If object is optimizable, turn optimize on
 	   else quit if object optimization has been turned off for this var
 	   */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type Number noOpti = +$$getOpti^UCGM(var,.newLevel)
 	if noOpti>msrc do {	; protect $TEST
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		do setOpti^UCGM(var,.newLevel,0)
 	}
 	else  if noOpti'=0 quit expr
 
 	type Number n
-	set n=$G(patch)+1,patch=n
+	set n = patch.get() + 1, patch = n
 	set patch( n) = (msrc+1)_ PATCHCHAR _expr
 	set patch( 0, subRou, var, newPtr, n)=""
 	quit PATCHCHAR_ n_ PATCHCHAR
 
 	// ---------------------------------------------------------------------
-ResultSet( String subRou,
+private ResultSet( String subRou,
 	PSLIdentifier var,
 	Number newPtr,
 	Boolean flag) 
@@ -626,8 +672,8 @@ ResultSet( String subRou,
 		0 = do not suppress optimzation
 		1 = suppress optimization
 	INPUTS:
-	. struct("S",subRou,newPtr,var) = Resultset data (see select^UCDB)
-		This subroutine uses the pieces 1,2, and 5
+	. struct("S",subRou,newPtr,var) = Resultset data (see select^UCDB and
+		select^UCDBR). This subroutine uses the pieces 1,2, and 5
 	. append( "vOpen"_seqnr,*) = M code generated by UCDB and UCDBR
 	. msrc() = pass 1 code
 		Occurrences of $$vFetchN(vOid) will be replaced by
@@ -644,20 +690,17 @@ ResultSet( String subRou,
 
 	type public String append(,), msrc(), patch(,,,,), struct(,,), tab
 
-	type String code,expr,fexpr,new,test,x,y
+	type String code, expr, fexpr, newLst, test, x, y
 	type Number col,lptr,n,token
-
+	type Number  f = 0, sort = 0
+	type Boolean rdb = Runtime.isRdb
 	type String z = struct("s",subRou,newPtr,var).get()
-
 	type Number instLine = z.piece( tab)
 	type String seq      = z.piece( tab, 2)
-
-	type Number f = 0, sort = 0
 	type String label = "vOpen"_ seq
 
 	if z.piece( tab, 5) = 1 set flag = 1	// ResultSet from Record.compare()
 	if seq = "" set flag = 1		// Public or multiple open's
-	type Boolean rdb = $$rtIsRdb^UCXDD()
 
 	/* vOpen0() / vFetch0() is used for dynamic selects, and shared by ALL
 	   subroutines in this unit. Find out if this is the only occurrence.
@@ -718,6 +761,7 @@ ResultSet( String subRou,
 			   most likely all vsql references in the exe() array
 			   for MDB open/fetch will have been removed by
 			   select^UCDB. */
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			if code["vsql" set code = $$rplcvsql(code,subRou,var,newPtr), append(label,n) = code do warnGroup^UCGM("INTERNAL","vsql references found and replaced in "_label)
 
 			if sort=0,code["K ^DBTMP($J,vOid)" set sort = n
@@ -728,7 +772,7 @@ ResultSet( String subRou,
 			set y = code.find( test) if y = 0 quit
 
 			/* Delete lines that contain assignments to negative
-			   nodes. */
+			   nodes */
 			if code.extract( y, y+1)=",-" kill append(label,n) quit
 
 			set code = $$change(code,test,subRou,var,newPtr)
@@ -766,8 +810,8 @@ ResultSet( String subRou,
 			type Number ptr=0
 			if col=1,expr=( PSL.oLvn_"("_var_")") set ptr=1
 			if col>1,expr=( PSL.oLvn_"("_var_")") set f=0  ; getRow
-			if expr[",$C(9)," set ptr=$P($P(expr,",$C(9),",2),")",1)
-			if ptr,$D(col(ptr)) set code=$$patchTkn(code,z,col(ptr))
+			if expr[",$C(9)," set ptr=expr.piece(",$C(9),",2).piece(")",1)
+			if ptr,col(ptr).exists() set code=$$patchTkn(code,z,col(ptr))
 			else  set code=$$patchparse(code,expr,var,newPtr)
 		}
 		else  set code=$$patchparse(code,expr,var,newPtr)
@@ -776,22 +820,22 @@ ResultSet( String subRou,
 
 	if f kill append(label,f)			; Delete row set
 
-	set n="",new=""
-	for  set n=$O(patch(-3,subRou,var,newPtr,n)) quit:n=""  set new=new_","_patch(-3,subRou,var,newPtr,n)
+	set n = "", newLst = ""
+	for  set n=patch(-3,subRou,var,newPtr,n).order() quit:n=""  set newLst = newLst_ ","_ patch(-3,subRou,var,newPtr,n)
 
 	if 'flag,sort>1 do {
-		set new=new_",vOid"
+		set newLst = newLst_ ",vOid"
 		set append(label,sort)=tab_"S vOid=$G(^DBTMP($J))-1,^($J)=vOid K ^DBTMP($J,vOid)"
 	}
 	if 'flag,(seq=0) do {
-		set new=new_",sqlcur"
+		set newLst = newLst_ ",sqlcur"
 		set append(label,3.1)=tab_"set sqlcur="""_subRou_"."_var_""""
 	}
-	if new'="" do patchNew(var,new,newPtr)
+	if 'newLst.isNull() do patchNew( var, newLst, newPtr)
 	quit
 
 	// ---------------------------------------------------------------------
-rsDynFlag() ;local Boolean; Return 'flag' value in case of dynamic selects
+private rsDynFlag() ;local Boolean; Return 'flag' value in case of dynamic selects
 	/* ---------------------------------------------------------------------
 	All dynamic selects in a PSL unit share vOpen0() and vFetch0()
 	If there is only one occurrence of a dynamic select in this unit, then
@@ -807,12 +851,13 @@ rsDynFlag() ;local Boolean; Return 'flag' value in case of dynamic selects
 	*/
 	type public String struct(,), tab
 
-	new flag,subRou,newPtr,var
+	type Number flag,newPtr
+	type String subRou,var
 	set flag=0,(subRou,newPtr,var)=""
-	for  set subRou=$O(struct("s",subRou)) quit:subRou=""  do { quit:flag>1
-		for  set newPtr=$O(struct("s",subRou,newPtr)) quit:newPtr=""  do { quit:flag>1
-			for  set var=$O(struct("s",subRou,newPtr,var)) quit:var=""  do { quit:flag>1
-				if $P(struct("s",subRou,newPtr,var),tab,2)=0 s flag=flag+1
+	for  set subRou=struct("s",subRou).order() quit:subRou=""  do { quit:flag>1
+		for  set newPtr=struct("s",subRou,newPtr).order() quit:newPtr=""  do { quit:flag>1
+			for  set var=struct("s",subRou,newPtr,var).order() quit:var=""  do { quit:flag>1
+				if struct("s",subRou,newPtr,var).piece(tab,2)=0 set flag=flag+1
 			}
 		}
 	}
@@ -820,38 +865,39 @@ rsDynFlag() ;local Boolean; Return 'flag' value in case of dynamic selects
 	quit flag>1
 
 	// ---------------------------------------------------------------------
-rplcvsql(code,subRou,var,newPtr) ; Replace vsql lvns
+private rplcvsql(code,subRou,var,newPtr) ; Replace vsql lvns
 	/* ---------------------------------------------------------------------
 	*/
 	type public String patch(,,,,)
 
-	new atom,lvn,y,yz
+	type Number y, yz
+	type String atom, lvn
 
 	set y=0
-	for  set y=$F(code,"vsql",y) quit:y=0  do {
-		for yz=y:1 quit:$E(code,yz)'?1N
-		set atom=$E(code,y-4,yz-1) if atom="vsql" quit	; FRS - 06/13/03
-		set lvn=$G(patch(-3,subRou,var,newPtr,atom))
+	for  set y=code.find("vsql",y) quit:y=0  do {
+		for yz=y:1 quit:code.extract(yz)'?1N
+		set atom=code.extract(y-4,yz-1) if atom="vsql" quit	// FRS - 06/13/03
+		set lvn=patch(-3,subRou,var,newPtr,atom).get()
 		if lvn="" set lvn=$$getSym(subRou,"vos"),patch(-3,subRou,var,newPtr,atom)=lvn
-		set code=$E(code,1,y-5)_lvn_$E(code,yz,$L(code))
+		set code=code.extract(1,y-5)_lvn_code.extract(yz,code.length())
 	}
 	quit code
 
 	// ---------------------------------------------------------------------
-change(code,test,subRou,var,newPtr) ; Change resultSet generate code
+private change(code,test,subRou,var,newPtr) ; Change resultSet generate code
 	/* ---------------------------------------------------------------------
 	*/
 	type public String patch(,,,,)
 
-	new char,lvn,nod,y
+	type Number y
+	type String char, lvn, nod
 
-	for  set y=$F(code,test) quit:y=0  do {
-		set char=$E(code,y)
-		if char=")" set code=$E(code,1,y-$L(test)-1)_var_$E(code,y+1,$L(code)) quit
-		if char'="," b
-		set nod=$P($E(code,y+1,$L(code)),")",1)
-		set lvn=$G(patch(-3,subRou,var,newPtr,nod))
+	for  set y=code.find(test) quit:y=0  do {
+		set char=code.extract(y)
+		if char=")" set code=code.extract(1,y-test.length()-1)_var_code.extract(y+1,code.length()) quit
+		set nod=code.extract(y+1,code.length()).piece(")",1)
+		set lvn=patch(-3,subRou,var,newPtr,nod).get()
 		if lvn="" set lvn=$$getSym(subRou,"vos"),patch(-3,subRou,var,newPtr,nod)=lvn
-		set code=$E(code,1,y-$L(test)-1)_lvn_$E(code,y+2+$L(nod),$L(code)) quit
+		set code=code.extract(1,y-test.length()-1)_lvn_code.extract(y+2+nod.length(),code.length()) quit
 	}
 	quit code

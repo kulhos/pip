@@ -1,0 +1,41 @@
+NOD=
+LEN=3
+DFT=124
+DOM=
+TBL=[DBCTLDELIM]
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=ASCII Delimiter
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Delimiter
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The character used to separate the positions of a field so that
+multiple data items can reside on the same field ID (node).  Common
+delimeter characters are | or \ or ^.
+
+For example, in the following global listing, the | character is the piece
+delimiter.
+
+    ^HIST(12345,12)="|1200.00|SD|3000.00|54234,222|12211|TXA|"
+
+In this example, the third piece of the global has the value SD.

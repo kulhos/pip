@@ -1,0 +1,51 @@
+NOD=1
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Protect Field Display Size
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=4
+RHD=Protect@Field Display Size
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+]An indicator which specifies whether (Y) or not (N) the system allows users to
+change the value in the Field Display Size data item in file definitions
+([DBTBL1D]SIZ) referencing this user-defined data type.  The value in the Field
+Display Size data item in the user-defined data type definition ([DBSDOM]SIZ)
+defaults as the [DBTBL1D]SIZ value for data items referencing the user-defined
+data type.
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+definition ([CRCD]MINRATE) specifies a user-defined data type of RATE, and the
+RATE data type specifies a default display size of 12, the system defaults 12
+in the Field Display Size attribute ([DBTBL1D]SIZ) associated with the
+[CRCD]MINRATE data item.
+
+If Y (Yes), the user can modify the [DBTBL1D]SIZ value for the data item
+referencing this data type (e.g., the user can modify the value in the
+Field Display Size attribute associated with the [CRCD]MINRATE data item).
+
+If N (No), the user cannot modify the [DBTBL1D]SIZ value for the data item
+referencing this data type (e.g., the user cannot modify the defaulted value of
+12 for the display size associated with the [CRCD]MINRATE data item).

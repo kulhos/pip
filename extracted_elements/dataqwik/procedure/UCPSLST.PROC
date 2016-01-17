@@ -40,7 +40,6 @@
 		The leftmost character in forState corresponds to the innermost
 		code block.
 
-
 	---------- Revision History --------------------------------------------
 	04/11/06 - Frans S.C. Witte - CRs: 20280 / 18164
 		Added function $$botDo(). Corrected $$topDo().
@@ -48,6 +47,8 @@
 	11/01/05 - Frans S.C. Witte - CRs: 18163 / 18164
 		Initial program.
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -67,7 +68,7 @@
 	quit
 
 	// ---------------------------------------------------------------------
-private botDo( String pslSt)	// PSLState "object"
+botDo( String pslSt)	// PSLState "object"
 	/* ---------------------------------------------------------------------
 	return the bottom doState value of pslSt
 	*/
@@ -76,21 +77,21 @@ private botDo( String pslSt)	// PSLState "object"
 	quit sDo.piece( ",", sDo.length(","))
 
 	// ---------------------------------------------------------------------
-private getDo( String pslSt)	// PSLState "object"
+getDo( String pslSt)	// PSLState "object"
 	/* ---------------------------------------------------------------------
 	return the complete doState value of pslSt
 	*/
 	quit pslSt.piece("|")
 
 	// ---------------------------------------------------------------------
-private getFor( String pslSt)	// PSLState "object"
+getFor( String pslSt)	// PSLState "object"
 	/* ---------------------------------------------------------------------
 	return the complete forState value of pslSt
 	*/
 	quit pslSt.piece("|",3)
 
 	// ---------------------------------------------------------------------
-private getForBlock( String pslSt,	// PSLState "object"
+getForBlock( String pslSt,	// PSLState "object"
 		String outer)		// outer scope
 	/* ---------------------------------------------------------------------
 	return the doState of the outermost iterative code block inside outer.
@@ -106,14 +107,14 @@ private getForBlock( String pslSt,	// PSLState "object"
 	quit pslSt.piece("|").piece(",",sub,siz)
 
 	// ---------------------------------------------------------------------
-private getIf( String pslSt)	// PSLState "object"
+getIf( String pslSt)	// PSLState "object"
 	/* ---------------------------------------------------------------------
 	return the complete ifState value of pslSt
 	*/
 	quit pslSt.piece("|",2)
 
 	// ---------------------------------------------------------------------
-private isDoScope( String pslSt,	// PSLState "object" (inner scope)
+isDoScope( String pslSt,	// PSLState "object" (inner scope)
 		String outer)		// outer scope doStack
 	/* ---------------------------------------------------------------------
 	Helper function that returns 1 if either
@@ -128,7 +129,7 @@ private isDoScope( String pslSt,	// PSLState "object" (inner scope)
 	quit 0
 
 	// ---------------------------------------------------------------------
-private new(	String  doVal,	// value for doState
+new( String  doVal,	// value for doState
 		Boolean ifVal,	// value for ifState
 		Boolean forVal)	// value for forState
 	/* ---------------------------------------------------------------------
@@ -143,7 +144,7 @@ private new(	String  doVal,	// value for doState
 	quit doVal_ "|"_ ifVal_ "|"_ forVal
 
 	// ---------------------------------------------------------------------
-private pop(	String pslSt,	// PSLState "object"		/MECH=REFVAR:RW
+pop( ret String pslSt,	// PSLState "object"		/MECH=REFVAR:RW
 		String doVal,	// lvn for top of doState	/MECH=REFVAR:W
 		Boolean ifFl,	// lvn for top of ifState	/MECH=REFVAR:W
 		Boolean forFl) 	// lvn for top of forState	/MECH=REFVAR:W
@@ -163,7 +164,7 @@ private pop(	String pslSt,	// PSLState "object"		/MECH=REFVAR:RW
 	quit
 
 	// ---------------------------------------------------------------------
-private push(	String pslSt,	// PSLState "object"		/MECH=REFVAR:W
+push( ret String pslSt,	// PSLState "object"		/MECH=REFVAR:W
 		String doVal,	// value to push on doState
 		Boolean ifFl,	// value to push on ifState
 		Boolean forFl) 	// value to push on forState
@@ -177,7 +178,7 @@ private push(	String pslSt,	// PSLState "object"		/MECH=REFVAR:W
 	quit
 
 	// ---------------------------------------------------------------------
-private set(	String pslSt,	// PSLState "object"		/MECH=REFVAR:W
+set( ret String pslSt,	// PSLState "object"		/MECH=REFVAR:W
 		String doVal,	// value to replace top of doState
 		Boolean ifFl,	// value to replace top of ifState
 		Boolean forFl) 	// value to replace top of forState
@@ -195,21 +196,21 @@ private set(	String pslSt,	// PSLState "object"		/MECH=REFVAR:W
 	quit
 
 	// ---------------------------------------------------------------------
-private topDo( String pslSt)	// PSLState "object"
+topDo( String pslSt)	// PSLState "object"
 	/* ---------------------------------------------------------------------
 	return the top value of doState
 	*/
 	quit pslSt.piece("|").piece(",")
 
 	// ---------------------------------------------------------------------
-private topFor( String pslSt)	// PSLState "object"
+topFor( String pslSt)	// PSLState "object"
 	/* ---------------------------------------------------------------------
 	return the top value of forState
 	*/
 	quit pslSt.piece("|",3).extract()
 
 	// ---------------------------------------------------------------------
-private topIf( String pslSt)	// PSLState "object"
+topIf( String pslSt)	// PSLState "object"
 	/* ---------------------------------------------------------------------
 	return the top value of ifState
 	*/

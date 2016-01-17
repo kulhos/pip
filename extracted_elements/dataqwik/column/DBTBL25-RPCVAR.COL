@@ -1,0 +1,33 @@
+NOD=PROCID
+LEN=250
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=List of variable names (RPC call)
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=78
+DEL=
+POS=6
+RHD=List of variable names (RPC call)
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The variables defined here will be included in the RPC call if this executive
+is being executed on the client.

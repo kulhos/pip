@@ -1,0 +1,77 @@
+NOD=
+LEN=60
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=MUMPS Pattern Check
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=MUMPS Pattern Check
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+A string of characters that allows the system to check the value of a string
+against a pattern.  The system uses this string of characters to validate
+values entered for data items in file definitions referencing this master data
+dictionary data item.  The value in the [DBSMDD]PTN data item defaults as the
+MUMPS Pattern Match data item in file definitions referencing this master data
+dictionary data item ([DBTBL1D]PTN).  The user can modify the defaulted value
+if the Protect MUMPS Pattern Match data item ([DBSMDD]PRPTN) contains N (No).
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) links to the [MDDPBS]MINRATE master data dictionary data item,
+and the [MDDPBS]MINRATE data item specifies a pattern of NN.NN, the system
+defaults NN.NN into the MUMPS Pattern Match attribute ([DBTBL1D]PTN) associated
+with the [CRCD]MINRATE data item.
+
+The following pattern checks verify the specified input:
+
+1. A social security number is input as three numbers, a dash (-), two numbers,
+   a dash, and four numbers
+
+        3N1"-"2N1"-"4N
+
+2. At least one number, followed by three uppercase letters, followed by two
+   numbers
+
+        .E1N3U2N
+
+Valid pattern characters are:
+
+   E - Anything
+   U - Uppercase character
+   L - Lowercase character
+   N - Number
+   C - Control character
+   A - Any uppercase or lowercase character
+   "string" - Specific chracters contained within quotes
+
+General guidelines include:
+
+*  Place a number before any of the pattern characters to check for the
+   occurrence of that number characters (e.g., 4N checks for 4 numbers).
+
+*  Use a '.' to check for any number of characters (e.g., .N checks for any
+   number of numbers).
+
+*  Place two pattern characters together to check for the occurrence of either
+   condition (e.g., 1UN checks for one uppercase character or one number).

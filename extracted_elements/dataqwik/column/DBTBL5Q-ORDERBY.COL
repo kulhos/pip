@@ -1,0 +1,178 @@
+NOD=0
+LEN=100
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Report Order
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=10
+RHD=Report Order
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         REPORT ORDER BY
+
+             By default, the report is ordered by, or "sorted" by
+             the access keys in the primary access file.
+
+             You can sort by an additional data item or items by
+             listing them at the Report Order By prompt.  You can
+             use any data item name in the Access File(s) as a sort
+             key.  You can sort up to seven levels.
+
+             The system has to sort by the access keys in the Primary
+             Access File.  When you specify a sort key, it will be in
+             addition to the Access Key(s) from the Primary Access
+             File.  When you add a data item at the Report Order By
+             prompt, the system fills in the prompt with the access
+             keys from the primary Access File.
+
+             The default sort order is ASCENDING.  Use /DESC to sort
+             in DESCENDING order.
+
+         _____________________________________________________________________
+         Example - No Sort Option
+                  (Report is sorted by Account Number since the Account
+                   Number (CID) is the Access Key in the DEP file)
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP
+           |       Data Item(s): CID,BAL,LNM,BOO
+           |    Report Order By:
+
+
+           Report Run ----------------------------------------------------
+           |
+           |       Account       Account    Report    Branch Of
+           |        Number       Balance  Short Name  Ownership
+           |  ------------  ------------  ----------  ---------
+           |             1         10.00  DOE,JOHN            2
+           |             4      1,000.00  SMITH,JOE           1
+           |             5        200.00  SMITH,MARY          1
+           |             6        123.45  CORBIN,JOE          2
+           |             7         45.00  LEE,KAREN           1
+           |                ============
+           |                    1,378.45
+           |
+
+         _____________________________________________________________________
+         Example - Sort by Balance in Ascending Order
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP
+           |       Data Item(s): CID,BAL,LNM,BOO
+           |    Report Order By: BAL                 <-- Your entry
+           |    Report Order By: [DEP]BAL,[DEP]CID   <-- Supplied by the System
+
+
+           Report Run ----------------------------------------------------
+           |
+           |       Account       Account    Report    Branch Of
+           |        Number       Balance  Short Name  Ownership
+           |  ------------  ------------  ----------  ---------
+           |             1         10.00  DOE,JOHN            2
+           |             7         45.00  LEE,KAREN           1
+           |             6        123.45  CORBIN,JOE          2
+           |             5        200.00  SMITH,MARY          1
+           |             4      1,000.00  SMITH,JOE           1
+           |                ============
+           |                    1,378.45
+
+
+         _____________________________________________________________________
+         Example - Sort by Balance in Descending Order
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP
+           |       Data Item(s): CID,BAL,LNM,BOO
+           |    Report Order By: BAL/DESC                 <-- Your entry
+           |    Report Order By: [DEP]BAL/DESC,[DEP]CID   <-- System-supplied
+
+
+           Report Run ----------------------------------------------------
+           |
+           |       Account       Account    Report    Branch Of
+           |        Number       Balance  Short Name  Ownership
+           |  ------------  ------------  ----------  ---------
+           |             4      1,000.00  SMITH,JOE           1
+           |             5        200.00  SMITH,MARY          1
+           |             6        123.45  CORBIN,JOE          2
+           |             7         45.00  LEE,KAREN           1
+           |             1         10.00  DOE,JOHN            2
+           |                ============
+           |                    1,378.45
+
+
+         _____________________________________________________________________
+         Example - Sort by Branch in Ascending Order, then
+                   Balance in Descending Order
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP
+           |       Data Item(s): BOO,CID,BAL,LNM
+           |    Report Order By: BOO,BAL/DESC             <-- Your entry
+           |    Report Order By: [DEP]BOO,[DEP]BAL/DESC,[DEP]CID
+                                             ^
+                    Supplied by the System --|
+
+
+           Report Run ----------------------------------------------------
+           |
+           |   Branch Of       Account       Account    Report
+           |   Ownership        Number       Balance  Short Name
+           |   ---------  ------------  ------------  ----------
+           |           1             4      1,000.00  SMITH,JOE
+           |           1             5        200.00  SMITH,MARY
+           |           1             7         45.00  LEE,KAREN
+           |           2             6        123.45  CORBIN,JOE
+           |           2             1         10.00  DOE,JOHN
+           |                            ============  ==========
+           |                                1,378.45           5
+
+
+         _____________________________________________________________________
+         Example - Sort by a Data Item from the Secondary File (CIF)
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP,CIF
+           |       Data Item(s): DOB,CID,BAL
+           |    Report Order By: DOB                 <-- Your entry
+           |    Report Order By: [CIF]DOB,[DEP]CID   <-- System-supplied
+
+
+           Report Run ----------------------------------------------------
+           |
+           |             Date           Account       Account
+           |           Of Birth          Number       Balance
+           |           ----------  ------------  ------------
+           |           01/05/40               4     -1,000.00
+           |           05/20/45               5        200.00
+           |           01/30/50               7         45.00
+           |           05/19/60               1    234,567.00
+           |           05/19/60               6        123.45
+           |           ==========                ============
+           |                    5                  233,935.45

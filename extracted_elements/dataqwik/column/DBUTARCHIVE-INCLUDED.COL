@@ -1,0 +1,47 @@
+NOD=ARCHTBL
+LEN=256
+DFT=
+DOM=
+TBL=[DBTBL1]:NOVAL
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Include when Archiving
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Include when Archiving
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=S RM=$$INCLUDEDCHK^DBARCHIVE(ARCHTBL,X) S:RM'="" ER=1
+NULLIND=0
+A table may included in archiving when another table is archived.  To be
+archived with another table, the two tables have to use different globals, but
+both tables must have identical key structures - same number, datatypes, and
+lengths of keys - for all keys through the archive key.
+
+An example of a table that might be archived with another is table HISTN, 
+archived with HIST.  (Note that any table that must continue to be updateable
+cannot be archived, since that will place it in a read-only state.  For this
+reason HISTR, even though having the same key structure as HIST and HISTN,
+cannot be archived since it must remain available for updates if a transaction
+is reversed.
+
+This field takes a comma separated list of tables.
+
+Tables entered in this field cannot be listed separately for archiving and
+cannot be included with any other table's INCLUDED column.

@@ -1,0 +1,98 @@
+NOD=SEQ
+LEN=3
+DFT=
+DOM=
+TBL=[DBCTLQFUN]
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Math Function
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=6
+RHD=Math@Function
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         MATH
+
+             The math function to be performed on this column.
+
+             A subtotal will print at each group break (if specified
+             with BREAK ON option).  Report totals print at the end of
+             the report.
+
+             The math options are:
+
+                 SUM - The sum of the values in the column
+
+                 CNT - The total record count for the column
+
+             QWIK Report automatically sums all columns that are
+             currency type with decimal precision of 2 places and
+             counts the first text-type column in a report.
+
+             You can accept the SUM and CNT defaults provided, or
+             you can change them.  You can specify a CNT function
+             for any column.  You can specify a SUM function for
+             any column of numeric-type data.
+
+         _____________________________________________________________________
+         Example
+
+           Report Definition ---------------------------------------------
+           |
+           |     Data Item(s): BOO,CID,BAL,LNM,IRN*BAL/36500
+           |  Report Order By: BOO,CID
+           |         Break On: BOO
+           |
+           |---------------------------------------------------------
+           |
+           | Field         Column Heading
+           | Name          ----+---10----+---20---  Math
+           |
+           | BOO           Branch
+           | CID           Account@Number
+           | BAL           Account@Balance          SUM  <-- System-supplied
+           | LNM           Report@Short Name        CNT  <-- System-supplied
+           | IRN*BAL/3650  One Day's@Interest       SUM  <-- User-supplied
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           |  Branch  Account    Account    Report     One Day's
+           |           Number    Balance  Short Name    Interest
+           |  ------  -------  ---------  ----------  ----------
+           |       1        4   1,000.00  SMITH,JOE         0.19
+           |                5     200.00  SMITH,MARY        0.04
+           |                7      45.00  LEE,KAREN         0.01
+           |                   ---------  ----------  ----------
+           |                    1,245.00           3        0.24  <--Subtotal
+           |                                                         at Branch
+           |       2        1      10.00  DOE,JOHN          0.01     break
+           |                6     123.45  CORBIN,JOE        0.04
+           |                   ---------  ----------  ----------
+           |                      133.45           2        0.05  <--Subtotal
+           |
+           |                   =========  ==========  ==========
+           |                    1,378.45           5        0.29  <--Report
+           |                                                         Summary
+                                   ^               ^          ^
+                                   |               |          |
+                                  SUM             CNT        SUM

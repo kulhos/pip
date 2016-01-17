@@ -1,0 +1,44 @@
+NOD=
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Maximum Value
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Maximum
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The maximum value that data items linked to this master data dictionary data
+item may have.  The system does not permit users to specify values greater than
+this value in fields referencing linked data items.  The value in the
+[DBSMDD]MAX data item defaults as the Maximum Value ([DBTBL1D]MAX) for data
+items referencing the master data dictionary data item.  The user can modify
+the defaulted value if the Protect Maximum Value data item ([DBSMDD]PRMAX)
+contains N (No).
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) links to the [MDDPBS]MINRATE master data dictionary data item,
+and the [MDDPBS]MINRATE data item specifies a maximum value of 10.00, the
+system defaults 10.00 into the Maximum Value attribute ([DBTBL1D]MAX)
+associated with the [CRCD]MINRATE data item.

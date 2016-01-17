@@ -16,17 +16,67 @@
 	memory use at runtime.
 
 	Naming conventions within this routine:
+	. rdb*	= RDB related
 	. Rs*	= ResultSet related (runtime behavior for Db.select() and
 		Db.selecDbSet().
 	. RsMs*	= ResultSet, Map Symbols
 		Subroutines and functions that rewrite the clauses and construct
 		the symbol map.
-	. wr*	= wrapper functions for RDB API calls.
-		%DBAPI calls usually return an error code. The data, and the
-		errormessage will be passed in a parameter. The wrappers will
-		return the data, and throw an exception on a fatal API error.
 
 	---- Revision History --------------------------------------------------
+	2009-04-22 - RussellDS - CR39733
+		* Modified handling of -162 node related to blobs in rdbSaveC
+		  to avoid problems in UTF environment
+		* Fixed problem in rdbSave* to ignore -161 nodes that do not
+		  indicate any columns modified
+	
+	2008-11-06, Frans S.C. Witte, CRs 35741/36525/36492
+		* Corrected RsMsSel() to accept ASC and DESC as column name.
+
+	2008-10-20, Frans S.C. Witte, CR35992
+		* Added deprecation notice to description of rdb().
+		* Replaced $$rtIsRdb^UCXDD() with $$isRdb^vRuntime().
+		* Added code to deal with callback-computed in ORDERBY/GROUPBY
+		* Added delimiter parameter to RsMsXV
+
+	10/19/2008 - RussellDS - CR35741/35918
+		Modified rdbSaveC section to clarify and correct handling of
+		-152 node when it is not present, and corrected comment related
+		to -152 in rdbSaveS section.
+	
+	08/22/2008 - RussellDS - CR30801
+		Modified rdbSaveC^UCDBRT and rdbSaveS^UCDBRT to reset nodes 
+		-161 and -162.
+		
+	2008-07-09, Frans S.C. Witte, CR34739
+		Modified RsMsWtChild and RsMsWtList to fully support Db.select()
+		with multiple parent/child tables.
+
+	01/02/2008 - Frans S.C. Witte - CR30811
+		Added support for parent/child tables in general (as opposed to
+		for ACN/DEP/LN only).
+
+	09/24/2007 - RussellDS - CR29295
+		* Added functions rColIns and rColUpd to support RDB column
+		  update/insert code which manage nodes -161 & -162 for construction
+		  of update/insert data.  These functions are used when the in-line
+		  code form will cause lines to be excessively long.
+		  (See cdRdbAsn^UCXDD).
+		* Added labels rdbSaveS and rdbSaveC to provide common code to
+		  perform RDB UPDATE and INSERT based on data vobj.  With the
+		  addition of nodes -161/-162, these replace the obsolete
+		  VOBJ^DBSDBASE.
+		* Eliminated wrapper functions for calls to %DBAPI as %DBAPI now
+		  has equivalent functions that throw errors.
+		* Clean up warnings due to new compiler changes.
+		  
+	08/29/07 - Frans S.C. Witte - CR:27800
+		* Cleanup / correct use of List
+
+	07/19/07 - Frans S.C. Witte - CR: 28353
+		* Modified parameter in call to $$COLLIST^DBSDD() to include
+		  Masterfields.
+
 	03/18/07 - Frans S.C. Witte - CR: 26364
 		* Added support for additional parameter to computed functions.
 		* Optimized $$RsRdb() to prevent call to RsMsCls() if not RDB.
@@ -129,6 +179,8 @@
 		$$RsMsIns(), $$RsMsJoin(), $$RsMsQcn(), RsMsSub, $$RsMsXI(),
 		$$RsMsXV(), $$RsRdb() and $$RsSelList().
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -149,28 +201,265 @@
 	quit
 
 	// ---------------------------------------------------------------------
-public rdb( String table)	// list of table names
+public rdb( String table)	// **** DEPRECATED ****
 	/* ---------------------------------------------------------------------
-	Is table stored in relational database?
-	This function returns 1 if the supplied table is stored on a relational
-	database, and 0 if stored in M.
-	If no table is supplied, it returns 1 if running against a relational
-	database.
+	For $$rdb^UCDBRT(table) use rtIsRdb^UCXDD()
+	For $$rdb^UCDBRT() use isRdb^vRuntime()
+	*/
+	if 'table.exists() quit $$isRdb^vRuntime()
+        quit $$rtIsRdb^UCXDD( table)
+
+	// ---------------------------------------------------------------------
+public rdbColIns( Boolean noOverlay,	// no overlay checking
+		  Record recobj,	// PSL Object
+		  PSLExpression intCln,	// internal column name
+		  PSLExpression nod,	// node
+		  String dlmStr,	// table delimiter
+		  PSLExpression value)	// value to assign to column
+	/* ---------------------------------------------------------------------
+	Function to manage updating nodes -161/-162 for RDB column updates
+	when the equivalent in-line code will result in excessive line lengths.
+	This function maintains -161/-162 for the insert form, and is coded
+	to handle possible overlay situations (i.e., where a column may be set
+	more than once), or not, based on noOverlay.
+
+	ARGUMENTS:  see cdRdbAsn^UCXDD
+
+	OUTPUTS:
+	. $$ = ""	Always returns null.  Implemented as a function to
+			avoid affecting $T in caller.
+	*/
+	type public String vobj(,,)
+	
+	type Number obj
+
+	/* Remove this ACCEPT when we eventually can deal with the proper
+	   passing of an object and use of the object pointer.
+	   See bypassSave^DBSDYNRA
+	*/
+	#ACCEPT Date=09/30/2007; Pgm=RussellDS; CR=29295; Group=DEPRECATED
+	set obj = recobj.getPointer()
+
+	if 'noOverlay, (vobj(obj, -161, nod) [ (","_ intCln_ "=")) set vobj(obj, -162, nod).piece(dlmStr, vobj(obj, -161, nod).piece((","_ intCln_ "=")).length(",")+1) = value
+	else  do {
+		set vobj(obj, -161, nod) = vobj(obj, -161, nod)_ ","_ intCln_ "="
+		set vobj(obj, -162, nod) = vobj(obj, -162, nod)_ dlmStr_ value
+		set vobj(obj,-161,nod).piece(",", 1) = vobj(obj, -161, nod) + 1
+	}
+	quit ""
+
+
+	// ---------------------------------------------------------------------
+public rdbColUpd( Boolean noOverlay,	// no overlay checking
+		  Record recobj,	// PSL Object
+		  PSLExpression intCln,	// internal column name
+		  PSLExpression nod,	// node
+		  String dlmStr,	// table delimiter
+		  PSLExpression value)	// value to assign to column
+	/* ---------------------------------------------------------------------
+	Function to manage updating nodes -161/-162 for RDB column updates
+	when the equivalent in-line code will result in excessive line lengths.
+	This function maintains -161/-162 for the update form, and is coded
+	to handle possible overlay situations (i.e., where a column may be set
+	more than once), or not, based on noOverlay.
+
+	ARGUMENTS:  see cdRdbAsn^UCXDD
+
+	OUTPUTS:
+	. $$ = ""	Always returns null.  Implemented as a function to
+			avoid affecting $T in caller.
+	*/
+	type public String vobj(,,)
+
+	type Number obj
+
+	/* Remove this ACCEPT when we eventually can deal with the proper
+	   passing of an object and use of the object pointer.
+	   See bypassSave^DBSDYNRA
+	*/
+	#ACCEPT Date=09/30/2007; Pgm=RussellDS; CR=29295; Group=DEPRECATED
+	set obj = recobj.getPointer()
+
+	if 'noOverlay, (vobj(obj, -161, nod) [ (","_ intCln_ "=")) set vobj(obj, -162, nod).piece( dlmStr, vobj(obj, -161, nod).piece( ","_ intCln_ "=:HV", 2) + 1) = value
+	else  do {
+		type Number vCc = +vobj(obj, -161, nod)
+		
+		set vobj(obj, -161, nod) = vobj(obj, -161, nod)_ ","_ intCln_ "=:HV"_ vCc
+		set vobj(obj, -162, nod) = vobj(obj, -162, nod)_ dlmStr_ value
+		set vobj(obj,-161,nod).piece(",", 1) = vCc + 1
+	}
+	quit ""
+
+	
+	// ---------------------------------------------------------------------
+public rdbSaveS(Record recobj,		// PSL Object
+		String dlmStr,		// table delimiter
+		String where)		// WHERE clause with host variables (*3)
+	/* ---------------------------------------------------------------------
+	Saves (update or insert) data for an RDB table based on the column
+	information in nodes -161/-162.  This code deals with "simple" tables,
+	i.e., table that have a single nod value used internally in vobj, which
+	excludes wide tables and table that have blobs or memos.  This nod value
+	in this case is "0*".
+
+	The related code in rdbSaveC deals with "complex" tables that may be
+	represented across multiple nod values.
+
+	See cdRdbAsn^UCXDD for documenation related to -161/-162 nodes.
+
+	Node -152 contains the host variables values list, with a trailing
+	delimiter.
 
 	ARGUMENTS:
-	. table = list of tables			/NOREQ/MECH=VAL
-		If supplied, and not empty, the first table will determine the
-		result. This assumes that joins between RDB and M will not occur.
-
-	INPUTS:
-	. ^STBL("MTBLS",tablename) exists if tablename is stored in M.
-
-	NOTES:
-	. The assumption that mixed RDB - M joins will not occur is reasonable,
-		because only the Data Dictionary and the OBJECT structures are
-		stored in M.
+	(*3) where - WHERE clause, built by getWhrKey^UCXDD, using host
+		variables.  Host variable numbers must be in key order
+		to match the host variable value list in node -152.
 	*/
-	quit $$rtIsRdb^UCXDD( table.get())
+
+	type literal Number maxLen = PSL.maxStringLength
+	type literal String nod = "0*"
+
+	type public String vobj(,,)
+
+	type Number obj
+	type String ret
+
+	/* Remove this ACCEPT when we eventually can deal with the proper
+	   passing of an object and use of the object pointer.
+	   See bypassSave^DBSDYNRA
+	*/
+	#ACCEPT Date=09/30/2007; Pgm=RussellDS; CR=29295; Group=DEPRECATED
+	set obj = recobj.getPointer()
+	
+	quit:(vobj(obj, -161, nod) '> 1)	// No columns modified
+
+	// -152 will not exist if no keys, e.g., CUVAR	
+	if (vobj(obj, -2) = 1) do {
+
+		type String vlist = vobj(obj, -162, nod).piece(dlmStr, 2, maxLen)_ dlmStr_ vobj(obj, -152).get()
+
+		set ret=$$EXECUTESQL^%DBAPI(0,"UPDATE "_ vobj(obj, -162, nod).piece(dlmStr, 1)_ " SET "_ vobj(obj, -161, nod).piece(",", 2, maxLen)_ where, dlmStr, vlist)
+	}
+	else  do {
+
+		type Number i
+		type String cols, HVs
+
+		set (cols, HVs) = ""
+
+		for i = 2:1:vobj(obj, -162, nod).length(dlmStr) set cols = cols_ ","_ vobj(obj, -161, nod).piece(",", i).piece("=", 1), HVs = HVs_ ",:HV"_ (i - 1)
+
+		set ret = $$EXECUTESQL^%DBAPI(0, "INSERT INTO "_ vobj(obj, -162, nod).piece(dlmStr, 1)_ " ("_ cols.piece(",", 2, maxLen)_ ") VALUES ("_ HVs.piece(",", 2, maxLen)_ ")", dlmStr, vobj(obj, -162, nod).piece(dlmStr, 2, maxLen)_ dlmStr)
+	}
+	
+	// Reset
+	set vobj(obj, -161, nod) = "1", vobj(obj, -162, nod) = vobj(obj, -162, nod).piece(dlmStr)
+		
+	quit
+	
+	
+	// ---------------------------------------------------------------------
+public rdbSaveC(Record recobj,		// PSL Object
+		String dlmStr,		// table delimiter
+		String where)		// WHERE clause with host variables (*3)
+	/* ---------------------------------------------------------------------
+	Saves (update or insert) data for an RDB table based on the column
+	information in nodes -161/-162.  This code deals with "complex" tables,
+	i.e., table that may have multiple nod value used internally in vobj, which
+	includes wide tables and table that have blobs or memos.
+
+	The related code in rdbSaveS deals with "simple" tables that only have a
+	single nod value.
+
+	See cdRdbAsn^UCXDD for documenation related to -161/-162 nodes.
+
+	Node -152 contains the host variables values list, with a trailing
+	delimiter.
+
+	ARGUMENTS:
+	(*3) where - WHERE clause, built by getWhrKey^UCXDD, using host
+		variables. Host	variable numbers must be in key order
+		to match the host variable value list in node -152.
+	*/
+
+	type literal Number maxLen = PSL.maxStringLength
+
+	type public String vobj(,,)
+
+	type Number collOrder, obj
+	type String nod, ret
+
+	/* Remove this ACCEPT when we eventually can deal with the proper
+	   passing of an object and use of the object pointer.
+	   See bypassSave^DBSDYNRA
+	*/
+	#ACCEPT Date=09/30/2007; Pgm=RussellDS; CR=29295; Group=DEPRECATED
+	set obj = recobj.getPointer()
+
+	/* If insert, do main table(s) first, then blobs/memos as updates.
+	   If update, do blobs/memos first, since may be key change and
+	   need to make sure blob/memo is updated first.  Control with
+	   collOrder (collating order).
+	*/
+	if (vobj(obj, -2) = 0) set collOrder = 1
+	else  set collOrder = -1
+
+	set nod = ""
+	for  set nod = vobj(obj, -161, nod).order(collOrder) quit:nod.isNull()  do {
+		
+		quit:(vobj(obj, -161, nod) '> 1)	// No columns
+	
+		/* nod containing comma indicates blob/memo.  Only single blob or
+		   memo per node.
+		   
+		   collOrder = -1 indicates update
+		*/
+		if nod.isLike("%,%") do {
+			
+			/* Since dealing with a LOB, need to treat value as a
+			   byte string to avoid UTF-8 problems. */
+			
+			type ByteString nod162 = vobj(obj, -162, nod).toByteString()
+			type String tbl = nod162.piece(dlmStr, 1)
+			
+			/* -152 will exist except for inserts and then is only needed
+			   if doing a LOB update as part of an insert.  In that case,
+			   construct it.
+			*/
+			if 'vobj(obj, -152).exists() do {
+	
+				type Number i
+	
+				set vobj(obj, -152) = ""
+				for i = -3:-1 quit:'vobj(obj, i).exists()  set vobj(obj, -152) = vobj(obj, -152)_ vobj(obj, i)_ dlmStr
+			}
+			// Remove leading " WHERE" for call to LOBUPDATE
+			set ret = $$LOBUPDATE^%DBAPI(0, tbl, vobj(obj, -161, nod).piece(",", 2).piece("=", 1), where.extract(7, where.length()), nod162.extract(tbl.toByteString().length() + 2, maxLen), dlmStr, vobj(obj, -152))
+		}
+		else  if (collOrder = -1) do {
+			
+			type String vlist = vobj(obj, -162, nod).piece(dlmStr, 2, maxLen)_ dlmStr_ vobj(obj, -152)
+			
+			set ret = $$EXECUTESQL^%DBAPI(0, "UPDATE "_ vobj(obj, -162, nod).piece(dlmStr, 1)_ " SET "_ vobj(obj, -161, nod).piece(",", 2, maxLen)_ where, dlmStr, vlist)
+		}
+		else  do {
+	 	
+			type Number i
+			type String cols, HVs
+	
+			set (cols, HVs) = ""
+		
+			for i = 2:1:vobj(obj, -162, nod).length(dlmStr) set cols = cols_ ","_ vobj(obj, -161, nod).piece(",", i).piece("=", 1), HVs = HVs_ ",:HV"_ (i - 1)
+	
+			set ret = $$EXECUTESQL^%DBAPI(0, "INSERT INTO "_ vobj(obj, -162, nod).piece(dlmStr, 1)_ " ("_ cols.piece(",", 2, maxLen)_ ") VALUES ("_ HVs.piece(",", 2, maxLen)_ ")", dlmStr, vobj(obj, -162, nod).piece(dlmStr, 2, maxLen)_ dlmStr)
+		}
+		
+		// Reset
+		set vobj(obj, -161, nod) = "1", vobj(obj, -162, nod) = vobj(obj, -162, nod).piece(dlmStr)
+	}
+
+	quit
+	
 
 	// ---------------------------------------------------------------------
 public RsDyRT( String select,		// SELECT-clause (*1)
@@ -233,12 +522,18 @@ public RsDyRT( String select,		// SELECT-clause (*1)
 	* selmap("XV",*) = host variables
 	*/
 	type String expr,fsn(),HAVING,par(),tok
+	type Number ER	// exported by TOKEN^%ZS
 
 	// Rewrite components with literals removed, and converted to uppercase
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set select  = $$TOKEN^%ZS(select,.tok,"'").upperCase()
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set from    = $$TOKEN^%ZS(from,.tok,"'").upperCase()
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set where   = $$TOKEN^%ZS(where,.tok,"'").upperCase()
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set orderby = $$TOKEN^%ZS(orderby,.tok,"'").upperCase()
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set groupby = $$TOKEN^%ZS(groupby,.tok,"'").upperCase()
 
 	// Split GROUPBY in GROUP BY and HAVING part
@@ -249,22 +544,24 @@ public RsDyRT( String select,		// SELECT-clause (*1)
 	   exception. This exceptino is NOT handled here, it is passed to the
 	   caller, because it is unlikely that the query result is as intended.
 	   */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if parlist]"" do PARSPAR^%ZS(parlist,.par)
 	if par("DQMODE").get() set from = $$RsMsDQMD(from)
 
 	// Build Symbol Map
-	set expr = $$RsMsBld(.selmap,.tok,select,from,where,orderby,groupby,HAVING.get())
+	set expr = $$RsMsBld(selmap(,),.tok,select,from,where,orderby,groupby,HAVING.get())
 
 	// insert columns (XC) and tables (XT)
-	set expr = $$RsMsXI(.selmap,"XC",expr)
-	set expr = $$RsMsXI(.selmap,"XT",expr)
+	set expr = $$RsMsXI(selmap(,),"XC",expr)
+	set expr = $$RsMsXI(selmap(,),"XT",expr)
 
 	// return result with SQL literals back in place
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	quit $$UNTOK^%ZS(expr,tok)
 
 	// ---------------------------------------------------------------------
 public RsMsBld(	String map(,),		// map array (*1)	/MECH=REFARR:RW
-		String sqllit,		// SQL literals (*2)	/MECH=REF:RW
+		ret String sqllit,	// SQL literals (*2)	/MECH=REF:RW
 		String select,		// SELECT-clause (*3)
 		String from,		// FROM-clause (*3), (*4)
 		String where,		// WHERE-clause (*3)
@@ -346,9 +643,9 @@ public RsMsBld(	String map(,),		// map array (*1)	/MECH=REFARR:RW
 	- Else whitespace is removed and from and RsMsBld("FROM") will receive
 	  identical values. */
 	if (from.translate("()","  ")[" JOIN ")!(from[" AS ") do {
-		set from = $$RsMsCls( .RsMsBld, .map, .sqllit, 3, from, "")
+		set from = $$RsMsCls( RsMsBld(,), map(,), .sqllit, 3, from, "")
 	}
-	else  set (RsMsBld("FROM"), from) = from.translate(" "_$C(9))
+	else  set (RsMsBld("FROM"), from) = from.translate(" "_ 9.char())
 
 	/* Handle SELECT-clause:
 	   Strip keyword DISTINCT or ALL, but prepend it afterwards */
@@ -362,35 +659,35 @@ public RsMsBld(	String map(,),		// map array (*1)	/MECH=REFARR:RW
 	   */
 	if select = "*" set select = $$RsSelAll( RsMsBld("FROM"))
 
-	set select = $$RsMsSel(.RsMsBld, .map, .sqllit, 1, select, "")
+	set select = $$RsMsSel( RsMsBld(,), map(,), .sqllit, 1, select, "")
 	if expr'="" set RsMsBld("SELECT") = expr_" "_select
 	else  set RsMsBld("SELECT") = select
 
 	// Handle WHERE-clause: do not yet add keyword WHERE, it may still be modified
-	if where'="" set where = $$RsMsCls( .RsMsBld, .map, .sqllit, 2, where)
+	if where'="" set where = $$RsMsCls( RsMsBld(,), map(,), .sqllit, 2, where)
 
 	// Handle GROUPBY-clause:
-	if 'groupby.isNull() set tail = " GROUP BY "_$$RsMsSel( .RsMsBld, .map, .sqllit, 0, groupby, "")
+	if 'groupby.isNull() set tail = " GROUP BY "_$$RsMsSel( RsMsBld(,), map(,), .sqllit, 0, groupby, "")
 
 	// Handle HAVING-clause:
-	if 'having.isNull() set tail = tail_" HAVING "_$$RsMsCls( .RsMsBld, .map, .sqllit, 2, having)
+	if 'having.isNull() set tail = tail_" HAVING "_$$RsMsCls( RsMsBld(,), map(,), .sqllit, 2, having)
 
 	// Handle ORDERBY-clause
-	if 'orderby.isNull() set tail = tail_" ORDER BY "_$$RsMsSel(.RsMsBld, .map, .sqllit, 0, orderby, "ASC,DESC")
+	if 'orderby.isNull() set tail = tail_" ORDER BY "_$$RsMsSel(RsMsBld(,), map(,), .sqllit, 0, orderby, "ASC,DESC")
 	
 	/* Update the FROM-clause (and the WHERE-clause) for use of wide tables
 	   If from and bld("FROM") are equal, simple name substitution in
 	   combination with an addition to the where-clause will do.
 	   Else an aliased derivedtable clause must be created. */
 	if from=RsMsBld("FROM") {	// NOTE: do{} needed: call modifies from
-		do RsMsWtL(.RsMsBld, .map, .sqllit, .from, .where)
+		do RsMsWtList(RsMsBld(,), map(,), .sqllit, .from, .where)
 	}
-	else  do RsMsWtD(.RsMsBld,.map)
+	else  do RsMsWtJoin(RsMsBld(,),map(,))
 
 	/* The WHERE-clause can now be prepended to tail */
 	if 'where.isNull() set tail = " WHERE "_ where_ tail
 
-	/* Export "SELNAM" and "SELTYP" from this query to map() */
+	/* Export "SELNAM" and "SELTYP" from this query to map(,) */
 	set map("SELNAM") = RsMsBld("SELNAM")
 	set map("SELTYP") = RsMsBld("SELTYP")
 
@@ -402,7 +699,7 @@ public RsMsBld(	String map(,),		// map array (*1)	/MECH=REFARR:RW
 	// ---------------------------------------------------------------------
 public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		String map(,),		// (*2)			/MECH=REFARR:RW
-		String sqllit,		// (*3)			/MECH=REF:RW
+		ret String sqllit,	// (*3)			/MECH=REF:RW
 		Number mode,		// (*4)
 		String clause,		// SQL clause to be analyzed
 		String kwds)		// (*6)
@@ -424,6 +721,11 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		string literal that is converted to uppercase for type 'U'
 		columns.
 	(*4) mode = processing mode
+		0 = simple column list (GROUPBY or ORDERBY)
+		  - the value of kwds will be used
+		  - the only valid delimiter character is ","
+		  - does not append the additional TOKEN parameter for computed
+		    columns that require a callback. See $$RsMsSel().
 		1 = value-expression (SELECT)
 		  - the value of kwds will be ignored, and replaced by
 		    "NULL,COUNT,MIN,MAX,AVE,SUM,UPPER,LOWER,SUBSTR"
@@ -474,7 +776,7 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		(between, dt, origtbl, prevatom, ptrnot).
 	*/
 	type literal String BAR = "|"		// standard delimiter
-	type literal String TAB = $CHAR(9)	// quote char for computeds
+	type literal String TAB = 9.char()	// quote char for computeds
 
 	type String atom		// current atom being examined
 	type Boolean between = 0	// 1 indicates AND in between-predicate
@@ -489,14 +791,18 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 	type Number ptrnot		// position of NOT in clause
 	type String seltyp = ""		// column type in SELECT
 
-	if mode<3 set delim = "*/+-|,()", kwds = "NULL,COUNT,MIN,MAX,AVG,SUM,UPPER,LOWER,SUBSTR"
-	if mode=2 set delim = delim_"<=>", kwds = kwds_",IN,IS,OR,AND,LIKE,NOT,BETWEEN,EXISTS,ANY,ALL"
-	if mode=3 set delim = ",()", kwds = "AS,JOIN,LEFT,RIGHT,KEY,CROSS,NATURAL,USING,OUTER,INNER,FULL,UNION"
-
+	if mode=0 set delim = ","	// and use supplied kwds
+	else  {
+		if mode<3 set delim = "*/+-|,()", kwds = "NULL,COUNT,MIN,MAX,AVG,SUM,UPPER,LOWER,SUBSTR"
+		if mode=2 set delim = delim_"<=>", kwds = kwds_",IN,IS,OR,AND,LIKE,NOT,BETWEEN,EXISTS,ANY,ALL"
+		if mode=3 set delim = ",()", kwds = "AS,JOIN,LEFT,RIGHT,KEY,CROSS,NATURAL,USING,OUTER,INNER,FULL,UNION"
+	}
 	if mode=3 set bld("FROM")=""
 
 	// main decomposition loop =============================================
 	set ptr = 0, atom = "", null = 0, null(0) = 0
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	for  set prevatom = atom, atom = $$ATOM^%ZS(clause,.ptr,delim,,1) do { quit:'ptr
 		if ER.get() set ptr = 0 quit
 		
@@ -510,6 +816,8 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		   is the next atom (the exponent). */
 		if atom?.N.1"."1.N1"E" do {
 			set ptr = ptr+1		// advance to "+" or "-"
+
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			set atom = atom_ clause.extract(ptr)_ $$ATOM^%ZS( clause, .ptr, delim, , 1)
 		}
 
@@ -559,7 +867,7 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		   The between-flag can (always) be reset. */
 		if (atom="OR")!(atom="AND") do { quit
 			if between set between = 0 quit
-			do RsMsNull( .null(), sqllit, .clause, .ptr)
+			do RsMsNull( null(), sqllit, .clause, .ptr)
 			set dt = ""
 		}
 		if atom="BETWEEN" set between = 1 quit
@@ -583,7 +891,7 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 			   null-predidcate, else replace null-predicate by
 			   comparison-predicate */
 			if colnull.piece(BAR,3).extract(3)=0 quit
-			do RsMsRpl(.clause, $CHAR(9)_ colnull.piece(BAR)_ $CHAR(9)_ comppred, null(0).piece(BAR,2), .ptr)
+			do RsMsRpl(.clause, 9.char()_ colnull.piece(BAR)_ 9.char()_ comppred, null(0).piece(BAR,2), .ptr)
 		}
 
 		/* =============================================================
@@ -596,6 +904,8 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 			type Number sptr = ptr, num = 0
 			type String satm
 			type Boolean found = 0
+
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			for  set satm=$$ATOM^%ZS(clause,.sptr,"+*-/|,()<=>",,1) do { quit:found
 				if sptr=0 set found = 1 quit
 				if (","_kwds_",")[(","_satm_",") set found = 1 quit
@@ -609,7 +919,7 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 			if sptr = 0 set sptr = clause.length(), satm = ""
 			type String searcond = clause.extract( ptr + 1, sptr - satm.length())
 			set num = searcond.length()
-			set searcond = $$RsMsCls(.bld, .map, .sqllit, 2, searcond, "")
+			set searcond = $$RsMsCls( bld(,), map(,), .sqllit, 2, searcond, "")
 
 			// replace original searchcond by returned and update ptr
 			set clause = clause.extract( 1, ptr)_ searcond_ clause.extract( ptr+num+1, clause.length())
@@ -638,9 +948,10 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 			   break into components, add recursively */
 			type Number ER
 			type String FROM,GROUP,HAVING,RM,SELECT,subquery,WHERE
+
 			set SELECT = $$TOK^SQL(nest.extract( 8, nest.length()), "FROM,WHERE,GROUP,HAVING", sqllit)
 			if GROUP.get().extract(1,3)="BY " set GROUP = GROUP.extract( 4, GROUP.length())
-			set subquery = $$RsMsBld(.map, .sqllit, SELECT, FROM.get(), WHERE.get(), "", GROUP.get(), HAVING.get())
+			set subquery = $$RsMsBld(map(,), .sqllit, SELECT, FROM.get(), WHERE.get(), "", GROUP.get(), HAVING.get())
 
 			// replace original subquery by returned and update ptr
 			set clause = clause.extract(1, ptr)_ subquery_ clause.extract(ptr+len+1, clause.length())
@@ -650,9 +961,9 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		// =============================================================
 		if atom = "*", prevatom="(", mode = 1 do {	// COUNT(*)
 			/* Take first table from normalized list,
-			   insert into map(), then take first wide-table */
+			   insert into map(,), then take first wide-table */
 			type String tbl = bld("FROM").piece(",")
-			type Number sym = $$RsMsIns(.bld, .map, "XT", tbl)
+			type Number sym = $$RsMsIns( bld(,), map(,), "XT", tbl)
 			set tbl = map("XT", tbl).piece(BAR,2).piece(",")
 			set bld("FROM", tbl)=""
 		}
@@ -693,18 +1004,19 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		   SQL accepts '+' in numeric literals, $$isNum^UCGM() does not
 		   (yet) allow this. Translating the "+" into a "-" will pass a
 		   value that $$isNum^UCGM() understands. */
-		else  if $$isNum^UCGM($tr(atom,"+","-")) set dtmode = 1
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		else  if $$isNum^UCGM( atom.translate("+","-")) set dtmode = 1
 
 		// =============================================================
-		else  if $e(atom)=$C(0) set dtmode = 2		// string literal
+		else  if atom.extract()=0.char() set dtmode = 2	// string literal
 
 		// =============================================================
-		else  if $e(atom)=":" do {			// hostvar
+		else  if atom.extract()=":" do {			// hostvar
 			/* replace hostvar (after ":") in clause with
 			   $C(9)sym$C(9), assign its map(,) entry to null(null),
 			   so it is available to $$RsMsDT(). */
 			set atom = atom.extract(2, atom.length())
-			type Number sym =  $$RsMsIns(.bld, .map, "XV", atom, dt.extract())
+			type Number sym =  $$RsMsIns( bld(,), map(,), "XV", atom, dt.extract())
 			do RsMsSub( TAB_ sym_ TAB, atom, .clause, .ptr)
 			set null(null) = map( "XV", sym)
 			set dtmode = 3
@@ -729,14 +1041,14 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 			set bld("FROM") = bld("FROM")_ atom
 			set dtmode = 5
 
-			do RsMsSub( TAB_ $$RsMsIns(.bld, .map, "XT", atom)_ TAB, atom, .clause, .ptr)
+			do RsMsSub( TAB_ $$RsMsIns( bld(,), map(,), "XT", atom)_ TAB, atom, .clause, .ptr)
 		}
 		// =============================================================
 		else  do {					// column spec
 			/* Replace columnref in clause with $C(9)sym$C(9).
 			   Translate into qualified column name (qcn), and
 			   insert it into the symbol table.*/
-			type String qcn = $$RsMsQcn(.bld, atom)
+			type String qcn = $$RsMsQcn( bld(,), atom)
 
 			/* ==================================== OTHER IDENTIFIER
 			   If the qcn starts with "_.", then the name did not map
@@ -748,7 +1060,7 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 			if qcn.extract(1,2)="_." set dtmode = 5 quit
 			
 			// =====================================================
-			type String sym = TAB_ $$RsMsIns(.bld, .map, "XC", qcn)_ TAB
+			type String sym = TAB_ $$RsMsIns( bld(,), map(,), "XC", qcn)_ TAB
 
 			/* Store the symbol map entry in null(null), so
 			   it is available to $$RsMsDT().
@@ -769,8 +1081,9 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 			   a separate value expression. */
 			type String ic = map("XC",qcn).piece(BAR,2,2,TAB)
 			if ic["(" do {
+				#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 				set ic = $$TOKEN^%ZS(ic.piece(TAB,2),.sqllit)
-				set ic = $$RsMsCls(.bld,.map,.sqllit,1,ic,"")
+				set ic = $$RsMsCls( bld(,), map(,), .sqllit, 1, ic, "")
 
 				/* FSCW 2007-03-16: For computeds that require
 				   callback, add the additional parameter as the
@@ -781,11 +1094,15 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 				   The parameter is added as a special hostvar,
 				   starting with "%%". $$RsMsXV will recognize
 				   that, and treat it accordingly.
+				   FSCW 2008-09-08: Do not add this for mode=0
+				   because GROUP BY and ORDER BY will use an
+				   alias instead of the computed returned by
+				   this function
 				   */
-				if Db.isDefined( "STBLCLBKCOL", "FID=:qcn.piece(""."") AND DI=:qcn.piece(""."",2)") {
+				if Db.isDefined( "STBLCLBKCOL", "FID=:qcn.piece(""."") AND DI=:qcn.piece(""."",2)"),mode'=0 {
 				  set ic = ic.extract( 1, ic.length() - 1)
 				  if 'ic.endsWith("(") set ic = ic_ ","
-				  set ic = ic_ ":"_ TAB_ $$RsMsIns(.bld, .map, "XV", "%%$S($G(%TOKEN)'="""":0_%TOKEN,1:1_$J)","T0")_ TAB_ ")"
+				  set ic = ic_ ":"_ TAB_ $$RsMsIns( bld(,), map(,), "XV", "%%$S($G(%TOKEN)'="""":0_%TOKEN,1:1_$J)","T0")_ TAB_ ")"
 				}
 
 				do RsMsSub(ic, atom, .clause, .ptr)
@@ -809,16 +1126,16 @@ public RsMsCls(	String bld(,),		// (*1)			/MECH=REFARR:RW
 				   bld("FROM",), but only if the column name is
 				   qualified (SYSDAT could be treated as an
 				   unqualified columnname) and not computed. */
-				set sym = $$RsMsIns(.bld, .map, "XT", $P(qcn, "."))
+				set sym = $$RsMsIns( bld(,), map(,), "XT", qcn.piece( "."))
 				// It's save to use map(,).piece() without TAB
 				set bld("FROM", map("XC",qcn).piece(BAR, 2).piece(".")) = ""
 			}
 		} // end column specification
-		set dt=$$RsMsDT(.map, .sqllit, dtmode, dt, .null(), .clause, .ptr)
+		set dt=$$RsMsDT(map(,), .sqllit, dtmode, dt, null(), .clause, .ptr)
 	} // end main decomposition loop
 
 	/* handle last null-pred */
-	do RsMsNull( .null(), sqllit, .clause, .ptr)
+	do RsMsNull( null(), sqllit, .clause, .ptr)
 
 	/* Force datatype and decimals of SELECT-clause and pass in bld()  */
 	if mode = 1 do {
@@ -888,7 +1205,7 @@ public RsMsDQMD( List from)		// (*1)
 	*/
 	type Number count = from.count()
 	if count=1 quit from
-	if (from.translate("()","  ")[" JOIN ")!(from[" AS ") quit from
+	if (from.toString().translate("()","  ")[" JOIN ")!(from[" AS ") quit from
 
 	type Number elm = 2	// table name iterator for table being added
 	type String key		// key column of table being added
@@ -901,7 +1218,7 @@ public RsMsDQMD( List from)		// (*1)
 	type PSLTable td	// PSLTable instance for table being added
 
 	// strip quotes from table names
-	if from["""" set from = from.translate("""")
+	if from.toString()["""" set from = {List}(from.toString().translate(""""))
 
 	for elm = 2:1:count do {
 		/* ================
@@ -912,11 +1229,11 @@ public RsMsDQMD( List from)		// (*1)
 		set inner = from.elementAt(elm)
 		set td = PSL.getPSLTable( inner, 0)
 
-		// DEP and LN are INNER JOINed all others OUTER JOINed
+		// child-tables are INNER JOINed all others OUTER JOINed
 		if td.parentTable.isNull() set RsMsDQMD = RsMsDQMD_ " LEFT JOIN "_ inner
 		else  set RsMsDQMD = RsMsDQMD_ " INNER JOIN "_ inner
 		set pk = td.primaryKeys
-		//if pk.isNull() throw Class.new( "Error", "%PSL-E-SQLJOINFAIL,,"_ RsMsDQMD)
+
 		if pk.isNull() quit		// CUVAR etc: no ON-clause
 		set on = ""
 		for nk = 1:1:pk.count() do {
@@ -948,7 +1265,6 @@ public RsMsDQMD( List from)		// (*1)
 			for no = 1:1:elm-1 do {
 				set outer = from.elementAt(no)
 				if '$$isColumn^UCXDD( outer, key) quit
-				//if 'Db.isDefined("DBTBL1D","%LIBS='SYSDEV',FID=:outer,DI=:key") quit
 				if 'on.isNull() set on = on_ " AND "
 				set on = on_ outer_ "."_ key_ "="_ inner_ "."_ key
 				set no = elm	// done when match found
@@ -961,13 +1277,13 @@ public RsMsDQMD( List from)		// (*1)
 	quit RsMsDQMD
 
 	// ---------------------------------------------------------------------
-RsMsDT(		String map(,),		// map array		/MECH=REFARR:R
-		String sqllit,		// string literals (*2)	/MECH=REF:RW
+private RsMsDT(	String map(,),		// map array		/MECH=REFARR:R
+		ret String sqllit,		// string literals (*2)	/MECH=REF:RW
 		String mode,		// dtmode (*3)
 		String dt,		// current data type
 		String pred(),		// predicate (*5)	/MECH=REFARR:RW
-		String clause,		// clause (*6)		/MECH=REF:RW
-		String ptr)		// char pointer (*7)	/MECH=REF:RW
+		ret String clause,	// clause (*6)		/MECH=REF:RW
+		ret String ptr)		// char pointer (*7)	/MECH=REF:RW
 	/* ---------------------------------------------------------------------
 	This function edits the DataType string. The only purpose of this function
 	is to ensure that string literals are replaced by their conceptual value
@@ -1038,7 +1354,7 @@ RsMsDT(		String map(,),		// map array		/MECH=REFARR:R
 
 	/* If already complete, only strlit replacement may be needed */
 	if dt["~" do { quit dt		// already complete
-		if mode=2 do RsMsDTL( .sqllit, dt.extract(), pred, .pred(), .clause, .ptr)
+		if mode=2 do RsMsDTL( .sqllit, dt.extract(), pred, pred(), .clause, .ptr)
 	}
 
 	if dt="" quit dt2		// first datatype is always OK
@@ -1068,7 +1384,7 @@ RsMsDT(		String map(,),		// map array		/MECH=REFARR:R
 		   Replace by internal numeric representation if needed:
 		   If dtdq in (C,D,L) then assume conversion needed. In that case
 		   the resulting datatype is Number */
-		do RsMsDTL( .sqllit, dtdq, pred, .pred(), .clause, .ptr)
+		do RsMsDTL( .sqllit, dtdq, pred, pred(), .clause, .ptr)
 		if "CDL"'[dtdq set dt = dtdq quit	// keep previous datatype
 		set dt = "N"
 		}
@@ -1083,12 +1399,12 @@ RsMsDT(		String map(,),		// map array		/MECH=REFARR:R
 	quit dt
 
 	// ---------------------------------------------------------------------
-RsMsDTL(	String sqllit,		// string literals (*1)	/MECH=REF:RW
+private RsMsDTL( ret String sqllit,	// string literals (*1)	/MECH=REF:RW
 		String dtdq,		// DQ data type (*2)
 		Number sub,		// subcript  (*3)
 		String pred(),		// (*4)			/MECH=REFARR:RW
-		String clause,		// (*1)
-		String ptr)		// (*1)
+		ret String clause,	// (*1)
+		ret String ptr)		// (*1)
 	/* ---------------------------------------------------------------------
 	This subroutine replaces a string literal by its internal representation
 	if needed.
@@ -1126,14 +1442,18 @@ RsMsDTL(	String sqllit,		// string literals (*1)	/MECH=REF:RW
 	if "CDLU"'[dtdq quit	// no conversion needed
 
 	type String atom = pred(sub)
-	type Number pos = atom.piece($CHAR(0),2)
-	type String lit = sqllit.piece($CHAR(1),pos)
+	type Number pos = atom.piece(0.char(),2)
+	type String lit = sqllit.piece(1.char(),pos)
 	type String val
 
 	if lit = "''" quit	// don't touch empty string
 
 	if dtdq="U",lit?.CNPU quit	// no need to convert if no lowercase
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if dtdq="U" set val = $$TOKEN^%ZS( lit.upperCase(), .sqllit, "'")
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	else  set val = $$INT^%ZM(lit.stripQuotes("'"),dtdq)
 
 	if ptr>0 set pos = ptr
@@ -1145,7 +1465,7 @@ RsMsDTL(	String sqllit,		// string literals (*1)	/MECH=REF:RW
 	quit
 
 	// ---------------------------------------------------------------------
-RsMsEx( String context)	// Text for Error.context
+private RsMsEx( String context)	// Text for Error.context
 	/* ---------------------------------------------------------------------
 	Throws a PSL runtime exception
 
@@ -1220,7 +1540,7 @@ public RsMsIns(	String bld(,),		// (*1)	`		/MECH=REFARR:RW
 	type public String %DB			// database environment variable
 
 	type literal String BAR = "|"		// standard separator
-	type literal String TAB = $CHAR(9)	// quote char for computeds
+	type literal String TAB = 9.char()	// quote char for computeds
 
 	type String ext, xtr
 	type Number mmd = map("MD").get(1)
@@ -1288,10 +1608,10 @@ public RsMsIns(	String bld(,),		// (*1)	`		/MECH=REFARR:RW
  	quit map
 
 	// ---------------------------------------------------------------------
-RsMsNull(	String null(),	// null-pred array (*2)		/MECH=REFARR:RW
-		String sqllit,	// tokenized SQL literals
-		String clause,	// SQL clause			/MECH=REF:RW
-		Number ptr)	// current pointer		/MECH=REF:RW
+private RsMsNull( String null(),	// null-pred array (*2)		/MECH=REFARR:RW
+		String sqllit,		// tokenized SQL literals
+		ret String clause,	// SQL clause			/MECH=REF:RW
+		ret Number ptr)		// current pointer		/MECH=REF:RW
 	/* ---------------------------------------------------------------------
 	Check a complete predicate for COLUMN = '' or COLUMN <> '', and replace it
 	by COLUMN IS NULL or COLUMN IS NOT NULL respectively (unless the column
@@ -1338,9 +1658,9 @@ RsMsNull(	String null(),	// null-pred array (*2)		/MECH=REFARR:RW
 		else  if null( at) = "<", null(at+1) = ">" set at = at + 2, isnull = " IS NOT NULL"
 
 		if isnull.isNull() quit				// incorrect compop
-		if null(at).extract() '= $CHAR(0) quit		// atom not strlit
-		type Number lit = null(at).piece($CHAR(0),2)
-		if sqllit.piece($CHAR(1),lit) '= "''" quit	// atom not ''
+		if null(at).extract() '= 0.char() quit		// atom not strlit
+		type Number lit = null(at).piece(0.char(),2)
+		if sqllit.piece(1.char(),lit) '= "''" quit	// atom not ''
 
 		/* We have a match, a replacement will be made. Check the COLUMN's
 		   NULLIND value to see if the '' needs to be translated into 0 */
@@ -1355,7 +1675,7 @@ RsMsNull(	String null(),	// null-pred array (*2)		/MECH=REFARR:RW
 		   clause, followed by all atoms to the right of null(at).
 		   To be save, all appended atoms will be separated from each other
 		   by a space. */
-		set isnull = $CHAR(9)_ atom.piece(BAR)_ $CHAR(9)_ isnull
+		set isnull = 9.char()_ atom.piece(BAR)_ 9.char()_ isnull
 
 		for pos = at+1:1:null set isnull = isnull_ " "_ null(pos)	
 		do RsMsRpl( .clause, isnull, null(0).piece(BAR,2), .ptr)
@@ -1365,7 +1685,7 @@ RsMsNull(	String null(),	// null-pred array (*2)		/MECH=REFARR:RW
 	quit
 
 	// ---------------------------------------------------------------------
-RsMsQcn(	String bld(),		// (*1)			/MECH=REFARR:R
+private RsMsQcn( String bld(,),		// (*1)			/MECH=REFARR:R
 		String cln)		// (*2)
 	/* ---------------------------------------------------------------------
 	Because the SQL standard requires that column specifications uniquely
@@ -1420,7 +1740,7 @@ RsMsQcn(	String bld(),		// (*1)			/MECH=REFARR:R
 
 
 	// ---------------------------------------------------------------------
-private RsMsQID1( String DQtbl)		// DQ Table name
+RsMsQID1( String DQtbl)		// DQ Table name
 	/* ---------------------------------------------------------------------
 	This helper function returns an edited form of DBTBL1.QID1:
 	- M quotes will be replaced by SQL quotes
@@ -1444,15 +1764,17 @@ private RsMsQID1( String DQtbl)		// DQ Table name
 	   This shall be made available as a property of td !! */
 	type RecordDBTBL1 rec = Db.getRecord("DBTBL1","%LIBS='SYSDEV',FID=:DQtbl")
 	type String clause = rec.qid1
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if clause["""" set clause = $$QSWP^%ZS(clause,"""","'")
 	if clause.translate("()","  ")[" OR " set clause = "("_ clause_ ")"
 	quit clause
 
 	// ---------------------------------------------------------------------
-RsMsRpl(	String cls,	// source and target string	/MECH=REF:RW
-		String val,	// replacement value
-		String old,	// old value of ptr (*3)
-		Number cur)	// new vlaue of ptr (*4)	/MECH=REF:RW
+private RsMsRpl( ret String cls,	// source and target string	/MECH=REF:RW
+		String val,		// replacement value
+		String old,		// old value of ptr (*3)
+		ret Number cur)		// new vlaue of ptr (*4)	/MECH=REF:RW
 	/* ---------------------------------------------------------------------
 	ARGUMENTS:
 	(*3) the value of the pointer to the atom preceding the string to be
@@ -1462,30 +1784,29 @@ RsMsRpl(	String cls,	// source and target string	/MECH=REF:RW
 	OUTPUTS:
 	. cls = modified string
 		The characters from cur+1 up to and including new will have been
-		replaqced by val.
+		replaced by val.
 	. cur = updated position
 		If new>0, then its value will be updated to old + val.length()
 	*/
 	type Number pos
 	if cur>0 set pos = cur
 	else  set pos = cls.length()
-	set cls = cls.extract(1,old)_ val_ cls.extract( pos+1, cls.length())
+	set cls = cls.extract( 1, old)_ val_ cls.extract( pos+1, cls.length())
 	if cur>0 set cur = old + val.length()
 	quit
 
 	// ---------------------------------------------------------------------
 public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		String map(,),		// (*2)			/MECH=REFARR:RW
-		String sqllit,		// (*3)			/MECH=REF:RW
+		ret String sqllit,	// (*3)			/MECH=REF:RW
 		Number mode,		// (*4)
 		String clause,		// SQL clause to be analyzed
 		List kwds)		// (*6)
 	/* ---------------------------------------------------------------------
 	Handle a single SELECT, GROUP BY or ORDER BY clause.
 	This function acts as a "wrapper" that treats its input as a list
-	of value expressions (mode=1) or column names (mode=0). If mode=0, all
-	handling is done in  this function. If mode=1, $$RsMsCls() is called to
-	decompose the single value expression.
+	of value expressions (mode=1) or column names (mode=0). In either case
+	$$RsMsCls() is called to decompose the single value expression.
 
 	ARGUMENTS:
 	(*1) bld(,) = build structure from caller	
@@ -1506,14 +1827,9 @@ public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		value-expression. The REF:W applies when the clause contains a
 		string literal that is converted to uppercase for type 'U'
 		columns.
-	(*4) mode = processing mode
+	(*4) mode = processing mode will be passed to $$RsMsCls()
 		0 = simple column list (GROUPBY or ORDERBY)
-		  - the value of kwds will be used
-		  - the only valid delimiter character is ","
 		1 = value-expression list (SELECT)
-		  - the value of kwds will be ignored, and replaced by
-		    "NULL,COUNT,MIN,MAX,AVE,SUM,UPPER,LOWER,SUBSTR"
-		  - valid delimiter characters are "*+-/|,()"
 	(*6) kwds = comma-separated list of accepted keywords
 		if mode=0:	/REQ
 		if mode=1:	/NOREQ
@@ -1541,9 +1857,30 @@ public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 	. bld("SELTYP") = Datatype and Number of decimals
 		For each column in the select-list, this node will contain the
 		datatype and number of decimals.
+
+	NOTES:
+	. Computed columns that require a callback provide a dilemma for mode=0.
+		According to the SQL standard, the ORDER BY and GROUP BY
+		clause must name a column that occurs in the SELECT-clause.
+		DQ / PSL relaxes the latter by adding the column to the SELECT-
+		clause if it is missing.
+		For computed columns, a column alias is added to the (forced)
+		reference in the SELECT-clause, and the alias itself is used in
+		the generated ORDER BY or GROUP BY clause. $$RsMsCls() is aware
+		of this, and will NOT add the TOKEN parameter to the HOSTVAR
+		list.
+		If the computed column is explicitly named in the SELECT-clause,
+		as required by the SQL standard, this works out as needed.
+		However, if the computed column is not named in the SELCET-
+		clause, it will be added here, but the TOKEN parameter will be
+		missing from the call. This will not even result in a runtime
+		failure (just incorrect data-item proctection behavior).
+		This failure is the expected behavior, and will disappear as
+		soon as the SQL statement is corrected to conform to the SQL
+		Standard (by explicitly including the column in the list).
 	*/
 	type literal String BAR = "|"		// standard delimiter
-	type literal String TAB = $CHAR(9)	// quote char for computeds
+	type literal String TAB = 9.char()	// quote char for computeds
 
 	type String elem		// current element being examined
 	type String ic			// internal column or expression
@@ -1563,7 +1900,7 @@ public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		type String frme,tble,tbli
 		for ni = 1:1:bld("FROM").length(",") do {
 			set tbli = bld("FROM").piece(",", ni)
-			set sym = $$RsMsIns( .bld, .map, "XT", tbli)
+			set sym = $$RsMsIns( bld(,), map(,), "XT", tbli)
 			set frme = map("XT",tbli).piece(BAR,2)
 			for ne = 1:1:frme.length(",") set bld("FROM", frme.piece(",", ne)) = ""
 		}
@@ -1584,7 +1921,7 @@ public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		   expression, which shall only occur when mode = 1. */
 		set selnam = elem.piece(" ")
 		if selnam.translate("""%","AA")?1A.ANP do {
-			set qcn = $$RsMsQcn(.bld, selnam)
+			set qcn = $$RsMsQcn( bld(,), selnam)
 			//set selalias = selnam_ "_"
 			//if selalias["." set selalias = selalias.piece(".", selalias.length("."))
 			set selalias = $$RESWRD^DBMAP(selnam.piece(".", selnam.length(".")))_ "_"
@@ -1596,7 +1933,13 @@ public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 
 		if mode = 0 set selprim = selnam
 		else  set selprim = elem
-		set selprim = $$RsMsCls(.bld, .map, .sqllit, 1, selprim, kwds)
+
+		/* Do not pass kwds (keywords) to RsMsCls if mode=0. Because
+		   selprim contains only a name in that case, it must be
+		   remapped regardless of the supplied keyword list. Note that
+		   RsMsCls discards the value for mode=1 anyway.
+		   */
+		set selprim = $$RsMsCls( bld(,), map(,), .sqllit, mode, selprim, "")
 
 		if map("XC",qcn).exists() set ic = map("XC",qcn).piece(BAR,2,2,TAB)
 		else  set ic=""
@@ -1620,12 +1963,15 @@ public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 		if mode = 0 do {
 			/* A map(,) entry must have been added. if not throw
 			   exception */
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			if 'map("XC",qcn).exists() do RsMsEx(qcn_ " in ORDER BY/GROUP BY "_$$UNTOK^%ZS(elem))
 
 			/* Check ASC / DESC keyword (if allowed). A keyword that
 			   does not occur in the supplied list will trigger an
 			   exception */
 			type String kwd = elem.extract(selnam.length()+2,elem.length()).translate(" ")
+
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			if 'kwd.isNull() set selprim = selprim_" "_kwd if 'kwds.contains(kwd) do RsMsEx(kwd_ " in ORDER BY/GROUP BY "_$$UNTOK^%ZS(elem))
 
 			/* Check for computed column in ORDER BY: if the internal
@@ -1639,8 +1985,11 @@ public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 			if 'bld("SELECT", qcn).exists() do {
 				/* column in ORDER BY or GROUP BY not in SELECT
 				   the UNQUALIFIED RDB column name is added to
-				   bld("SELNAM") */
+				   bld("SELNAM"), except if it is a call-back */
 				if bld("SELECT", "*").exists() quit	// SELECT *
+				
+				#ACCEPT GROUP=ACCESS;CR=35741;DATE=2008-10-23;PGM=Frans S.C. Witte
+				if Db.isDefined( "STBLCLBKCOL", "FID=:qcn.piece(""."") AND DI=:qcn.piece(""."",2)") do RsMsEx("invalid callback-computed "_qcn_ " in ORDER BY/GROUP BY "_$$UNTOK^%ZS(elem))
 				type String sym = TAB_ map("XC", qcn).piece(BAR)_ TAB
 				set bld("SELECT", qcn) = elem		// only once
 				set bld("SELECT") = bld("SELECT")_ ","_ sym
@@ -1668,7 +2017,7 @@ public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 			else  do {
 				/* Need to define a separate selname, and use the
 				   seltype returned by $$RsMsCls() */
-				set selnam = elem.translate("*/+-|():""% "_$C(0),"_______").upperCase()
+				set selnam = elem.translate("*/+-|():""% "_0.char(),"_______").upperCase()
 				if selnam.isNull() set selnam = selnum_"_"
 				set seltyp = bld("CLSTYP")
 			}
@@ -1686,7 +2035,7 @@ public RsMsSel(	String bld(,),		// (*1)			/MECH=REFARR:RW
 	quit RsMsSel
 
 	// ---------------------------------------------------------------------
-RsMsSelE( String str)	// String to break down		/MECH=REFNAM:RW
+private RsMsSelE( ret String str)	// String to break down		/MECH=REFNAM:RW
 	/* ---------------------------------------------------------------------
 	Helper function that returns the next element in a SELECT, ORDER BY, or
 	GROUP BY clause.
@@ -1710,10 +2059,10 @@ RsMsSelE( String str)	// String to break down		/MECH=REFNAM:RW
 	quit sel.trim()
 
 	// ---------------------------------------------------------------------
-RsMsSub(	String sym,	// symbol string to be used as placeholder
+private RsMsSub( String sym,	// symbol string to be used as placeholder
 		String org,	// original value to be replaced
-		String str,	// source and target string	/MECH=REF:RW
-		Number pos)	// position of last char of org	/MECH=REF:RW
+		ret String str,	// source and target string	/MECH=REF:RW
+		ret Number pos)	// position of last char of org	/MECH=REF:RW
 	/* ---------------------------------------------------------------------
 	OUTPUTS:
 	. str = modified string
@@ -1731,51 +2080,78 @@ RsMsSub(	String sym,	// symbol string to be used as placeholder
 	quit
 
 	// ---------------------------------------------------------------------
-RsMsWtACN( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
-	String map(,))		// map array			/MECH=REFARR:R
+private RsMsWtChild( PSLTable child	// child table
+		, String bld(,)	// tables used in from-clause
+		, String map(,)	// map array
+		)
 	/* ---------------------------------------------------------------------
-	Return "left key" for wide table join column clause as follows:
-	- If bld("FROM","ACN") does not exist, then ACN is not referenced in
-		this query. The function will return "".
-	- If CID is the only column from ACN, then ACN is not needed to satisfy
-		the query, and every other wide table can be used as the left
-		key. This is returned as "?.CID".
-	- Otherwise "ACN.CID" is returned.
+	Return "join keys" for wide table join column clause as follows:
+	- If bld("FROM",parent) does not exist, then the parent table is not
+		referenced in this query. The function will return "".
+	- If only key columns of the parent table are referenced, then the
+		parant table is not needed to satisfy the query, and every other
+		wide table can be used on the left side of a key comparison.
+		This is returned as "?.key1 = !.key1 AND ?.key2 - !.key2".
+	- Otherwise "parent.key1 = !.key1 AND parent.key2 = !.key2" is returned.
 
-	ARGUMENTS:
+	INPUTS:
 	. bld("FROM",internalTable) contains all internal table names from which
 		columns are referenced
-	. map("XV",wt.CID) will be used to see if ACN.CID is the only column from
-		ACN.
+	. map("XV",wt.kN) will be used to see if only key columns from the
+		parent table are used.
+
+	OUTPUTS:
+	. $$ = join clause on primary key columns of parent table.
+
+	NOTES:
+	. If the return value only contains "!", then the parent table is used,
+		and the caller will only need to replace the "!" by the
+		appropriate child table.
+	. If the return value contains both "|" and "?", then the parent table
+		is not needed for the query, and the caller must replace "?"
+		by the first child table part, and the "!" by subsequent child
+		parts.
+	. If the return value contains both "?" and "!", then the return value
+		will start with "?"
+	. This function assumes that the DQ names of the primary key columns
+		are the same as the internal RDB names of the columns.
+	. This function assumes that the DQ name of the parent table is the same
+		as the internal RDB name of the parent table.
 	*/
-	type literal String BAR     = "|"
-	type literal String JOINKEY = ".CID"
+	type literal String BAR = "|"
 
-	if 'bld("FROM","ACN").exists() quit ""
+	if 'bld( "FROM", child.parentTable).exists() quit ""
 
-	/* ACN is included. However, since CID maps to ACN, it might be that CID
-	   is the only column from ACN. If that is the case, then ACN needs not
-	   be included, but CID must be re-mapped to some other wide table that
-	   is found in bld("FROM",*). If we find any column other than CID, this
-	   shall be treated as "CID is not the only column from ACN". */
-	type String qcn = "", ci
+	/* Parent is included. However, since key columns map to the parent
+	   table, it might be that only key columns of the parent are referenced
+	   in the query. If that is the case, then the parent table needs not
+	   be included, but any key column must be re-mapped to some other wide
+	   table that is found in bld("FROM",*). If we find any column other than
+	   a key column, this shall be treated as "parent table really needed".
+	   */
+	type String ci, cn = child.table, qcn = cn_".", tbl = child.parentTable
 	type Number cnt = 0
+	type List     pk = child.primaryKeys
+	type Number   mx = pk.count() 
 
-	for  set qcn=map("XC",qcn).order() quit:(cnt>1)!qcn.isNull()  do {
+	for  set qcn=map("XC",qcn).order() quit:(cnt>mx)!(qcn.piece(".")'=cn)!qcn.isNull()  do {
 		set ci = map("XC",qcn).piece(BAR,2)
-		if ci.piece(".") = "ACN" set cnt = cnt + 1
-		if ci.piece(".",2) '= JOINKEY.piece(".",2) set cnt = 2
+		if ci.piece(".") = tbl set cnt = cnt + 1 if 'pk.contains( ci.piece(".",2)) set cnt = mx + 1
 	}
 
-	/* If cnt=1, then CID is the only column from ACN,
-	   If cnt=2, then a column other than ACN.CID has been found. */
-	quit "?:ACN".piece(":",cnt)_ JOINKEY
+	/* If cnt > mx, then a column other than a key column has been found,
+	   else the query can use child table name(s) only.
+	   */
+	quit $$RsMsWtWhr( $SELECT( cnt>mx:tbl, 1:"?"), pk)
+
 
 	// ---------------------------------------------------------------------
-RsMsWtD( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
-	String map(,))	// map array			/MECH=REFARR:RW
+private RsMsWtJoin( String bld(,)	// tables used in from-clause
+		, String map(,)		// map array
+		)
 	/* ---------------------------------------------------------------------
 	Update a FROM-clause that is not a List of tablenames.
+
 	See if there are wide tables involved. If so, replace each occurrence by
 	an aliased derivedtable-clause that represents the wide tables and the
 	wide table columns needed for this select-statement.
@@ -1783,9 +2159,9 @@ RsMsWtD( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 	multiple tables, it will be replaced by an aliased derivedtable-clause:
 
 		( SELECT wt1.c11, wt1.c12, wt2.c21, wt2.c22
-		    FROM wt1,wt2 WHERE wt1.CID = wt2.CID) dqname
+		  FROM wt1,wt2 WHERE wt1.k1=wt2.k1 AND wt1.k2=wt2.k2 ) dqname
 
-	The wtN.CM names will be the names as they occur in the internal model.
+	The wtN.CNM names will be the names as they occur in the internal model.
 	These names will be inserted into the from-replacement WITHOUT
 	placeholders. For columns in the derived table's select-list, the
 	corresponding mapping in map("XC",qualDqName) will be changed to use the
@@ -1815,13 +2191,11 @@ RsMsWtD( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 		map("XC",wideTable.column).
 	--------------------------------------------------------------------- */
 	type literal String BAR     = "|"
-	type literal String JOINKEY = ".CID"
-	type literal String TAB     = $CHAR(9)
+	type literal String TAB     = 9.char()
 
 	type String dqtbl    = ""	// from-list element (DQ table name)
 	type Number elm			// from-list iterator
 	type List   fromlist = {List}bld("FROM")
-	type String leftkey  = $$RsMsWtACN( .bld(,), .map(,))
 
 	for elm = 1:1:fromlist.count() do {
 		set dqtbl = fromlist.elementAt(elm)
@@ -1831,26 +2205,22 @@ RsMsWtD( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 			   - mapped to one or more (wide) tables (find them all).
 			   */
 			if 'map("XT",dqtbl).exists() quit
-			type List itl = {List}map("XT",dqtbl).piece(BAR,2)
+			type List itl = {List}(map("XT",dqtbl).piece(BAR,2))
 
 			/* Simple (one-to-one) tablename remapping: ignore */
 			if itl'["," quit
 
-			/* wide table ==========================================
-			   Until ACN is included into the list by definition,
-			   force inclusion here. Supplying allowDuplicate=0
-			   ensures the code works OK even if ACN is already
-			   included. Supplying inOrder=1 fiddles the table in the
-			   first position (UGH!) */
-			set itl = itl.add("ACN",",",0,1)
-
-			type String icn = ""	// internal column name
-			type String frm = ""	// from clause
-			type String it		// internal table name
-			type Number itc		// internal table iterator
-			type String qcn		// qualified column name
-			type String sel = ""	// select clause
-			type String whr = ""	// where clause
+			/* wide table ======================================= */
+			type String	icn = ""	// internal column name
+			type String	frm = ""	// from clause
+			type String	it		// internal table name
+			type Number	itc		// internal table iterator
+			type String	qcn		// qualified column name
+			type String	sel = ""	// select clause
+			type PSLTable	td = PSL.getPSLTable( dqtbl, 0)
+			type List	pk = td.primaryKeys
+			type String	whr = ""	// where clause
+			type String	whrkey = $$RsMsWtChild( td, bld(,), map(,))
 
 			/* for each internal table ========================== */
 			for itc=1:1:itl.count() do {
@@ -1859,56 +2229,64 @@ RsMsWtD( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 				// ignore if not used
 				if 'bld("FROM",it).exists() quit
 
-				// ignore ACN if ACN.CID only column
-				if it="ACN", leftkey=("?"_JOINKEY) quit
+				// ignore parent table if only key columns
+				if it = td.parentTable, whrkey.extract() = "?" quit
 
 				if 'frm.isNull() set frm = frm_ ","
 				set frm = frm_ it
 
-				/* if ACN needed for join it occurs
-				   already in leftkey */
-				if it="ACN" quit
+				/* if parent needed for join it occurs
+				   already in whrkey */
+				if it = td.parentTable quit
 
-				// ACN not included: first table sets leftkey
-				if leftkey.isNull() set leftkey = it_ JOINKEY quit
+				// parent not included: first table sets whrkey
+				if whrkey.isNull() set whrkey = $$RsMsWtWhr( it, pk) quit
 
-				// ACN.CID is only column from ACN
-				if leftkey=("?"_JOINKEY) do { quit
-					/* remap dqtbl.CID to wt.CID */
-					set leftkey = it_ JOINKEY
-					set map("XC",dqtbl_JOINKEY).piece(BAR,2) = leftkey
+				// only key columns from parent
+				if whrkey.extract() = "?" do { quit
+					/* remap dqtbl.keyN to wt.keyN */
+					set whrkey = whrkey.replace( "?", it)
+					type String cn
+					type Number cc
+					for cc = 1:1:pk.count() {
+						set cn = pk.elementAt( cc)
+						if map("XC",dqtbl_ "."_ cn).exists() set map("XC",dqtbl_ "."_ cn).piece(BAR,2) = it_ "."_ cn
+					}
 				}
 
+				// subsequent wide table
 				if 'whr.isNull() set whr = whr_ " AND "
-				set whr = whr_ leftkey_ "="_ it_ JOINKEY
+				set whr = whr_ whrkey.replace( "!", it)
 			} // end for all internal tables
 
 			/* =====================================================
-			   If ACN is included either as the only table, or in
-			   the list of tables, then add the DBTBL1.QID1 of DEP
-			   or LN. Although this should only impact the final
-			   result if ACN is the only table, queries have been
-			   found in which Oracle invoked the computation of a
-			   (say) DEP.computed() on an ACN row with ACN.CLS='L'.
+			   If parent is included either as the only table, or in
+			   the list of tables, then add the DBTBL1.QID1 of the
+			   child. Although this should only impact the final
+			   result if the parent is the only table, queries have
+			   been found in which Oracle invoked the computation of
+			   a (say) DEP.computed() on an ACN row with
+			   ACN.CLS='L'.
 			   This may cause the computation to fail, and the query
 			   to be aborted. Note that it is completely up to the
 			   RDB implementation as to when it applies a predicate
 			   to a row. By providing the RDB with the option of
-			   ruling out certain rows on ACN.CLS before calling the
-			   the computation, we hope to prevent the problem ...
+			   ruling out certain rows based on QID1 before calling
+			   the the computation, we hope to prevent the problem
+			   ...
 			   */
-			if frm["ACN" do {
+			if frm.contains( td.parentTable) do {
 				if 'whr.isNull() set whr = whr_ " AND "
 				set whr = whr_ $$RsMsQID1( dqtbl)
 			}
 
 			/* =====================================================
 			   If frm contains only one table, and there is no where
-			   clause (ACN not needed), we are lucky.
+			   clause (parent not needed), we are lucky.
 			   Because columnreferences have not yet been remapped,
 			   it is sufficient to store the name of the internal
-			   table in map("XT",dqtbl). ACN.CID (re)mapping has been
-			   taken care of in the construction of frm. */
+			   table in map("XT",dqtbl). key column (re)mapping has
+			   been taken care of in the construction of frm. */
 			if frm'[",",whr.isNull() set map("XT",dqtbl).piece(BAR,2)=frm quit
 
 			/* =====================================================
@@ -1916,11 +2294,11 @@ RsMsWtD( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 			   Because all columns for this wide table occur in map()
 			   by their dqname, this can be done in one pass,
 			   independent of the internal tables in which they occur
-			   as long as ACN.CID is mapped correctly:
-			   The construction of frm caused map("XC",dqtbl.CID) to
+			   as long as key columns are mapped correctly:
+			   The construction of frm caused map("XC",dqtbl.key) to
 			   contain the correct qualified column reference.
 			   Use this value in the select-clause before changing it
-			   back to dqtbl.CID. */
+			   back to dqtbl.key. */
 			set qcn = dqtbl_"."
 
 			/* for each column used in the query ================ */
@@ -1932,11 +2310,11 @@ RsMsWtD( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 				if icn[TAB quit
 
 				/* Strip tablename from column as used in the
-				   select-clause, except if dqtbl.CID, and update
+				   select-clause, except if dqtbl.key, and update
 				   map("XC",qcn) to use the alias (= dqtbl) name.
 				   */
 				if 'sel.isNull() set sel = sel_ ","
-				if qcn = (dqtbl_JOINKEY) set sel = sel_ icn
+				if pk.contains( qcn.piece(".",2)) set sel = sel_ icn
 				else  set sel = sel_ icn.piece(".",2)
  
 				set map("XC",qcn).piece(BAR,2) = dqtbl_"."_icn.piece(".",2)
@@ -1953,11 +2331,11 @@ RsMsWtD( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 	quit
 
 	// ---------------------------------------------------------------------
-RsMsWtL( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
-	String map(,),	// map array			/MECH=REFARR:RW
-	String sqllit,	// SQL string literals		/MECH=REF:RW
-	String from,	// pre-processed from-clause	/MECH=REF:RW
-	String where)	// pre-processed where-clause	/MECH=REF:RW
+private RsMsWtList( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
+		String map(,),		// map array			/MECH=REFARR:RW
+		ret String sqllit,	// SQL string literals		/MECH=REF:RW
+		ret String from,	// pre-processed from-clause	/MECH=REF:RW
+		ret String where)	// pre-processed where-clause	/MECH=REF:RW
 	/* ---------------------------------------------------------------------
 	Update the FROM-clause and the WHERE-clause to reflect wide tables.
 	The variables 'from' and bld("FROM") both contain the original
@@ -1968,7 +2346,7 @@ RsMsWtL( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 	and replaced by all tables that are listed in map("XT",t), and that do
 	occur in bld("FROM",*).
 	For each of these tables, the WHERE-clause will be extended with
-	the JOIN condition (on wt.CID).
+	the JOIN condition (on wt.keyN).
 
 	ARGUMENTS / INPUTS / OUTPUTS:
 	. bld("FROM") and bld("FROM",internalTable)
@@ -1992,7 +2370,7 @@ RsMsWtL( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 		the supplied clause.
 
 	NOTES:
-	. Unlike RsMsWdD(), this function needs to modify .from and .where
+	. Unlike RsMsWdJoin(), this function needs to modify .from and .where
 		because:
 		. The from clause was not passed to $$RsMsCls() and therefor will
 			not contain placeholders for the (wide) table names.
@@ -2000,19 +2378,16 @@ RsMsWtL( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 			clause.
 	*/
 	type literal String BAR     = "|"
-	type literal String JOINKEY = ".CID"
 
 	type String table = ""		// from-list element
 	type Number elm			// from-list iterator
-	type String joinwhr = ""	// additional where-clause
-
-	type String leftkey = $$RsMsWtACN( .bld(,), .map(,))
 
 	type List fromlist = {List}from
 	set from = ""
 
 	/* for each table =========================================== */
 	for elm = 1:1:fromlist.count() do {
+		type String joinwhr = ""	// additional where-clause
 		if 'from.isNull() set from = from_ ","
 		set table = fromlist.elementAt(elm)
 		if 'bld("FROM",table).exists() do {
@@ -2021,23 +2396,19 @@ RsMsWtL( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 			   * mapped to one or more (wide) tables (find
 			   them all). */
 			if 'map("XT",table).exists() quit
-			type List wtl = {List}map("XT",table).piece(BAR,2)
+			type List wtl = {List}(map("XT",table).piece(BAR,2))
 
 			/* Simple (one-to-one) tablename remapping */
 			if wtl'["," set table = wtl quit
 
-			/* wide table ==================================
-			   Until ACN is included into the list by
-			   definition, force inclusion here.
-			   Supplying allowDuplicate=0 ensures the code
-			   works OK even if ACN is already included.
-			   Supplying inOrder=1 fiddles the table in the
-			   first position (UGH!) */
-			set wtl = wtl.add("ACN",",",0,1)
-			type String dqt	= table	// DQ table name
-			type String wt		// wide table name
-			type Number wtc		// wide table iterator
-			set table = ""
+			/* wide table =============================== */
+			type String	dqt = table	// DQ table name
+			type String	wt		// wide table name
+			type Number	wtc		// wide table iterator
+			type PSLTable	td = PSL.getPSLTable( dqt, 0)	// child table
+			type List	pk = td.primaryKeys
+			type String 	whrkey = $$RsMsWtChild( td, bld(,), map(,))
+			set table = ""			//  list of wide tables
 
 			/* for each wide table ====================== */
 			for wtc=1:1:wtl.count() do {
@@ -2046,37 +2417,41 @@ RsMsWtL( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 				// ignore if not used
 				if 'bld("FROM",wt).exists() quit
 
-				// ignore ACN if ACN.CID only column
-				if wt="ACN", leftkey=("?"_JOINKEY) quit
+				// ignore parent if only key columns
+				if wt = td.parentTable, whrkey.extract() = "?" quit
 
-				/* if ACN already occurs in the from list under
+				/* if parent already occurs in the from list under
 				   construction, ignore it. This will be the
 				   case if ACN and DEP or ACN and LN are both
 				   explicitly included in the original from
 				   list (strange query ...). */
-				if wt="ACN",(","_table_",")[",ACN," quit
+				if wt = td.parentTable, (","_table_",")[(","_ td.parentTable_ ",") quit
 
 				if 'table.isNull() set table = table_ ","
 				set table = table_ wt
 
-				/* if ACN needed for join it occurs
+				/* if parent needed for join it occurs
 				   already in leftkey */
-				if wt="ACN" quit
+				if wt = td.parentTable quit
 
-				// ACN not included at all.
-				if leftkey.isNull() set leftkey = wt_ JOINKEY quit
+				// parent not included at all.
+				if whrkey.isNull() set whrkey = $$RsMsWtWhr( wt, pk) quit
 
-				// ACN.CID is only column from ACN
-				if leftkey=("?"_JOINKEY) do { quit
-					/* remap table.CID to wt.CID */
-					set leftkey = wt_ JOINKEY
-					set map("XC",dqt_ JOINKEY).piece(BAR,2) = leftkey
-				}
+				// Only key columns from parent
+				if whrkey.extract() = "?" do { quit
+					/* remap dqtbl.keyN to wt.keyN */
+					set whrkey = whrkey.replace( "?", wt)
+					type String cn
+					type Number cc
+					for cc = 1:1:pk.count() {
+						set cn = pk.elementAt( cc)
+						if map("XC",dqt_ "."_ cn).exists() set map("XC",dqt_ "."_ cn).piece(BAR,2) = wt_ "."_ cn
+					}
+				} // end if whrkey starts with '?'
 
-				///* don't add leftkey=leftkey*/
-				//if leftkey = (alias_ joinkey) quit
+
 				if 'joinwhr.isNull() set joinwhr = joinwhr_ " AND "
-				set joinwhr = joinwhr_ leftkey_ "="_ wt_ JOINKEY
+				set joinwhr = joinwhr_ whrkey.replace("!", wt)
 			} // end for each wide table
 
 			/* =====================================================
@@ -2093,40 +2468,44 @@ RsMsWtL( String bld(,),	// tables used in from-clause	/MECH=REFARR:R
 			   ACN), table="ACN". In the second case, table="".
 			   In both cases, use DBTBL1.QID1 of the original DQ
 			   table as the additional "joinclause". */
-			/* -----------------------------------------------------
-			if table="" do {
-				for wtc=1:1:wtl.count() do {
-					set wt = wtl.elementAt(wtc)
-					if wt="ACN" quit
-					set table = wt
-					set map("XC",dqt_JOINKEY).piece(BAR,2) = wt_JOINKEY
-				}
-			}
-			----------------------------------------------------- */
-			if table="" set table = "ACN"
-			if table="ACN" do {
+			if table.isNull() set table = td.parentTable
+			if table = td.parentTable do {
 				/* value returned by $$RsMsQID1() will contain
 				   unqualified columnnames. Ensure that all will
 				   be taken from ACN. */
 				type String origFrom = bld("FROM")
-				set bld("FROM") = "ACN"
+				set bld("FROM") = table
 				set joinwhr = $$RsMsQID1( fromlist.elementAt(elm))
-				set joinwhr = $$RsMsCls( .bld, .map, .sqllit, 2, joinwhr, "")
+				set joinwhr = $$RsMsCls( bld(,), map(,), .sqllit, 2, joinwhr, "")
 				set bld("FROM") = origFrom
 			}
 		} // end if table not in bld("FROM",*)
 
 		set from = from_ table
+		/* =============================================================
+		   append WHERE extension */
+		if 'joinwhr.isNull() do {
+			if where.isNull() set where = joinwhr quit
+			if where.translate("()","  ")[" OR " set where = "("_ where_ ") AND "_joinwhr quit
+			set where = where_ " AND "_ joinwhr
+		}
 	} // end for each table
-
-	/* =============================================================
-	   append WHERE extension */
-	if 'joinwhr.isNull() do {
-		if where.isNull() set where = joinwhr quit
-		if where.translate("()","  ")[" OR " set where = "("_ where_ ") AND "_joinwhr quit
-		set where = where_ " AND "_ joinwhr
-	}
 	quit
+
+	// ---------------------------------------------------------------------
+private RsMsWtWhr( String left	// "table" to be used on the left side
+		, List pk	// primary keys
+		)
+	/* ---------------------------------------------------------------------
+	Return "join keys" for wide table join column clause as follows:
+
+	OUTPUT:
+	$$ = "left.key1 = !.key1 AND left.key2 = !.key2"
+	*/
+	type Number cnt
+	type String whr = left_ "."_ pk.elementAt(1)_ " = !."_ pk.elementAt(1)
+	for cnt = 2:1:pk.count() set whr = whr _" AND "_ left_ "."_ pk.elementAt( cnt)_ " = !."_ pk.elementAt( cnt)
+	quit whr
 
 	// ---------------------------------------------------------------------
 public RsMsXI(	String map(,),	// identier map array		/MECH=REFARR:R
@@ -2148,7 +2527,7 @@ public RsMsXI(	String map(,),	// identier map array		/MECH=REFARR:R
 		replacement requires additional processing
 	*/
 	type literal String BAR = "|"
-	type literal String TAB = $CHAR(9)
+	type literal String TAB = 9.char()
 
 	type String extrep,intrep,sub
 	type Number le,ls,pos
@@ -2168,9 +2547,10 @@ public RsMsXI(	String map(,),	// identier map array		/MECH=REFARR:R
 	quit str
 
 	// ---------------------------------------------------------------------
-public RsMsXV(	String map(,),	// map array			/MECH=REFARR:R
-		String str,	// source and target string	/MECH=REF:RW
-		Boolean bExt)	// external values? (*3)	/NOREQ
+public RsMsXV(	String map(,),	// map array
+		ret String str,	// source and target string
+		Boolean bExt,	// external values? (*3)	/NOREQ
+		Number dlm)	// host value delimiter (*4)	/NOREQ
 	/* ---------------------------------------------------------------------
 	This function can be called at runtime to construct the actual SQL
 	select statement, and bind the hostvars.
@@ -2189,6 +2569,10 @@ public RsMsXV(	String map(,),	// map array			/MECH=REFARR:R
 		- The internal value "v" (lowercase), that denotes an "unknown"
 			datatype will be treated as T (no conversion, but
 			quotes added)
+	(*4) dlm = host value delimiter
+		For standard SELECT this will be $C(9), but since it is one of
+		the paramters in the call to SELECT^%DBAPI(), we will need to
+		support alternative values as well.
 
 	INPUTS:
 	. map("XV",sym) = sym | hostvar | typeinfo
@@ -2250,7 +2634,7 @@ public RsMsXV(	String map(,),	// map array			/MECH=REFARR:R
 
 	set (intrep,vallist) = ""
 	for  set intrep = map("XV",intrep).order() quit:intrep=""  do {
-		set sub = $CHAR(9)_map("XV",intrep).piece(BAR)_$CHAR(9)
+		set sub = 9.char()_map("XV",intrep).piece(BAR)_9.char()
 		set extrep = map("XV",intrep).piece(BAR,2)
 		set dtd = map("XV",intrep).piece(BAR,3)
 		set dec = dtd.extract(2)
@@ -2275,7 +2659,7 @@ public RsMsXV(	String map(,),	// map array			/MECH=REFARR:R
 		if extrep.extract() = "%" do {
 			set hv = "V"_map("XV",intrep).piece( BAR)_"DBRT"
 			if extrep.extract(2) = "%" set extrep = extrep.extract( 3, extrep.length()) quit
-			type Row kwdRow = $$kwdRow^UCDTAUTL( extrep, .syskwd()).toRow( "#$$kwdRowDef^UCDTAUTL")
+			type Row kwdRow = $$kwdRow^UCDTAUTL( extrep, syskwd()).toRow( "#$$kwdRowDef^UCDTAUTL")
 			type String newrep = kwdRow.des
 			if newrep.isNull() quit		// not a system keyword
 			set dtd = kwdRow.class.extract().translate("BS","LT")
@@ -2296,7 +2680,7 @@ public RsMsXV(	String map(,),	// map array			/MECH=REFARR:R
 		/* temporarily: others add quotes */
 		// else  set extrep = "$S(" _ extrep _ "'[""'"":""'""_" _ extrep _ "_""'"",1:$$QADD^%ZS(" _ extrep _ ",""'""))"
 		if 'vallist.isNull() set vallist = vallist _ "_"
-		set vallist = vallist_ extrep_ "_$C(9)"
+		set vallist = vallist_ extrep_ "_$C("_ dlm.get(9)_ ")"
 		set str = str.replace(sub,hv,1)
 	}
 	quit vallist
@@ -2316,34 +2700,36 @@ public RsRdb( String from)	// FROM-clause (*1)
 	. $$ = 1 if the first table of the normalized list is stored in an RDB
 	     = 0 if the first table of the normalized list is stored in an MDB
 	*/
-	if '$$rtIsRdb^UCXDD() quit 0
+	if 'Runtime.isRdb quit 0
 
 	if (from.translate("()","  ")[" JOIN ")!(from[" AS ") do {
 		type Number map=0
 		type String bld(,)
 		type String lit
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		type String ignore = $$TOKEN^%ZS(from,.lit,"'")
-		set ignore = $$RsMsCls(.bld,.map,.lit,3,from,"")
+		set ignore = $$RsMsCls( bld(,), map(,), .lit, 3, from, "")
 		set from = bld("FROM")
 	}
-	else  set from = from.translate(" "_$C(9))
+	else  set from = from.translate(" "_9.char())
 	quit $$rtIsRdb^UCXDD(from)
 
 	// ---------------------------------------------------------------------
 public RsSelAll( List from)	// from-list (*1)
 	/* ---------------------------------------------------------------------
 	SELECT * will be replaced by $$COLLIST^DBSDD() of the tables.
-	The parameters to the call specify that computed columns will be
-	included. However, Masterfields and Blobs/Memos will be excluded.
+	The parameters to the call specify that computed columns and
+	masterfields will be included. However Blobs/Memos will be excluded.
 	ARGUMENTS:
 	(*1) fromList
-		Shall be the normilized list, so no explicit JOIN or table alias
+		Shall be the normalized list, so no explicit JOIN or table alias
 		is allowed.
 	*/
 	type Number n
-	type String selAll = $$COLLIST^DBSDD( from.elementAt(1), 1, 1, 0)
+	type String selAll = $$COLLIST^DBSDD( from.elementAt(1), 0, 1, 0)
 
-	for n=2:1:from.count() set selAll = selAll_ ","_ $$COLLIST^DBSDD( from.elementAt( n), 1, 1, 0)
+	for n=2:1:from.count() set selAll = selAll_ ","_ $$COLLIST^DBSDD( from.elementAt( n), 0, 1, 0)
 	quit selAll
 
 	// ---------------------------------------------------------------------
@@ -2361,151 +2747,13 @@ public RsSelList( String select)	// SELECT-clause (*1)
 	type String expr,tok
 	if select.extract()'="""" set expr = select
 	else   set expr = select.stripQuotes()
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set expr = $$SQL^%ZS(expr,.tok)
 	if expr["""" set expr = expr.stripQuotes()	// Strip quotes from names
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set expr = $$UNTOK^%ZS(expr,.tok)
 	if expr.extract(1,9)="DISTINCT " set expr = expr.extract(10,expr.length())
 	if expr.extract(1,4)="ALL "      set expr = expr.extract( 5,expr.length())
 	quit expr
-
-	// ---------------------------------------------------------------------
-public wrEXECSP( Number vIndex,		// index (*1)
-		String vSp,		// stored procedure name (*1)
-		String vKeyVals,	// key value host var list (*1)
-		Number vKeyNum,		// number of keys (*1)
-		String vDlm)		// column delimiter (*1)
-	/* ---------------------------------------------------------------------
-	This function is a runtime wrapper for the call to $$EXECSP^%DBAPI().
-	All formal parameters of this function match the formal input parameters
-	for the call to $$EXECSP^%DBAPI. The output parameters of that call are
-	declared here locally, to hide them from the calling environment.
-	The function returns the data received in the data output parameter.
-
-	ARGUMENTS:
-	(*1) See corresponding parameter in EXECSP^%DBAPI().
-
-	OUTPUTS:
-	. $$ = vData as obtained from call to $$EXECSP^%DBAPI
-
-	THROWS:
-	. %PSL-E-SQLFAIL
-		if the return value from $$EXECSP^%DBAPI() is less than zero
-		Error.description will contain the error message returned by
-		$$EXECSP^%DBAPI()
-	*/
-	type Number vEr
-	type String vData,vRm
-
-	set vEr=$$EXECSP^%DBAPI(vIndex,vSp,vKeyVals,vKeyNum,vDlm,.vData,.vRm)
-
-	if vEr<0 throw Class.new("Error","%PSL-E-SQLFAIL,"_$TR($G(vRm),$C(10,44),$C(32,126)))
-
-	quit vData
-
-	// ---------------------------------------------------------------------
-public wrEXEC( Number vIndex,		// index (*1)
-		String vSql,		// SQL statement (*1)
-		String vDlm,		// column delimiter (*1)
-		String vList)		// host variable values (*1)
-	/* ---------------------------------------------------------------------
-	This subroutine is a runtime wrapper for the call to $$EXECUTE^%DBAPI().
-	All formal parameters of this subroutine match the formal input
-	parameters of the call to $$EXECUTE^%DBAPI. The output parameter and the
-	return value from the call are declared here locally, to hide them from
-	the calling environment.
-	The subroutine will throw a SQLFAIL exception when $$EXECUTE^%DBAPI()
-	returns a negative value. A return value of zero, or a positive return
-	value will be (silently) ignored.
-
-	ARGUMENTS:
-	(*1) See corresponding parameter in EXECUTE^%DBAPI().
-
-	OUTPUTS:
-	. none
-
-	THROWS:
-	. %PSL-E-SQLFAIL
-		if the return value from $$EXECUTE^%DBAPI() is less than zero
-		Error.description will contain the error message returned by
-		$$EXECUTE^%DBAPI()
-	*/
-	type Number vEr
-	type String vRm
-
-	set vEr=$$EXECUTE^%DBAPI(vIndex,vSql,vDlm,vList,.vRm)
-
-	if vEr<0 throw Class.new("Error","%PSL-E-SQLFAIL,"_$TR($G(vRm),$C(10,44),$C(32,126)))
-
-	quit
-
-	// ---------------------------------------------------------------------
-public wrLOBUPD( Number vIndex,		// index (*1)
-		String vTbl,		// RDB table name (*1)
-		String vCln,		// RDB column name (*1)
-		String vWhr,		// WHERE clause (primary key) (*1)
-		String vVal,		// Value to assign to LOB (*1)
-		String vDlm,		// column delimiter (*1)
-		String vList)		// host variable values (*1)
-	/* ---------------------------------------------------------------------
-	This subroutine is a runtime wrapper for the call to $$LOBUPDT^%DBAPI().
-	All formal parameters of this subroutine match the formal input
-	parameters of the call to $$LOBUPDT^%DBAPI. The output parameter and the
-	return value from the call are declared here locally, to hide them from
-	the calling environment.
-	The subroutine will throw a SQLFAIL exception when $$LOBUPDT^%DBAPI()
-	returns a negative value. A return value of zero, or a positive return
-	value will be (silently) ignored.
-
-	ARGUMENTS:
-	(*1) See corresponding parameter in LOBUPDT^%DBAPI().
-
-	OUTPUTS:
-	. none
-
-	THROWS:
-	. %PSL-E-SQLFAIL
-		if the return value from $$LOBUPDT^%DBAPI() is less than zero
-		Error.description will contain the error message returned by
-		$$LOBUPDT^%DBAPI()
-	*/
-	type Number vEr
-	type String vRm
-
-	set vEr=$$LOBUPDT^%DBAPI(vIndex,vTbl,vCln,vWhr,vVal,vDlm,vList,.vRm)
-
-	if vEr<0 throw Class.new("Error","%PSL-E-SQLFAIL,"_$TR($G(vRm),$C(10,44),$C(32,126)))
-
-	quit
-
-	// ---------------------------------------------------------------------
-public wrSELECT( Number vIndex,		// index (*1)
-		String vSql,		// sql select statement (*1)
-		String vDlm,		// column delimiter (*1)
-		String vKeyVals)	// key value host var list (*1)
-	/* ---------------------------------------------------------------------
-	This function is a runtime wrapper for the call to $$SELECT^%DBAPI().
-	All formal parameters of this function match the formal input parameters
-	for the call to $$EXECSP^%DBAPI. The output parameters of that call are
-	declared here locally, to hide them from the calling environment.
-	The function returns the data received in the data output parameter.
-
-	ARGUMENTS:
-	(*1) See corresponding parameter in SELECT^%DBAPI().
-
-	OUTPUTS:
-	. $$ = vData as obtained from call to $$SELECT^%DBAPI
-
-	THROWS:
-	. %PSL-E-SQLFAIL
-		if the return value from $$SELECT^%DBAPI() is less than zero
-		Error.description will contain the error message returned by
-		$$SELECT^%DBAPI()
-	*/
-	type Number vEr
-	type String vData,vRm
-
-	set vEr=$$SELECT^%DBAPI(vIndex,vSql,vDlm,vKeyVals,.vData,.vRm)
-
-	if vEr<0 throw Class.new("Error","%PSL-E-SQLFAIL,"_$TR($G(vRm),$C(10,44),$C(32,126)))
-
-	quit vData

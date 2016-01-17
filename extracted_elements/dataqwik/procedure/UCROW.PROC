@@ -43,6 +43,13 @@
 
 
 	---- Revision History --------------------------------------------------
+	09/25/07 - Frans S.C. Witte - CR: 27800
+		* Corrected call to patch() in pp for array-of-Rows
+		* Replaced 'public' by 'ret' in fp declarations
+		* Replaced PSLLabelRecord by PSLMethod
+		* Added implementation of Row.toObject
+		* All PSLBuffer.insert() calls now include a resultClass
+
 	11/07/06 - Frans S.C. Witte - CRs: 23841 / 23842
 		Added InstMode parameter in call to $$insByOvs^UCREC4OP
 		
@@ -115,6 +122,8 @@
              as well as release for v7.0
 
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -134,7 +143,7 @@
 	quit
 
 	/* ****************************************************************** */
-private classNew	// Class constructor for new Row object
+classNew	// Class constructor for new Row object
 	/* ---------------------------------------------------------------------
 	INPUTS:
 	. PSL.actual(1) = "Row" (classname from Class.new(,))
@@ -153,13 +162,15 @@ private classNew	// Class constructor for new Row object
 		And it is unconditionally called to create the Row instance for
 		String.toRow().
 	*/
-	type Public String struct(,,,)
-	type Public String postProc()
-	type Public String tab
-	type Public Number ER
+	type public String struct(,,,)
+	type public String postProc()
+	type public String tab
+	type public Number ER
 
 	type Number varPtr
-	if PSL.var.exists() set varPtr = PSL.var.scopeLine
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if PSL.var.exists() set varPtr = $$getNew^UCGM( PSL.var, PSL.varLevel)
 	else  set varPtr = ""
 
 	if varPtr.isNull() do PSL.error("Row object can only be asigned to properly declared variable") quit
@@ -190,7 +201,7 @@ private classNew	// Class constructor for new Row object
 	quit
 
 	// ---------------------------------------------------------------------
-actualPar(tag,parNum)	; private; Return actual parameter value
+private actualPar( String tag, Number parNum)	// Return actual parameter value
 	/* ---------------------------------------------------------------------
 	ARGUMENTS:
 	. String tag = complete M labelref			/MECH=VAL
@@ -212,24 +223,28 @@ actualPar(tag,parNum)	; private; Return actual parameter value
 
 	/* get paramater list: after first "(", drop last char (= ")"),
 	   and tokenize literals. */	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set z=$$TOKEN^%ZS(tag.piece("(",2).extract(1,tag.length()-1), .tok)
 
 	set cnt=0,ptr=0
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	for  set return=$$ATOM^%ZS(z,.ptr,",",.tok) do { quit:ptr=0!(cnt=parNum)
 
 		if return="," quit
 		set cnt=cnt+1
 
 		// found type specification, get next atom
-		if $E(z,ptr+1)=" " set return=$$ATOM^%ZS(z,.ptr,",",.tok)
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		if z.extract(ptr+1)=" " set return=$$ATOM^%ZS(z,.ptr,",",.tok)
 	}
 	if ptr=0 quit ""
 	quit return
 
 
 	// ---------------------------------------------------------------------
-private buildList( String list,	// property list or template
-	public String del)	// delimiter
+buildList( String list,	// property list or template
+	ret String del)	// delimiter
 	/* ---------------------------------------------------------------------
 	Build property list string and delimiter.
 
@@ -243,7 +258,7 @@ private buildList( String list,	// property list or template
 		ignored.
 	*/
 
-	type Public Number ER
+	type public Number ER
 
  	if list.isLiteral() do {
 
@@ -257,7 +272,7 @@ private buildList( String list,	// property list or template
 		}
 
 		type Number i
-		for i = 1:1:list.length(",") do {
+		if 'list.isNull() for i = 1:1:list.length(",") do {
 
 			type String col = list.piece(",",i)
 			if 'col.isNull(),col.piece(" ",2).isNull() set col = "String "_col
@@ -272,17 +287,17 @@ private buildList( String list,	// property list or template
 
 
 	/* ****************************************************************** */
-private getCol	// Get column value
+getCol	// Get column value
 	type literal String PATCHCHAR = 6.char()
 
-	type Public String postProc()
-	type Public String struct(,,,)
-	type Public String struct(,,,,)
-	type Public String tab
+	type public String postProc()
+	type public String struct(,,,,)
+	type public String tab
 
 	set postProc("Row") = "pp^"_%RoutineName
 
-	type Number varPtr = PSL.objectName.scopeLine
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number varPtr = $$getNew^UCGM( PSL.objectName, PSL.objectLevel)
 
 	type String list,del
 
@@ -296,7 +311,8 @@ private getCol	// Get column value
 	   is included in the source. Nonsense parameters can be passed to
 	   $$getColRt() because the value returned by the function will be
 	   ignored. */
-	if list.isNull(),PSL.objectName.scope = "FORMAL" do { quit
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if list.isNull(), $$getScope^UCGM( PSL.objectName, PSL.objectLevel) [ "FORMAL" do { quit
 	
 		set struct("Row",PSL.subRou,PSL.objectName,varPtr,PSL.msrc+1) = ""
 		set PSL.return = $$getColRt("","","","")	// force vRwGC()
@@ -304,6 +320,7 @@ private getCol	// Get column value
 		set PSL.class = "Primitive"
 	}
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if PSL.fset do setInst^UCGM(PSL.objectName,PSL.msrc,"")
 
 	set PSL.return = $$getPos(list,PSL.objectName,PSL.ref,del,.PSL.class)
@@ -312,11 +329,11 @@ private getCol	// Get column value
 
 
 	/* ****************************************************************** */
-getPos( String list,	// property list		/REQ/MECH=VAL/NONULL
-	String var,	// instance variable		/REQ/MECH=VAR/NONULL
-	String col,	// column name or number	/REQ/MECH=VAL/NONULL
-	String del,	// delimiter			/REQ/MECH=VAL/NONULL
-	String cls)	// return type of column	/NOREQ/MECH=REF:W
+private getPos( String list,	// property list		/REQ/MECH=VAL/NONULL
+		String var,	// instance variable		/REQ/MECH=VAR/NONULL
+		String col,	// column name or number	/REQ/MECH=VAL/NONULL
+		String del,	// delimiter			/REQ/MECH=VAL/NONULL
+		ret String cls)	// return type of column	/NOREQ/MECH=REF:W
 	/* Return position expression
 	*/
 	set cls = "Primitive"	// default in case of indirection or runtime
@@ -340,7 +357,7 @@ getPos( String list,	// property list		/REQ/MECH=VAL/NONULL
 
 
 	// ---------------------------------------------------------------------
-private pp	// Post processor for row class, called after program is parsed
+pp	// Post processor for row class, called after program is parsed
 	/* ---------------------------------------------------------------------
 	If the row was instantiated with a literal column list and the
 	caller(s) are identifiable and there is only one list, then replace
@@ -353,36 +370,40 @@ private pp	// Post processor for row class, called after program is parsed
 
 	type public String struct(,,,)
 	type public String calls(,,,)		// calls(subRou,dcLnr,tag)
-	type public PSLLabelRecord labels()
+	type public PSLParser pslPrsr
 
-	type String subRou = ""
-	for  set subRou = labels(subRou).order() quit:subRou.isNull()  do {
-		if subRou["^" quit		// external call, ignore
+	type String cls = pslPrsr.moduleName, subRou = cls_ "."
+	for  set subRou = pslPrsr.pslMtd( subRou).order() quit:subRou.piece(".")'=cls  do {
+		//if subRou["^" quit		// external call, ignore
 
 		// Skip this subroutine if there aren't Row parameters
-		if labels(subRou).formalList'[" Row " quit
+		type PSLMethod omd = pslPrsr.pslMtd( subRou)
+		if omd.formalList'[" Row " quit
 
-		type PSLLabelRecord lr = labels(subRou)
-		type Number newPtr = lr.codeLine
-		type Boolean pubAcc = (lr.accessLevel>0)
+		type Number newPtr = omd.codeLine
+		type Boolean pubAcc = (omd.accessLevel>0)
+		type String mtd = subRou.piece(".",2)
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		if $$isNamePSL^UCGM( mtd) quit		// exclude PSL generated methods
 
 		type Number i
-		for i = 1:1:$$getFpCount^UCPSLLR( lr) do {
+		for i = 1:1:omd.getFpCount() do {
 
-			if $$getFpClass^UCPSLLR( lr, i) '= "Row" quit
+			if omd.getFpClass( i) '= "Row" quit
 
 			// fp of class Row
-			type String frmlPar = $$getFpVsig^UCPSLLR( lr, i)
+			type String frmlPar = omd.getFpVsig( i)
 
 			/* If subroutine is accessible to external units, don't
 			   bother (specify as "unknown list"), else try to trace
 			   callers. */
-			if pubAcc set struct("Row", subRou, frmlPar, newPtr) = ""
+			if pubAcc set struct("Row", mtd, frmlPar, newPtr) = ""
 			else  do ppsub( subRou, frmlPar, newPtr)
 
 			/* In both cases, replace TAB var . property TAB as
 			   appropriate. */
-			do patch(subRou,frmlPar,newPtr)
+			do patch(mtd,frmlPar.piece("("),newPtr)
 		}
 	}
 
@@ -391,13 +412,13 @@ private pp	// Post processor for row class, called after program is parsed
 	   all calls to public labels, and all 'unresolved' local calls
 	*/
 	set subRou = ""
-	for  set subRou = $order(calls(subRou)) quit:subRou.isNull()  do {
+	for  set subRou = calls(subRou).order() quit:subRou.isNull()  do {
 
 		type Number callat = ""
-		for  set callat = $order(calls(subRou,callat)) quit:callat.isNull()  do {
+		for  set callat = calls(subRou,callat).order() quit:callat.isNull()  do {
 
 			type String called = ""
-			for  set called = $order(calls(subRou,callat,called)) quit:called.isNull()  if (called["Row ") do patchCalls( subRou, callat, called)
+			for  set called = calls(subRou,callat,called).order() quit:called.isNull()  if (called["Row ") do patchCalls( subRou, callat, called)
 		}
 	}
 
@@ -405,9 +426,9 @@ private pp	// Post processor for row class, called after program is parsed
 
 
 	// ---------------------------------------------------------------------
-patch(	String subRou,		// subroutine
-	String frmlPar,		// name of formal parameter
-	Number newPtr)		// line where frmlPar is declared
+private patch(	String subRou,		// subroutine
+		String frmlPar,		// name of formal parameter
+		Number newPtr)		// line where frmlPar is declared
 	/* ---------------------------------------------------------------------
 	Patch msrc row.property.
 	Called by pp for every formal parameter of class Row, of all subroutines
@@ -429,24 +450,26 @@ patch(	String subRou,		// subroutine
 
 	type Number ER = 0
 
-	//type Public PSLLabelRecord labels()
-	type Public String msrc()
-	type Public String struct(,,,)
+	type public String msrc()
+	type public String struct(,,,)
 
 	type String z = struct("Row",subRou,frmlPar,newPtr).get()
 
 	type String del = $$getDelCT(z)
-	type String list = z.piece($C(9),2)
+	type String list = z.piece(9.char(),2)
 
 	// Build code to parse list and del from Row object
 	if list.isNull() do {
 
 		// Get the formal parameters and patch
 
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set del = $$nxtSym^UCGM()	// Get delimiter variable
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set list = $$nxtSym^UCGM()	// get list variable
 
-		set struct("Row",subRou,frmlPar,newPtr) = del_$C(9)_list
+		set struct("Row",subRou,frmlPar,newPtr) = del_ 9.char()_ list
 
 		//type Number lptr = labels(subRou).codeLine
 		type String code = msrc(newPtr)
@@ -463,7 +486,7 @@ patch(	String subRou,		// subroutine
 	   (re)calculated value of $$getPos() */
 	type String test = PATCHCHAR_ frmlPar_ "."
 	type Number line = 0
-	for  set line = $order(struct("Row",subRou,frmlPar,newPtr,line)) quit:line.isNull()  do {
+	for  set line = struct("Row",subRou,frmlPar,newPtr,line).order() quit:line.isNull()  do {
 
 		type Number y
 		for  set y = msrc(line).find(test,0) quit:y = 0  do {
@@ -478,7 +501,10 @@ patch(	String subRou,		// subroutine
 
 
 	// ---------------------------------------------------------------------
-ppsub( String subRou, String frmlPar, Number newPtr)	// Replace column reference tokens
+private ppsub( String subRou
+		, String frmlPar
+		, Number newPtr
+		)	// Replace column reference tokens
 	/* ---------------------------------------------------------------------
 	Called by pp for every formal parameter (frmlPar) of class Row of each
 	subroutine (subRou) with local access.
@@ -493,16 +519,17 @@ ppsub( String subRou, String frmlPar, Number newPtr)	// Replace column reference
 		parameter names, and may be differing in number of supplied
 		parameters.
 	*/
-	type Public PSLLabelRecord labels()
-	type Public String called(,,)		// called(tag,subRou,dcLnr)
-	type Public String struct(,,,)
+	type public PSLParser pslPrsr
+	type public String called(,,)		// called(tag,subRou,dcLnr)
+	type public String struct(,,,)
 
 	type Number callat
 	type String actPar,actPars,actPtr,caller,srtag,r1,r2
+	type PSLMethod omd = pslPrsr.pslMtd( subRou)
 
-	type Number parNum = $$getFpPosition^UCPSLLR( labels( subRou), frmlPar)
+	type Number parNum = omd.getFpPosition( frmlPar)
 
-	set srtag = subRou_"("
+	set srtag = subRou.piece( ".", 2)_ "("
 	for  set srtag = called(srtag).order() quit:'srtag.beginsWith(subRou_"(")  do {
 
 		set actPar = $$actualPar( srtag, parNum)
@@ -524,7 +551,7 @@ ppsub( String subRou, String frmlPar, Number newPtr)	// Replace column reference
 
 				/* If column definition not literal, force
 				   "different" */
-				if 'r1.piece($C(9),2).isLiteral() set r1 = ""
+				if 'r1.piece( 9.char(),2).isLiteral() set r1 = ""
 
 				/* If no definition of the Row characteristics
 				   use those f the first caller */
@@ -545,22 +572,23 @@ ppsub( String subRou, String frmlPar, Number newPtr)	// Replace column reference
 
 
 	// ---------------------------------------------------------------------
-patchCalls( String subRou,	// calling subroutine
-	Number callat,		// line where call occurs
-	String called)		// called tag: entryref(type1 ap1, type2 ap2)
+private patchCalls( String subRou,	// calling subroutine
+		Number callat,		// line where call occurs
+		String called)		// called tag: entryref(type1 ap1, type2 ap2)
 	/* ---------------------------------------------------------------------
 	Add list and delimiter parameters to call if apropriate.
 	
 	*/
 
-	type Public String calls(,,,)
-	type Public PSLLabelRecord labels()
-	type Public String msrc()
-	type Public String struct(,,,,)
+	type public String calls(,,,)
+	type public String msrc()
+	type public PSLParser pslPrsr
+	type public String struct(,,,,)
 
 	type Number actPtr,newPtr,ptr = 0,parnum = 1,y
 	type String actPar,actPars,atom,code,del,frmlPar,label,list,rec,tok
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set called = $$TOKEN^%ZS(called,.tok)		// Tokenize it 
 
 	set label = called.piece("(",1)
@@ -569,10 +597,12 @@ patchCalls( String subRou,	// calling subroutine
 	/* For each actual parameter, check if it is of class Row. If so,
 	   get the associated formal parameter, and see 
 	   */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	for  set atom = $$ATOM^%ZS(actPars,.ptr,",",tok) do { if ptr = 0 quit
 		if atom = "," set parnum = parnum+1 quit
 		if ptr,atom = "Row" do {
 
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			set actPar = $$ATOM^%ZS(actPars,.ptr,",",tok)
 			set rec = ""
 
@@ -581,12 +611,13 @@ patchCalls( String subRou,	// calling subroutine
 				/* If call to label that is accesible from
 				   elsewhere, the additional parameters will
 				   need to be added anyway. */
-				if labels(subRou).accessLevel>0 quit
+				type PSLMethod omd = pslPrsr.pslMtd( pslPrsr.moduleName_ "."_ label)
+				if omd.accessLevel>0 quit
 
-				set newPtr = labels(label).codeLine
+				set newPtr = omd.codeLine
 				//set frmlPars = labels(label).formalList
 
-				set frmlPar = $$getFpVsig^UCPSLLR( labels(label), parnum)
+				set frmlPar = omd.getFpVsig( parnum)
 				set rec = struct("Row",label,frmlPar,newPtr).get()
 			}
 
@@ -595,20 +626,21 @@ patchCalls( String subRou,	// calling subroutine
 			   that use the same literal parameters. This relies on
 			   the fact that ppsub will have modified the structure
 			   when it finds conflicting specifications. */
-			if 'rec.isNull(),rec.piece($C(9),2).isLiteral() quit
+			if 'rec.isNull(),rec.piece(9.char(),2).isLiteral() quit
 
 			/* Find the struct associated with the declaration of
 			   the actual parameter. */
-			set actPtr = $order(struct("Row",subRou,actPar,callat+1),-1)
+			set actPtr = struct("Row",subRou,actPar,callat+1).order(-1)
 			set rec = struct("Row",subRou,actPar,actPtr).get()
 
-			set del = $$getDelCT(rec),list = rec.piece($C(9),2)
+			set del = $$getDelCT(rec),list = rec.piece(9.char(),2)
 
 			set code = msrc(callat)
 			set y = code.find(label_"(",0)
 			if y set y = code.find(actPar,y)
 			if y,'(",)"[code.extract(y)) set y = 0 
-			if y,'("(,."[code.extract(y-actPar.length()-1)) set y = 0 
+			if y,'("(,."[code.extract(y-actPar.length()-1)) set y = 0
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			if y = 0 do warnGroup^UCGM("MISMATCH","Row instance passed to subroutine that does not expect Row: "_called) quit
 
 			/* Insert the delimiter and columndefinition for this
@@ -622,10 +654,10 @@ patchCalls( String subRou,	// calling subroutine
 
 
 	/* ****************************************************************** */
-getColRt( String rec,	// name of Row instance
-	String list,	// property list (T1 c1,T2  c2,...)
-	String ref,	// property name or number
-	String del)	// property delimiter
+private getColRt( String rec,	// name of Row instance
+		String list,	// property list (T1 c1,T2  c2,...)
+		String ref,	// property name or number
+		String del)	// property delimiter
 	/* Return column position at runtime
         */
 	type literal String label = "vRwGC"
@@ -642,7 +674,7 @@ getColRt( String rec,	// name of Row instance
 		do buf.add("if vP = 0 set vP = ("",""_vList_"","").find("",""_vRef_"","") if vP = 0 quit """"")
 		do buf.add("quit vList.extract( 1, vP - vRef.length()).length("","")")
 
-		do buf.insert(label)
+		do buf.insert(label, "String")
 	}
 
 	if ref.beginsWith("@") set ref = ref.extract(2,ref.length())
@@ -652,12 +684,13 @@ getColRt( String rec,	// name of Row instance
 
 
 	/* ****************************************************************** */
-private getDel	// get the delimiter list of a Row object
+getDel	// get the delimiter list of a Row object
 
-	type Public String struct(,,,,)
-	type Public String postProc()
+	type public String struct(,,,,)
+	type public String postProc()
 
-	type Number newPtr = PSL.objectName.scopeLine
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number newPtr = $$getNew^UCGM( PSL.objectName, PSL.objectLevel)
 
 	type String rec = struct("Row",PSL.subRou,PSL.objectName,newPtr).get()
 	
@@ -667,9 +700,8 @@ private getDel	// get the delimiter list of a Row object
 	
 	quit
 
-
 	/* ****************************************************************** */
-getDelCT(String rowDes)	// rowDescriptor (delim tab proplist	/REQ/NONULL
+private getDelCT(String rowDes)	// rowDescriptor (delim tab proplist	/REQ/NONULL
 	/* Return the compile-time value of the delimiter.
 	If the first piece of the descriptor is not empty, then it is returned.
 	Else, "$C(9)" is returned.
@@ -678,43 +710,45 @@ getDelCT(String rowDes)	// rowDescriptor (delim tab proplist	/REQ/NONULL
 	and subroutines shall use $$getDelCT() to obtain a consistent value for
 	the delimiter.
 	*/
-	if 'rowDes.piece($C(9)).isNull() quit rowDes.piece($C(9))
+	if 'rowDes.piece(9.char()).isNull() quit rowDes.piece(9.char())
 	quit "$C(9)"
 
 
 	/* ****************************************************************** */
-private getProp	// get the properties list of a Row object
+getProp	// get the properties list of a Row object
 
-	type Public String struct(,,,,)
-	type Public String postProc()
+	type public String struct(,,,,)
+	type public String postProc()
 
-	type Number newPtr = PSL.objectName.scopeLine
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number newPtr = $$getNew^UCGM( PSL.objectName, PSL.objectLevel)
 
 	type String rec = struct("Row",PSL.subRou,PSL.objectName,newPtr).get()
 	
 	set postProc("Row") = "pp^"_%RoutineName
-	if 'rec.piece($C(9),2).isNull() set PSL.return = rec.piece($C(9),2)
+	if 'rec.piece(9.char(),2).isNull() set PSL.return = rec.piece(9.char(),2)
 	quit
 
 
 	/* ****************************************************************** */
-private setProp	// Set the properties list of a Row object
+setProp	// Set the properties list of a Row object
 
-	type Public String struct(,,,,)
-	type Public String postProc()
+	type public String struct(,,,,)
+	type public String postProc()
 
-	type Number newPtr = PSL.objectName.scopeLine
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number newPtr = $$getNew^UCGM( PSL.objectName, PSL.objectLevel)
 
 	type String rec = struct("Row", PSL.subRou, PSL.objectName, newPtr).get()
 
-	type String del = rec.piece($C(9),1)
-	type String list = rec.piece($C(9),2)
+	type String del  = rec.piece(9.char())
+	type String list = rec.piece(9.char(),2)
 	
 	// Currently disallow multiple definitions, causes conflicts in post processor
 	if 'list.isNull() do PSL.error("ColumnList definition already exists: "_list) quit
 
-	set rec.piece($C(9),2) = $$buildList( PSL.actual(1),.del)
-	set rec.piece($C(9),1) = del
+	set rec.piece(9.char(),2) = $$buildList( PSL.actual(1),.del)
+	set rec.piece(9.char()) = del
 
 	set struct("Row", PSL.subRou, PSL.objectName, newPtr) = rec
 	set postProc("Row") = "pp^" _ %RoutineName
@@ -722,12 +756,13 @@ private setProp	// Set the properties list of a Row object
 
 
 	/* ****************************************************************** */
-private setDel	// Set the delimiter attribute of a Row object
+setDel	// Set the delimiter attribute of a Row object
 	
-	type Public String struct(,,,,)
-	type Public String postProc()
+	type public String struct(,,,,)
+	type public String postProc()
 
-	type Number newPtr = PSL.objectName.scopeLine
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number newPtr = $$getNew^UCGM( PSL.objectName, PSL.objectLevel)
 
 	type String rec = struct("Row",PSL.subRou,PSL.objectName,newPtr).get()
 
@@ -742,32 +777,125 @@ private setDel	// Set the delimiter attribute of a Row object
 	
 	if 'del.isLiteral(),del.upperCase()'?1"$C".A1"("1.N1")" set del = "$S("_del_"]"""":"_del_",1:$C(9))"
 	
-	set rec.piece($C(9),1) = del
+	set rec.piece(9.char()) = del
 	set struct("Row", PSL.subRou, PSL.objectName, newPtr) = rec
 	set postProc("Row") = "pp^" _ %RoutineName
 
 	quit
 
 
+	// ---------------------------------------------------------------------
+toObject	// method: Row.toClass(Object identifier,String columnMap)
+	// Copy a row to a record
+	type public PSLParser pslPrsr
+	type public PSLTokenizer tknzr
+	type public String struct(,,,,)
+	type static PSLClass
+
+	type String di,table,tok,map()
+	type PSLIdentifier name = PSL.actual(1)
+	type String xmap = PSL.actual(2)
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number newPtr = $$getNew^UCGM( PSL.objectName, PSL.objectLevel)
+	type String z = struct("Row",PSL.subRou,PSL.objectName,newPtr).get()
+	type String delimit = z.piece(9.char())
+	type String columns = z.piece(9.char(),2)
+
+	if columns.isNull() do PSL.error("Columns list missing: "_ PSL.objectName) quit
+	if 'columns.isLiteral() do PSL.error("Columns list must be literal: "_ PSL.objectName) quit
+	if 'xmap.isLiteral() do PSL.error("ColumnMap must be literal: "_ PSL.objectName) quit
+
+	if name.isNull() do PSL.error("Target object identifier required") quit
+
+	type String varClass = name.class
+
+	if varClass.isNull() do PSL.error("Target object is not in scope:"_name) quit
+
+	/* Mark the use of this variable as an instantiation. This is similar
+	   to any other subroutine call that passes an object. However, this
+	   occurrence will not have been detected by the compiler automatically.
+	   */
+	type Number dummy
+	if PSLClass.isRecord(varClass) > 0 set dummy = $$insByOvs^UCREC4OP( PSL.subRou, name, "", "U")
+
+	// Set up one-to-one map between Row object and Record object
+
+	type Number i
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set z = $$TOKEN^%ZS(columns.stripQuotes(),.tok)
+
+	for i = 1:1:z.length(",") do {
+		type String di = z.piece(",",i)
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		set di = $$UNTOK^%ZS(di,.tok).piece(" ",2).lowerCase()
+		set map(di) = di
+	}
+
+	if 'xmap.isNull(1) do {
+		type String z = xmap.stripQuotes()
+
+		for i = 1:1:z.length(",") do {
+			type String ndi,x
+			set x = z.piece(",",i)
+			set di = x.piece("=",1).trim().lowerCase()
+			set ndi = x.piece("=",2).trim()
+
+			if di.isNull() do PSL.error("Invalid map expression: "_x) quit
+			if pslPrsr.findPSLProperty( tknzr, varClass_"."_ndi, 1).isNull() do PSL.error("MISMATCH: Invalid property: "_varClass_"."_ndi) quit
+		 	set map(di) = ndi
+		}
+ 	}
+
+	/* Make sure every occurrence ends up in its own subroutine because the
+	   post-processing will not look at PSL names when patching the formal
+	   and actual parameter lists */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type String label = $$findSubr^UCGM("vRwTO","") 
+
+	type String code = "(Row vRow,"_varClass_" vObj)"
+
+	type PSLBuffer buf = PSL.openBuffer(code,"Copy Row to "_varClass)
+
+	set z = columns
+
+	do buf.add("do vRow.setColumns("_z_")")
+	do buf.add("do vRow.setDelimiter("_delimit_")")
+	set di = ""
+	for  set di = map(di).order() quit:di.isNull()  do {
+		if map(di).isNull() quit
+		set code = "set vObj."_map(di)_" = vRow."_di
+		do buf.add(code)
+	}
+
+	do buf.add("quit")
+	do buf.insert(label, "void")
+
+	set PSL.return=label_"(."_PSL.objectName_",."_name_")"
+
+	quit
+
 	/* ****************************************************************** */
-private toRecord	// method: Row.toRecord(Record identifier,String columnMap)
+toRecord	// method: Row.toRecord(Record identifier,String columnMap)
 	// Copy a row to a record
 
-	type Public Number ER
-
-	type Public String fsn(),labels()
-	type Public String struct(,,,,)
+	type public Number ER
+	type public String struct(,,,,)
+	type static PSLClass
 
 	type String di,table,tok,map()
 
 	type PSLIdentifier name = PSL.actual(1)
 	type String xmap = PSL.actual(2)
 
-	type Number newPtr = PSL.objectName.scopeLine
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number newPtr = $$getNew^UCGM( PSL.objectName, PSL.objectLevel)
 
 	type String z = struct("Row",PSL.subRou,PSL.objectName,newPtr).get()
-	type String delimit = z.piece($C(9),1)
-	type String columns = z.piece($c(9),2)
+	type String delimit = z.piece(9.char())
+	type String columns = z.piece(9.char(),2)
 
 	if columns.isNull() do PSL.error("Columns list missing: "_ PSL.objectName) quit
 
@@ -777,7 +905,7 @@ private toRecord	// method: Row.toRecord(Record identifier,String columnMap)
 	//type String instExpr = name.instExpr
 
 	if varClass.isNull() do PSL.error("Record object is not in scope:"_name) quit
-	if 'PSL.isRecord(varClass) do PSL.error("Object parameter is not a Record<Class>: "_name) quit
+	if PSLClass.isRecord(varClass) = 0 do PSL.error("Object parameter is not a Record<Class>: "_name) quit
 
 	/* Mark the use of this variable as an instantiation. This is similar
 	   to any other subroutine call that passes an object. However, this
@@ -790,12 +918,15 @@ private toRecord	// method: Row.toRecord(Record identifier,String columnMap)
 	type Number i
 	if columns.isLiteral() do {
 
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		type String z = $$TOKEN^%ZS(columns.stripQuotes(),.tok)
 
 		for i = 1:1:z.length(",") do {
 
 			type String di = z.piece(",",i)
-			set di = $$UNTOK^%ZS(di,.tok).piece(" ",2)
+
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+			set di = $$UNTOK^%ZS(di,.tok).piece(" ",2).lowerCase()
 			set map(di) = di
 		}
 	}
@@ -804,11 +935,11 @@ private toRecord	// method: Row.toRecord(Record identifier,String columnMap)
 
 		type String z = xmap.stripQuotes()
 
-		for i = 1:1:$L(z,",") do { quit:ER
+		for i = 1:1:z.length(",") do { quit:ER
 
 			type String ndi,x
 			set x = z.piece(",",i)
-			set di = x.piece("=",1).trim()
+			set di = x.piece("=",1).trim().lowerCase()
 			set ndi = x.piece("=",2).trim()
 
 			//if di.isNull()!ndi.isNull() do PSL.error("Invalid map expression: "_x) quit
@@ -819,9 +950,11 @@ private toRecord	// method: Row.toRecord(Record identifier,String columnMap)
 		}
  	}
 
-	type String label = $$newLabel^UCGM("RwTR",.labels) 
-
-	kill labels(label) 		// to avoid duplicate error
+	/* Make sure every occurrence ends up in its own subroutine because the
+	   post-processing will not look at PSL names when patching the formal
+	   ans actual parameter lists */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type String label = $$findSubr^UCGM("vRwTR","") 
 
 	type String code = "(Row row,"_varClass_" record"
 
@@ -829,8 +962,6 @@ private toRecord	// method: Row.toRecord(Record identifier,String columnMap)
 	if 'xmap.isNull(1) set code = code_",String xmap"
 
 	type PSLBuffer buf = PSL.openBuffer(code_")","Copy Row to"_varClass)
-
-	do buf.add("")
 
 	set z = columns
 	if 'z.isLiteral() set z = "columns"
@@ -879,7 +1010,7 @@ private toRecord	// method: Row.toRecord(Record identifier,String columnMap)
 	}
 
 	do buf.add("quit")
-	do buf.insert(label)
+	do buf.insert(label, "void")
 
 	set PSL.return=label_"(."_PSL.objectName_",."_name
 
@@ -891,8 +1022,8 @@ private toRecord	// method: Row.toRecord(Record identifier,String columnMap)
 
  
 	// ---------------------------------------------------------------------
-template( local String expr,
-	public String del)
+private template( String expr,
+		  ret String del)
 	/* ---------------------------------------------------------------------
 	Row list is a template (unfinished)
 	*/
@@ -918,24 +1049,8 @@ template( local String expr,
 	}
 	quit tmplcol
 
-	/* ================ unsupported feature (table STBLPSLREC not defined)
-	set VAL = expr
-	set sqlexpr = "LIST,DEL FROM STBLPSLREC WHERE REF = :VAL"
-	//type Literal String sqlexpr = "LIST,DEL FROM STBLPSLREC WHERE REF = :VAL"
-
-	do SELECT^SQL(sqlexpr,"","",.sqldta,.sqlcnt)
-	if '(sqlcnt = 1) do PSL.error("Record definition not found in STBLPSLREC: "_expr) quit
-
-	set expr = sqldta.piece(tab,1).addQuotes()
-
-	set del = sqldta.piece(tab,2) if del.isNull() set del = 9
-	set del = $S(del<31!(del>124):"$C("_del_")",1:$C(del).addQuotes())
-	quit expr
-	================ */
-
-
-	/* ****************************************************************** */
-private toString	//Method: Row.toString(colDel,quoChar,fmtDate,fmtTime,fmtBool)
+	// ---------------------------------------------------------------------
+toString	//Method: Row.toString(colDel,quoChar,fmtDate,fmtTime,fmtBool)
 
 	type String colDel  = PSL.actual(1)	// column separator in result
 	type String quoChar = PSL.actual(2)	// add quotes to String types?
@@ -943,15 +1058,16 @@ private toString	//Method: Row.toString(colDel,quoChar,fmtDate,fmtTime,fmtBool)
 	type String fmtTime = PSL.actual(4)	// output format for Time types
 	type String fmtBool = PSL.actual(5)	// output format for Boolean types
 
-	type Public String struct(,,,,)
-	type Public String postProc()
+	type public String struct(,,,,)
+	type public String postProc()
 
-	type Number newPtr = PSL.objectName.scopeLine
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number newPtr = $$getNew^UCGM( PSL.objectName, PSL.objectLevel)
 
 	type String rec = struct("Row",PSL.subRou,PSL.objectName,newPtr).get()
 
 	type String rowDel = $$getDelCT(rec)
-	type String list = rec.piece($C(9),2)
+	type String list = rec.piece(9.char(),2)
 
 	set PSL.return = PSL.objectName
 
@@ -979,10 +1095,15 @@ private toString	//Method: Row.toString(colDel,quoChar,fmtDate,fmtTime,fmtBool)
 	if quoChar.isNull(1),fmtDate.isNull(1),fmtTime.isNull(1),fmtBool.isNull(1) do { quit
 
 		if '(colDel = rowDel) do {
+			/* ---------------- begin old code ----------------
+			   This code suggested that a Row can be casted to a
+			   String, which is no longer true.
 			set PSL.return = $$tokenPush^UCPATCH( PSL.objectName, "Row")
 			set rowDel = $$tokenPush^UCPATCH( rowDel, "String")
 			set colDel = $$tokenPush^UCPATCH( colDel, "String")
-			set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr("{String}"_ PSL.return_ ".translate("_rowDel_","_colDel_")"), 3)
+			set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr( "{String}"_ PSL.return_ ".translate("_rowDel_","_colDel_")"), 3)
+			---------------- end old code ---------------- */
+			set PSL.return = "$TR("_ PSL.return_ ","_rowDel_","_colDel_")"			
 		}
 	}
 
@@ -1008,7 +1129,7 @@ private toString	//Method: Row.toString(colDel,quoChar,fmtDate,fmtTime,fmtBool)
 		do buf.add("")
 		do buf.add("if '(rowDel = colDel) set row = row.translate(rowDel,colDel)")
 		do buf.add("quit row")
-		do buf.insert(label)
+		do buf.insert(label, "String")
 	}
 	if quoChar.isNull(1) set quoChar = """"""
 	if fmtDate.isNull(1) set fmtDate = """"""

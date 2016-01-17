@@ -1,0 +1,52 @@
+//DO NOT MODIFY  Before Update Rights Columns|0|1|0|0|0|0|INSERTRTS,UPDATERTS,DELETERTS,SELECTRTS|||
+
+	/* ----- Revision History ---------------------------------------------
+	
+	01/13/2008 - RussellDS - CR30801
+		Created.
+	*/
+	
+	type List checkList = ""
+	type List errmsg
+	
+	/* Ensure that the userclass has WITH GRANT PRIVILEGES.  HASRIGHTS is
+	   in the BEFORE_INSERT trigger.
+	   
+	   Remove where clause if rights revoked. */
+	if this.isChanged("INSERTRTS") do {
+		
+		set checkList = checkList.add("insert")
+		if (this.insertrts = 0) set this.insrestrict = ""
+	}
+	if this.isChanged("UPDATERTS") do {
+		
+		set checkList = checkList.add("update")
+		if (this.updaterts = 0) set this.updrestrict = ""
+	}
+	if this.isChanged("DELETERTS") do {
+		
+		set checkList = checkList.add("delete")
+		if (this.deleterts = 0) set this.delrestrict = ""
+	}
+	if this.isChanged("SELECTRTS") do {
+		
+		set checkList = checkList.add("select")
+		if (this.selectrts = 0) set this.selrestrict = ""
+	}
+	
+	if 'this.HASRIGHTS(checkList, this.tablename, .errmsg) do this.throwError(errmsg)
+	
+	/* At least one userclass must exist that has all privileges and the
+	   WITH GRANT OPTION enabled for this. */
+	
+	quit:(this.tablename '= "DBACCRTS")
+	   
+	type ResultSet rs = Db.select("USERCLASS", "DBACCRTS", "TABLENAME='DBACCRTS' AND USERCLASS<>:this.userclass AND INSERTRTS=2 AND UPDATERTS=2 AND DELETERTS=2 AND SELECTRTS=2")
+	
+	if rs.isEmpty() do {
+		
+		// At least one entry to access rights table (DBACCRTS) must be ALL PRIVILEGES with GRANT OPTION
+		if '((this.insertrts = 2) & (this.updaterts = 2) & (this.deleterts = 2) & (this.selectrts = 2)) do this.throwError($$^MSG(6764))
+	}
+		
+	quit

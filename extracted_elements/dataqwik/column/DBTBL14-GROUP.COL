@@ -1,0 +1,33 @@
+NOD=5*
+LEN=2
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Group Code
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=GROUP@CODE
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+User defined unique group number (1-99) for different
+types of protection definitions.

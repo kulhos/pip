@@ -1,9 +1,42 @@
-//DO NOT MODIFY  Library of PSL methods|UCMETHOD|||||||1
+//DO NOT MODIFY  Library of PSL* methods|UCMETHOD|||||||1
 	  /*
 	ORIG: FSANCHEZ - 02/19/2003
 	DESC: Library of PSL methods
 
 	---------- Revision History --------------------------------------------
+	2009-06-25, Frans S.C Witte, CR 41380
+		* Corrected code in opti (should not call $$getExpr^UCGM())
+
+	2009-03-30, Frans S.C Witte, CRs 35741/39032
+		* Code for PSL.mExpr now also supresses MISMATCH warnings
+
+	02/02/2009 - RussellDS - CR37982
+		* Added new method, PSLTable.getChildren
+	
+	2008-10-15, Frans S.C. Witte, CRs 35741/?????
+		Added generator for PSLTable.getExistsCode()
+
+	03/06/2008 - RussellDS - CR30801
+		* Added new method, PSLTable.getNewMethodCode
+		* Added new method, PSLTable.checkAccessRights
+		* Added new method, PSLTable.getLogging
+	
+	09/20/07 - RussellDS - CR29295
+		* Added new parameter (RdbCodeForm) to getUpdateCode.
+                * Added new method, PSLTable.getInitCode
+		
+	05/14/07 - Frans S.C. Witte - CR: 27800
+		* Replaced commands(,) by PSL.xxxSetting(,)
+		* Replaced $D(labels()) with $$hasSubr^UCGM(^UCGM()
+		* Removed insLine (because PSL.insertLine() was removed)
+		* Removed getDbLoad (because PSL.getDbload() was removed)
+		* Removed cmdsRest() and cmdsSave() (no longer called)
+		* Removed getLabel (PSL.getLabelRecord no longer exists)
+		* All PSLBuffer.insert() calls now include a resultClass
+		* Calls to ^DBARCHIVE will now only be generated conditionally
+		  (Version 7, no bootrestriction, no RDB)
+		* Removed isRecord (PSL.isRecord is no longer supported)
+
 	04/05/07 - Frans S.C. Witte - CR: 26334
 		Corrected fitsLinLen to add parenthesis to actual(1) if needed
 
@@ -25,7 +58,7 @@
 		* Added $$stdCall() and stdMet
 
 	07/11/06 - Frans S.C. Witte - CRs: 22720 / 22274
-		* Added commands("Options","ResultClass") in call to
+		* Added pslPrsr("Options","ResultClass") in call to
 		  $$fromSubrou^UCPSLLR()
 		* Added documentation to decribe use of $$tokenPush^UCPATCH()
 		  and $$tokenPush^UCPATCH() with PSL.mExpr().
@@ -120,6 +153,8 @@
         	Retrofit of changes made in v7.0 up to this date into Profile01
         	as well as release for v7.0
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -136,80 +171,17 @@
 	// * Keep these comments as single line to ensure they exist in the  *
 	// * generated M code.                                               *
 	// *******************************************************************
-	quit
 
 	// ---------------------------------------------------------------------
-cmdsRest( String cmdsRest(,))	// array to restore commands() from
-	/* Restores switch(es) in commands().
-	   This is the "inverse" of cmdsSave().
-	*/
-	type public Boolean commands(,)
-	
-	#ACCEPT DATE=11/02/04;CR=11445;PGM=FSCW
-	#BYPASS
-	KILL commands("WARN"),commands("OPTIMIZE")
-	MERGE commands("WARN")=cmdsRest("WARN")
-	MERGE commands("OPTIMIZE")=cmdsRest("OPTIMIZE")
-	#ENDBYPASS
-
-	quit
-
-	// ---------------------------------------------------------------------
-cmdsSave( String cmdsSave(,))	// array in which commands() is to be saved
-	/* This procedure saves commands("WARN") and commands("OPTIMIZE") and
-	   forces:
-	   #WARN OFF
-	   #OPTIMIZE FUNCTIONS OFF
-	*/
-	type public Boolean commands(,)
-	
-	#ACCEPT DATE=11/02/04;CR=11445;PGM=FSCW
-	#BYPASS
-	MERGE cmdsSave("WARN")=commands("WARN")
-	MERGE cmdsSave("OPTIMIZE")=commands("OPTIMIZE")
-	KILL commands("WARN"),commands("OPTIMIZE")
-	#ENDBYPASS
-	
-	/* save current setting of commands("OPTIMIZE","OBJECTS") */
-	set commands("OPTIMIZE","OBJECTS")=cmdsSave("OPTIMIZE","OBJECTS").get()
-
-	/* force commands("OPTIMIZE","FUNCTIONS")=0 */
-	set commands("OPTIMIZE","FUNCTIONS")=0
-
-	quit
-
-	/* ******** COMMENTED OUT (NO LONGER CALLED)
-	// ---------------------------------------------------------------------
-private init	// Initialize the method and property array(s) DEPRECATED
-
-	do WARNDEP^UCGM("'this.': Use PSL.method or PSL.property")
-
-	// Instantiate the 'this' object
-	;;do setScop^UCGM("this",-1,0,"NEW")
-	;;do setType^UCGM("this","PSL",-1)
-	do setScope^UCGM("this",-1,0,"NEW","PSL")
-	do setInst^UCGM("this",-1,"")
-	do setOpti^UCGM("this",-1,-1)
-
-	// Instantiate the parameter array - actual
-	;;do setScop^UCGM("actual()",-1,0,"PUBLIC")
-	;;do setType^UCGM("actual()","String",-1)
-	do setScope^UCGM("actual()",-1,0,"PUBLIC","String")
-
-	quit
-	******** */
-
-	// ---------------------------------------------------------------------
-private INSERT( Number object,	// object id		/REQ/MECH=VAL
+INSERT( Number object,	// object id		/REQ/MECH=VAL
 	String subRou,		// name of subroutine	/REQ/MECH=VAL
 	String resCls)		// ResultClass (*3)
 	/* ---------------------------------------------------------------------
 	Runtime subroutine, called to convert PSL to M and insert buffer.
 
-	The current version of the code (in #IF 1 block) just appends the PSL
-	code to the existing m2src() array. In order to prevent duplicate
-	insertions, endless loops, etc. it keeps track of the subroutines that
-	it inserted:
+	The current version of the code just appends the PSL code to the
+	existing source array. In order to prevent duplicate insertions,
+	endless loops, etc. it keeps track of the subroutines that it inserted:
 	- set labels(subRou) = data
 
 	ARGUMENTS:
@@ -237,133 +209,59 @@ private INSERT( Number object,	// object id		/REQ/MECH=VAL
 		compilation, so there is no guarantee that the setting that was
 		in effect when the code was inserted will still apply when the
 		code is compiled.
-	. Saving the settings of #INFO, #OPTOIN, #OPTIMIZE, and #WARNING, and
-		restoring them after inserting the PSL source, is an overkill.
+	. Saving the settings of #INFO, #OPTION, #OPTIMIZE, and #WARNING, and
+		restoring them after inserting the PSL source, was an overkill.
 		As long as all inserted PSL code follows the original PSL code,
 		it is sufficient to "force" the settings that need to be in
 		effect for the inserted code. The only exception is the setting
 		of #OPTIMIZE OBJECTS, but this setting is not changed here.
+		So the current code does not save / restore settings.
 	*/
+	type public String append()	// temporary use of append()
+	type public PSLParser pslPrsr	// temporary use of pslPrsr(,)
 
-	#IF 1
-	/* NEW CODE */
-	type public PSLLabelRecord labels()
-	//type public Primitive commands(,)
-	
 	type String  decl
-	type List    savCmds()
-	//type Boolean savResCl = commands( "Options", "ResultClass").get( false)
 	type Boolean mtdResCl = '(resCls.get().isNull())
+	type PSLClass ocd = pslPrsr.getPSLClass( pslPrsr.moduleName)
 
 	if subRou.isNull() do PSL.error("Subroutine name required") quit
 
-	/* Setting labels(subRou) = "" will serve as an indication that a
-	   subroutine with this label has been appended to the PSL source code.
+	/* Setting append(subRou) will serve as an indication that a subroutine
+	   with this label has been appended to the PSL source code.
 	   By quiting if subRou already exists, the implementation of the method
 	   will silently ignore unintended duplications.
 	   (The "OLD" implementation silently rewrote each previous definition)
 	   */
-	if labels(subRou).exists() quit			// insert only once
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if $$hasSubr^UCGM(subRou) quit			// insert only once
 	if mtdResCl set decl = resCls_ " "_ subRou_ vobj( object, 1)
 	else  set decl = subRou_ vobj( object, 1)
-	set labels(subRou) = {PSLLabelRecord}$$fromSubrou^UCPSLLR( decl, 0, mtdResCl)
-	//set labels(subRou).comment = vobj( object, -2)
+	if ocd.classType>-1 set:'mtdResCl decl="String "_decl set decl = "static "_decl
 
-	/* Save current settings of commands("WARN",*) and
-	   commands("OPTIMIZE",*) */
-	//type String l1,l2
-	//for l1="WARN","OPTIMIZE" do {
-	//	set savCmds(l1) = ""
-	//	set l2 = ""
-	//	for  set l2 = commands(l1,l2).order() quit:l2=""  if commands(l1,l2) set savCmds(l1) = savCmds(l1).add(l2)
-	//}
+	set append(subRou) = 0_ 9.char()_ vobj( object, -2)
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do addM2src^UCGM( " // ----------------")
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do addM2src^UCGM(" #OPTION ResultClass "_ mtdResCl)
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do addM2src^UCGM( decl)	// Insert declaration
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do addM2src^UCGM( " //")
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do addM2src^UCGM( " #WARN "_ $$allWARN^UCGMC()_ " OFF")
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do addM2src^UCGM( " #OPTIMIZE FUNCTIONS OFF")
 
 	type Number ln = 1
-
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	for  set ln = vobj(object,ln).order() quit:ln.isNull()  do addM2src^UCGM( vobj(object,ln))
-
-	//do addM2src^UCGM(" #OPTION ResultClass "_ savResCl)
-	//for l1="WARN","OPTIMIZE" if 'savCmds(l1).isNull() do addM2src^UCGM( " #"_l1_ " "_ savCmds(l1)_ " ON")
-
-	#ELSE
-	/* OLD CODE */
-	type Public String append(,)
-	type Public String commands(,)
-	type Public String labels()
-	type Public String type(,)
-	type Public String vobj(,)
-	
-	type String saveCmds()
-
-	if subRou.isNull() do PSL.error("Subroutine name required") quit
-	
-	if append(subRou).exists() kill append(subRou),labels(subRou)
-
-	// variables that hide variables from main^UCGM() (UGH!)
-	type Number level,ifLevel=0,line=0
-	type String dbLoad(),dbAcc(),msrc(),m2src(),level(),patch(),struct()
-	type String doStack="",ifStack="",forStack=""
-	type String pslSt=""
-	type List   pslNew()
-	type String del,lptr,mcode,var,return,class,cmd,cmdNum,cmdDel
-
-	type String v="",ztype()
-	for  set v=type(-1,v).order() quit:v.isNull()  set ztype(v)=type(-1,v)
-
-	#ACCEPT CR=18163;DATE=2005-11-07;PGM=FSCW
-	type String type	// not a very clean way to achieve this ...
-	for  set v=ztype(v).order() quit:v.isNull()  set type(-1,v)=ztype(v)
-
-	set level=0,level(level)=0,msrc=0
-	set lptr=""
-
-	set m2src(1)=" //"
-	set m2src(2)=subRou_vobj(object,1)	// Insert label
-	set m2src(3)=" //"
-
-	// save commands("WARN") and commands("OPTIMIZE") and force values
-	// for generated code
-	do cmdsSave(.saveCmds())
-	
-	do {
-		catch pslException {
-			do PSL.error( "%PSL-E-COMPILE: error during processing of PSLBuffer.insert()")
-		}
-		set subRou="",lptr=1
-
-		// First copy the append buffer into m2src & delete append buffer
-		for line=4:1 set lptr=vobj(object,lptr).order() quit:lptr.isNull()  set m2src(line)=vobj(object,lptr)
-
-		// Then process m2src into M in the compiler
-		for line=1:1 set lptr=m2src(lptr).order() quit:lptr.isNull()  do line^UCGM(m2src(lptr))
-
-		// See UCGM for correct order !!
-		if patch("").order()'="" do ^UCPATCH
-		if dbAcc("").order()'="" do optNload^UCREC4OP( .msrc(), +commands("OPTIMIZE","OBJECTS").get(),0)
-		if dbLoad("").order()'="" do PSL.warn("%PSL-W-INTERNAL: dbLoad exists for PSLBuffer.insert()")
-
-		set subRou=m2src(2).piece(" ",1).piece("(",1)		// Retrieve subRou
-		if 'pslNew(subRou).isNull() set msrc(2.00001)=" N "_pslNew(subRou)
-
-		// Finally move the M code back into append
-		for line=1:1 set lptr=msrc(lptr).order() quit:lptr.isNull()  set append(subRou,line)=msrc(lptr)
-	}
-
-	// Finally, restore Switch(es)
-	do cmdsRest(.saveCmds())
-	#END
 
 	quit
 
 	// ---------------------------------------------------------------------
-private insMet( local String prefix, local Number missing)
+insMet( String prefix, Number missing)
 	/* ---------------------------------------------------------------------
 	Support procedure for methods that simply translate into a call to a
 	function or subroutine with objectName and all supplied actuals
@@ -387,11 +285,11 @@ private insMet( local String prefix, local Number missing)
 		if ap>1 set PSL.return = PSL.return_ ","
 		set PSL.return = PSL.return_ PSL.actual(ap)
 	}
-	set PSL.return =  PSL.return_ ")"
+	set PSL.return =  PSL.return.trim( 1, ",")_ ")"
 	quit
 
 	// ---------------------------------------------------------------------
-private statMet( local String prefix, local Number missing)
+statMet( String prefix, Number missing)
 	/* ---------------------------------------------------------------------
 	Support procedure for methods that simply translate into a call to a
 	function or subroutine with all supplied actuals ("static" method)
@@ -440,7 +338,7 @@ stdCall(String prefix, String aplist())
 	Implementation of methods and properties of class PSL
 	*/
 	// ---------------------------------------------------------------------
-private addSubr	// Method: PSL.addSubrou - Add a subroutine
+addSubr	// Method: PSL.addSubrou - Add a subroutine
 
 	type literal String label="vaddSubr"
 
@@ -448,13 +346,12 @@ private addSubr	// Method: PSL.addSubrou - Add a subroutine
 
 		type PSLBuffer buf=PSL.openBuffer("(String p1,String p2,String p3,Boolean p4)","PSL.addSubrou")
 
-		do buf.add("type Public PSLLabelRecord labels()")
-		do buf.add("if p4.get() set p1=$$newLabel^UCGM(p1,.labels)")
-		do buf.add("else  if labels(p1).exists() do PSL.error(""Subroutine exists: ""_p1) quit p1")
+		do buf.add("if p4.get() set:p1.extract()'=""v"" p1=""v""_p1 set p1=$$findSubr^UCGM(p1,"""")")
+		do buf.add("else  if $$hasSubr^UCGM(p1) do PSL.error(""Subroutine exists: ""_p1) quit p1")
 		do buf.add("do addSubr^UCGM(p1,p2,p3)")
 		do buf.add("quit p1")
 
-		do buf.insert(label)
+		do buf.insert(label, "PSLSubrou")
 	}
 
 	// ensure that a call with 4 parameters is generated
@@ -466,18 +363,17 @@ private addSubr	// Method: PSL.addSubrou - Add a subroutine
 	quit
 
 	// ---------------------------------------------------------------------
-private arrayProp	// Method PSL.actual - "array property" actual()
+arrayProp	// Method PSL.actual - "array property" actual()
 	/* Because PSL will interpret PSL.actual(val) as a method call, this method
 	is used to transform the method call to a property reference.
 	Because this subroutine uses PSL.method as the "name" value, it can be
 	used as the implementing method for all array properties of the PSL class.
 	*/
-
 	set PSL.return = PSL.method _ "(" _ PSL.actual(1) _")"
 	quit
 
 	// ---------------------------------------------------------------------
-private caPslCln	// void
+caPslCln	// void
 	/* ---------------------------------------------------------------------
 	method PSL.cachePSLColumn(PSLColumn(),String,PSLTable())
 
@@ -494,7 +390,7 @@ private caPslCln	// void
 	quit
 
 	// ---------------------------------------------------------------------
-private caPslTbl	// void
+caPslTbl	// void
 	/* ---------------------------------------------------------------------
 	method PSL.cachePSLTable(PSLTable(),String,Number)
 
@@ -509,27 +405,27 @@ private caPslTbl	// void
 	if PSL.actual(3).isNull() set PSL.actual(3) = 0
 	set PSL.return = "$$caPslTbl^UCXDD("_ PSL.actual(1)_","_ PSL.actual(2)_","_ PSL.actual(3)_")"
 	quit
+	
+	// ---------------------------------------------------------------------
+checkAccessRights	// Method: PSLTable.checkAccessRights()
+	/* ---------------------------------------------------------------------
+	
+	INPUTS:
+	. PSL.actual(1) = Boolean to force check from DBACCRTS table, versus
+			  trying RecordTABLE.checkAccessRights() first
+	*/
+
+	set PSL.return = "$$checkAccessRights^UCXDD("_  PSL.objectName_ ","_ PSL.actual(1)_ ")"
+	quit
 
 	// ---------------------------------------------------------------------
-private error	// Method: PSL.error - Report a compile-time error
+error	// Method: PSL.error - Report a compile-time error
 
 	set PSL.return = "ERROR^UCGM("_ PSL.actual(1)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getDbLoad	// PSL.getDbLoad - Return dbLoad record map
-
-	set PSL.return = "$G(dbLoad("_ PSL.actual(1)_","_ PSL.actual(2)_","_ PSL.actual(3)_"))"
-	quit
-
-	// ---------------------------------------------------------------------
-private getLabel	// PSL.getLabelRecord - Return label record
-
-	set PSL.return = "$G(labels("_ PSL.actual(1)_"))"
-	quit
-
-	// ---------------------------------------------------------------------
-private getPslCln	// void
+getPslCln	// void
 	/* ---------------------------------------------------------------------
 	method PSL.getPSLColumn(String,String,PSLTable())
 
@@ -549,7 +445,7 @@ private getPslCln	// void
 	quit
 
 	// ---------------------------------------------------------------------
-private getPslTbl	// void
+getPslTbl	// void
 	/* ---------------------------------------------------------------------
 	method PSL.getPSLTable(String,Number)
 
@@ -569,7 +465,7 @@ private getPslTbl	// void
 	quit
 
 	// ---------------------------------------------------------------------
-private getPslValue( Primitive default)	// default value (*1)
+getPslValue( Primitive default)	// default value (*1)
 	/* ---------------------------------------------------------------------
 	This subroutine generates the code for PSL properties such as
 	PSL.maxStringLength and PSL.maxLineLength.
@@ -580,13 +476,10 @@ private getPslValue( Primitive default)	// default value (*1)
 		value that shall be used as default value for the property.
 		The default value will be used if:
 		- code is generated in compiler completion mode
-			(i.e. $GET(PSL.commands("boot","restrictionlevel"))>1)
+			(i.e. PSL.getSetting("boot","restrictionlevel")>1)
 		- the call to $$getPslValue^UCOPTS() returns ""
 
 	INPUTS:
-	. public Boolean commands(,)
-		the value commands("boot","restrictionlevel") is used to bypass the call
-		to $$getPslValue^UCOPTS()
 	. public String ref
 		The name of the property is passed to $$getPslValue^UCOPTS()
 
@@ -599,69 +492,82 @@ private getPslValue( Primitive default)	// default value (*1)
 		PSL.maxDataLength would be coded as:
 			OBJECTPROP.ROUTINE = 'getPslValue^UCMETHOD(450)'
 	*/
-	type public Boolean commands(,)
 	type public String ref
 
-	if commands("boot","restrictionlevel").get()>1 set PSL.return = default
+	if PSL.getSetting("boot","restrictionlevel",0)>1 set PSL.return = default
 	else  set PSL.return = $$getPslValue^UCOPTS( ref) if PSL.return.isNull() set PSL.return = default
 	quit
 
 	// ---------------------------------------------------------------------
-private getProp	// Property procedure of class PSL
+getProp	// Property procedure of class PSL
 
 	/* Property implementation method for properties of class PSL.
 	Initially all property names will be the same as the UCGM
 
 	actual(1-n) = Actual parameters passed
 	attrib(1-2) = Attributes of parameters vptr<tab>class<tab>byref
+	class       = Expect return class of this method
+	cmd         = current PSL command (full word, lowercase spelling)
+	fset        = Flag var within assignment scope
+	level       = static DO level within subRou
+	mclass      = class in which method occurs
+	mcode       = Current M generated code for this line
+	method      = name of current method
+	msrc        = line number of current line in generated M code
+	objectLevel = Stack level where identifier was scoped
+	objectName  = the expression (!) that represents the object
+	objectVar   = non-litralized versoin of objectName
+	oLvn        = Object storage array name
+	postCond    = M code of postconditional for current command
+	pslSt       = do/for/if "stack" (used by UCREC4OP and UCPSLST)
+	pslTmpLvn   = name of temporary variable allocated by PSL
+	ref         = name of current property
+	return      = genereated code for method or property
+	subRou      = current subroutine
+	tok         = tokenized string literals
 	var         = Variable return assigned to unless void
 	varLevel    = Stack level where var was scoped
-	objectName  = Name of the object identifier
-	objectLevel = Stack level where identifier was scoped
-	objectScope = Scope of identifier (FORMAL,NEW,PUBLIC,LITERAL)	
-	class       = Expect return class of this method
-	fset        = Flag var within assignment scope 
-	oLvn        = Object storage array name
-	mcode       = Current M generated code for this line
-	msrc        = The last line in the code output buffer
-	reClass     = Record<class> Prefix 
+
+	NOTES:
+	. once the cleanup of the compiler has limited the use of PSL.publicVar
+		to the above list, the warning shall be changed into an error.
+		Use of additional public variables is no longer allowed.
+		If access to additional structures is needed, they shall be
+		made available as "properties" of PSLParser.
 	*/
+	type literal List EXPS = "actual,mcode,postCond,pslTmpLvn,return"
+	type literal List NUMS = "fset,level,msrc,objectLevel,varLevel"
+	type literal List SIGS = "objectName,objectVar,var"
+	type literal List STRS = "cmd,attrib,class,objectScope,mclass,method,oLvn,pslSt,ref,subRou,tok"
+	type literal List ALLOW = EXPS_ ","_ NUMS_ ","_ SIGS_ ","_ STRS
 
-	if $$getNew^UCGM(PSL.ref) do PSL.error("Object scope is not visible: PSL."_ PSL.ref) quit
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if $$getNew^UCGM( PSL.ref) do PSL.error("Object scope is not visible: PSL."_ PSL.ref) quit
 
-	set PSL.return=PSL.ref
+	/* The #ACCEPT GROUP=SCOPE is needed because List.contains uses
+	   PSL.mexpr, which by the time it is evalueated will contain "ref", not
+	   "PSL.ref". This will not be addressed until the parser is rewritten.
+	   */
+	#ACCEPT GROUP=SCOPE,ACCESS;CR=27800;DATE=2007-09-04;PGM=Frans S.C. Witte
+	if 'ALLOW.contains( PSL.ref) do warnGroup^UCGM("SCOPE","non-standard PSL property PSL."_ PSL.ref)
 
-	if PSL.ref="objectName"!(PSL.ref="var") set PSL.class="PSLIdentifier"
-	else  if PSL.ref="return" set PSL.class="PSLExpression"
+	set PSL.return = PSL.ref
+
+	if SIGS.contains( PSL.ref)       set PSL.class="PSLIdentifier"
+	else  if EXPS.contains( PSL.ref) set PSL.class="PSLExpression"
+	else  if NUMS.contains( PSL.ref) set PSL.class="Number"
 	else  set PSL.class="String"
 
 	quit
 
 	// ---------------------------------------------------------------------
-private insLine		// PSL.insertLine(PSLcode,line,level)
-	// Convert a line of PSL code to M code and insert into program
-	// after first comment free line after parameter line.
+isSubr	// Method: PSL.subrExists - Return whether a subroutine exists
 
-	type String p2 = PSL.actual(2)
-	if p2 = "line",'p2.beginsWith(".") set p2="."_p2
-
-	set PSL.return = "newLine^UCGM("_ PSL.actual(1)_","_p2_","_ PSL.actual(3)_")"
+	set PSL.return="$$hasSubr^UCGM("_ PSL.actual(1)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private isRecord	// PSL.isRecord(String class)
-
-	set PSL.return="$$isRecord^UCGM("_ PSL.actual(1)_")"
-	quit
-
-	// ---------------------------------------------------------------------
-private isSubr	// Method: PSL.subrExists - Return whether a subroutine exists
-
-	set PSL.return="$D(labels("_ PSL.actual(1)_"))"
-	quit
-
-	// ---------------------------------------------------------------------
-private mExpr	// PSL.mExpr(expr)
+mExpr	// PSL.mExpr(expr)
 	/* ---------------------------------------------------------------------
 	Return an M expression from a PSL expression.
 
@@ -669,7 +575,7 @@ private mExpr	// PSL.mExpr(expr)
 	express the code generated for a method as a PSL expression. Programmers
 	that use this method shall be aware of the following:
 	When the code generator for the method
-		MyClass.myMethod(local Primitive Arg1, local Primitive Arg2)
+		MyClass.myMethod(Primitive Arg1, Primitive Arg2)
 	will be invoked, the Myclass instance will be available in objecName,
 	and the arguments will be available in actual(1) and actual(2). Due to
 	the nature of the compiler, all these entities will no longer contain
@@ -695,22 +601,26 @@ private mExpr	// PSL.mExpr(expr)
 
 		quit
 	*/
-	
 	type literal String label="vMExpr"
 
 	if 'PSL.subrouExists(label) do {
 
 		type PSLBuffer buf=PSL.openBuffer("(String v1)","PSL.mExpr")
 
-		do buf.add("type public Primitive commands(,)")
 		do buf.add("type String vExp,mcode,tok")	// 'tok' and 'mcode' used as public var by $$valExpr !!!!
-		do buf.add("type Boolean vFun=commands(""OPTIMIZE"",""FUNCTIONS"").get(0)")
-		do buf.add("set commands(""OPTIMIZE"",""FUNCTIONS"")=0")
+		do buf.add("type Boolean vDep=PSL.getSetting(""WARN"",""DEPRECATED"",0)")
+		do buf.add("type Boolean vMis=PSL.getSetting(""WARN"",""MISMATCH"",0)")
+		do buf.add("type Boolean vFun=PSL.getSetting(""OPTIMIZE"",""FUNCTIONS"",0)")
+		do buf.add("do PSL.addSetting(""WARN"",""DEPRECATED"",0)")
+		do buf.add("do PSL.addSetting(""WARN"",""MISMATCH"",0)")
+		do buf.add("do PSL.addSetting(""OPTIMIZE"",""FUNCTIONS"",0)")
 		do buf.add("set mcode="""",v1=$$TOKEN^%ZS(v1,.tok),vExp=$$valExpr^UCGM(v1,,0)")
-		do buf.add("set commands(""OPTIMIZE"",""FUNCTIONS"")=vFun")
+		do buf.add("do PSL.addSetting(""WARN"",""DEPRECATED"",vDep)")
+		do buf.add("do PSL.addSetting(""WARN"",""MISMATCH"",vMis)")
+		do buf.add("do PSL.addSetting(""OPTIMIZE"",""FUNCTIONS"",vFun)")
 		do buf.add("quit vExp")
 
-		do buf.insert(label)
+		do buf.insert(label, "String")
 	}
 
 	set PSL.return="$$"_label_"("_ PSL.actual(1)_")"
@@ -718,19 +628,19 @@ private mExpr	// PSL.mExpr(expr)
 	quit
 
 	// ---------------------------------------------------------------------
-private newVar	// PSL.newVariable
+newVar	// PSL.newVariable
 
 	set PSL.return = "$$nxtSym^UCGM"
 	quit
 
 	// ---------------------------------------------------------------------
-private patch	// PSL.patch(String expression) - Replace expression with 
+patch	// PSL.patch(String expression) - Replace expression with 
 
 	set PSL.return="$$patch^UCPATCH(subRou,objectName,objectLevel,"_ PSL.actual(1)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private warn	// Method PSL.warn - Report a compile-time warning
+warn	// Method PSL.warn - Report a compile-time warning
 
 	set PSL.return="WARN^UCGM("_ PSL.actual(1)_")"
 	quit
@@ -740,29 +650,38 @@ private warn	// Method PSL.warn - Report a compile-time warning
 	Implementation of methods of class PSLBuffer
 
 	PSLBuffer uses the following structure:
-	vobj(oid,-2) = comment (cmt)
-	vobj(oid,-1) = formal parameter list (fpl)
-	vobj(oid,1)  = fpl_ " // "_ cmt
+	vobj(oid,-3) = comment (cmt)
+	vobj(oid,-2) = formal parameter list (fpl)
+	xvobj(oid,1)  = fpl_ " // "_ cmt
+
 	*/
 	// ---------------------------------------------------------------------
-private openBuff	// Method: PSL.openBuffer - Open a PSL code buffer
-	
+openBuff	// Method: PSL.openBuffer - Open a PSL code buffer
+	/* ---------------------------------------------------------------------
+	NOTES:
+	. This subroutine uses PSLBuffer to generate PSL code that accesses the
+		vobj() array. This is wrong from a modeling perspective because
+		the vobj() array is the M implementatation of PSL objects. No
+		PSL code shall directly reference the variable vobj.
+		This code must be rewritten to use PSLSubrou, which generates M
+		code and is allowed / incurred to access vobj.
+	*/
 	type literal String label="vopenBuf"
 
 	if 'PSL.subrouExists(label) do {
 
-		type PSLBuffer buf=PSL.openBuffer("(List v1,String v2)","PSL.openBuffer")
+		type PSLBuffer buf=PSL.openBuffer("(String v1,String v2)","PSL.openBuffer")
 
-		do buf.add("type Public String vobj(,)")
+		do buf.add("type public String vobj(,)")
 		do buf.add("type Number vOid")
-		do buf.add("set vOid=vobj("""").order(-1)+1")
+		do buf.add($$cdNewObj^UCCLASS("vOid","""PSLBuffer"""))
 		do buf.add("if v1.extract()'=""("",'v1.isNull() set v1=""(""_v1_"")""")
-		do buf.add("set vobj(vOid,-1)=v1")
-		do buf.add("set vobj(vOid,-2)=v2")
+		do buf.add("set vobj(vOid,-2)=v1")
+		do buf.add("set vobj(vOid,-3)=v2")
 		do buf.add("set vobj(vOid,1)=v1_"" // ""_v2")
 		do buf.add("quit vOid")
 
-		do buf.insert(label)
+		do buf.insert(label, "PSLBuffer")
 	}
 
 	set PSL.return="$$"_label_"("_ PSL.actual(1)_","_ PSL.actual(2)_")"
@@ -770,102 +689,103 @@ private openBuff	// Method: PSL.openBuffer - Open a PSL code buffer
 	quit
 
 	// ---------------------------------------------------------------------
-private addBuff	// Method: PSLBuffer.add - Add code to an existing buffer
-
+addBuff	// Method: PSLBuffer.add - Add code to an existing buffer
+	/* ---------------------------------------------------------------------
+	NOTES:
+	. This subroutine uses PSLBuffer to generate PSL code that accesses the
+		vobj() array. This is wrong from a modeling perspective because
+		the vobj() array is the M implementatation of PSL objects. No
+		PSL code shall directly reference the variable vobj.
+		This code must be rewritten to use PSLSubrou, which generates M
+		code and is allowed / incurred to access vobj.
+	*/
 	type literal String label="vaddBuff"
 
 	if 'PSL.subrouExists(label) do {
 
 		type PSLBuffer buf=PSL.openBuffer("(Number object,String p1)","PSLBuffer.add")
 
-		do buf.add("type Public String vobj(,)")
+		do buf.add("type public String vobj(,)")
 		do buf.add("type Number line")
 		do buf.add("set line=vobj(object,"""").order(-1)+1")
 		do buf.add("set vobj(object,line)="" ""_p1")
 		do buf.add("quit")
 
-		do buf.insert(label)
+		do buf.insert(label, "void")
 	}
 
 	set PSL.return=label_"(" _ PSL.objectName_","_ PSL.actual(1)_")"
 
 	quit
 
-	// ---------------------------------------------------------------------
-	/*
-private insBuff	// Method: PSLBuffer.insert - Convert PSL to M and insert buffer
-	
-	set PSL.return="INSERT^UCMETHOD("_ PSL.objectName_","_ PSL.actual(1)_")"
-	quit
-	*/
-
 	/* =====================================================================
 	Implementation of methods and properties of class PSLColumn
 	*/
 	// ---------------------------------------------------------------------
-private getPcClass	// Method: PSLColumn.getClass()
+getPcClass	// Method: PSLColumn.getClass()
 
 	set PSL.return="$$getClass^UCXDD("_ PSL.objectName_ ")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getCurExpr	// Method: PSLColumn.getCurrentExpr(PSLIdentifier,Boolean)
+getCurExpr	// Method: PSLColumn.getCurrentExpr(PSLIdentifier,Boolean)
 
 	if PSL.actual(2).isNull() set PSL.actual(2) = 0
 	set PSL.return="$$getCurExpr^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getCurLvn	// Method: PSLColumn.getCurrentLvn(PSLIdentifier)
+getCurLvn	// Method: PSLColumn.getCurrentLvn(PSLIdentifier)
 
 	set PSL.return="$$getCurLvn^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getCurNode	// Method: PSLColumn.getCurrentNode(Boolean)
+getCurNode	// Method: PSLColumn.getCurrentNode(Boolean)
 
 	if PSL.actual(1).isNull(1) set PSL.actual(1) = 0
 	set PSL.return="$$getCurNode^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getOldExpr	// Method: PSLColumn.getOldExpr(PSLIdentifier,Boolean)
+getOldExpr	// Method: PSLColumn.getOldExpr(PSLIdentifier,Boolean)
 
 	if PSL.actual(2).isNull() set PSL.actual(2) = 0
 	set PSL.return="$$getOldExpr^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getOldLvn	// Method: PSLColumn.getOldLvn(PSLIdentifier)
+getOldLvn	// Method: PSLColumn.getOldLvn(PSLIdentifier)
 
 	set PSL.return="$$getOldLvn^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getOldNode	// Method: PSLColumn.getOldNode(Boolean)
+getOldNode	// Method: PSLColumn.getOldNode(Boolean)
 
 	if PSL.actual(1).isNull(1) set PSL.actual(1) = 0
 	set PSL.return="$$getOldNode^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getPurNode	// Method: PSLColumn.getPurposeNode()
+getPurNode	// Method: PSLColumn.getPurposeNode()
 
 	set PSL.return="$$getPurNode^UCXDD("_ PSL.objectName_ ")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getUpdCode	// Method: PSLColumn.getUpdateCode(PSLIdent,PSLExpr,Bool)
+getUpdCode	// Method: PSLColumn.getUpdateCode(PSLIdent,PSLExpr,Number,Number)
 
-	if PSL.actual(3).isNull() set PSL.actual(3) = 1
-	set PSL.return="$$getUpdCode^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)_","_ PSL.actual(3)_")"
+	if PSL.actual(3).isNull() set PSL.actual(3) = 1	// default: PSL audit
+	if PSL.actual(4).isNull() set PSL.actual(4) = 0	// default: in-line update
+	set PSL.return="$$getUpdCode^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)_","_ PSL.actual(3)_","_ PSL.actual(4)_")"
 	quit
 
 	/* =====================================================================
 	Implementation of methods of class PSLExpression
 	*/
 	// ---------------------------------------------------------------------
-private fitsLinLen	// Method: PSLExpression.fitsLineLength( Number extra)
+fitsLinLen	// Method: PSLExpression.fitsLineLength( Number extra)
 	/* ---------------------------------------------------------------------
 	This method will cast the PSLExpression as a ByteString, and return 1 if
 	and only if the (byte) length of the PSLExpression is not greater than
@@ -889,13 +809,13 @@ private fitsLinLen	// Method: PSLExpression.fitsLineLength( Number extra)
 	quit
 
 	// ---------------------------------------------------------------------
-private isArr   // Method: PSLExpression.isArray
+isArr   // Method: PSLExpression.isArray
 
 	set PSL.return="$$isArr^UCGM("_ PSL.objectName_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private isLit   // Method: PSLExpression.isLiteral
+isLit   // Method: PSLExpression.isLiteral
 	/* ---------------------------------------------------------------------
 	Overrides String.isLiteral. Unlike its ancestor method, this method will
 	not interpret the compiletime value.
@@ -905,13 +825,13 @@ private isLit   // Method: PSLExpression.isLiteral
 	quit
 
 	// ---------------------------------------------------------------------
-private isVar   // Method: PSLExpression.isVariable
+isVar   // Method: PSLExpression.isVariable
 
 	set PSL.return="$$isVar^UCGM("_ PSL.objectName_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private toConsta	// Method PSLExpression.toValue
+toConsta	// Method PSLExpression.toValue
 
 	set PSL.return="$$toLit^UCGM("_ PSL.objectName_")"
 	quit
@@ -921,15 +841,15 @@ private toConsta	// Method PSLExpression.toValue
 	Implementation of methods of class PSLIdentifier
 	*/
 	// ---------------------------------------------------------------------
-private getSym(Number pos)	// PSLIdentifier properties
+getSym(Number pos)	// PSLIdentifier properties
 	/* Return the code to retrieve one of the properties of a PSLIdentifier.
 	The mapping of propertyname to position is hard-coded in the value of
 	OBJECTPROP.ROUTINE for the property.
 	*/
-
 	if PSL.fset do PSL.error("Identifier table properties are read only")
 
 	type String keys=PSL.objectName
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if keys.beginsWith("vo") set keys=$$getExpr^UCGM(keys)
 
 	if keys="objectName" set keys="objectName,objectLevel"
@@ -941,32 +861,35 @@ private getSym(Number pos)	// PSLIdentifier properties
 	quit
 
 	// ---------------------------------------------------------------------
-private getLevel	// PSLIdentifier.scopeLevel property
+getLevel	// PSLIdentifier.scopeLevel property
 
 	type String var=PSL.objectName
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if var.beginsWith("vo") set var=$$getExpr^UCGM(var)
 
 	set PSL.return="$$getLevel^UCGM("_var_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private opti	// Method: PSLIdentifier.allowOptimize - Allow backfill optimize
+opti	// Method: PSLIdentifier.allowOptimize - Allow backfill optimize
 
 	type literal String label="vPSLopti"
 
 	if 'PSL.subrouExists(label) do {
 
-		type PSLBuffer buf=PSL.openBuffer("(PSLIdentifier var)","PSLIdentifier.allowOPtimize")
+		type PSLBuffer buf=PSL.openBuffer("(String var)","PSLIdentifier.optimize()")
 
-		do buf.add("type Number varLevel=var.scopeLevel")
-		do buf.add("type Number opti=var.noPatch")
-		do buf.add("if opti>PSL.msrc set opti=0 do setOpti^UCGM(var,varLevel,0)")
-		do buf.add("quit 'opti")
+		do buf.add("type public Integer msrc")
+		do buf.add("type Integer varLevel=$$getLevel^UCGM(var)")
+		do buf.add("type Integer opti=+$$getAtt^UCGM(var,varLevel,10)")
+		do buf.add("if opti>msrc set opti=0 do setOpti^UCGM(var,varLevel,0)")
+		do buf.add("quit opti=0")
 
-		do buf.insert(label)
+		do buf.insert(label, "Boolean")
 	}
  
-	set PSL.return="$$"_label_"("_$$getExpr^UCGM(PSL.objectName)_")"
+ 	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set PSL.return="$$"_label_"("_ PSL.objectName_ ")"
 	quit
 
 
@@ -974,102 +897,127 @@ private opti	// Method: PSLIdentifier.allowOptimize - Allow backfill optimize
 	Implementation of methods of class PSLSubroutine
 	*/
 	// ---------------------------------------------------------------------
-private addCode	// Method: PSLSubroutine.addCode - add a line of code
+addCode	// Method: PSLSubroutine.addCode - add a line of code
 	/* INPUTS:
 	. PSL.actual(1) = code to add
 	
 	RETURNS:
 	. PSL.return = addCode^UCPSLSR( PSL.objectName, PSL.actual(1))
 	*/
-
 	set PSL.return = "addCode^UCPSLSR("_ PSL.objectName_ ","_ PSL.actual(1)_ ")"
 	quit
 
 	// ---------------------------------------------------------------------
-private addExe	// Method: PSLSubroutine.addExe - add a line from exe() to code
+addExe	// Method: PSLSubroutine.addExe - add a line from exe() to code
 	/* INPUTS:
 	. PSL.actual(1) = code to add
 	
 	RETURNS:
 	. PSL.return = addExe^UCPSLSR( PSL.objectName, PSL.actual(1))
 	*/
-
 	set PSL.return = "addExe^UCPSLSR("_ PSL.objectName_ ","_ PSL.actual(1)_ ")"
 	quit
 
 	// ---------------------------------------------------------------------
-private addLvn	// Method: PSLSubroutine.addLvn - add vsql() replacement
+addLvn	// Method: PSLSubroutine.addLvn - add vsql() replacement
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set PSL.mcode = $$backup^UCGM( PSL.mcode)
 	set PSL.return=" S"_ PSL.postCond_" append("_ PSL.objectName_ ",-3,"_ PSL.actual(1)_ ")="_ PSL.actual(2)
 	quit
 
 	// ---------------------------------------------------------------------
-private addTag	// Method: PSLSubroutine.addTag - add tag to append(,-2)
+addTag	// Method: PSLSubroutine.addTag - add tag to append(,-2)
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set PSL.mcode = $$backup^UCGM( PSL.mcode)
 	if PSL.actual(2).isNull() set PSL.actual(2) = """"""
 	set PSL.return=" S"_ PSL.postCond_" append("_ PSL.objectName_ ",-2,"_ PSL.actual(1)_")="_ PSL.actual(2)
 	quit
 
 	// ---------------------------------------------------------------------
-private getCode	// Method: PSLSubroutine.getCode - return the code on a line
+getCode	// Method: PSLSubroutine.getCode - return the code on a line
 
 	set PSL.return="$G(append("_ PSL.objectName_","_ PSL.actual(1)_"))"
 	quit
 
 	// ---------------------------------------------------------------------
-private getLine	// Method: PSLSubroutine.getline - return the current line
+getLine	// Method: PSLSubroutine.getline - return the current line
 
 	set PSL.return="$O(append("_ PSL.objectName_",""""),-1)"
 	quit
+	
+	// ---------------------------------------------------------------------
+getLogging	// Method: PSLTable.getLogging()
+	/* ---------------------------------------------------------------------
+	
+	INPUTS:
+	. PSL.actual(1) = Boolean to force check from DBAUDITDEF table, versus
+			  trying RecordTABLE.logging() first
+	*/
+
+	set PSL.return = "$$getLogging^UCXDD("_  PSL.objectName_ ","_ PSL.actual(1)_ ")"
+	quit
 
 	// ---------------------------------------------------------------------
-private getLvn	// Method: PSLSubroutine.getLvn - return vsql() substitution value
+getLvn	// Method: PSLSubroutine.getLvn - return vsql() substitution value
 
 	set PSL.return="$G(append("_ PSL.objectName_",-3,"_ PSL.actual(1)_ "))"
 	quit
 
 	// ---------------------------------------------------------------------
-private getLvnMax	// Method: PSLSubroutine.getLvnMax - highest number used
+getLvnMax	// Method: PSLSubroutine.getLvnMax - highest number used
 
 	set PSL.return="+$O(append("_ PSL.objectName_",-3,""""),-1)"
 	quit
 
 	// ---------------------------------------------------------------------
-private getTag	// Method: PSLSubroutine.getTag - return the tag for exe(nr)
-	/* INPUTS:
+getName	// Method: PSLSubroutine.getName - name of subroutine
+	/* ---------------------------------------------------------------------
+	With the current implementation of PSLSubrou, the instance variable
+	contains the name of the subroutine, and this name will be used as the
+	first level subscript into append(,).
+	This is likely to change as part of the cleanup of the PSL* classes.
+	*/
+	set PSL.return = PSL.objectName
+	quit
+
+	// ---------------------------------------------------------------------
+getTag	// Method: PSLSubroutine.getTag - return the tag for exe(nr)
+	/* ---------------------------------------------------------------------
+	INPUTS:
 	. PSL.actual(1) = subscript in exe()
 	
 	RETURNS:
 	. PSL.return = getTag^UCPSLSR( PSL.objectName, PSL.actual(1))
 	*/
-
 	set PSL.return = "$$getTag^UCPSLSR("_ PSL.objectName_ ","_ PSL.actual(1)_ ")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getTagMax	// Method: PSLSubroutine.getTagMax - highest TAG number used
+getTagMax	// Method: PSLSubroutine.getTagMax - highest TAG number used
 
 	set PSL.return="+$O(append("_ PSL.objectName_",-2,""""),-1)"
 	quit
 
 	// ---------------------------------------------------------------------
-private getTagPrefix	// Method: PSLSubroutine.getTagPrefix - prefix used by addExe()
+getTagPrefix	// Method: PSLSubroutine.getTagPrefix - prefix used by addExe()
 
 	set PSL.return="$G(append("_ PSL.objectName_ ",-2))"
 	quit
 
 	// ---------------------------------------------------------------------
-private insCode	// Method: PSLSubroutine.insCode - Insert code at line
+insCode	// Method: PSLSubroutine.insCode - Insert code at line
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set PSL.mcode = $$backup^UCGM( PSL.mcode)
 	set PSL.return=" S"_ PSL.postCond_" append("_ PSL.objectName_","_ PSL.actual(1)_")="_ PSL.actual(2)
 	quit
 
 	// ---------------------------------------------------------------------
-private setTagPrefix	// Method: PSLSubroutine.getTagPrefix - prefix used by addExe()
+setTagPrefix	// Method: PSLSubroutine.getTagPrefix - prefix used by addExe()
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set PSL.mcode = $$backup^UCGM( PSL.mcode)
 	set PSL.return=" S"_ PSL.postCond_" append("_ PSL.objectName_ ",-2)="_ PSL.actual(1)
 	quit
@@ -1078,7 +1026,7 @@ private setTagPrefix	// Method: PSLSubroutine.getTagPrefix - prefix used by addE
 	Implementation of methods and properties of class PSLTable
 	*/
 	// ---------------------------------------------------------------------
-private tAssert	// Method: PSLTable.assertLevel(Number,PSLColumn())
+tAssert	// Method: PSLTable.assertLevel(Number,PSLColumn())
 	/* ---------------------------------------------------------------------
 	method PSLtable.assertLevel(Number,PSLColumn())
 
@@ -1095,52 +1043,76 @@ private tAssert	// Method: PSLTable.assertLevel(Number,PSLColumn())
 	. The default / maximum value for actual(1) shall be synchronized with
 		getPslTbl^UCMETHOD and tAssert^UCXDD
 	*/
-
 	if PSL.actual(1).isNull() set PSL.actual(1) = 1
 	if PSL.actual(2).isNull() set PSL.return = "$$tAssert^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_")"
 	else  set PSL.return = "$$tAssert^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getArchivable	//Method: PSLTable.getArchivable()
+getArchivable	//Method: PSLTable.getArchivable()
 
+	if (PSL.getSetting("boot","restrictionlevel") = -1) ! Runtime.isRdb set PSL.return = "0" quit
 	set PSL.return = "$$getArchivable^DBARCHIVE("_  PSL.objectName_")"
 	quit
 	
 	// ---------------------------------------------------------------------
-private getArchiveIncluded	//Method: PSLTable.getArchiveIncluded()
+getArchiveIncluded	//Method: PSLTable.getArchiveIncluded()
 
+	if (PSL.getSetting("boot","restrictionlevel") = -1) ! Runtime.isRdb set PSL.return = """""" quit
 	set PSL.return = "$$getArchiveIncluded^DBARCHIVE("_  PSL.objectName_")"
 	quit
 	
 	// ---------------------------------------------------------------------
-private getArchiveKey	//Method: PSLTable.getArchiveKey(Boolean)
+getArchiveKey	//Method: PSLTable.getArchiveKey(Boolean)
 
+	if (PSL.getSetting("boot","restrictionlevel") = -1) ! Runtime.isRdb set PSL.return = "0" quit
 	if PSL.actual(1).isNull() set PSL.actual(1) = 0
 	set PSL.return = "$$getArchiveKey^DBARCHIVE("_  PSL.objectName_","_ PSL.actual(1)_")"
 	quit
 	
 	// ---------------------------------------------------------------------
-private getArchiveSubs	//Method: PSLTable.getArchiveSubs()
+getArchiveSubs	//Method: PSLTable.getArchiveSubs()
 
+	if (PSL.getSetting("boot","restrictionlevel") = -1) ! Runtime.isRdb set PSL.return = """""" quit
 	set PSL.return = "$$getArchiveSubs^DBARCHIVE("_  PSL.objectName_")"
 	quit
 	
 	// ---------------------------------------------------------------------
-private getArchiveTable	//Method: PSLTable.getArchiveTable()
+getArchiveTable	//Method: PSLTable.getArchiveTable()
 
+	if (PSL.getSetting("boot","restrictionlevel") = -1) ! Runtime.isRdb set PSL.return = """""" quit
 	set PSL.return = "$$getArchiveTable^DBARCHIVE("_  PSL.objectName_")"
+	quit
+	
+	// ---------------------------------------------------------------------
+getChildren	// Method: PSLTable.getChildren()
+
+	set PSL.return = "$$getChildren^UCXDD("_  PSL.objectName_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getFlrLgc	// Method: PSLTable.getFilerLogic(String,Boolean())
+getExisCode	// Method: PSLTable.getExistsCode(PSLIdentifier,String())
+
+	set PSL.return = "$$getExisCode^UCXDD("_  PSL.objectName_","_ PSL.actual(1)
+	if 'PSL.actual(2).isNull() set PSL.return = PSL.return_","_ PSL.actual(2)
+	set PSL.return = PSL.return_")"
+	quit
+	
+	// ---------------------------------------------------------------------
+getFlrLgc	// Method: PSLTable.getFilerLogic(String,Boolean())
 
 	if PSL.actual(3).isNull() set PSL.actual(3) = 0
 	set PSL.return = "$$getFlrLgc^UCXDD("_  PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)_","_ PSL.actual(3)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getLodCode	// Method: PSLTable.getLoadCode()
+getInitCode	// Method: PSLTable.getInitCode(PSLIdentifier,Boolean)
+
+	set PSL.return = "$$getInitCode^UCXDD("_  PSL.objectName_ ","_ PSL.actual(1)_ ","_ PSL.actual(2)_ ")"
+	quit
+
+	// ---------------------------------------------------------------------
+getLodCode	// Method: PSLTable.getLoadCode()
 	/* ---------------------------------------------------------------------
 	ACTUALS:
 	. 1 PSLIdentifier recInst
@@ -1150,7 +1122,6 @@ private getLodCode	// Method: PSLTable.getLoadCode()
 	. 5 PSLIdentifier lvpm()	/NOREQ
 	None of the required actual() values has a default value.
 	*/
-
 	set PSL.return = "$$getLodCode^UCXDD("_ PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)
 	set PSL.return = PSL.return_","_ PSL.actual(3)_","_ PSL.actual(4)
 	if 'PSL.actual(5).isNull() set PSL.return = PSL.return_","_ PSL.actual(5)
@@ -1158,19 +1129,33 @@ private getLodCode	// Method: PSLTable.getLoadCode()
 	quit
 
 	// ---------------------------------------------------------------------
-private getNewCode	// Method: PSLTable.getNewCode(PSLIdentifier,PSLExpression)
+getNewCode	// Method: PSLTable.getNewCode(PSLIdentifier,PSLExpression,Boolean)
 
-	set PSL.return = "$$getNewCode^UCXDD("_  PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)_")"
+	if PSL.actual(3).isNull() set PSL.actual(3) = "0"
+	set PSL.return = "$$getNewCode^UCXDD("_  PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)_","_ PSL.actual(3)_")"
+	
 	quit
 	
 	// ---------------------------------------------------------------------
-private getQuery	// Method: PSLTable.getQuery()
+getNewMethodCode	// Method: PSLTable.getNewMethodCode(String)
+
+	set PSL.return = "$$getNewMethodCode^UCXDD("_  PSL.objectName_","_ PSL.actual(1)_")"
+	quit
+	
+	// ---------------------------------------------------------------------
+getPrimaryKeyWhere	// Method: PSLTable.getPrimaryKeyWhere()
+
+	set PSL.return = "$$getPrimaryKeyWhere^UCXDD("_  PSL.objectName_")"
+	quit
+	
+	// ---------------------------------------------------------------------
+getQuery	// Method: PSLTable.getQuery()
 
 	set PSL.return = "$$getQuery^UCXDD("_  PSL.objectName_")"
 	quit
 	
 	// ---------------------------------------------------------------------
-private getSavCode	// Method: PSLTable.getSaveCode()
+getSavCode	// Method: PSLTable.getSaveCode()
 	/* ---------------------------------------------------------------------
 	ACTUALS:
 	. 1 PSLIdentifier recInst
@@ -1180,17 +1165,15 @@ private getSavCode	// Method: PSLTable.getSaveCode()
 	. 5 PSLColumn rdbCol()		/NOREQ
 	None of the required actual() values has a default value.
 	*/
-
 	set PSL.return = "$$getSavCode^UCXDD("_ PSL.objectName_","_ PSL.actual(1)
 	set PSL.return = PSL.return_","_ PSL.actual(2)_","_ PSL.actual(3)
-	//if 'PSL.actual(4).isNull() set PSL.return = PSL.return_","_ PSL.actual(4)
 	if 'PSL.actual(4).isNull()!'PSL.actual(5).isNull() set PSL.return = PSL.return_","_ PSL.actual(4)
 	if 'PSL.actual(5).isNull() set PSL.return = PSL.return_","_ PSL.actual(5)
 	set PSL.return = PSL.return_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private getUpdKey	// Method: PSLTable.getUpdateKey(PSLIdentifier,String())
+getUpdKey	// Method: PSLTable.getUpdateKey(PSLIdentifier,String())
 
 	set PSL.return = "$$getUpdKey^UCXDD("_  PSL.objectName_","_ PSL.actual(1)
 	if 'PSL.actual(2).isNull() set PSL.return = PSL.return_","_ PSL.actual(2)
@@ -1198,37 +1181,37 @@ private getUpdKey	// Method: PSLTable.getUpdateKey(PSLIdentifier,String())
 	quit
 	
 	// ---------------------------------------------------------------------
-private isParent	// Method: PSLTable.isParent()
+isParent	// Method: PSLTable.isParent()
 
 	set PSL.return = "$$isParent^UCXDD("_  PSL.objectName_")"
 	quit
 	
 	// ---------------------------------------------------------------------
-private isOneNode	//Method: PSLTable.isOneNode()
+isOneNode	//Method: PSLTable.isOneNode()
 
 	set PSL.return = "$$isOneNode^UCXDD("_  PSL.objectName_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private tblHasBlob	// property PSLTable.hasBlob: Return 1 if table has Blob
+tblHasBlob	// property PSLTable.hasBlob: Return 1 if table has Blob
 
 	set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr( "("_ $$tokenPush^UCPATCH( PSL.objectName, "PSLTable")_ ".dataTypes[""B"")"), 1)
 	quit
 
 	// ---------------------------------------------------------------------
-private tblHasMemo	// property PSLTable.hasMemo: Return 1 if table has Memo
+tblHasMemo	// property PSLTable.hasMemo: Return 1 if table has Memo
 
 	set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr( "("_ $$tokenPush^UCPATCH( PSL.objectName, "PSLTable")_ ".dataTypes[""M"")"), 1)
 	quit
 
 	// ---------------------------------------------------------------------
-private tblHasNeg	// property PSLTable.hasNegativeNode: Return 1 if table has node with negative subscript
+tblHasNeg	// property PSLTable.hasNegativeNode: Return 1 if table has node with negative subscript
 
 	set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr( "("",""_"_ $$tokenPush^UCPATCH( PSL.objectName, "PSLTable")_ ".nodeQuotedList["",""""v"")"), 1)
 	quit
 
 	// ---------------------------------------------------------------------
-private tblIsRdb	// property PSLTable.isRdb: 1 if table stored in RDB
+tblIsRdb	// property PSLTable.isRdb: 1 if table stored in RDB
 	/* ---------------------------------------------------------------------
 	The generated code uses the values of the "literals" DQINT and SEP.
 	As long as PSL does nopt support "global literals", the definition of
@@ -1241,7 +1224,7 @@ private tblIsRdb	// property PSLTable.isRdb: 1 if table stored in RDB
 	quit
 
 	// ---------------------------------------------------------------------
-private tblHasMasf	// property PSLTable.hasMasterfield: Return 1 table has Masterfields
+tblHasMasf	// property PSLTable.hasMasterfield: Return 1 table has Masterfields
 
 	set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr( "'"_ $$tokenPush^UCPATCH( PSL.objectName, "PSLTable")_ ".masterfieldList.isNull()"), 1)
 	quit

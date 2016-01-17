@@ -1,0 +1,34 @@
+NOD=4*
+LEN=31
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Calling File Name
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Calling File
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The name of the file containing the function.  The file name will
+be used to find the corresponding entry in the SYSMAPPROPDATA table,
+i.e., the corresponding TARGET in that table.

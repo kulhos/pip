@@ -1,0 +1,54 @@
+NOD=DI
+LEN=20
+DFT=
+DOM=
+TBL=[DBSDOM]
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=User-Defined Data Type
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=User-Defined@Data Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=DOM
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The name of a record which contain attributes common to a group of similar data
+items.  User-defined data types are used to converge the common attributes of a
+set of similar (but not semantically identical) data items into a single
+definition.  A data type may contain many data items. Data items which do not
+point to a data type are their own data type.  Data types are maintained in the
+table DBSDOM.
+
+Changes made to a user-defined data type will automatically propogate to the
+data items which reference it (with the above noted exceptions).
+
+
+                   DATA ITEM Attribute Inheritance Hierarchy
+
+ +- DBCTLDVFM -+
+ |  Data Type  |
+ +-------------+ --> +-- DBTBL12 ---+
+                     | User-defined |
+                     |   Data type  |
+                     +--------------+ -> +----- MDD ----+
+                                         | Master Dict. |
+                                         +--------------+ --> +-- DBTBL1D --+
+                                                              |  Data Item  |
+                                                              +-------------+

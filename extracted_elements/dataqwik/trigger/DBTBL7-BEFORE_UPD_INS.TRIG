@@ -1,0 +1,31 @@
+//DO NOT MODIFY  Before Update or Insert|1|1|0|0|0|0|COLUMNS|||
+	/* Ensure column not used in other update triggers, other than Z-named columns.
+	   We allow Z-names to use same columns to support customization.
+	*/
+	
+	type List columns = {List}(this.columns)
+
+	quit:'(this.actbu or this.actau)	// Not an update trigger
+	quit:this.trgid.beginsWith("Z")		// Z-named OK
+	
+	type DbSet ds = Db.selectDbSet("DBTBL7", "%LIBS='SYSDEV' AND TABLE=:this.table AND TRGID<>:this.trgid AND TRGID NOT LIKE 'Z%' AND (ACTBU=1 OR ACTAU=1)")
+	
+	while ds.next() do {
+		
+		type Number i
+		type List othercols
+		
+		type RecordDBTBL7 othertrig = ds.getRecord("DBTBL7")
+		
+		set othercols = {List}(othertrig.columns)
+		
+		for i = 1:1:columns.count() if othercols.contains(columns.elementAt(i)) do {
+			
+			type String errmsg = "Column "_ columns.elementAt(i)_ " already defined by trigger "_ othertrig.trgid
+			
+			if this.actbu, othertrig.actbu do this.throwError(errmsg)
+			if this.actau, othertrig.actau do this.throwError(errmsg)
+		}
+	}
+	
+	quit

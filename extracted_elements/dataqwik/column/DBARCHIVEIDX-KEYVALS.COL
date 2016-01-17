@@ -1,0 +1,35 @@
+NOD=2*
+LEN=256
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Key Values
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=0
+SFD=
+SIZ=40
+DEL=
+POS=
+RHD=Key Values
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+A string composed of key values for the archived table for all keys that precede
+the archive key, delimiter separated.  For tables that use the first key as the
+archive key, this key (KEYVALS) is not used.  In that case, it will have a value
+of 0.

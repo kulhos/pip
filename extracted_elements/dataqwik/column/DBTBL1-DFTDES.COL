@@ -1,0 +1,39 @@
+NOD=10
+LEN=200
+DFT=
+DOM=
+TBL=@SELDI^DBSFUN(FID,.X)
+PTN=
+XPO=D DFTDES^DBSFPP
+XPR=
+TYP=T
+DES=Look-up Table List
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=6
+RHD=Data Items
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ This field supports one of the allowed syntaxes for look-up table input.  If
+ within any data item definition an entry of [FID] is made in the look-up table
+ field, the system looks to the data item string entered in this field for
+ resolution of the look-up values.  A string of data values will be constructed
+ and displayed on the user's screen corresponding to the data items in the
+ string.  Based on the file definition length of the data items included
+ within the string, the look-up display can be one record per line or two
+ records per line.

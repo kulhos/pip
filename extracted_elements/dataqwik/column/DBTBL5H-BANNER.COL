@@ -1,0 +1,45 @@
+NOD=0
+LEN=1
+DFT=1
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Print Banner Page
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=16
+RHD=PRINT@BANNER PAGE
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         BANNER PAGE (Y/N)                             Default=Y
+
+             Y - Print a banner page before the report.
+
+                 The banner page includes a summary of the
+                 report definition and details about the print
+                 run such as User ID, date, and time.
+
+                 An Institution Variable data item to print
+                 banner pages must also be set to YES for banner
+                 pages to print.
+
+             N - Does not print a banner page.  First page printed
+                 is the first page of the report.

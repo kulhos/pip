@@ -1,0 +1,38 @@
+NOD=RID
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Report Description
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Report Description
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+         DESCRIPTION                                   Required
+
+             A brief description to identify this report.  Spaces
+             and punctuation characters are permitted.
+
+             This description will appear in the standard report
+             header and on lists of reports.

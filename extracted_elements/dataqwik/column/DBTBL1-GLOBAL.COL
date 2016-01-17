@@ -1,0 +1,60 @@
+NOD=0
+LEN=31
+DFT=
+DOM=
+TBL=
+PTN=((X?1A.AN)!(X?1"%".AN)!(X?1"["1E.E1"]"1E.E))
+XPO=
+XPR=
+TYP=T
+DES=Global Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=31
+DEL=
+POS=1
+RHD=Global@Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+ A global is a MUMPS term for the name of the data files stored on the
+ computer's hard disk.  The system will assign a name defaulting to the file
+ ID.  More than one file definition can, and often many do, point to a single
+ global.  The PROFILE Integrated Banking System offers many examples.  Customer
+ information is stored within the Customer Information file [CIF].  The file
+ definition CIF has a global name of CIF with a customer number as the single
+ access key.  The CIF to Account Linkage file [CIFREL] also has a global name
+ of CIF, but two access keys - customer number and related financial account
+ number.  The CIFREL file defines the storage of multiple financial accounts
+ under the single customer account number.
+
+ For each data item defined within each file ID, DATA-QWIK filers will file
+ input to the defined global.  The filing will be to the assigned global based
+ on the access keys established for the record being filed.
+
+         Example:
+
+         The DEP file is linked to the global ACN and has a single access
+         key, CID.  As records are filed via DATA-QWIK, they could be found
+         on the system stored under:
+
+         ^ACN(CID)=DATA
+
+         (The ^ indicates that the data is stored on disk.)
+
+ An extended syntax [%DIR,%SYS]GLOBAL can be used to reference a global that
+ resides in a directory that is not the current directory.
+
+         Example:  ["TEST_GBLDIR"]TESTFILE

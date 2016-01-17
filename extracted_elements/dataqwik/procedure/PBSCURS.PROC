@@ -1,0 +1,655 @@
+//DO NOT MODIFY  Profile Server Cursor Prool Process|PBSCURS|||||||1
+PBSCURS
+	/*
+	Procedure ID:	PBSCURS - Profile Server Cursor Pool
+  
+	Description:  This procedure definition is a daemon process that
+		      handles SQL OPEN, FETCH, and CLOSE statements for
+		      non-GT.M databases.
+
+	Orig Author:  Allan Mattson
+	Orig Date:  05/13/2005
+
+	Library:
+		. MAIN		Main section for cursor pool process
+		. CREATEQ	Create request/reply queues
+		. DELETEQ	Delete request/reply queues
+		. START		Start Cursor Pool processes
+		. STOP		Stop Cursor Pool processes
+
+	----- Revision History ------------------------------------------------
+	
+	01/07/2009 - RussellDS - CR37511
+		* Modified to correctly close cursors to prevent open cursor
+		  leaks.
+	
+	11/14/08 - GIRIDHARANB - CR 36391
+	
+		Rolled up changes from FW v2.7
+		
+		11/14/08 - GIRIDHARANB - CR36678
+		Modified EXEC section to preserve %TOKEN as it is used by $$^SQL.
+		Removed old Revision History.
+		
+		11/01/2008 - RussellDS - CR 36492
+		Modified EXEC section to deal with specific in/out variables
+		instead of the entire symbol table.  The other approach was
+		resulted in excessive overhead based on benchmarking.
+		
+	09/30/08 - GIRIDHARANB - CR35828
+	
+		Rolled up these changes from FW v2.7
+		
+		Modified section CLOSE to include the processID when clearing out
+		expired cursors, this was causing row lock contention in oracle.
+	
+		Modified section EXEC to use the cursor process ID as third key
+		to the SQLCUR0 table. This ensures that there is no contention between
+		two cursor processes when operating with the same cursor.
+		
+		Modified section STOPEXT to call deleteq. This prevents orphaned
+		queues on the system.
+		
+	11/30/07 - Pete Chenard - 30087
+		Modified to declare vzMSG as a ByteString data type.
+		
+	08/09/07 - GIRIDHARANB - CR28225
+		Cleaned up code to eliminate PSL compiler warnings.
+	-----------------------------------------------------------------------
+
+	*/
+
+	quit
+
+
+public MAIN(String QNAME,
+            Number CPID)
+            
+        /*
+        Main process loop for cursor pool process
+
+	ARGUMENTS:
+	     . QNAME	Queue Name		/REQ/MECH=VAL
+	     . CPID	Cursor Process ID	/REQ/MECH=VAL
+	*/
+
+	type String %INTRPT(),cpCACHE(,,),vzERMSG,vzEXIT,vzHDR,vzREPLY,vzSERVER
+	type ByteString vzMSG
+	
+	set vzEXIT=0
+
+	catch error {
+		do ZE^UTLERR
+		set vzERMSG=$$CPDSCNCT^%DBAPI()
+		do Db.fastDelete("SVCTRLCP","QNAME=:QNAME,CPID=:CPID")
+	}
+
+	// Create request/reply queues
+	set vzERMSG=$$CQSTART^%DBAPI()
+	if 'vzERMSG.isNull() do { quit:vzEXIT
+		if vzERMSG="CS_CQEXISTS" quit
+		do ERRLOG(vzERMSG)
+		set vzEXIT=1
+	}
+
+	// Connect to transport layer
+	set vzERMSG=$$CPCNCT^%DBAPI()
+	if 'vzERMSG.isNull() do { quit:vzEXIT
+		if vzERMSG="CS_DUPLCNCT" quit
+		do ERRLOG(vzERMSG)
+		set vzEXIT=1
+	}
+
+	// Register Cursor Pool process in table SVCTRLCP
+	type RecordSVCTRLCP svctrlcp=Db.getRecord("SVCTRLCP","QNAME=:QNAME,CPID=:CPID",1)
+	if svctrlcp.getMode()=1,$$DECHEX^%ZHEX(%ProcessID)'=svctrlcp.pid do { quit:vzEXIT
+		if $$VALID^%ZPID(svctrlcp.pid,1)=0 quit
+		set vzERMSG=$$CPDSCNCT^%DBAPI()
+		do ERRLOG("CS_CPIDEXISTS")
+		set vzEXIT=1
+	}
+		
+	set svctrlcp.pid=$$DECHEX^%ZHEX(%ProcessID)
+	do svctrlcp.bypassSave()
+	
+	// Register M process
+	do REGISTER^IPCMGR("CURSOR")
+
+	// Process loop
+	for  do { quit:vzEXIT
+		
+		// Clean up symbol table between loops
+		#ACCEPT Date=11/06/2008; Pgm=RussellDS; CR=36492; Group=BYPASS
+		#BYPASS
+		KILL (%INTRPT,cpCACHE,CPID,QNAME,vzEXIT)
+		#ENDBYPASS
+
+		// Close expired cursors (those that exceed timeout)
+		do CLOSE(cpCACHE(,,),$$TIM^PBSUTL($H))
+
+		// Check interrupt status
+		if %INTRPT.data()>1 do INTRPT^IPCMGR
+		if %INTRPT.get()="STOP" set vzEXIT=1 quit
+		
+		// Link new changes.
+		if %INTRPT.get()="CTRL" do LINK
+
+		// Get message from server process
+		set vzERMSG=$$CPGETMSG^%DBAPI(%ProcessID,.vzMSG,15)
+		if vzERMSG="CS_TIMEOUT" quit
+		if vzERMSG="CS_NOCNCT" set vzEXIT=1 quit
+
+		if 'vzERMSG.isNull() do ERRLOG(vzERMSG) quit
+		if vzMSG.get().translate(" ").isNull() quit
+
+		set vzHDR=vzMSG.extract(1,10)
+		set vzMSG=vzMSG.extract(11,vzMSG.length())
+
+		// Execute SQL on behalf of the server process
+		do EXEC(vzMSG,.vzREPLY,.vzSERVER,cpCACHE(,,))
+
+		// Prepend the header to reply message
+		set vzREPLY=vzHDR_vzREPLY
+
+		// Reply to server process
+		set vzERMSG=$$CPREPLY^%DBAPI(vzSERVER,vzREPLY)
+		if 'vzERMSG.isNull() do ERRLOG(vzERMSG) quit
+	}
+
+	// Close all cursors
+	do CLOSE(cpCACHE(,,),"")
+
+	// Remove cursor entries for the process.
+	do Db.delete("SQLCUR0","CPID=:%ProcessID")
+
+	// Unregister from cursor control table.
+	do Db.fastDelete("SVCTRLCP","QNAME=:QNAME,CPID=:CPID")
+	
+	// Disconnect from transport
+	set vzERMSG=$$CPDSCNCT^%DBAPI()
+	if 'vzERMSG.isNull() do ERRLOG(vzERMSG)
+	
+	// Unregister M Process
+	do CLOSE^IPCMGR()
+	HALT 
+	
+	quit
+
+
+EXEC(String MSG,
+     String REPLY,
+     String SERVERID,
+     String cpCACHE(,,))
+
+	/*
+	This function executes code on behalf of the server process.
+
+	ARGUMENTS:
+	     . MSG	Input Message (LV format)	/REQ/MECH=VAL
+	     
+	     		See section below that unpackages the input
+	     		message for field level details.
+	     
+	     . REPLY	Reply Message (LV format)	/REQ/MECH=REF:W
+	     
+	     . SERVERID	Server ID to send reply		/REQ/MECH=REF:W
+
+	     . cpCACHE	Cursor Cache			/REQ/MECH=REFARR:W
+	     
+	IMPORTANT NOTE:  Any change to the variables necessary to pass to and be
+			 returned by PBSCURS must be coordinated in this section
+			 as well as in MAIN^PBSMSQL.  Look for all uses of the
+			 arrays infld and outfld.
+        */
+        
+	type Number ptr
+	type String infld(), outfld()
+	
+	// Variables set based on PBSMSQL message
+	type String %CO, %CRCD, %IDENT, %MSKC, %MSKD, %MSKE, %MSKL, %MSKN
+	type String %STFHOST, %TOKEN, %UCLS, %UID, %VN, %VNC, clientToken, curName
+	type String oldCID, sqlcmd, SQLEXPR, SQLPAR(), SQLTOK, TJD, TLO, xexpr
+	
+	// Variables expected as part of return from execute SQL to return to PBSMSQL
+	type Number ER = 0
+	type String %ZTSEQ, RM, SQLCNT, SQLCOD, SQLDTA, SQLIND
+
+	catch error@"LOGERR^UTLERR" {
+		type public Number %ZTSEQ, RM
+		
+		type Number I
+
+		set outfld(1) = ER.get()
+		set outfld(2) = RM.get()
+		for I = 3:1:6 set outfld(I) = ""
+		set outfld(7) = %ZTSEQ.get()
+
+		set REPLY = $$V2LV^MSG(outfld())
+	}
+
+	// Parse LV input message into fields
+	set ptr = $$LV2V^MSG(MSG, infld())
+	
+	/* Unpack message and assign variables
+	   See comments above about changes to variables
+	*/
+	set xexpr = infld(1)		// Executable string (i.e., "set ER=$$^SQL.." )
+	set SERVERID = infld(2)		// Process ID of server
+	set clientToken = infld(3)	// Client Token (%TOKEN)
+	set %TOKEN = clientToken	// Used by $$^SQL
+	set curName = infld(4)		// Cursor Name (ID)
+	set sqlcmd = infld(5)		// SQL command (OPEN/FETCH/CLOSE)
+	
+	set SQLEXPR = infld(6)
+	if 'infld(7).isNull() do {
+	
+		type Number i
+		
+		for i = 1:2:infld(7).length(0.char()) set SQLPAR(infld(7).piece(0.char(), i)) = infld(7).piece(0.char(), i + 1)
+	}
+	set SQLTOK = infld(8)
+	set %CO = infld(9)
+	set %CRCD = infld(10)
+	set %IDENT = infld(11)
+	set %MSKC = infld(12)
+	set %MSKD = infld(13)
+	set %MSKE = infld(14)
+	set %MSKL = infld(15)
+	set %MSKN = infld(16)
+	set %STFHOST = infld(17)
+	set %UCLS = infld(18)
+	set %UID = infld(19)
+	set %VN = infld(20)
+	set %VNC = infld(21)
+	set TJD = infld(22)
+	set TLO = infld(23)
+
+	/*
+	Cache cursor information in cpCACHE array.  This information
+	is used to direct the reply to the appropriate server and to
+	close cursors that have timed out.
+
+	Format:  cpCACHE("CURSOR",%TOKEN,CURSOR)=ServerID|TimeStamp|CPID
+	*/
+
+	set oldCID = ""
+
+	if sqlcmd = "OPEN" do {
+		
+		set oldCID = cpCACHE("CURSOR", clientToken, curName).get().piece("|", 3)
+		set cpCACHE("CURSOR", clientToken, curName).piece("|",1) = SERVERID
+	}
+	else  if cpCACHE("CURSOR", clientToken, curName).get().isNull() do {
+		
+		set ER = 1
+		set RM = "Cursor "_curName_" is not OPEN"
+	}
+
+	if 'ER do {
+		set cpCACHE("CURSOR", clientToken, curName).piece("|", 2) = $$TIM^PBSUTL($H)
+
+		// Execute SQL statement
+		do {
+
+			// Protect variables we don't want touched
+			type String clientToken, cpCACHE(,,), curName
+
+			// Execute the call to $$SQL on behalf of the server process.
+			#ACCEPT PGM=Allan Mattson;DATE=05/13/05;CR=18181
+			xecute xexpr
+		}
+
+		/*
+		If this is an OPEN, update SQLCUR with cursor pool process ID.
+		This is used by the server process to direct the subsequent
+		FETCH and CLOSE statements to the same cursor pool process.
+		*/
+
+		if sqlcmd = "OPEN" do {
+			
+			type Boolean ER
+			type String exe(), vsql()
+			
+			// Need to restore to recover vsql("vCurID")
+			do RESTORE^SQLUTL(curName, vsql(), exe())
+			
+			if 'oldCID.isNull(), 'vsql("vCurID").get().isNull(), oldCID '= vsql("vCurID") set ER = $$CLOSECUR^%DBAPI("", oldCID)
+			
+			// Save RDB cursor ID to be able to close
+			set cpCACHE("CURSOR", clientToken, curName).piece("|", 3) = vsql("vCurID").get()
+				
+			do Db.fastDelete("SQLCUR0", "TOKEN=:clientToken,CURSOR=:curName")
+		
+			type RecordSQLCUR0 sqlcur0 = Class.new("RecordSQLCUR0", "TOKEN=:clientToken,CURSOR=:curName,CPID=%ProcessID")
+		
+			do sqlcur0.bypassSave()
+		}
+
+		if sqlcmd = "CLOSE" do {
+		
+			do Db.fastDelete("SQLCUR0", "TOKEN=:clientToken,CURSOR=:curName")
+			kill cpCACHE("CURSOR", clientToken, curName)
+		}
+	}
+	
+	/* Pack up the return information to send back to PBSMSQL
+	   See comments above about changes to variables
+	*/
+	set outfld(1) = ER.get()
+	set outfld(2) = RM.get()
+	set outfld(3) = SQLCOD.get()
+	set outfld(4) = SQLDTA.get()
+	set outfld(5) = SQLCNT.get()
+	set outfld(6) = SQLIND.get()
+	set outfld(7) = %ZTSEQ.get()
+
+	set REPLY = $$V2LV^MSG(outfld())
+	
+	quit
+
+
+public CREATEQ
+
+	/*
+	Create the cursor pool queue, if it doesn't already exist.
+	
+	NOTE that this is called externally, e.g., by MTMFUNCS, so no prompts
+	or other interaction should be added to this section.
+	*/ 
+
+	type public Number ER
+	type public String RM
+	
+	#IF '(($$TRNLNM^%ZFUNC("SCAU_DB")="")!($$TRNLNM^%ZFUNC("SCAU_DB")="GTM"))
+	
+	type String ET
+	
+	set ET = $$CQSTART^%DBAPI()
+	quit:ET.isNull()
+
+	// If queue already has already been created, quit without an error
+	if (ET '= "CS_CQEXISTS") set ER = 1
+
+	#ELSE
+	set ER = 1
+	set RM = "Function not valid for this environment"
+	#ENDIF
+
+	quit
+	
+
+public DELETEQ
+
+	/*
+	Delete the cursor pool queue.
+	
+	NOTE that this is called externally, e.g., by MTMFUNCS, so no prompts
+	or other interaction should be added to this section.
+	*/ 
+
+	type public Number ER
+	type public String RM
+	
+	#IF '(($$TRNLNM^%ZFUNC("SCAU_DB")="")!($$TRNLNM^%ZFUNC("SCAU_DB")="GTM"))
+	
+	type String ET
+
+	set ET = $$CQSTOP^%DBAPI()
+	quit:ET.isNull()
+
+	// If queue has already been deleted, quit without an error
+	if (ET '= "CS_CQNOEXIST") set ER = 1
+
+	#ELSE
+	set ER = 1
+	set RM = "Function not valid for this environment"
+	#ENDIF
+
+	quit
+
+
+public START
+
+	/*
+	Entry point for prompt-based starting of Cursor Pool process(es)
+
+	EXAMPLE:
+		do START^PBSCURS
+	*/
+
+	type public Number ER
+	type public String RM()
+
+	#IF '(($$TRNLNM^%ZFUNC("SCAU_DB")="")!($$TRNLNM^%ZFUNC("SCAU_DB")="GTM"))
+
+	type Number CPCNT, CPID, X
+	type String %READ, %TAB(), QNAME, VFMQ
+
+	set QNAME = $$TRNLNM^%ZFUNC("SCA_CS_ST_SCA_IBS")
+	if QNAME.isNull() do { quit
+		
+		set ER=1
+		// ~p1 - Logical not defined
+		set RM = $$^MSG(7146,"SCA_CS_ST_SCA_IBS")
+	}
+
+	set %TAB("CPCNT") = "/DES=Number of CP Processes/TYP=N/LEN=2/MIN=1"
+	set %READ = "@@%FN/REV/CEN,,CPCNT/REQ"
+	do ^UTLREAD quit:(VFMQ = "Q")
+	
+	do STARTEXT(QNAME, CPCNT)
+	
+	#ELSE
+	set ER = 1
+	set RM = "Function not valid for this environment"
+	#ENDIF
+	
+	quit
+	
+	
+public STARTEXT(String QNAME,	// Queue name
+		Number CPCNT)	// Number of cursor processes to start
+		
+	/*
+	External (non-prompted) entry point to start cursor pool queues.
+	
+	EXAMPLE:
+		do STARTEXT^PBSCURS(name, 2)
+	*/
+	
+	//check other calls to see what we need to return if external call
+		
+	type public Number ER
+	type public String RM()
+	
+	#IF '(($$TRNLNM^%ZFUNC("SCAU_DB")="")!($$TRNLNM^%ZFUNC("SCAU_DB")="GTM"))
+	
+	type Boolean ZJOBRET
+	type Number CPID
+	type String JOBNAM, PARAMS, PRCNAM
+
+	do CHKTBL(QNAME)
+
+	set CPID = Db.nextVal("SVCTRLCP","QNAME=:QNAME")
+
+	for  do { quit:(CPCNT = 0)
+		set CPID = CPID + 1
+		set CPCNT = CPCNT - 1
+		set PRCNAM = "CP_"_QNAME_"_"_CPID
+		set JOBNAM = "MAIN^PBSCURS("""_QNAME_""","_CPID_")"
+
+		set PARAMS = $$JOBPARAM^%OSSCRPT(PRCNAM) 
+		set ZJOBRET = $$^%ZJOB(JOBNAM, PARAMS, 1)
+
+		if ZJOBRET set RM(RM("").order(-1) + 1) = $$^MSG(6800, PRCNAM)
+		// 
+		else  set RM(RM("").order(-1) + 1) = $$^MSG(6799, PRCNAM)
+	}
+
+	#ELSE
+	set ER = 1
+	set RM = "Function not valid for this environment"
+	#ENDIF
+
+	quit
+
+
+public STOP
+
+	/*
+	Entry point for prompt-based stopping of Cursor Pool process(es)
+
+	EXAMPLE:
+		do STOP^PBSCURS
+	*/
+
+	type public Number ER
+	type public String RM()
+
+	#IF '(($$TRNLNM^%ZFUNC("SCAU_DB")="")!($$TRNLNM^%ZFUNC("SCAU_DB")="GTM"))
+
+	type Number CPCNT, CPID
+	type String %READ, %TAB(), PID, QNAME, VFMQ
+
+	set QNAME=$$TRNLNM^%ZFUNC("SCA_CS_ST_SCA_IBS")
+	if QNAME.isNull() do { quit
+		
+		set ER = 1
+		// ~p1 - Logical not defined
+		set RM = $$^MSG(7146, "SCA_CS_ST_SCA_IBS")
+	}
+
+	set %TAB("CPCNT") = "/DES=Number of CP Processes/TYP=N/LEN=2/MIN=1"
+	set %READ = "@@%FN/REV/CEN,,CPCNT/REQ"
+	do ^UTLREAD quit:(VFMQ = "Q")
+	
+	do STOPEXT(QNAME, CPCNT)
+
+	#ELSE
+	set ER = 1
+	set RM = "Function not valid for this environment"
+	#ENDIF
+
+	quit
+	
+	
+public STOPEXT(String QNAME,	// Queue name
+	       Number CPCNT)	// Number of cursor processes to stop
+		
+	/*
+	External (non-prompted) entry point to stop cursor pool queues.
+	
+	EXAMPLE:
+		do STOPEXT^PBSCURS(name, 2)
+	*/
+			
+	type public Number ER
+	type public String RM()
+	
+	#IF '(($$TRNLNM^%ZFUNC("SCAU_DB")="")!($$TRNLNM^%ZFUNC("SCAU_DB")="GTM"))
+	
+	type String PID
+	
+	do CHKTBL(QNAME)
+
+	type ResultSet rs=Db.select("PID","SVCTRLCP","QNAME=:QNAME")
+	
+	while rs.next() do { quit:(CPCNT = 0)
+
+		D SIGNAL^IPCMGR($$HEXDEC^%ZHEX(rs.getCol("PID")),"STOP")
+		set CPCNT = CPCNT - 1
+	}
+	
+	do DELETEQ		// delete queues
+
+	#ELSE
+	set ER = 1
+	set RM = "Function not valid for this environment"
+	#ENDIF
+
+	quit
+
+
+CHKTBL(String QNAME)
+
+	type Number CPID
+	type String LIST(), PID
+
+	do ^%ZPID(.LIST)
+
+	type ResultSet rs = Db.select("CPID,PID", "SVCTRLCP", "QNAME=:QNAME")
+	
+	while rs.next() do {
+		
+		set CPID = rs.getCol("CPID")
+		set PID = rs.getCol("PID")
+	
+		if 'LIST($$HEXDEC^%ZHEX(PID)).exists() do Db.fastDelete("SVCTRLCP", "QNAME=:QNAME, CPID=:CPID")
+	}
+
+	quit	
+
+CLOSE(String CACHE(,,),
+      Number DATETIME)
+
+	type Boolean ER
+	type Number LASTTIME
+	type String %TOKEN, CURSOR, oldCID
+
+	set (%TOKEN, CURSOR) = ""
+	for  set %TOKEN = CACHE("CURSOR", %TOKEN).order() quit:%TOKEN.isNull()  do {
+		for  set CURSOR = CACHE("CURSOR", %TOKEN, CURSOR).order() quit:CURSOR.isNull()  do {
+			
+			set LASTTIME = CACHE("CURSOR", %TOKEN, CURSOR).piece("|",2)
+			set oldCID = CACHE("CURSOR", %TOKEN, CURSOR).piece("|",3)
+
+			// Cursor timeout has not been exceeded
+			if (DATETIME > 0), (DATETIME - LASTTIME < 300) quit
+
+			// Close expired cursor
+			if 'oldCID.isNull() set ER = $$CLOSECUR^%DBAPI("", oldCID)
+
+			// Clean out the sqlcur0 table.
+			do Db.fastDelete("SQLCUR0","TOKEN=:%TOKEN,CURSOR=:CURSOR,CPID=:%ProcessID")
+
+			// Delete cursor entry in CACHE array
+			kill CACHE("CURSOR", %TOKEN, CURSOR)
+		}
+	}
+
+	quit
+
+private LINK //link changes specified in the CP control table.
+	
+	type public Number ER
+	type public String RM 
+	type String QNAME,CPEXPR
+	type Number CPID,MSEQ,PID
+
+	set QNAME=$$TRNLNM^%ZFUNC("SCA_CS_ST_SCA_IBS")
+	if QNAME.isNull() do { quit
+		
+		set ER = 1
+		// ~p1 - Logical not defined
+		set RM = $$^MSG(7146, "SCA_CS_ST_SCA_IBS")
+	}
+	
+	set PID=%ProcessID
+	
+	type ResultSet rs=Db.select("CPEXPR,CPID,MSEQ","SVCTRLTCP","QNAME=:QNAME AND PID=:PID")
+	
+	while rs.next() do {		
+		set CPEXPR=rs.getCol("CPEXPR")
+		set CPID=rs.getCol("CPID")
+		set MSEQ=rs.getCol("MSEQ")
+		#ACCEPT PGM=Badri Giridharan;DATE=08/13/06; CR=22684;GROUP=XECUTE
+		xecute CPEXPR
+		// remove the record after processing.		
+		do Db.delete("SVCTRLTCP","QNAME=:QNAME AND CPID=:CPID AND MSEQ=:MSEQ")
+	}	
+	quit	
+ERRLOG(String ET)
+
+	do ^UTLERR
+	
+	quit

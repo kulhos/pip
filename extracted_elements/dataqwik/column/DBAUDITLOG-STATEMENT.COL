@@ -1,0 +1,34 @@
+NOD=1
+LEN=32000
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=M
+DES=SQL Statement
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP= 
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=SQL Statement
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The entire SQL statement as executed, including the OPERATION, the table or
+procedure operated on, any WHERE clause, ORDER BY clause, etc., or, for
+EXECUTE, parameters.

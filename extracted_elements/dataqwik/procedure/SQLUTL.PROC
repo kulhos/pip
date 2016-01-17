@@ -1,5 +1,4 @@
 //DO NOT MODIFY  SQL Utilities|SQLUTL|||||||1
-SQLUTL
 	/*
 	ORIG: 6915 - 09/19/2002
 	DESC: SQL Utilities
@@ -8,6 +7,25 @@ SQLUTL
 	This procedure contains SQL related utilities.
  
 	---- Revision History ------------------------------------------------
+	2009-04-10, Frans S.C. Witte, CR 35741/38852
+		* Added #PACKAGE and #OPTION ResultClass
+		* Corrected BYTECODE()
+
+	11/22/208 - RussellDS - CR36716
+		* Added SCATBL5A method
+		* Added VALID24X7 method
+	
+	08/04/08 - Pete Chenard / Giridharanb - CR 35828
+		Modified to add three new sections which handle
+		saving and restoring the vsql array between two calls.
+		
+	10/27/07 - Pete Chenard - CR30087
+		Added new function BYTECODE, which returns the string "$C(x)"
+		or "$ZCH(x)" depending on the character set configuration.
+		This function is called by SQL when the determination of whether
+		to use $C or $ZCH can occur at code-generation time as opposed to 
+		run time.
+		
 	07/10/07 - Pete Chenard - 28171
 		Added new function BSE for M routines that need to use 
 		byte string extract functions.
@@ -16,10 +34,12 @@ SQLUTL
 		Corrected parameter type in BSL section and added () to the
 		end of the .length method in that section.
 	*/
+	#PACKAGE framework.sql
+	#OPTION ResultClass ON
 
 	quit
 
-public ROWS(ByteString str)
+public Integer ROWS(ByteString str)
 	/*
 	This function returns the number of rows contained in
 	the length-value string 'str'.
@@ -31,8 +51,8 @@ public ROWS(ByteString str)
 	     .$$	Number of rows
 	*/
 
-	type ByteString del,row,rows
-	type Number i,size
+	type ByteString del,row
+	type Number i,size,rows
 
 	set del=255.byte()
 	set size=0
@@ -49,7 +69,7 @@ public ROWS(ByteString str)
 	quit rows
 
 
-public SQLDTA(ByteString str,
+public ByteString SQLDTA(ByteString str,
               ByteString sqlcur,
               ByteString sqldta)
 	/*
@@ -78,7 +98,7 @@ public SQLDTA(ByteString str,
 	quit sqldta
 
 
-LVU(ByteString str, Number ptr)
+ByteString LVU(ByteString str, Number ptr)
 	/*
 	This function unwraps and removes the header of
 	length-value string 'str' at the specified
@@ -106,7 +126,7 @@ LVU(ByteString str, Number ptr)
 	quit z
 
 
-LVW(ByteString str)	
+ByteString LVW(ByteString str)	
 	/*
 	This function wraps string 'str' with a 2 byte header.
 
@@ -123,7 +143,7 @@ LVW(ByteString str)
 	if len<256 quit 0.byte()_len.byte()_str
 	quit (len\256).byte()_(len#256).byte()_str
 
-BSL(String str)
+Integer BSL(String str)
 	/*
 	This function provides the byte string length for a string. It is
 	a wrapper for .toByteString().length() for use by existing M routines
@@ -136,7 +156,7 @@ BSL(String str)
 	quit str.toByteString().length()
 
 
-public BSASCII(ByteString INSTRING, // Input string
+public Integer BSASCII(ByteString INSTRING, // Input string
              Number POS)            // Position
 
       /*
@@ -150,7 +170,7 @@ public BSASCII(ByteString INSTRING, // Input string
       quit INSTRING.ascii(POS)
 
 
-public BYTECHAR(Number INNUM,       // Input number
+public ByteString BYTECHAR(Number INNUM,       // Input number
 		Number INNUM2,
 		Number INNUM3,
 		Number INNUM4,
@@ -187,7 +207,24 @@ public BYTECHAR(Number INNUM,       // Input number
         if INNUM12.exists() set str=str_INNUM12.byte()
       quit str
 
-BSE(String str, Number start, Number end)
+public String BYTECODE(Number INNUM)       // Input number
+      /*
+
+      Return a string containing either "$C(x)" or
+      "$ZCHAR(x)", depending on whether  the environment is
+      configured for M or UTF-8 character sets.  This gets called at
+      code-generation time by the SQL engine, and only one parameter is 
+      passed to it.  If it is determined that this function needs to 
+      support multiple input values in the future, it will be modified
+      accordingly.
+            
+      */
+	type String CHAR = $select(Runtime.charsetName="M":"$C(",1:"$ZCH(")
+	
+	set CHAR = CHAR_INNUM_")"
+	quit CHAR
+
+ByteString BSE(String str, Number start, Number end)
 	/*
 	This function provides the byte string extract for a string. It is
 	a wrapper for .toByteString().extract() for use by existing M routines
@@ -203,7 +240,7 @@ BSE(String str, Number start, Number end)
 	*/
 	quit str.toByteString().extract(start,end)
 
-BSP(String str, String del, Number pos, Number endpos)
+ByteString BSP(String str, String del, Number pos, Number endpos)
 	/*
 	This function provides the byte string $piece for a string. It is
 	a wrapper for .toByteString().piece() for use by existing M routines
@@ -220,3 +257,82 @@ BSP(String str, String del, Number pos, Number endpos)
 	*/
 	if 'endpos.get().isNull() quit str.toByteString().piece(del,pos,endpos)
 	quit str.toByteString().piece(del,pos)
+
+public void SAVE(String name,String vsql(),String exe()) 
+
+	/* private; Save context into ^SQLCUR
+	Saves vsql and exe arrays into ^SQLCUR(%TOKEN,object_name)
+	Maximum total array size is 32K due to GTM string limit
+	String is broken into 255 byte global strings
+	*/
+	
+	if 'vsql("K").exists() quit
+
+	type String z
+	type public String %TOKEN
+	#ACCEPT GROUP=ACCESS;CR=38852;DATE=2009-04-10;PGM=Frans S.C. Witte
+	set z = 0.char()_2.char()_0.char()_2.char()_$$PACK^SQLCACHE(vsql(),exe())
+	
+	type RecordSQLCUR sqlcur = Db.getRecord("SQLCUR","TOKEN = :%TOKEN, CNAME = :name",1)
+	set sqlcur.vsqlarr = z
+	
+	do sqlcur.save()
+	quit
+
+public void RESTORE(String name, String vsql(), String exe())	
+
+	/* Restore symbol table for server fetch
+	    Restore exe and vsql arrays from ^SQLCUR(%TOKEN,object_name)
+	*/
+
+	type Number  i,z
+	type public Number ER,sqlcnt
+	type public String RM, sqldta, %TOKEN
+	
+	type RecordSQLCUR sqlcur = Db.getRecord("SQLCUR","TOKEN = :%TOKEN,CNAME = :name",1)
+	if sqlcur.getMode() = 0 set ER=1,RM="Cursor "_name_" is not OPEN",sqlcnt=0,sqldta="" quit
+	
+	set z = sqlcur.vsqlarr
+	#ACCEPT GROUP=ACCESS;CR=38852;DATE=2009-04-10;PGM=Frans S.C. Witte
+	do UNPACK^SQLCACHE(z,vsql(),exe())
+	
+	quit	
+	
+public void CLOSE(String token, String name)
+			
+	// Delete sqlcur entries on a close cursor
+	do Db.fastDelete("SQLCUR","TOKEN = :token, CNAME = :name")
+	
+	quit
+
+	
+String SCATBL5A(String RPCID,		// SCATBL5A.RPCID
+		 String userClass)
+	 
+	/*
+	Wrapper used by FUNC^SQL to avoid global reference, since data may
+	be in RDB.
+	
+	Returns null if entry is not defined, otherwise, returns
+	SCATBL5A.LOGFLG
+	*/
+	
+	type RecordSCATBL5A scatbl5a = Db.getRecord("SCATBL5A", "RPCID=:RPCID,UCLS=:userClass", 1)
+	
+	if (scatbl5a.getMode() = 0) quit ""
+	if scatbl5a.logflg quit 1
+	quit 0
+	
+	
+String VALID24X7(String ROUTINE)
+
+	/*
+	Wrapper used by FUNC^SQL to avoid global reference, since data may
+	be in RDB.
+	
+	Returns setting of UTBLRTNS.VALID24X7
+	*/
+	
+	type RecordUTBLRTNS utblrtns = Db.getRecord("UTBLRTNS", "ROUTINE=:ROUTINE", 1)
+	
+	quit utblrtns.valid24x7

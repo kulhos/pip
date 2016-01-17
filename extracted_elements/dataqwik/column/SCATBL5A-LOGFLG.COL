@@ -1,0 +1,33 @@
+NOD=UCLS
+LEN=1
+DFT=0
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Log Execution
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=1
+RHD=Log Execution
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+An indicator of whether or not execution of the procedure should be logged
+for the specified userclass.

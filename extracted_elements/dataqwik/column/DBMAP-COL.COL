@@ -1,0 +1,33 @@
+NOD=3*
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Profile Column Name
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Profile Column Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The name of the column in DATA-QWIK that is being mapped to a relational
+database.

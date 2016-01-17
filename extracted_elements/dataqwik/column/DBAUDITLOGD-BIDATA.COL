@@ -1,0 +1,34 @@
+NOD=
+LEN=32000
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Before Image Data
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=$$BIDATA^SQLAUDIT(CDATE,PID,SEQ,RECSEQ,KEYS)
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Before Image Data
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+For tables with logging of data enabled for UPDATE or DELETE, the name-value
+pairs of the before image of the record, with non-numeric values quoted.  It
+does not include memo or blob columns.  This is a computed column.

@@ -1,0 +1,34 @@
+NOD=DI
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Description
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=10
+RHD=Description
+SRL=
+CNV=
+LTD=
+USER=
+MDD=DES
+VAL4EXT=1
+DEPREP=
+DEPOSTP=
+NULLIND=
+The description that will appear whenever this data item is accessed
+or listed in reports or help screens.  The description is the default
+prompt on data entry and inquiry screens.

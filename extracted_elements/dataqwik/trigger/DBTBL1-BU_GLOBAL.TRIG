@@ -1,7 +1,11 @@
 //DO NOT MODIFY  Change GLREF field|0|1|0|0|0|0|GLOBAL|||
+
+	/* ----- Revision History ---------------------------------------------
 	
-	new gbl
-	set gbl=dbtbl1.glref                			// Old reference
-	set dbtbl1.glref=$C(94)_dbtbl1.global_"("_$P(gbl,"(",2) // New reference
-	quit 
+	06/14/2008 - RussellDS - CR30801
+		Cleaned up code to eliminate PSL warnings.
+	*/
 	
+	type String gbl = dbtbl1.glref                				// Old reference
+	set dbtbl1.glref = 94.char()_ dbtbl1.global_ "("_ gbl.piece("(", 2)	// New reference
+	quit

@@ -1,0 +1,362 @@
+NOD=SEQ
+LEN=20
+DFT=
+DOM=
+TBL=[DBCTLRFMT]:NOVAL
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Column Display Format
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=5
+RHD=Column Display@Format
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         DISPLAY FORMAT
+
+             The display format for data.  The following are available
+             formats with examples.
+
+             NOTE:  Examples show US formats.  Formats will differ
+                    from the examples if your system has been
+                    localized for a country other than the US.
+
+
+              $   -  Currency with two-place decimal precision
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123         $          10            123.00
+                      123.4       $          10            123.40
+                      123.45      $          10            123.45
+                      123.456     $          10            123.46
+
+
+              C   -  Clock time  HH:MM
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      12345       C          10        3:25 AM
+                      36000       C          10        10:00 AM
+
+
+              D   -  Date format  MM/DD/YY
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      12345       D          10        10/19/1874
+                      54000       D          10        11/05/88
+
+
+              MM/DD/YY   -  Date format  MM/DD/YY
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      12345       MM/DD/YY   10        10/19/74
+                      54000       MM/DD/YY   10        11/05/88
+
+
+              DD-MON-YY   -  Date format  DD-MON-YY
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      12345       DD-MON-YY   10       19-OCT-74
+                      54000       DD-MON-YY   10       05-NOV-88
+
+
+              DD-MON-YEAR   -  Date format  DD-MON-YEAR
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      12345     DD-MON-YEAR   10       19-OCT-1874
+                      54000     DD-MON-YY     10       05-NOV-1988
+
+
+              DAY   -  Day of the week in three-character abbreviation
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      12345      DAY         3         MON
+                      54000      DAY         3         SAT
+
+
+              MON   -  Month in three-character abbreviation
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      12345      MON         3         OCT
+                      54000      MON         3         NOV
+
+
+              YEAR  -  Year in four digits
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      12345      YEAR        4         1874
+                      54000      YEAR        4         1988
+
+
+              E   -  Edited currency format with thousands separator
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123         E          10            123.00
+                     -123.4       E          10           -123.40
+                      1234.56     E          10          1,234.56
+                      1234.567    E          10          1,234.57
+
+
+              I$   -  Currency converted to fixed length numeric
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123         I$          10       0000012300
+                      123.4       I$          10       0000012340
+                      123.45      I$          10       0000012345
+                      123.456     I$          10       0000012345
+
+
+              I$S  -  Currency converted to fixed length numeric
+                      with zone bit
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123         I$S         10       000001230{
+                      123.4       I$S         10       000001234{
+                      123.41      I$S         10       000001234A
+                      123.456     I$S         10       000001234E
+                     -123.4       I$S         10       000001234{
+                     -123.41      I$S         10       000001234J
+                     -123.45      I$S         10       000001234N
+
+
+              I$n  -  Decimal converted to fixed length numeric
+                      (n = decimal precision)
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123         I$2         10       0000012300
+                      123.4       I$4         10       0001234000
+                      123.45      I$5         10       0012345000
+                      123.456     I$1         10       0000001234
+                      123.50      I$0         10       0000000123
+
+
+              I$Sn -  Currency converted to fixed length numeric
+                      with zone bit (n = decimal precision)
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123         I$S2        10       000001230{
+                      123.4       I$S4        10       000123400{
+                      123.45      I$S5        10       001234500{
+                      123.456     I$S1        10       000000123D
+                      123.50      I$S0        10       000000012C
+                     -123.457     I$S3        10       000012345P
+
+
+              IN   -  Numeric converted to fixed length
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123         IN          10       0000000123
+                      12345       IN          10       0000012345
+
+
+              INS  -  Numeric converted to fixed length with zone bit
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123         INS         10       000000012C
+                      12345       INS         10       000001234E
+                     -123         INS         10       000000012L
+
+
+              ID   -  Julian date converted to 6-character date (MMDDYY)
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ---------
+                      53645       ID          6         111687
+                      53625       ID          6         102787
+
+
+              L   -  Logical converted to Y or N
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      -1          L          1             Y
+                      0           L          1             N
+                      1           L          1             Y
+                      123         L          1             Y
+
+
+              N   -  Numeric
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123         N          10               123
+                      12345       N          10             12345
+                      -12345      N          10            -12345
+                      123.45      N          10            123.45
+
+              NC  -  Negative value as NNN CR
+
+              ND  -  Negative value as NNN DR
+
+              NP  -  Negative value as (NNN)
+
+              NR  -  Negative value as NNN-
+
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                         0        NC         10              0
+                      -123        NC         10            123 CR
+                      -123.45     NC         10         123.45 CR
+
+                         0        ND         10              0
+                      -123        ND         10            123 DR
+                      -123.45     ND         10         123.45 DR
+
+                         0        NP         10              0
+                      -123        NP         10             (123)
+                      -123.45     NP         10          (123.45)
+
+                         0        NR         10                0
+                      -123        NR         10              123-
+                      -123.45     NR         10           123.45-
+
+
+              RDn   -  Rounded to n decimal precision.
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      123.45      RD0        10               123
+                      123.55      RD0        10               124
+
+                      123.45      RD1        10             123.5
+                      123.55      RD1        10             123.6
+                     -123.45      RD1        10            -123.5
+
+                      123.4444    RD3        10           123.444
+                      123.4555    RD3        10           123.456
+
+                      123.45      RD5        10         123.45000
+
+
+              RI    -  Rounded integer
+
+              RT    -  Rounded tenth
+
+              RH    -  Rounded hundred
+
+              RK    -  Rounded thousand
+
+              RM    -  Rounded million
+
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                     123.45       RI         10               123
+                     123.55       RI         10               124
+
+                     123.45       RT         10                12
+                     155.00       RT         10                16
+
+                     -160         RH         10                -2
+                     123.45       RH         10                 1
+
+                     1234         RK         10                 1
+                     1500         RK         10                 2
+
+                     1234         RM         10                 0
+                     1234567      RM         10                 1
+                     1500000      RM         10                 2
+
+
+              ZS    -  Convert value of zero to NULL
+
+
+                      Input       Format     Length     Output
+                     --------    --------   --------   ----------
+                      0           ZS        10
+                      0.00        ZS        10
+                      1           ZS        10         1
+                      123         ZS        10         123
+
+
+         _____________________________________________________________________
+         Example - Changing Display Formats
+
+           Report Definition - Default Formats ---------------------------
+           |
+           | Field         Column Heading             Spaces   Size Format
+           | Name          ----+---10----+---20----+   Skip
+           |
+           | CID           Account@Number                 0    12   N
+           | BAL           Account@Balance                2    12   E
+           | IRN           Interest@Rate                  2    8    RD5
+           | IRN*BAL/3650  One Day's@Interest             2    12   RD5
+           | DOB           Date of@Birth                  2    9    D
+           |
+
+
+           Report Run - Default Formats ----------------------------------
+           |
+           |       Account       Account  Interest     One Day's  Date of
+           |        Number       Balance    Rate        Interest  Birth
+           |  ------------  ------------  --------  ------------  ---------
+           |             1         10.00  20.00000       0.01111  11/10/65
+           |             4     -1,000.00   7.00000      -0.19124  12/12/55
+           |             5        200.00   7.00000       0.04700  03/05/33
+           |             6        123.45  12.00000       0.04642  01/01/46
+           |             7         45.00   9.23000       0.01333  02/28/66
+           |                ============
+           |                     -621.55
+           |
+
+        Report with Formats Changed
+
+           Report Definition - Different Formats -------------------------
+           |
+           | Field         Column Heading             Spaces   Size Format
+           | Name          ----+---10----+---20----+   Skip
+           |
+           | CID           Account@Number                 0    12   IN
+           | BAL           Account@Balance                2    12   E,NP
+           | IRN           Interest@Rate                  2    8    $
+           | IRN*BAL/3650  One Day's@Interest             2    12   $
+           | DOB           Date of@Birth                  2    9    DD-MON-YEAR
+           |
+
+
+           Report Run - Different Formats --------------------------------
+           |
+           |       Account       Account  Interest     One Day's  Date of
+           |        Number       Balance    Rate        Interest  Birth
+           |  ------------  ------------  --------  ------------  -----------
+           |  000000000001         10.00     20.00          0.01  10-NOV-1965
+           |  000000000004     (1,000.00)     7.00         -0.19  12-DEC-1955
+           |  000000000005        200.00      7.00          0.04  05-MAR-1933
+           |  000000000006        123.45     12.00          0.04  01-JAN-1946
+           |  000000000007         45.00      9.23          0.01  28-FEB-1966
+           |                ============
+           |                     (621.55)
+           |

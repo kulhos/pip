@@ -1,0 +1,36 @@
+NOD=2*
+LEN=20
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Name of Method for Procedure
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Name of Method
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Identifies the method for which the procedure is create since each method has
+its own naming convention and approach to generating the supporting procedure.
+
+For supported method names and associated naming conventions, refer to the
+comments in DBSPID.PROC.

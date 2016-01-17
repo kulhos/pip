@@ -1,0 +1,33 @@
+NOD=INDEXNM
+LEN=29
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Index Description
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=5
+RHD=Index Description
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+  A brief description of this index name.  The description will be used by
+  the index rebuild function to set up the selection prompts.

@@ -1,0 +1,33 @@
+NOD=2
+LEN=32000
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=M
+DES=Host Variable Values
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP= 
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Host Variable Values
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+For SQL statements that use host variables, a list of the values that are
+associated with those host variables.

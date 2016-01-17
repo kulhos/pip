@@ -1,0 +1,136 @@
+NOD=SEQ
+LEN=35
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Column Heading
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=2
+RHD=Form Control - Column Heading
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         COLUMN HEADING
+
+             Standard report column headings are defined for all data
+             items in the file definition for the file containing the
+             data item.
+
+             The standard column heading for a data item automatically
+             comes up on the second page of the QWIK Report Definition.
+             You can change the heading for the report, if you like.
+
+             An @ symbol is used to break a long heading onto two lines.
+
+             Column headings are not generated automatically for
+             computed operations.  You can supply a heading for a
+             computed operation, if you like.
+
+          _____________________________________________________________________
+          Example - Changing Column Headings
+
+           Report Definition - Original Headings -------------------------
+           |
+           |   Field        Column Heading
+           |   Name         ----+---10----+---20----+---30----+
+           |
+           |   CID          Account@Number
+           |   BAL          Account@Balance
+           |   BOO          Branch Of@Ownership
+           |   IRN*BAL/3650
+           |
+
+
+           Report Run - Original Headings --------------------------------
+           |
+           |         Account       Account  Branch Of
+           |          Number       Balance  Ownership
+           |    ------------  ------------  ---------  ------------
+
+         Report with Headings Changed
+
+           Report Definition - New Headings ------------------------------
+           |
+           |   Field        Column Heading
+           |   Name         ----+---10----+---20----+---30----+
+           |
+           |   CID          Account@Number
+           |   BAL          Account@Balance
+           |   BOO          Branch
+           |   IRN*BAL/3650 One Day's@Interest
+           |
+
+
+           Report Run - New Headings -------------------------------------
+           |
+           |         Account       Account                One Day's
+           |          Number       Balance     Branch      Interest
+           |    ------------  ------------  ---------  ------------
+           |
+
+
+             Headings can be suppressed by removing the text in
+             the column heading field.
+
+         _____________________________________________________________________
+         Example - Suppressing Column Headings
+
+           Report Definition - Original Headings -------------------------
+           |
+           |   Field        Column Heading
+           |   Name         ----+---10----+---20----+---30----+
+           |
+           |   CID          Account@Number
+           |   LNM          Report@Short Name
+           |   AD1          Address Line 1
+           |   AD2          Address Line 2
+           |   MCSZ         CITY,STATE COUNTRY ZIP
+           |
+
+
+           Report Run - Original Headings --------------------------------
+           |
+           |         Account    Report      Address Line 1
+           |          Number  Short Name    Address Line 2
+           |                                CITY, STATE COUNTRY ZIP
+           |    ------------  ------------  -------------------------
+
+         Changing the Headings
+
+           Report Definition - New Headings ------------------------------
+           |
+           |   Field        Column Heading
+           |   Name         ----+---10----+---20----+---30----+
+           |
+           |   CID          Account@Number
+           |   LNM          Name
+           |   AD1          Address
+           |   AD2
+           |   MCSZ
+           |
+
+
+           Report Run - New Headings -------------------------------------
+           |
+           |         Account
+           |          Number  Name          Address
+           |    ------------  ------------  -------------

@@ -1,0 +1,42 @@
+NOD=
+LEN=32000
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=M
+DES=Input Data to Procedure
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP= 
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Input Data to Procedure
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Each method and associated procedure require different input.  This column
+contains the input data passed to DBSPID.PROC in the INPUT() array.  The data
+is saved in this memo field in the form:
+
+        array_index=data<CR,LF>array_index=<CR,LF>...
+
+The contents of this data vary based on the method and are documented for each
+method in the CREATESP section of DBSPID.PROC.
+
+Data stored in this column is used to determine if the procedure has already
+been generated and to enable regeneration of procedures.

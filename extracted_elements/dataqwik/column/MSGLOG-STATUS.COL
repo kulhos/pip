@@ -1,0 +1,34 @@
+NOD=MSGID
+LEN=12
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Success/Failure Status
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=Success/Failure@Status
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+This is the message status code.  A value of '0' indicates a successful
+transaction; a value of '1' indicates the transaction failed due to
+encountering an error.

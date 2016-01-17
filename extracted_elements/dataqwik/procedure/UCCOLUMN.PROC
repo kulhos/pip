@@ -12,6 +12,35 @@
 	"vCo".
 
 	---------- Revision History --------------------------------------------
+	2008-11-06, Frans S.C. Witte, CR 35741/36952
+		* Removed getKey() because it is no longer called.
+		* Modified colProp to support underscore in quoted column name
+
+	08/22/2008 - RussellDS - CR30801
+		Modified dynamic to use the 'external' parameter
+	
+	11/13/2007 - RussellDS - CR29295
+		* Modified calls to method getUpdateCode to add new parameter for
+		  RdbCodeForm.
+		* Major changes related to column indirection code - modified to
+		  always use ^DBSDYNRA, which already incorporates all the 
+		  necessary get/set logic at runtime.  Modified dynamic to
+		  support this, removing considerable code no longer necessary.
+		  Eliminated labels dynKey, dynLd, dynLdBM, dynGet, and dynSet.
+	
+	10/12/07 - Frans S.C. Witte / Kevin Braun - CR: 27800
+		* Added support for Column.method().
+		* Replaced commands(,) references by PSL.getSetting(,,).
+		* Replaced new-statement in generated PSL code with
+		  type-statement.
+		* Replaced 'public' by 'ret' in fp declarations.
+		* Changed PSLSubrou.toString() to PSLSubrou.getName().
+
+	10/11/07 - Frans S.C. Witte - CR 29729
+		* Column assignment under postconditional now reports a compile-
+		  time exception
+		* When column audit is forced, needVobj is now set as well.
+
 	05/03/07 - Frans S.C. Witte - CRs: 26334
 		Curval(): lvn table is now initialized before calling $$colProp
 		because the individual column properties need the table name,
@@ -89,7 +118,7 @@
 		* Corrected code used in -100 tree for keys
 		* Synchronized use of PSLColumn.getOldNode() with correction in
 		  UCXDD.
-		* Replaced thi. by PSL., and removed #XECUTE
+		* Replaced this. by PSL., and removed #XECUTE
 		* Replaced pslSchCln() by pslCln(), and pslSchTbl() by pslTbl().
 
 	06/24/05 - Frans S.C. Witte - CR16346
@@ -272,6 +301,9 @@
 		    Modified the curVal section to obtain the column positions	
 		    from the DBMAP global instead of calling the RDB.
 	*/
+	#PACKAGE framework.psl
+	#OPTION  ResultClass ON
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -291,12 +323,13 @@
 	quit
 
 	// ---------------------------------------------------------------------
-private curVal( PSLIdentifier  oid,	// object variable instance
+String curVal( PSLIdentifier  oid,	// object variable instance
+		String  tabnm,		// tablename
 		String  property,	// column name
 		Boolean fset,		// set (1) or get (0)
 		PSLExpression objExpr,	// oid.property[.xyz] (*4)
-		Number  ptr,		// char pointer	(*5)	/MECH=REF:RW
-		Boolean nest)		// nested?		/NOREC
+		ret Number ptr)		// char pointer	(*5)	/MECH=REF:RW
+		//Boolean nest)		// nested?		/NOREC
 	/* ---------------------------------------------------------------------
 	Return the leftexpr (fset=1) or rightexpr (fset=0) that represents the
 	column's current value.
@@ -313,60 +346,72 @@ private curVal( PSLIdentifier  oid,	// object variable instance
 	*/
 	type literal String LEFTEXMARK = 31.char()
 
-	type public Boolean   commands(,)	// uses commands("WARN","SCOPE")
 	type public PSLColumn pslCln()
 	type public PSLTable  pslTbl()
 
 	type PSLExpression return		// function return value
 
-	/* the Column properties need the table name too */
-	type String table = $$getReTable^UCGM( oid.class)
+	/* A postconditional on column assignment is not allowed (cannot
+	   generate conditional update code). */
+	if 'PSL.postCond.isNull(),fset throw Class.new( "Error", "%PSL-E-SYNTAX,Postconditional not allowed for Column assignment")
 
-	if ptr quit $$colProp( oid, property, fset, objExpr, .ptr)
+	/* the Column properties need the table name too */
+	//type String table = $$getReTable^UCGM( oid.class)
+
+	if ptr quit $$colProp( oid, tabnm, property, fset, objExpr, .ptr)
 
 	/* handle indirection before checking the table name, to allow column
 	   indirection on dynamic instances */
-	if property.extract()="@"  quit $$dynamic(0, oid, table, property, fset)
+	if property.extract()="@"  quit $$dynamic(0, oid, tabnm, property, fset)
 
-	/* if table.isNull(), then we have a reference to a Record instance */
-	if table.isNull() throw Class.new( "Error", "%PSL-E-DYNAMIC,Dynamic record not supported")
+	/* if tabnm.isNull(), then we have a reference to a Record instance */
+	if tabnm.isNull() throw Class.new( "Error", "%PSL-E-DYNAMIC,Dynamic record not supported")
 
 	/* ensure PSLTable instance for this table exists.
 	   This will throw an exception when the tablename is invalid.
 	   Ensure that information level is 1, to be able to use all properties.
 	   Note that this must be enforced for ALL instances, not just the new
 	   instances. */
-	type PSLTable td = {PSLTable}$$getPslTbl( table)
+	type PSLTable td = {PSLTable}$$getPslTbl( tabnm)
 
 	set property = $$getColNm(property)
 	if property.isNull() throw Class.new( "Error", "%PSL-E-REQUIRED,Missing property name")
 
-	type String ref    = table_ "."_ property
+	type String ref    = tabnm_ "."_ property
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do addXref^UCGM("P"_ fset, ref, oid)
 
 	/* Initiate the PSLColumn instance for this column
 	   The PSLColumn properties are filled with RDB values if applicable
 	   */
-	type PSLColumn cd = {PSLColumn}$$getPslCln(table, property)
+	type PSLColumn cd = {PSLColumn}$$getPslCln(tabnm, property)
 	set PSL.class = cd.getClass()
 
 	/* If retrieving column value from literal record instance, retrieve and
-	   return the value at compile time */	
-	if oid.scope = "LITERAL" quit $$litVal(oid, property, fset)
+	   return the value at compile time */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if $$getScope^UCGM(oid) = "LITERAL" quit $$litVal(oid, property, fset)
 
 	/* scope is not literal, so create an access entry.
 	   If this column reference does not have a root instance, report a
 	   warning */
 	type Boolean bHasRoot
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type Boolean bAudit = ''$$getAtt^UCGM( oid, oid.scopeLevel, 12)
 
 	/* Force bAudit for this column if the column is used in an index (and
-	   not already part of the primary key) */
-	if 'bAudit, pslTbl( table).indexList.contains(property), 'pslTbl( table).primaryKeys.contains(property) set bAudit = 1
+	   not RDB, and not already part of the primary key). Also set the
+	   needVobj flag for this declaration, as audit code will always use
+	   vobj(). Note that this only applies when the column is assigned to
+	   (fset). */
+	if fset,'bAudit, pslTbl( tabnm).indexList.contains(property), 'td.isRdb, 'pslTbl( tabnm).primaryKeys.contains(property) {
+		set bAudit = 1
+		do setNeedVobj^UCREC4OP( PSL.subRou, oid, 1)
+	}
 
 	type Number  accPos = $$clnByOvs^UCREC4OP( PSL.subRou, oid, cd, bAudit, fset, .bHasRoot)
-	if 'bHasRoot,commands("WARN","SCOPE").get() do PSL.warn( "SCOPE: Variable "_ oid_ " may not have been instantiated")
+	if 'bHasRoot,PSL.getSetting("WARN","SCOPE",false) do PSL.warn( "SCOPE: Variable "_ oid_ " may not have been instantiated")
 
 	/* Construct the return code based on the PSLColumn methods.
 	   - For subscripted variables don't try anything fancy, just return
@@ -374,22 +419,23 @@ private curVal( PSLIdentifier  oid,	// object variable instance
 	   - For unsubscripted variables generate placeholder code
 	   */
 	if oid["(" do {
-		if fset set return = cd.getUpdateCode(oid, LEFTEXMARK, bAudit)
+		if fset set return = cd.getUpdateCode(oid, LEFTEXMARK, bAudit, 0)
 		else  set return = cd.getCurrentExpr(oid, 0)
 	}
 	else  do {
 		type Number decPos = $$getDec^UCREC4OP( PSL.subRou, oid, accPos)
 
+		#ACCEPT CR=27800; Date=2007-10-11; PGM=Frans S.C. Witte; Group=MISMATCH; passes Number as PSLIdentifier
 		if 'fset set return = cd.getCurrentExpr( decPos, 0) quit
 		set return = $$clnAsn1^UCREC4OP( decPos, accPos, LEFTEXMARK)
 
 		/* Some PSL source code contains assignments to columns of a
 		   locally declared record, without ever calling Record.save().
 		   This will lead to code that uses voxn for nodes, but still
-		   includes -150 assignments. To ensure that the record is
+		   includes -161/-162 assignments. To ensure that the record is
 		   marked as assigned as well, set assign as if
 		   Record.bypassSave is detected (assign=1). This will allow
-		   voXN use and suppress -150 assignments.
+		   voXN use and suppress -161/-162 assignments.
 
 		   Similar observations apply for the assignment of
 		   vobj(oid,-100,nod)="" to indicate a node that changed (both
@@ -398,6 +444,7 @@ private curVal( PSLIdentifier  oid,	// object variable instance
 		   to prevent optimization all together. */
 		// if td.recordType>1!td.isRdb do setAssign^UCREC4OP( PSL.subRou, oid, 2),setOpti^UCGM(oid, oid.scopeLevel, -1)
 		if td.isRdb do setAssign^UCREC4OP( PSL.subRou, oid, 1)
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		if td.recordType>1 do setOpti^UCGM(oid, oid.scopeLevel, -1)
 	}
 
@@ -421,16 +468,18 @@ private curVal( PSLIdentifier  oid,	// object variable instance
 	quit return
 
 	// ---------------------------------------------------------------------
-getColNm( String cln)		// column name
+private String getColNm( String cln)		// column name
 	/* ---------------------------------------------------------------------
 	Helper function to return the column name in all uppercase, or unquoted.
 	*/
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if cln.ascii() quit $$UPCASE^UCGM( cln)
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	quit $$UNTOK^%ZS( cln, PSL.tok).stripQuotes()
 	
 	// ---------------------------------------------------------------------
-getPslCln( String tbl,		// table name
-	String cln)		// column name
+private PSLColumn getPslCln( String tbl,		// table name
+		String cln)		// column name
 	/* ---------------------------------------------------------------------
 	Helper function to return a PSLColumn from the pslCln() cache.
 	The descriptor will be added if it does not yet occur in the cache.
@@ -440,8 +489,10 @@ getPslCln( String tbl,		// table name
 
 	type String ref
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if cln.ascii() set cln=$$UPCASE^UCGM( cln)
-	else  set cln=$$QSUB^%ZS($$UNTOK^%ZS( cln, PSL.tok),"""")
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	else  set cln=($$UNTOK^%ZS( cln, PSL.tok)).stripQuotes("""")
 
 	set ref = tbl_ "."_ cln
 
@@ -449,11 +500,11 @@ getPslCln( String tbl,		// table name
 		if xcpt.type ["RECNOFL" set xcpt.type="%PSL-E-INVALIDREF",xcpt.context=ref
 		throw xcpt
 	}
-	if 'pslCln(ref).exists() set pslCln(ref) = PSL.getPSLColumn(tbl, cln, .pslTbl())
+	if 'pslCln(ref).exists() set pslCln(ref) = PSL.getPSLColumn(tbl, cln, pslTbl())
 	quit pslCln(ref)
 
 	// ---------------------------------------------------------------------
-getPslTbl( String tbl)		// table name
+private PSLTable getPslTbl( String tbl)		// table name
 	/* ---------------------------------------------------------------------
 	Helper function to return a PSLTable from the pslTbl() cache.
 	The descriptor will be added if it does not yet occur in the cache.
@@ -471,11 +522,11 @@ getPslTbl( String tbl)		// table name
 		throw xcpt
 	}
 	if 'pslTbl( tbl).exists() set pslTbl(tbl) = PSL.getPSLTable( tbl, 0)
-	set pslTbl( tbl) = pslTbl(tbl).assertLevel( 1, .pslCln())
+	set pslTbl( tbl) = pslTbl(tbl).assertLevel( 1, pslCln())
 	quit pslTbl(tbl)
 
 	// ---------------------------------------------------------------------
-private longGet( PSLColumn cd,
+private String longGet( PSLColumn cd,
 		String expr)
 	/* ---------------------------------------------------------------------
 	Force subroutine for retrieval of Masterfield when the expression may
@@ -508,10 +559,10 @@ private longGet( PSLColumn cd,
 	do sr.addCode( code)
 	do sr.addCode(" Q")
 		
-	quit "$$"_ sr.toString()_ "()"
+	quit "$$"_ sr.getName()_ "()"
 
 	// ---------------------------------------------------------------------
-private longSet( PSLColumn cd,
+String longSet( PSLColumn cd,
 		String leftexp,		// instance var or declaration position
 		String rightexp,
 		Number mode)
@@ -526,23 +577,24 @@ private longSet( PSLColumn cd,
 
 	type Number pce
 	type PSLSubrou sr = PSL.addSubrou( "CoSet", "(vV)", cmt, 1)
-	type String expr = cd.getUpdateCode( leftexp, "vV", mode)
+	type String expr = cd.getUpdateCode( leftexp, "vV", mode, 0)
 
 	for pce=1:1:expr.length( 9.char()) do sr.addCode( " "_ expr.piece( 9.char(), pce))
 	do sr.addCode(" Q")
 
-	quit " D "_ sr.toString()_ "("_ rightexp_ ")"
+	quit " D "_ sr.getName()_ "("_ rightexp_ ")"
 
 	// ---------------------------------------------------------------------
-litVal( PSLIdentifier  oid,	// object variable instance
-	String  property,	// column name
-	Boolean fset)		// set (1) or get (0)
+private String litVal( PSLIdentifier  oid,	// object variable instance
+		String  property,	// column name
+		Boolean fset)		// set (1) or get (0)
 	/* ---------------------------------------------------------------------
 	Return the column value of a literal Record instance.
 	This function uses $$propGet^DBSDYNRA()
 	*/
 	if fset do PSL.error( "Db class is read-Only under LITERAL scope") quit ""
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type String vOid = $$getExpr^UCGM( oid)
 	if vOid="" do PSL.error( "LITERAL scope "_ oid_ " was not instantiated") quit ""
 
@@ -551,21 +603,23 @@ litVal( PSLIdentifier  oid,	// object variable instance
 	quit val.addQuotes()
 
 	// ---------------------------------------------------------------------
-colProp( PSLIdentifier recVar,	// record instance variable
-	String  colnm,		// column name
-	Boolean fset,		// assignment flag
-	PSLExpression propExpr,	// object expression (*4)
-	Number  ptr)		// character pointer (*5)		/MECH=REFNAM:RW
+private String colProp( PSLIdentifier recVar,	// record instance variable
+		String tabnm,		// tablename
+		String  colnm,		// column name
+		Boolean fset,		// assignment flag
+		PSLExpression propExpr,	// object expression (*4)
+		ret Number ptr)		// character pointer (*5)	/MECH=REFNAM:RW
 	/* ---------------------------------------------------------------------
-	Process column methods
-	If the property exists in the Column class, return the property
-	value.  Otherwise return the current column value and class
-	and process this property on that class.
-	
+	Process column methods and properties
+	If the method or property exists in the Column class, return its value.
+	Otherwise return the current column value and class and process this
+	mnethod or property on that class.
+
 	The formal parameters are the same as the (corresponding) formal
 	parameters in $$curVal()
 
-	Column properties: CURVAL,DES,JOURNAL,KEY,LEN,OLDVAL,TYP
+	Column methods: setNull()
+	Column properties: curval, des, journal, key, len, oldval, typ
 
 	ARGUMENTS:
 	(*4) propExpr = object expression
@@ -576,103 +630,127 @@ colProp( PSLIdentifier recVar,	// record instance variable
 		this is not the case. Because this function may call
 		$$property^UCGM(), the name 'ptr' is essential, because it is
 		the public variable that is expected by $$property^UCGM().
-
 	*/
 	type public String class
 	type public String setVar
+	type public PSLParser pslPrsr
+	type public PSLTokenizer tknzr
 
 	type Number optr = ptr		// old value of ptr
-	type String prop		// Column property
+	type String ref			// Column property or method
+	type String name		// the name
+	type String params		// the parenthesis, and parameters
 
 	set ptr  = ptr + 1		// skip "."
-	set prop = $$ATOM^%ZS( propExpr, .ptr, ".", , 1)
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set ref = $$ATOM^%ZS( propExpr, .ptr, ".", , 1)
+	set name = ref.piece("(")
 
-	if prop.upperCase() = "CURVAL" quit $$curVal( recVar, colnm, fset, propExpr, .ptr)
+	if ref.upperCase() = "CURVAL" quit $$curVal( recVar, tabnm, colnm, fset, propExpr, .ptr)
 
-	type String z = $$opGet^UCXOBJ( , "Column", prop, 1)
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do initClass^UCGM("Column")
+	
+	type String prpid = pslPrsr.findPSLProperty( tknzr, "Column."_ name, 1)
+	type String mtdid = pslPrsr.findPSLMethod( tknzr, "Column."_ name, 1)
 
 	/* Not found at all. Must be property (or method) of Primitive
 	   descendant, that is applied to recVar.colnm
 	   Reset ptr to its original value (for the caller of $$curVal()), and
 	   return just $$curVal(). */
-	if z.isNull() set ptr=optr quit $$curVal(recVar,colnm,fset,"",0)
-
-	if ptr>0,fset do PSL.error( "Column class property is readOnly") quit ""
+	if prpid.isNull(),mtdid.isNull() set ptr=optr quit $$curVal( recVar, tabnm, colnm, fset, "", 0)
 
 	/* Create a dummy entry in type(,) to represent the Column instance.
-	   FSCW CR18163: the purpose of this instance is unknown */
+	   FSCW CR35741: For column properties the temp lvn is not used, as all
+	   property code (labels journal, key, len, req, and typ) use the
+	   "public" vars initiated here. The column methods (isNull() and
+	   isNotNull() do use it to obtain the column reference to which the
+	   method is applied (see UCPRIM).
+	   */
 	set class="Column"
 	type PSLIdentifier colId
 	type Number i
-
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	for i=1:1 set colId = "vol"_i  quit:$$getNew^UCGM(colId)=""
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do typeDec^UCGM( colId, class, "PUBLIC")
 
-	set colnm = $$getColNm(colnm)	// standardize name
-	quit $$property^UCGM( colId, PSL.level, prop, .class, .setVar)
+	// Assert: we have either a property or a method
+	type String return
+	if 'prpid.isNull() {
+		// not supported: property on dynamic columns
+		if colnm.extract()="@" throw Class.new("Error", "%PSL-E-DYNAMIC,Properties and methods not supported on dynamic columns")
+		if ptr>0,fset throw Class.new("Error", "%PSL-E-ACCESS,Column class property is readOnly")
+		set colnm = $$getColNm(colnm)	// standardize name
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		set return = $$property^UCGM( colId, PSL.level, ref, fset, .class, .setVar)
+	}
+	else  {
+		/* When the method generating method gets invoked, we need to
+		   know what record and column it is being invoked on.  Calling
+		   setInst^UCGM() lets this be provided in PSL.objectName.expr.
+		   It expects an untokenized expression; recVar is already
+		   untokenized but colnm is not, so untokenize colnm.
+		*/
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do setInst^UCGM( colId, "", recVar_"."_$$UNTOK^%ZS(colnm, PSL.tok), PSL.level)	
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		set return = $$method^UCGM( colId, PSL.level, ref, fset, .class, .setVar)
+	}
+	quit return
 
 	// ---------------------------------------------------------------------
-private des	// Property table.column.des ; Return Schema Description
+private void des	// Property table.column.des ; Return Schema Description
 	/* ----------------------------------------------------------------------
 	*/
-	type public String property,return,table
-	set return=$$QADD^%ZS($$DES^SQLDD(table_"."_property))
+	type public String property,return,tabnm
+	set return=($$DES^SQLDD(tabnm_ "."_ property)).addQuotes()
 	quit
 
 	// ---------------------------------------------------------------------
-private len	// Property table.column.len ; Return Schema Length
+private void len	// Property table.column.len ; Return Schema Length
 	/* ---------------------------------------------------------------------
 	*/
-	type public String property,table
-	type PSLColumn cd = {PSLColumn}$$getPslCln(table,property)
+	type public String property,tabnm
+	type PSLColumn cd = {PSLColumn}$$getPslCln(tabnm,property)
 
 	set PSL.return = cd.length
 	if PSL.return.isNull() set PSL.return = PSL.return.addQuotes()
 	quit
 
 	// ---------------------------------------------------------------------
-private typ	// Property table.column.typ ; Return Schema type
+private void typ	// Property table.column.typ ; Return Schema type
 	/* ---------------------------------------------------------------------
 	*/
-	type public String property,table
-	type PSLColumn cd = {PSLColumn}$$getPslCln(table,property)
+	type public String property,tabnm
+	type PSLColumn cd = {PSLColumn}$$getPslCln(tabnm,property)
 
 	set PSL.return = cd.dataType.addQuotes()
 	quit
 
 	// ---------------------------------------------------------------------
-private req	// Property table.column.req ; Return Schema is required
+private void req	// Property table.column.req ; Return Schema is required
 	/* ---------------------------------------------------------------------
 	*/
-	type public String property,return,table
-	set return=$$QADD^%ZS($$REQ^SQLDD(table_"."_property))
+	type public String property,return,tabnm
+	set return=$$REQ^SQLDD(tabnm_"."_property).addQuotes()
 	quit
 
 	// ---------------------------------------------------------------------
-private key	// Property table.column.key ; Return Schema key level (Null if not key)
+private void key	// Property table.column.key ; Return Schema key level (Null if not key)
 	/* ---------------------------------------------------------------------
 	*/
-	type public String property,table
+	type public String property,tabnm
 	
-	type PSLColumn cd = {PSLColumn}$$getPslCln( table, property)
+	type PSLColumn cd = {PSLColumn}$$getPslCln( tabnm, property)
 	if cd.node["*" set PSL.return = cd.position
 	else  set PSL.return = """"""
 
-	/* begin old code ------------------------------------------------------
-	type String keys
-
-	if '$D(fsn(table)) do fsn^SQLDD(.fsn,table) if ER do ERROR^UCGM quit
-
-	set keys = fsn(table).piece("|",3)
-	for return=1:1:keys.length(",") if keys.piece(",",return) = property quit
-
-	if $T=0 set return=""""""
-	-------------------------------------------------------- end old code */
-
 	quit
 
 	// ---------------------------------------------------------------------
-private oldVal	// Property table.column.oldVal
+private void oldVal	// Property table.column.oldVal
 	/* ---------------------------------------------------------------------
 	This subroutine is called because it is listed in OBJECTPROP.ROUTINE for
 	the combination ('Column', 'oldVal'). The call stack will be as follows:
@@ -699,24 +777,25 @@ private oldVal	// Property table.column.oldVal
 	. This subroutine assumes that property^UCGM will take care of the fact
 		that oldVal is a "read-only property".
 	*/
+	type public String        tabnm		// tablename as used by colProp
 	type public String	  colnm		// columnname as used by colProp
-	type public Boolean       commands(,)	// references commands("WARN","SCOPE")
 	type public PSLColumn     pslCln()	// column descriptor cache
 	type public PSLTable      pslTbl()	// column descriptor cache
 	type public PSLIdentifier recVar	// recordvar as used by colProp
 
-	type String    table = $$getReTable^UCGM( recVar.class)
-	type String    ref   = table_ "."_ colnm
-	type PSLColumn cd    = PSL.cachePSLColumn( .pslCln(), ref, .pslTbl())
+	type String    ref   = tabnm_ "."_ colnm
+	type PSLColumn cd    = PSL.cachePSLColumn( pslCln(), ref, pslTbl())
 	type Boolean   bHasRoot
 	type Number    accPos = $$clnByOvs^UCREC4OP( PSL.subRou, recVar, cd, 0, 0, .bHasRoot)
 	
 	/* If this column reference does not have a root instance, report a
 	   warning */
-	if 'bHasRoot,recVar.scope'="LITERAL",commands("WARN","SCOPE").get() do PSL.warn("SCOPE: Variable "_ recVar_ " may not have been instantiated")
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if 'bHasRoot,$$getScope^UCGM(recVar)'="LITERAL",PSL.getSetting("WARN","SCOPE",false) do PSL.warn("SCOPE: Variable "_ recVar_ " may not have been instantiated")
 
 	/* Turn off optimization for recVar, because .oldVal requires vobj() by
 	   definition. */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do setOpti^UCGM( recVar, recVar.scopeLevel, -1)
 
 	/* Construct the return code based on the PSLColumn methods.
@@ -729,10 +808,10 @@ private oldVal	// Property table.column.oldVal
 	quit
 
 	// ---------------------------------------------------------------------
-journal	; private ; Property ; table.column.journal
+private void journal	// Property table.column.journal
 	/* ---------------------------------------------------------------------
 	*/
-	type public Boolean fset
+	type public Boolean       fset
 	type public String	  colnm		// columnname as used by colProp
 	type public PSLIdentifier recVar	// recordvar as used by colProp
 	
@@ -741,22 +820,11 @@ journal	; private ; Property ; table.column.journal
 	=============== end v6.3 change */
 	set fset=0
 	set PSL.return = PSL.oLvn_ "("_ recVar_ ",-400,"""_ colnm_ """)"
+	do setOpti^UCGM( recVar, recVar.scopeLevel, -1)
 	quit
 
 	// ---------------------------------------------------------------------
-private getKey( List keys, String di)	; Return the key index
-	/* ---------------------------------------------------------------------
-	
-	================ begin old code
-	type Number i
-	for i=1:1:keys.length(",") if keys.piece(",",i)=di quit
-	if  quit (-2-i)
-	================ end old code */
-	if 'keys.contains(di) quit ""
-	quit -2 - keys.position(di)
-
-	// ---------------------------------------------------------------------
-private dynamic( Boolean external,	// are values in external representation?
+private String dynamic( Boolean external,	// are values in external representation?
 		PSLIdentifier var,	// object variable instance
 		String  table,		// table name (*3)
 		String  property,	// column expression (*4)
@@ -787,43 +855,14 @@ private dynamic( Boolean external,	// are values in external representation?
 		Shall have been initiated by the caller
 
 	OUTPUTS:
-	. $$  if fset=0:
-		Function call for indirect column retrieval
-	      if fset=1:
-		var_","_property (with "@" removed from property). This is the
-		first part of argument list to be supplied to the subroutine
-		specified in struct("setProperty"). The code in UCGM will add
-		the value to be assigned as the last parameter.
-
-	NOTES:
-	. See subroutine setProperty for another example of code that uses
-		struct("setProperty").
-	. If property starts with "@@", this subroutine fills return with:
-		property.extract(3, property.extract(3, property.length()))
-		i.e. the characters following "@@" are interpreted numerically,
-		and that number of characters is returned immediately.
-		The purpose of this behavior is unclear to FSCW.
-	. The code generated by this function will be capable to retrieve a
-		computed column at runtime. To do that, it must determine the
-		columns required to pass to the	computation and it must load the
-		nodes for those columns. Since this is done at runtime,
-		indirection is used to "compute" the return value, and it calls
-		itself to recursively obtain the values of the columns that
-		participate in the computation. This is obviously slow.
-		Programmers should be discouraged against runtime indirection of
-		computed columns even though this code works.
+	. $$  if fset=0: call to $$propGet^DBSDYNRA()
+	      if fset=1: complete code for DO propSet^DBSDYNRA() with LEFTEXMARK
 	*/
 	type literal String LEFTEXMARK = 31.char()
 
-	type public String	append(,)	// used to generate next label
-	type public PSLColumn	pslCln()	// PSLCoumn cache
-	type public PSLTable	pslTbl()	// PSLTable cache
-	type public String	struct()	// used to pass "setProperty"
-
-	type String dynamic	// function return value
-	type Number i		// scratch variable
-	type String nodChk	// node check for type 11 tables
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type Number varLvl = $$getLevel^UCGM( var)	// type level of var
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type Boolean bAudit = ''$$getAtt^UCGM( var, varLvl, 12)
 
 	/* First things to do:
@@ -833,6 +872,7 @@ private dynamic( Boolean external,	// are values in external representation?
 	   	supplied var may be dummy. So ignore the declaration not found
 	   	exception.
 	   */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do setOpti^UCGM( var, varLvl, -1)
 	do {
 		catch errRec {
@@ -844,486 +884,12 @@ private dynamic( Boolean external,	// are values in external representation?
 
 	// For now, resolve at runtime
 	set PSL.class = "String"
+	
+	// Track indirection use if we know the table
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if 'table.isNull() do addXref^UCGM("I"_fset, table, var)
 
 	/* Dynamic Record instances generate calls to propXyz^DBSDYNRA()
 	   */
-	if table.isNull(),fset quit " D propSet^DBSDYNRA("_ var_ ","_ property_ ","_ LEFTEXMARK_ ","_ bAudit_ ")"
-	if table.isNull() quit "$$propGet^DBSDYNRA("_ var_ ","_ property_ ")"
-
-	/* FSCW CR15028: Intention of next line completely unclear ... */
-	if property.extract() = "@" quit property.extract(2, property.extract(2, property.length()))
-
-	// Track indirection use
-	do addXref^UCGM("I"_fset, table, var)
-
-	type PSLTable td    = {PSLTable}$$getPslTbl( table)
-	type String comment = "Record"_ table.upperCase()_ "."
-
-	/* bAudit as stored in type() is an insufficient condition for change
-	   auditing: If the table has index columns, it will need bAudit
-	   behavior to track index changes. To be safe:
-	   set bAudit if the table has indexes. Modify bAudit before the
-	   comment is constructed, so it can be used to allocate the correct
-	   label. */
-	if fset do {
-		if 'td.indexList.isNull() set bAudit = 1
-		set comment = comment _ "setColumn("_ bAudit_ ","_ external_ ")"
-	}
-	else  set comment = comment _ "getColumn()"
-
-	// Find next label number to use
-	// type String label = "vCoInd"
-	// for i = 1:1 quit:'append(label_i).data()  quit:append(label_i,2).piece("; ",2)=comment
-	// set label = label_ i
-	type String label = $$findSubr^UCGM("vCoInd",comment)
-
-	/* Compose the formallist and the actuallist. The object id and column
-	   name are always included. In case of reference, the value returned by
-	   $$dynamic() will be the code to be inserted, including the actual
-	   parameters (var and property). In case of assignment, the lists also
-	   include the value to be assigned. In that case, the value returned by
-	   $$dynamic() will be the parameters that must be appended to the
-	   struct("setProperty") value.
-	*/
-	type String fpl = "String vOid, String vCol"
-	if fset do {
-		set fpl = fpl_ ", String vVal"
-		set dynamic = var_","_property
-		set struct("setProperty") = label
-	}
-	else  set dynamic = "$$"_ label_ "("_var_","_property_")"
-
-	if 'append(label).data() do {
-		type PSLBuffer sr = PSL.openBuffer( fpl, comment)
-
-		// replace next line by vP = PSL.getPSLColumn() once supported
-		do sr.add(" type PSLColumn vP = PSL.getPSLColumn("""_table_""",vCol.upperCase())")
-		do sr.add(" type String vNod=vP.node")
-		do sr.add(" type Number vPos")
-
-		// if audit/rdb and set, or table has Blob/Memo, dataType is needed
-		/*  bAudit is an insufficient condition: If the table has index
-		    columns, it will force bAudit behavior. To be safe: include
-		    the line always if fset.
-		if ((bAudit!td.isRdb) & fset) ! td.hasBlob ! td.hasMemo do sr.add(" type String vTyp = vP.dataType")
-		------------------------------------------------------------- */
-		if fset ! td.hasBlob ! td.hasMemo do sr.add(" type String vTyp = vP.dataType")
-
-		do dynKey(td,sr,fset,bAudit)
-
-		/* Code for retrieval and assignment of computed values is only
-		   included if table has them. */
-		if td.hasComputed do {
-			do sr.add(" //")
-			do sr.add(" type String vCmp=vP.computation")
-			if 'fset,td.recordType=1 do {
-				do sr.add(" if vCmp'="""" set vCmp=vP.getCurrentExpr(""vOid"",0) quit @vCmp")
-			}
-			else  if 'fset do {
-				do sr.add(" if vCmp'="""" do { quit @vCmp")
-				do sr.add("   type String vpt()")
-				do sr.add("   do parseCmp^UCXDD( vCmp, .vpt())")
-				do sr.add("   type Number vCnt = vpt("""").order(-1)")
-				do sr.add("   type String vVal")
-				do sr.add("   type Number vElm")
-				do sr.add("   set vCmp=""""")
-				do sr.add("   for vElm=2:2:vCnt set vCmp=vCmp_vpt(vElm-1)_($$"_label_"(vOid,vpt(vElm))).addQuotes()")
-				do sr.add("   set vCmp=vCmp_vpt(vCnt)")
-				do sr.add(" }")
-			}
-			else  do sr.add(" if vCmp'="""" throw Class.new(""Error"",""%PSL-E-INVALIDREF"")")
-		}
-		do sr.add(" //")
-		do sr.add(" set vPos = vP.position")
-
-		if td.recordType>1 do dynLd( td, sr, .nodChk)
-		if td.hasBlob!td.hasMemo do dynLdBM( td, sr, fset, bAudit)
-	
-		if 'fset do dynGet(td, sr, nodChk.get())
-		if fset  do dynSet(td, sr, nodChk.get(),bAudit,external)
-	
-		do sr.insert( label)
-	}
-
-	/* Pass struct("setProperty") just prior to quit. If assigned before
-	   calling PSLBuffer.insert(), it will be interpreted by the nested
-	   call to the compiler ... */
-	if fset set struct("setProperty") = label
-
-	quit dynamic
-
-	// ---------------------------------------------------------------------
-dynGet( PSLTable td,
-	PSLBuffer sr,
-	String check)		// node-not-bottomkey check (see dynLd())
-	/* ---------------------------------------------------------------------
-	Column indirection - Generate code for ordinary non-key column.
-	Note that the code for the retrieval of Blob/Memo is part of the
-	dbload code generated by dynLdBM().
-	*/
-	type literal String oLvn = "vobj"
-	
-	type String dlm  = "$C("_ td.columnDelimiter_ ")"
-	type Number ftyp = td.recordType
-
-	do sr.add(" type String vRet")
-
-	// RDB masterfield retrieval preceeds ordinary column construction
-	type List mlst = td.masterfieldList
-	if 'mlst.isNull(),td.isRdb do {
-		/* Include code for masterfield retrieval on RDB:
-		   Call $$getMfRDB^UCCOLSF() to get the retrieval expression, and
-		   call getMf2A^UCCOLSF() to break it down in pieces that fit
-		   the GT.M line length. If it fits on a single line (code()
-		   contains 1 line), insert at once, else insert as series of
-		   lines inside nested DO-block. */
-		type String code()	// masterfield code array
-		type Number i,j		// iterators
-		type String mcol	// master column name
-		type String mget	// masterfield retrieval expr
-		type String z		// scratch var
-		for i=1:1:mlst.count() do {
-			set mcol = mlst.elementAt(i)
-			set mget = $$rtMfRDB^UCCOLSF(td.table, mcol, "vOid")
-			set z = " if vCol="""_mcol_""" "
-			do getMf2A^UCCOLSF(mget,"vRet",.code())
-			set j = code("").order(-1)
-			if j>1 do {
-				do sr.add( z_ "do { quit vRet")
-				for j=1:1:j do sr.add("  "_code(j))
-				do sr.add( "}")
-			}
-			else  do sr.add( z_ "quit "_ code(1).extract(code(1).find("vRet="),code(1).length()))
-		}
-	}
-
-	if ftyp=11 do {	// need to include conditional code
-		do sr.add(" if "_ check_ " set vRet="_ oLvn_ "(vOid,vNod)")
-		do sr.add(" else  set vRet="_ oLvn_ "(vOid)")
-	}
-	else  do {	// correct node always known at compile time
-		type String ref
-
-		if ftyp=1 set ref = oLvn_"(vOid)"
-		else  set ref= oLvn_ "(vOid,vNod)"
-		do sr.add(" set vRet="_ ref))
-	}
-	do sr.add(" set vRet=vRet.piece("_dlm_",vPos)")
-
-	if 'mlst.isNull(),'td.isRdb do {
-		/* Include code for subfield retrieval on MDB:
-		   Generate runtime call to $$gsetSf^UCCOLSF() with all
-		   vP.subfieldXxx properties of this column. */
-		type String z = "$$getSf^UCCOLSF(vRet,vP.subfieldTag,vP.subfieldMajor,vP.subfieldMinor,vP.subfieldPosition)"
-		do sr.add(" if 'vP.subfieldPosition.isNull() quit "_ z)
-	}
-	do sr.add(" quit vRet")
-	quit
-
-	// ---------------------------------------------------------------------
-dynKey( PSLTable td,
-	PSLBuffer sr,
-	Boolean fset,
-	Boolean bAudit)
-	/* ---------------------------------------------------------------------
-	Column indirection - Add code to retrieve or assign a key column
-	*/
-	type Number i
-	type String keys = td.primaryKeys
-	type String z
-
-	// retrieve a key value
-	if keys'="",'fset do {
-		set z = " if vNod[""*"" quit "_ PSL.oLvn_ "(vOid,"
-		if keys.length(",")=1 set z = z_"-3)"
-		else  do {
-			//set z=z_"$S(" 
-			//for i=1:1:keys.length(",")-1 set z = z_"vCol="""_keys.piece(",",i)_""":-"_(i+2)_","
-			//set z=z_"1:-"_(i+3)_")"
-			set z = z_"-vP.position-2)"
-		}
-		do sr.add(z_ ".get()")
-	}
-
-	// assign to a key value
-	if keys'="",fset do {
-		set z = " if vNod[""*"" set vPos="
-		if keys.length(",")=1 set z = z_"-3"
-		else  do {
-			//set z=z_"$S(" 
-			//for i=1:1:keys.length(",")-1 set z = z_"vCol="""_keys.piece(",",i)_""":-"_(i+2)_","
-			//set z=z_"1:-"_(i+3)_")"
-			set z = z_"-vP.position-2"
-		}
-		// if Record.setAuditFlag(1), then add code to track change of key column value
-		if bAudit do {
-			type PSLExpression oldLvn = $$cdOldLvn^UCXDD("vOid","vP.position_""*""","vCol")
-			set z = z_" set:'"_ oldLvn_ ".exists() "_ oldLvn_ "=vTyp_""000""_"_ PSL.oLvn_ "(vOid,vPos)"
-		}
-		if td.isRdb do {	// include assignment(s) to -150 for key column
-			type String set150 = $$cdRdbAsn^UCXDD( "vOid", """"_ td.internalNames_ """", "vP.internalColumn", """0*""", "vPos", "$$toValMod^UCXDD(vTyp,vP.isNullToZero)")
-			if td.internalNames [ "," do {
-				type Number t
-				type String setNod, setTbl
-				for t=1:1:td.internalNames.count() do {
-					set setTbl = td.internalNames.elementAt(t)
-					set setNod = $$tbl2nod^DBMAP( setTbl)
-					if 'setNod.isNull() set set150 = set150_","_ $$cdRdbAsn^UCXDD( "vOid", """"_ setTbl_ """", "vP.internalColumn", setNod, "vPos", "$$toValMod^UCXDD(vTyp,vP.isNullToZero)")
-				}
-			}
-			set z = z_ " set "_ set150
-		}
-		do sr.add(z_ " set "_ PSL.oLvn_ "(vOid,vPos)=vVal quit")
-	}
-	quit
-
-	// ---------------------------------------------------------------------
-dynLd(  local PSLTable td,
-	local PSLBuffer sr,
-	public String btmKeyCk)		// (*3)				  /NOREQ
-	/* ---------------------------------------------------------------------
-	Column indirection - Add code for incremental load of vobj(oid,node)
-	Shall only be called when td.recordType > 1.
-
-	ARGUMENTS:
-	(*3) btmKeyChk = if-argument to check that the node does NOT name the
-		bottom key. This value will only be useful if td.recordType=11.
-	*/
-	type Number ftyp   = td.recordType
-	type String gbl    = $$getGbl^UCXDD( td, "vOid")
-	type String keys   = td.primaryKeys
-	type String ref    = PSL.oLvn_ "(vOid,vNod)"
-	type String sublst
-	type String var    = "vOid"
-
-	/* If table has negative nodes, PSLColumn.node is only used in the gbl
-	   subscript, and vNod must contain PSLColumn.getCurrentNode() because
-	   other dynamic code uses vNod as subscript in vobj(,). */
-	if td.hasNegativeNode do {
-		do sr.add(" type String vNd1 = vNod set vNod = vP.getCurrentNode()")
-		set btmKeyCk = "vNod'="""""
-		set sublst = "vNd1"
-	}
-	else  do {
-		set btmKeyCk = "vNod'=""" _ keys.piece(",", keys.length(",")) _ """"
-		set sublst = "vNod"
-	}
-
-	if keys="" do {	quit	// can never occur for RDB (td.recordType > 1)
-		//if 'gbl.endsWith("(") set gbl = gbl_ ","
-		do sr.add(" if '"_ ref_ ".data() set "_ ref_ "="_ gbl_ sublst_ ").get()")
-	}
-
-	/* remainder: keys not null. */
-	type String z = " if "
-	if ftyp=11 set z = z_ btmKeyCk_ ","
-	set z = z_ "'"_ ref_ ".data()"
-	if td.hasBlob!td.hasMemo set z = z_ ",""MB""'[vTyp"
-	do sr.add( z_ " do {")
-	do sr.add("   if '"_ PSL.oLvn_ "(vOid,-2).get() set "_ref_"="""" quit")
-	if td.isRdb do {
-		/* code generated for dbLoad of wide table node uses the
-		   fact that the wide tables have a single key (as stored
-		   in variable keys. */
-		do sr.add("   new vData,vEr,vRm")
-		type String z = "   set vEr=$$SELECT^%DBAPI(0"
-		set z = z_ ",""SELECT * FROM ""_ vP.internalTable_ "" where "_ keys_ "=:v1"""
-		set z = z_ ",$C("_ td.columnDelimiter_ ")"
-		do sr.add( z_ ",vobj(vOid,-3)_$C("_ td.columnDelimiter_ "),.vData,.vRm)")
-		do sr.add("   if vEr<0 throw Class.new(""Error"",""%PSL-E-SELFAIL"")")
-		do sr.add("   set "_ ref_ "=vData")
-	}
-	else  do {
-		do sr.add("   set "_ ref_ "="_ gbl_ sublst_ ").get()")
-	}
-	do sr.add(" }")
-
-	quit
-
-	// ---------------------------------------------------------------------
-dynLdBM( PSLTable td,
-	PSLBuffer sr,	
-	Boolean fset,
-	Boolean bAudit)
-	/* ---------------------------------------------------------------------
-	Column indirection - Add dbLoad code for Blom / Memo.
-	Shall only be called if td.hasBlob or td.hasMemo.
-	For retrieval, the code will always be included, and the generated code
-	will always quit the value that is already there or has just been loaded.
-	For assignment, the code will only be included if audit is on and the the
-	table is RDB.
-
-	NOTES:
-	. The current code declares both BMNODE and glbBM as ordinary variables,
-		that depend on td.recordType. Once all code is adapted to use
-		vobj(o,n,1) for Blob/Memo, BMNODE effectively becomes a literal.
-		However, gblBM will remain a variable that depends on the
-		record type, because there will be no change to the database
-		structure.
-	*/
-	type String BMNODE
-	type String gbl = $$getGbl^UCXDD( td, "vOid")
-	type String gblBM		// Global that contains Blob/Memo
-
-	if td.recordType=1,'td.isRdb do {
-		set BMNODE = "vobj(vOid,1,1)"
-		set gblBM  = gbl_"v1)"
-	}
-	else  do {
-		set BMNODE = "vobj(vOid,vNod,1)"
-		set gblBM  = gbl_"vNod,v1)"
-	}
-
-	if 'fset!(bAudit&td.isRdb) do {
-		do sr.add(" if ""MB""[vTyp do {"_$SELECT(fset:"",1:" quit "_BMNODE))
-		do sr.add("   if "_ BMNODE_ ".exists() quit")
-		do sr.add("   if 'vobj(vOid,-2).get() set "_BMNODE_"="""" quit")
-       		if td.isRdb do {
-       			/* construct the where-clause and the vList for
-       			   this table:
-       			   * for each column add a AND KEY=:vN to where
-			   * and add vobj(vOid,-key) to vList */
-			type String dlm = "$C("_ td.columnDelimiter_ ")"
-			type Number i
-			type String keys = td.primaryKeys
-			type String lst = "$$QADD^%ZS(vobj(vOid,-3))"
-			type String whr = " where "_ keys.piece(",")_"=:v1"
-			type String z
-			for i=2:1:keys.length(",") do {
-				set whr = whr_ " AND "_ keys.piece(",",i)_"=:v"_ i
-				set lst = lst_ "_"_ dlm_ "_"_ "$$QADD^%ZS(vobj(vOid,-"_ (i-2)_ "))"
-			}
-       			do sr.add("   // Incremental load of Blob/Memo")
-			do sr.add("   new vData,vEr,vList,vRm,vSql")
-			set z = """SELECT ""_vP.internalColumn_"" FROM ""_vP.internalTable_"""
-			do sr.add("   set vSql="_ z_ whr_"""")
-			do sr.add("   set vList="_ lst)
-			do sr.add("   set vEr=$$SELECT^%DBAPI(0,vSql,"_dlm_",vList,.vData,.vRm)")
-			do sr.add("   if vEr<0 throw Class.new(""Error"",""%PSL-E-SELFAIL"")")
-			do sr.add("   set "_ BMNODE_ "=vData")
-       		}
-        	else  do {
-			do sr.add("   type String v1,vVal set (v1,vVal)=""""")
-			do sr.add("   for  set v1="_ gblBM_ ".order() quit:v1.isNull()  set vVal=vVal_"_gblBM)
-			do sr.add("   set "_ BMNODE_ "=vVal")
-       		}
-		do sr.add(" }")
-	}
-	quit
-
-	// ---------------------------------------------------------------------
-dynSet( PSLTable td,
-	PSLBuffer sr,
-	String check,		// node-not-bottomkey check (see dynLd())
-	Boolean bAudit,
-	Boolean bExtern)	// values (in vVal) will be in external format
-	/* ---------------------------------------------------------------------
-	Column indirection - Generate code for assignment to non-key column.
-	Unlike dynGet(), this subroutine must handle (assignments to) Blob / Memo
-	columns.
-
-	NOTES:
-	. This subroutine generates code that maintains the -100 tree for Blob
-		and Memo columns (on RDB only).
-	*/
-	type literal String oLvn = "vobj"
-
-	/* Temporary code (until selective audit of index columns is supported)
-	   */
-	type String TBL = td.table
-	if Db.isDefined("DBTBL8","%LIBS='SYSDEV' and FID=:TBL", 1) set bAudit = 1
-
-	/* Construct an expr that represents the lvn that contains the Blob or
-	   Memo data. It will only be used when the table contains Blob/Memo. */
-	type String BMNODE
-	if td.recordType=1 set BMNODE = oLvn_ "(vOid,1,1)"
-	else  set BMNODE = oLvn_ "(vOid,vNod,1)"
-
-	type String  getPce = ".piece($C("_ td.columnDelimiter_ "),vPos)"
-	type Number  ftyp   = td.recordType
-	type Boolean bRdb   = td.isRdb
-	type Boolean bBM    = td.hasBlob!td.hasMemo
-	type String  z			// scratch variable
-
-	/* Construct an expr that represents the retrieval of the current value
-	   of the column. This is used to save the column.oldVal in the -100
-	   tree, and to retrieve masterfields in MDB. */
-	type String curVal
-	if ftyp = 1 set curVal = oLvn_"(vOid)"
-	else  if ftyp = 10 set curVal = oLvn_"(vOid,vNod)"
-	else  set curVal = "$S("_check_":"_oLvn_"(vOid,vNod),1:"_oLvn_"(vOid))"
-	set curVal = curVal_ getPce
-
-	if bExtern!bRdb do sr.add(" type Boolean vNul = vP.isNullToZero")
-
-	if bExtern do {		// convert external to internal
-		do sr.add(" if ""CDLU""[vTyp set vVal=$$INT^%ZM(vVal,vTyp)")
-		do sr.add(" if ""$N""[vTyp,'vVal.isNull()!vNul set vVal=+$$INT^%ZM(vVal,vTyp,,vP.precision)")
-	}
-
-	// handle masterfield assignments (identical on RDB and MDB)
-	type List mlst = td.masterfieldList
-	if 'mlst.isNull() do {
-		type Number i		// iterator
-		type String mcol	// master column name
-		for i=1:1:mlst.count() do {
-			set mcol = mlst.elementAt(i)
-			do sr.add(" if vCol="""_mcol_""" do "_$$setMaster^UCCOLSF(td.table,mcol,bAudit)_"(vOid,vVal) quit")
-		}
-	}
-
-	// handle -150 maintenance for RDB
-	if bRdb do {
-		type String nodExpr = $SELECT(ftyp=1:"""0*""",1:"$S("_check_":vNod,1:""0*"")")
-		do sr.add( " set "_ $$cdRdbAsn^UCXDD("vOid","vP.internalTable","vP.internalColumn",nodExpr,"vPos","$$toValMod^UCXDD(vTyp,vNul)"))
-	}
-
-	/* Allocate var and assign value of oldNode, and use this var
-	   in -100 tree. Include only if ftyp>1 or bAudit. */
-	if (ftyp>1)!bAudit do sr.add("type String vOldNod=vP.getOldNode(0)")
-	type String  oldLvn = $$cdOldLvn^UCXDD("vOid","vOldNod","vCol")
-
-	// handle vobj(vOid,-100,vOldNod,vCol) if bAudit
-	if bAudit do {
-		type String cur
-		if 'mlst.isNull(),'bRdb do {
-			// additional code to retrieve subfield.oldVal on MDB
-			do sr.add(" type String vOld = "_curVal)
-			set z = $$GETSUB^UCSTRING("vP.subfieldTag","vP.subfieldMajor","vP.subfieldMinor","vP.subfieldPosition","vOld",1)
-			do sr.add(" if 'vP.subfieldPosition.isNull() set vOld="_ z)
-			set cur = "vOld"
-		}
-		else  set cur = curVal
-
-		// exclude -100 maintenance of Blob/Memo on MDB (if present)
-		if bBM,'bRdb set z = """MB""'[vTyp,"
-		else  set z = ""
-		set z = " if "_ z_ "'$D("_ oldLvn_ ")) set "
-		do sr.add(z_ oldLvn_ "=vTyp_$E(1000+vPos,2,4)_"_ cur)
-	}
-
-	// Independent of audit, maintain vobj(vOid,-100,vOldNod), except for type 1 tables
-	if ftyp>1 do sr.add(" set "_ $$cdNodChg^UCXDD("vOid","vOldNod")_ "=""""")
-
-	// Assignment to Blob/Memo possible without additional processing
-	if bBM do sr.add(" if ""MB""[vTyp set "_ BMNODE_ "=vVal quit")
-
-	/* Add code to for subfield assignment on MDB.
-	   The final assignment will be to the masterfield. The generated code
-	   will replace the supplied vVal by the value of the masterfield with
-	   the supplied vVal inserted at the correct subfield position */
-	if 'mlst.isNull(),'bRdb do {
-		// additional code to set subfield on MDB
-		set z = $$PUTSUB^UCSTRING("vVal","vP.subfieldTag","vP.subfieldMajor","vP.subfieldMinor","vP.subfieldPosition",curVal,1)
-		do sr.add(" if 'vP.subfieldPosition.isNull() set vVal="_ z)
-	}
-
-	// now we are ready to generate the code for the final assignment
-        if ftyp=1 do sr.add(" set "_ oLvn_ "(vOid)"_ getPce_ "=vVal")
-        if ftyp=10 do sr.add(" set "_ oLvn_ "(vOid,vNod)"_ getPce_ "=vVal")
-	if ftyp=11 do {
-		do sr.add(" if "_ check_ " set "_ oLvn_ "(vOid,vNod)"_ getPce_ "=vVal quit")
-		do sr.add(" set "_ oLvn_ "(vOid)"_ getPce_ "=vVal")
-	}
-	do sr.add(" quit")
-	quit
+	if fset quit " D propSet^DBSDYNRA("_ var_ ","_ property_ ","_ LEFTEXMARK_ ","_ bAudit_ ","_ external_ ")"
+	quit "$$propGet^DBSDYNRA("_ var_ ","_ property_ ")"

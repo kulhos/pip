@@ -1,0 +1,36 @@
+NOD=
+LEN=32000
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=M
+DES=Extended Data
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP= 
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Extended Data
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+For computed columns, contains data related to the computed expression for
+use against an RDB.
+
+For master field columns, contains a SELECT statement to build the value
+based on the sub-fields.

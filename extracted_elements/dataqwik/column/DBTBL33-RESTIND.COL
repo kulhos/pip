@@ -1,0 +1,35 @@
+NOD=BCHID
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Insert Restart Logic
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=21
+RHD=Insert Restart Logic
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+A flag that indicates whether or not the batch compiler needs to add code for
+batch restart processing.  If the flag is set to 1, the batch compiler will
+compile in code for restart capabilities.  If the flag is set to 0 (zero), then
+the restart capability will NOT be added by the batch compiler.

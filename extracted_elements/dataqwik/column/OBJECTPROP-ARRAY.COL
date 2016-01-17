@@ -1,0 +1,36 @@
+NOD=PROPERTY
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Array Flag
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=6
+RHD=Array@Flag
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+
+ This column is associated with functionality that will be used in the core 
+ software in V6.4.  It provides the ability to group similar objects in a
+ container object. This column indicates that a property of the class contains
+ an array of similar objects.

@@ -1,19 +1,14 @@
 //DO NOT MODIFY  After update accecc keys|0|0|0|0|1|0|ACCKEYS|||
 	/*
 	---------- Revision History ------------------------------------------
-	10/28/04 - RussellDS - CR8058
-		   Fix logic errors that are not correctly renumbering keys.
-		   
-		   Revise code to use current PSL methods.
-		   
-		   Remove old revision history.
-		   
-	04/29/04 - RussellDS - CR9172
-		   Cleaned up variable scoping
+	06/14/2008 - RussellDS - CR30801
+		Cleaned up code to eliminate PSL warnings.
+		
+		Removed old revision history.
 	----------------------------------------------------------------------
 	*/
 	
-	type Public String FID
+	type public String FID
 	
 	type Number KEYNUM
 	type String GBLREF, KEYNAME, NEWKEYS(), OLDKEYS

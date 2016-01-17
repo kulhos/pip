@@ -1,0 +1,22 @@
+//DO NOT MODIFY  Before Insert|1|0|0|0|0|0||||
+
+	/* ----- Revision History ---------------------------------------------
+	
+	01/13/2008 - RussellDS - CR30801
+		Created.
+	*/
+	
+	type public Boolean ER = false
+	type public String RM
+	
+	/* Prevent the use of a program name (PGM) of the form "S"1.N, since
+	   these names are reserved for client generated stored procedures. */
+
+	if (dbtbl33.pgm ? 1"S"1.N) do { quit
+	
+		set ER = true
+		// Invalid name - ~p1
+		set RM = $$^MSG(1408, dbtbl33.pgm)
+	}
+	   
+	quit

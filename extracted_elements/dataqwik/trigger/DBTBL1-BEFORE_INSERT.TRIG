@@ -2,18 +2,19 @@
 
 	/* ----- Revision History ---------------------------------------------
 	
-	11/19/05 - RussellDS - CR18065
-		   Move code previously in after insert trigger that was doing
-		   updates and deletes here.
+	06/14/2008 - RussellDS - CR30801
+		Cleaned up code to eliminate PSL warnings.
+		
+		Removed old revision history.
 	*/
 
         // Default global name
 
 	if dbtbl1.global.isNull() do {
 
-		if $E(dbtbl1.fid,1,4)="UTBL"!($E(dbtbl1.fid,1,5)="ZUTBL") set dbtbl1.global="UTBL"
-		else  if $E(dbtbl1.fid,1,4)="STBL"!($E(dbtbl1.fid,1,5)="ZSTBL") set dbtbl1.global="STBL" 
-		else  if $E(dbtbl1.fid,1,4)="CTBL"!($E(dbtbl1.fid,1,5)="ZCTBL") set dbtbl1.global="CTBL" 
+		if dbtbl1.fid.beginsWith("UTBL")!dbtbl1.fid.beginsWith("ZUTBL") set dbtbl1.global="UTBL"
+		else  if dbtbl1.fid.beginsWith("STBL")!dbtbl1.fid.beginsWith("ZSTBL") set dbtbl1.global="STBL" 
+		else  if dbtbl1.fid.beginsWith("CTBL")!dbtbl1.fid.beginsWith("ZCTBL") set dbtbl1.global="CTBL" 
 	}
 	
 	// Reset full global reference

@@ -1,6 +1,6 @@
 //DO NOT MODIFY  Batch Procedure Definition|DBSBAT|||||||1
-DBSBAT	
-		 
+	#PACKAGE framework
+			 
 	/*
 	Batch Procedure Definition
 	
@@ -13,9 +13,16 @@ DBSBAT
 		. BUILDALL - Mass recompile batch routines
 
 	---- Revision History -------------------------------------------------
-	04/25/06 - RussellDS - CR20967
-		   Converted to PSL.
-
+	12/11/2008 - RussellDS - CRs 36952/35741
+		* Modified exec section to handle TP and data loading so that
+		  TP does not span interactive aspect of modification.  This
+		  avoids issues with long running transactions, a potential
+		  TP timeout, and lost data on restarts.
+		* Added #PACKAGE to force use of FW30 compiler
+		* Removed old revision history.
+	
+	10/10/2007 - RussellDS - CR29695
+		Eliminate use of setMode(3).  Being obsoleted in PSL.
 	-----------------------------------------------------------------------
 	*/
 	
@@ -152,7 +159,7 @@ exec(Number %ProcessMode)
 	type public String RM
 
 	type Boolean zproc
-	type String %READ, %TAB(), BCHID, DBTBL(,,), VFMQ
+	type String %READ, %TAB(), BCHID, buf(), DBTBL(,,), VFMQ
 
 	if (%ProcessMode = 0) set %TAB("BCHID") = "[DBTBL33]BCHID/TBL=[DBTBL33]:NOVAL/XPP=D pp^DBSBAT"
 	else  set %TAB("BCHID") = "[DBTBL33]BCHID/TBL=[DBTBL33]"
@@ -190,25 +197,11 @@ exec(Number %ProcessMode)
 		lock -DBTBL("SYSDEV",33,BCHID)
 	}
 	
-	do Runtime.start("CS")
-	
-	if (%ProcessMode = 3) do {
-		
-		type String pgm = fDBTBL33.pgm
-		
-		if 'pgm.isNull() do DEL^%ZRTNDEL(pgm)	// Delete routine
-		
-		do fDBTBL33.setMode(3)
-	}
-	
-	do fDBTBL33.save()
-	
 	// Edit code
-	
 	if zproc do {
 		
 		type Number seq
-		type String buf(), sec
+		type String sec
 		
 		set seq = 1
 		for sec="REVHIST", "OPEN", "SCHINIT", "SCHEXEC", "SCHPOST", "SCHEXIT", "THRINIT", "THREXEC", "EXEC", "THREXIT" do {
@@ -231,59 +224,79 @@ exec(Number %ProcessMode)
 			
 		do ^DBSWRITE("buf")
 		
-		if (VFMQ '= "Q") do {
+		if (VFMQ = "Q") kill buf
+	}
+	
+	if (VFMQ = "Q"), (%ProcessMode = 0) do { quit
 		
-			type Boolean isNewSec, isSecTop
-			type Number secseq
-			type String x
+		lock -DBTBL("SYSDEV",33,BCHID)
+	}
+	
+	// All user input is done, update the database		
+	do Runtime.start("CS")
+	
+	if (%ProcessMode = 3) do {
 		
-			do Db.delete("DBTBL33D", "%LIBS='SYSDEV' AND BCHID=:BCHID")
+		type String pgm = fDBTBL33.pgm
+		
+		if 'pgm.isNull() do DEL^%ZRTNDEL(pgm)	// Delete routine
+		
+		do Db.delete("DBTBL33", "%LIBS='SYSDEV' AND BCHID=:fDBTBL33.bchid")
+	}
+	
+	else  if fDBTBL33.isChanged() do fDBTBL33.save()
+	
+	// If edited batch code
+	if (buf.data() > 0) do {
+				
+		type Boolean isNewSec, isSecTop
+		type Number secseq, seq
+		type String sec, x
+		
+		do Db.delete("DBTBL33D", "%LIBS='SYSDEV' AND BCHID=:BCHID")
 			
-			set isSecTop = 0
-			set (sec, seq) = ""
-			for  set seq = buf(seq).order() quit:seq.isNull()  do {
+		set isSecTop = 0
+		set (sec, seq) = ""
+		for  set seq = buf(seq).order() quit:seq.isNull()  do {
 				
-				set isNewSec = 0
-				set x = buf(seq)
+			set isNewSec = 0
+			set x = buf(seq)
 				
-				// See if section name, set up new section flags
-				if x.extract(1, 11) = "---------- " do {
+			// See if section name, set up new section flags
+			if x.extract(1, 11) = "---------- " do {
 					
-					type String tag
+				type String tag
 					
-					set tag = x.extract(12, 20).piece(" ", 1)
+				set tag = x.extract(12, 20).piece(" ", 1)
 					
-					if 'tag.isNull() do {
+				if 'tag.isNull() do {
 					
-						set sec = tag
-						set secseq = 1
-						set isNewSec = 1
-						set isSecTop = 1
-					}
+					set sec = tag
+					set secseq = 1
+					set isNewSec = 1
+					set isSecTop = 1
 				}
+			}
 				
-				if 'isNewSec, 'sec.isNull() do {
+			if 'isNewSec, 'sec.isNull() do {
 				
-					// Ignore blank lines at section top
-					if x.isNull(), isSecTop quit
+				// Ignore blank lines at section top
+				if x.isNull(), isSecTop quit
 					
-					set isSecTop = 0
+				set isSecTop = 0
 					
-					type RecordDBTBL33D dbtbl33d = Class.new("RecordDBTBL33D", "%LIBS='SYSDEV',BCHID=:BCHID,LABEL=:sec,SEQ=:secseq")
+				type RecordDBTBL33D dbtbl33d = Class.new("RecordDBTBL33D", "%LIBS='SYSDEV',BCHID=:BCHID,LABEL=:sec,SEQ=:secseq")
 					
-					set dbtbl33d.code = x
+				set dbtbl33d.code = x
 					
-					do dbtbl33d.save()
+				do dbtbl33d.save()
 					
-					set secseq = secseq + 1
-				}
+				set secseq = secseq + 1
 			}
 		}
 		
-		set fDBTBL33.time = %CurrentTime
-		
+		set fDBTBL33.time = %CurrentTime		
 		do fDBTBL33.setMode(1)
-		
 		do fDBTBL33.save()
 	}
 	

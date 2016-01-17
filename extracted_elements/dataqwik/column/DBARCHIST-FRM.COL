@@ -1,0 +1,33 @@
+NOD=ARCHSEQ
+LEN=20
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=From Table
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=10
+RHD=From Table
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The FROM table passed in conjunction with SELECT and WHERE  to the archiving
+process to determine which primary records will have journal records archived.

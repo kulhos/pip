@@ -1,0 +1,37 @@
+NOD=JRNID
+LEN=255
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Execute IF condition
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=40
+DEL=
+POS=15
+RHD=Execute IF condition
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Code to allow conditional compilation of the journal into the filer.  If there
+is code in this field, and, at compile time, the execution of this code is
+true, then this journal will be included in the filer.  If the execution of
+this code is false, then the journal will not be included in the filer.
+
+If no code is present, the journal will always be included in the filer.

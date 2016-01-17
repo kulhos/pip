@@ -1,0 +1,46 @@
+NOD=10
+LEN=1
+DFT=0
+DOM=
+TBL=,0#Server Only,1#Client Only,2#Both
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Network Location
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=Network@Location
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ The location code of the file in the network.  A file can have one of three
+ location codes:
+
+        0 - Server Only              Records only exist on the Server
+        1 - Client Only              Records only exist on the Client
+        2 - Both                     Records exist on both the Server/Client
+
+ The DATA-QWIK compiler uses this code to optimize database loading in a client
+ server network.  Records that exist on the server only are requested through
+ a database remote procedure call (RPC) and merged with records that exist on
+ the client.
+
+ The DATA-QWIK logging utility (UTLLOG) also interrogates this code to
+ determine whether it needs to distribute changes to client processors
+ (Code=2) through the record distribution utility.

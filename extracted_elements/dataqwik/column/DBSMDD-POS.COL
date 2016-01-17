@@ -1,0 +1,40 @@
+NOD=
+LEN=2
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Field Position
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Position
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The position (piece) of a data item in a record if the data item shares a
+field (node) with other data items, and the fields are seperated by a
+delimeter.
+
+For example, the following definition maps the Account Balance (""<<BAL>>) to
+position 1 of the account file, and the Last Transaction Date ([LN]TLD) to
+position 2 of the account file:
+
+        ^ACN(account,51)=BAL|TLD|...|...

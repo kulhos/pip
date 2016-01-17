@@ -1,0 +1,40 @@
+NOD=10
+LEN=6
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Record Existed Indicator (node number)
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=13
+RHD=Record Existed Indicator@(node number)
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+ A MUMPS global node which is used to identify the existence of a record.
+
+ Examples:
+
+   Files                Record existed Indicator
+
+   CIF                  1
+   DEP                  50
+   LN                   50

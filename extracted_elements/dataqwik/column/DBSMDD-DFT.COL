@@ -1,0 +1,51 @@
+NOD=
+LEN=58
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Default Value
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Default
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The initial value that the data items referencing this master data dictionary
+element assume when the system loads a new record referencing this element.
+The user can modify the defaulted value if the Protect Default Value data item
+([DBSMDD]PRDFT) contains N (No).
+
+The default parameter supports the following types of expressions:
+
+        - <<[^]glvn>>              MUMPS global/local variable reference
+        - <<$[$^]function>>        MUMPS functions and extrinsic functions
+        - FID.DI or [FID]DI        DATA-QWIK data item reference
+        - ...                      Alphanumeric literal (all other)
+
+The value in the [DBSMDD]DFT data item defaults as the [DBTBL1D]DFT value for
+data items referencing the master data dictionary data item.
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) links to the [MDDPBS]MINRATE master data dictionary data item,
+and the [MDDPBS]MINRATE data item specifies a default value of 1.25, the system
+defaults 1.25 into the Default Value attribute ([DBTBL1D]DFT) associated with
+the [CRCD]MINRATE data item.

@@ -1,0 +1,38 @@
+NOD=4*
+LEN=20
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Trigger Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Trigger Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+A description of the action the trigger performs and the associated column name
+(data item).
+
+Examples
+
+AU_IOPT               After Update Interest Disb Option
+BU_IRN                Before update of IRN

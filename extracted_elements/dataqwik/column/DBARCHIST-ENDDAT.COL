@@ -1,0 +1,33 @@
+NOD=ARCHSEQ
+LEN=10
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=D
+DES=Process End Date
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=End Date
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The date the archiving process completed.  If this column is null, the process
+is still running.

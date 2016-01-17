@@ -1,0 +1,78 @@
+NOD=0
+LEN=1
+DFT=0
+DOM=
+TBL=[DBCTL]CODE,DESC:QU "[DBCTL]NAME=""RWPROT"""
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Data Item Protection Logic
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=7
+RHD=DATA@ITEM PROTECTION LOGIC
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         DATA ITEM PROTECTION LOGIC                     Default=0
+
+             Applies to data items that have data item protection
+             logic defined.
+
+
+             0 - Data item protection logic will not be applied for
+                 this report.
+
+             1 - Data item protection logic will be applied in this
+                 report for any data items that have protection
+                 logic defined.  Report displays protected items
+                 with ***** and will include its data value in the
+                 report total.
+
+  Example:
+
+
+     Account          Ledger  Report                Interest
+      Number         Balance  Short Name                Rate
+------------  --------------  --------------------  --------
+           1            0.00  JOHN DOE               5.00000
+          11          100.00  MR. SMITH              2.00000
+          12        1,000.00  HARRY                  6.50000
+          13  **************  SCA INC.               5.00000
+              --------------  --------------------
+                  995,116.51                     4
+
+             2 - Data item protection logic will be applied in this
+                 report for any data items that have protection
+                 logic defined.  Report displays protected items
+                 with ***** and will not include its data value
+                 in the report total.  This is the default option
+                 for QWIK reports.
+
+  Example:
+
+
+     Account          Ledger  Report                Interest
+      Number         Balance  Short Name                Rate
+------------  --------------  --------------------  --------
+           1            0.00  JOHN DOE               5.00000
+          11          100.00  MR. SMITH              2.00000
+          12        1,000.00  HARRY                  6.50000
+          13  **************  SCA INC.               5.00000
+              --------------  --------------------
+                    1,100.00                     4

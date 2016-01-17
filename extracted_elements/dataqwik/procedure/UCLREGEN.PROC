@@ -1,5 +1,4 @@
 //DO NOT MODIFY  Auto Literal Code Regenerator, DATA group|UCLREGEN|||||||1
-UCLREGEN	//
 	/*
 	ORIG: RussellDS - 04/18/2005
 	DESC: PSL Auto Literal Code Regenerator, Data group
@@ -33,33 +32,19 @@ UCLREGEN	//
 		. STOP		Signal regeneration monitor to stop
 
 	---- Revision History --------------------------------------------------
+	10/13/2008 - RussellDS - CR35741/35918
+		Modified error handling to use new logging syntax.
+		
+		Removed old revision history.
+	
+	01/12/2008 - RussellDS - CR27800 (see CR30907)
+		Modified RUN section to remove call to TERMSET^SCADRV.  Causing
+		problems if run in batch mode
+	
 	01/22/07 - RussellDS - CRs 24902 / 24903 / 24974
 		Modify references to SYSMAP to correspond with new structure.
-	
-	06/05/06 - RussellDS - CR21604 / 18164
-		Fix error in REGEN section if no records to process.
-		
-		Modify REGEN section to avoid error if element no longer exists.
-		
-		Ignore screens beginning with "z".  These are working copies.
-	
-	02/22/06 - RussellDS - CRs 19065 / 18164
-		Added automatic re-link to any running servers for recompiles.
-	
-	11/16/05 - Frans S.C. Witte - CRs: 18247 / 15593
-		Replaced call to $$^CUVAR by call to $$^UCXCUVAR.
-
-	10/24/05 - Frans S.C. Witte - CRs: 17937 / 15593
-		Replaced call to CUVAR.column by $$^CUVAR("column").
-
-	08/05/05 - Frans S.C. Witte - CRs: 15592 / 15593
-		Added required documentation for System group element
-		Added SETALL (copied from UCGM, and modified to access SYSMAP
-		through Db class).
-
-	04/18/05 - RussellDS - CR15379
-		   Created procedure.
 	*/
+	#PACKAGE framework
 	
 	quit			// No entry at top
 	
@@ -127,7 +112,7 @@ public SET(String table,	// Table name		/NOREQ
 	quit
 	
 	// ---------------------------------------------------------------------
-private SETRTN( String RTN)	// name of routine
+SETRTN( String RTN)	// name of routine
 	/* ---------------------------------------------------------------------
 	Add the UCLREGEN information for all SYSMAPLITFNC rows for the supplied
 	routine.
@@ -164,8 +149,11 @@ public START(Number interval)		// Seconds to hibernate between cycles	/NOREQ/DFT
 	// Set process name
 	set procname = "UCLREGEN_"_$$^UCXCUVAR("PTMDIRID")
 	set outfile = procname_"_"_%CurrentDate_"_"_%CurrentTime_".log"
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set params = $$JOBPARAM^%OSSCRPT(procname,,,,outfile)
 	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set ER='$$^%ZJOB("DAEMON^UCLREGEN("_interval_")", params, 0)
 	
 	lock -UCLREGEN			// Free lock to let daemon have it
@@ -196,11 +184,11 @@ public START(Number interval)		// Seconds to hibernate between cycles	/NOREQ/DFT
 	quit
 	
 	// ---------------------------------------------------------------------
-private DAEMON(Number interval)		// Seconds to hibernate between cycles	/NOREQ/DFT=600
+public DAEMON(Number interval)		// Seconds to hibernate between cycles	/NOREQ/DFT=600
 	/* ---------------------------------------------------------------------
 	Background processes to manage regens
 	
-	NOTE:  This section is private (versus local) because it is called by ^%ZJOB.
+	NOTE:  This section is public (versus local) because it is called by ^%ZJOB.
 	*/
 	
 	type literal String UCLREGEN = ""		// To avoid warning on lock
@@ -215,9 +203,7 @@ private DAEMON(Number interval)		// Seconds to hibernate between cycles	/NOREQ/D
 	lock +UCLREGEN:10
 	else  quit			// Cannot obtain lock, don't run
 	
-	catch error {			// Log errors, then exit
-		
-		do ZE^UTLERR
+	catch ERROR@"LOGERR^UTLERR" {		// Log errors, then exit
 	}
 	
 	// Clear stop indicator
@@ -275,9 +261,6 @@ public RUN
 	
 	type public String ER, RM
 	
-	do TERMSET^SCADRV		// Reset terminal for compile messages
-	write !
-	
 	do REGEN
 	
 	set ER = "W"
@@ -287,7 +270,7 @@ public RUN
 	quit
 		
 	// ---------------------------------------------------------------------
-REGEN
+private REGEN
 	/* ---------------------------------------------------------------------
 	Identify all procedures currently requiring regeneration, based on entries
 	in table UCLREGEN, and performs the regeneration.
@@ -435,7 +418,7 @@ REGEN
 	quit
 	
 	// ---------------------------------------------------------------------
-SETTIME(Number offset)		// Offset from now
+private SETTIME(Number offset)		// Offset from now
 	/* ---------------------------------------------------------------------
 	Return standardized time that can be used for comparisons
 	
@@ -478,6 +461,7 @@ public STOP
 
 	do uclregen.save()
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	write $$MSG^%TRMVT("Signal sent to monitor ... waiting for stop", 0, 0, 0, 23)
 
 	lock +UCLREGEN:70

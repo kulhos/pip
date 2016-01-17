@@ -1,0 +1,53 @@
+NOD=
+LEN=3
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Field Size (Display)
+ITP=
+MIN=1
+MAX=80
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Size
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The maximum length that the system accepts for data items in file definitions
+referencing this master data dictionary data item.  The system imposes the
+length limitation to facilitate screen and report design.  If the size of a
+field value exceeds the display size, DATA-QWIK displays the field within the
+display window and indicate the overflow with a special character (graphic <>).
+
+The value in the [DBSMDD]SIZ data item defaults as the Field Display Size data
+item in file definitions referencing this master data dictionary data item
+([DBTBL1D]SIZ).  The user can modify the defaulted value if the Protect Field
+Display Size data item ([DBSMDD]PRSIZ) contains N (No).
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) links to the [MDDPBS]MINRATE master data dictionary data item,
+and the [MDDPBS]MINRATE data item specifies a field display size of 12,
+the system defaults 12 into the Field Display Size attribute
+([DBTBL1D]SIZ) associated with the [CRCD]MINRATE data item.
+
+If the data item is shorter than the maximum length, DATA-QWIK does NOT reserve
+additional space.  The system only uses the amount of space actually needed to
+store the data, regardless of the maximum length defined.
+
+Internally, the system does not restrict the length of any data item.

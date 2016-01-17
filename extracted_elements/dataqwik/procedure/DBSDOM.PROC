@@ -5,6 +5,9 @@ DBSDOM
 	Create, modify, inquire, delete domain definitions.
 	
 	---- Revision History -------------------------------------------------
+	10/10/2007 - RussellDS - CR29695
+		Eliminate use of setMode(3).  Being obsoleted in PSL.
+		
 	04/10/06 - RussellDS - CR20967
 		   Converted to PSL.
 		   
@@ -47,17 +50,20 @@ public CREATE
 			
 			if DELETE do {
 				
-				do fDBSDOM.setMode(3)
+				do Db.delete("DBSDOM", "SYSSN=:fDBSDOM.syssn AND DOM=:fDBSDOM.dom")
 				
 				// Domain ~p1 deleted
 				set MSG = $$^MSG(853, fDBSDOM.dom)
 			}
-			// Domain ~p1 created
-			else  if (fDBSDOM.getMode() = 0) set MSG = $$^MSG(852, fDBSDOM.dom)
-			// Domain ~p1 modified
-			else  set MSG = $$^MSG(854, fDBSDOM.dom)
+			else  do {
+				
+				// Domain ~p1 created
+				if (fDBSDOM.getMode() = 0) set MSG = $$^MSG(852, fDBSDOM.dom)
+				// Domain ~p1 modified
+				else  set MSG = $$^MSG(854, fDBSDOM.dom)
 			
-			do fDBSDOM.save()
+				do fDBSDOM.save()
+			}
 			
 			// ~p1 ... Continue?
 			set MSG = $$^MSG(3008, MSG)

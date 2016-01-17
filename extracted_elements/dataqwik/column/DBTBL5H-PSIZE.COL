@@ -1,0 +1,38 @@
+NOD=0
+LEN=8
+DFT=60
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Page Size
+ITP=
+MIN=1
+MAX=99999999
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=6
+RHD=Page@Size
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         PAGE SIZE                                     Default=60
+
+             The length of the page in number of lines.  A page break
+             will be inserted after this number of lines.
+
+             For NO PAGE BREAK (such as for labels or for a report
+             that will be copied to a tape), enter 99999999.

@@ -1,0 +1,51 @@
+NOD=4
+LEN=500
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=SELECT Restrict Clause
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=SELECT Restrict Clause
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+A SQL WHERE clause, valid for this tablename, that can be used to limit the
+grant of SELECT rights for this userclass.
+
+If SELECT rights are granted and there is a RESTRICT clause in this column, it
+will be applied when records are retrieved from the database to determine if
+the userclass is allowed to access the records, based on the criteria
+specified in the RESTRICT clause.
+
+The RESTRICT clause acts to hide rows in the table that the userclass does not
+have access to, acting similarly to a SQL VIEW of the table.
+
+This column is ignored if SELECT rights are not granted.
+
+Columns specified in a SELECT restrict clause should include the table name
+in order to avoid problems if the restrict clause is appended to a WHERE
+clause involving other tables that use the same column names.
+
+If other tables are referenced in the RESTRICT clause, they must be tables that
+can be joined to the table specified by tablename, and the join condition must
+be included.

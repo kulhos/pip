@@ -1,0 +1,35 @@
+NOD=100
+LEN=12
+DFT=
+DOM=
+TBL=[DBTBL1D]:QU "[DBTBL1D]FID=<<FID>>"
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Date Item Name (User Last Updated)
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=9
+RHD=Date Item Name@(User Last Updated)
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+ Identifies the data item within the file used to store the name or Id of the
+ last user to update the record.  When a record is filed, DATA-QWIK puts the
+ value of %UID (PBS system) or VMS username (DBS system) in the field of the
+ record referenced here.

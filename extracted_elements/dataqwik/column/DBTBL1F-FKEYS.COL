@@ -1,0 +1,41 @@
+NOD=4*
+LEN=60
+DFT=
+DOM=
+TBL=[DBTBL1F]:QU "[DBTBL1F]FID=<<FID>>"
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Foreign Key Reference
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=60
+DEL=
+POS=
+RHD=Foreign Key Reference
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The name of the data item(s) in the child file that make up of the foreign key.
+
+  Example:
+
+       Child file   Foreign Key ---> references  Parent File   Primary key
+
+            CIFH         ACN                        CIF           ACN
+            CIFHH        ACN                        CIF           ACN
+            CIFHH        HHACN                      CIF           ACN
+            CIFHH0       ACN,HHTYP                  CIFHH         ACN,HHTYP

@@ -1,0 +1,39 @@
+NOD=11
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Statistic Target #1
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=Statistic Target #1
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+        STATISTICS TARGET
+
+             Accumulate totals for this column.  These totals may
+             be based on the source column (i.e., accumulated for each of
+             the values in the source column), or may be simply accumulated
+             and displayed by range of values.  For the latter, specify
+             the same column as both target and source and specify a range
+             value.

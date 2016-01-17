@@ -19,7 +19,7 @@
 		Instantiates a new empty RowSet with default delimiter, and no
 		column definition. The RowSet pointer is positioned before the
 		first row.
-	. Class.new("RewSet","type1 column1, type2 column2, ...")
+	. Class.new("RowSet","type1 column1, type2 column2, ...")
 		Instantiates a new empty RowSet with default delimiter, and the
 		supplied column definition. The RowSet pointer is positioned
 		before the first row.
@@ -66,11 +66,26 @@
 		rowset pointer points to a Row after the operation.
 		Returns 0 if the rowset pointer is after the last row.
 	. Row getRow()
-		Returns the Row ported to be the rowset pointer, or "" it the
+		Returns the Row pointed to by the rowset pointer, or "" if the
 		rowset pointer is not positioned at a row (e.g. after a call to
 		beforeFirst() or when next() returned 0).
 
+	Special purpose nodes:
+	. vobj(oid,-2) = column definition
+		This node contains the value of RowSet.columns
+	. vobj(oid,-3) = delimiter
+		This node contains the value of RowSet.delimiter
+	. vobj(oid,0) = rowset pointer
+		Initially positioned before the first row, incremented by
+		RowSet.next()
+	. vobj(oid,n) = RowSet Row # n (n = 1++)
+
 	---- Revision History ------------------------------------------------
+	07/18/07 - Frans S.C. Witte - CR: 27800
+		* Modified call to $$newObj^UCCLASS().
+		* Replaced PSL.varPtr by PSL.pslTmpLvn
+		* All PSLBuffer.insert() calls now include a resultClass
+
 	07/03/06 - Frans S.C. Witte - CRs: 22060 / 22061
 		Added vDel parameter to code generated for classNew()
 		Removed code that is no longer referenced.
@@ -84,6 +99,8 @@
 	09/05/05 - Frans S.C. Witte - CRs: 15592 / 15593
 		Initial program
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -107,14 +124,14 @@
 	/* ------------------------------------------------------------------ */
 
 	// ---------------------------------------------------------------------
-private classNew	// Class constructor for new RowSet object
+classNew	// Class constructor for new RowSet object
 	/* ---------------------------------------------------------------------
 	*/
 	type literal String label = "vRwsNew"
 
 	if 'PSL.subrouExists( label) do {
-		type PSLSubrou sr = PSL.addSubrou( label, "(vCol,vDel)", "new RowSet")
-		do sr.addCode(" N vOid S vOid="_ $$newObj^UCCLASS("RowSet"))
+		type PSLSubrou sr = PSL.addSubrou( label, "(vS,vCol,vDel)", "new RowSet")
+		do sr.addCode(" N vOid S vOid="_ $$newObj^UCCLASS("RowSet","vS"))
 		do sr.addCode(" S "_ PSL.oLvn_"(vOid,0)=0")
 		do sr.addCode(" S "_ PSL.oLvn_"(vOid,-2)=vCol")
 		do sr.addCode(" S "_ PSL.oLvn_"(vOid,-3)=vDel")
@@ -125,8 +142,7 @@ private classNew	// Class constructor for new RowSet object
 	if PSL.actual(2).isNull() set PSL.actual(2)="".addQuotes()
 	type String list = $$buildList^UCROW( PSL.actual(2),.del)
 
-	set PSL.return = "$$"_ label_ "("_ list _ ","_ del_ ")"
-
+	set PSL.return = "$$"_ label_ "("_ $$newObjSt^UCCLASS( PSL.var.get())_ ","_ list _ ","_ del_ ")"
 	quit
 
 	/* ------------------------------------------------------------------ */
@@ -134,7 +150,7 @@ private classNew	// Class constructor for new RowSet object
 	/* ------------------------------------------------------------------ */
 
 	// ---------------------------------------------------------------------
-private befFir	// RowSet.beforeFirst()
+befFir	// RowSet.beforeFirst()
 	/* ---------------------------------------------------------------------
 	Method generating code for RowSet.beforeFirst
 	*/
@@ -144,7 +160,7 @@ private befFir	// RowSet.beforeFirst()
 	quit
 
 	// ---------------------------------------------------------------------
-private getRow	// method ResultSet.getRow; returns Row
+getRow	// method ResultSet.getRow; returns Row
 	/* ---------------------------------------------------------------------
 	Method generating code for RowSet.getRow
 	
@@ -155,23 +171,23 @@ private getRow	// method ResultSet.getRow; returns Row
 		instantiated by setting actual(2) and actual(3) and then call
 		classNew^UCROW.
 	*/
-	
-	type public String type(,)
+	type public Number ptr
 	type public String tab
 
-	if PSL.ptr do { quit			// Nested reference
+	if ptr do { quit			// Nested reference
 
 		type Number ptr=0		// Stop loop
 		type Number varLevel=PSL.level
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		type String var=$$nxtSym^UCGM
 
-		set PSL.varPtr = PSL.varPtr-1	// Reset the var counter
-		set type(varLevel,var)="Row"_tab_(PSL.msrc+1)_tab_"NEW"_tab_(PSL.msrc+1)_tab
-		do getRow
+		set PSL.pslTmpLvn = var		// tell caller
+		//set type(varLevel,var)="Row"_tab_(PSL.msrc+1)_tab_"NEW"_tab_(PSL.msrc+1)_tab
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do typeDec^UCGM(var,"Row","NEW"), getRow
 	}
 
 	if PSL.var.exists() do {
-
 		set PSL.actual(3) = PSL.oLvn_ "("_ PSL.objectName_ ",-3)"
 		set PSL.actual(2) = PSL.oLvn_ "("_ PSL.objectName_ ",-2)"
 		do classNew^UCROW
@@ -179,11 +195,10 @@ private getRow	// method ResultSet.getRow; returns Row
 
 	type String cursor = PSL.oLvn_ "("_ PSL.objectName_ ",0)"
 	set PSL.return= "$S("_ cursor_ ">0:$G("_PSL.oLvn_ "("_ PSL.objectName_ ","_ cursor_ ")),1:"""")"
-
 	quit
 
 	// ---------------------------------------------------------------------
-private isEmpty	// RowSet.isEmpty()
+isEmpty	// RowSet.isEmpty()
 	/* ---------------------------------------------------------------------
 	Method generating code for RowSet.isEmpty
 	*/
@@ -191,7 +206,7 @@ private isEmpty	// RowSet.isEmpty()
 	quit
 
 	// ---------------------------------------------------------------------
-private ldFrFile	// RowSet.loadFromFile()
+ldFrFile	// RowSet.loadFromFile()
 	/* ---------------------------------------------------------------------
 	Method generating code for RowSet.loadFromFile
 
@@ -207,12 +222,12 @@ private ldFrFile	// RowSet.loadFromFile()
 	/* Reset assignment expression of properties.
 	   NOTES: the call to propReset^UCGM() shall be encapsulated as a method
 	   of PSLIdentifier. */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do resetProps^UCGM( PSL.objectName)
 
 	set PSL.return = "vRwsLFF"
 
 	if 'PSL.subrouExists( PSL.return) do {
-
 		type PSLBuffer buf = PSL.openBuffer("(String vOid, String vDir, String vFil, Number vTyp)","RowSet.loadFromFile")
 
 		do buf.add("type IO vIO = Class.new(""IO"")")
@@ -237,15 +252,13 @@ private ldFrFile	// RowSet.loadFromFile()
 		do buf.add("do vIO.close()")
 		do buf.add("quit")
 
-		do buf.insert( PSL.return)
+		do buf.insert( PSL.return, "void")
 	}
-
 	set PSL.return = PSL.return_"("_ PSL.objectName_","_ PSL.actual(1)_","_ PSL.actual(2)_","_ PSL.actual(3)_")"
-
 	quit
 
 	// ---------------------------------------------------------------------
-private next	// RowSet.next()
+next	// RowSet.next()
 	/* ---------------------------------------------------------------------
 	Method generating code for RowSet.next
 	*/

@@ -26,21 +26,20 @@ DBSGETID	// DATA-QWIK Get ID(s)
 	 
 	---- Revision History -------------------------------------------------
 	
-	10/18/06 - RussellDS - CR22719
-		   Fix problem in LIST section if Q from UTLREAD.  Was still
-		   calling SCAIO.
+	12/19/2008 - Giridharanb - CR36952
 	
-	07/03/06 - RussellDS - CR20967
-		   Fix use of PNTDOC in LIST section.
+		Modified section VALIDKEY to allow undescores in column names.
 	
-	09/14/04 - RussellDS - CR12334
-		   Converted routines DBSANS and DBSANS1 to this new procedure.
+	09/12/2008 - RussellDS - CR30801
+		Modified TBLPRMPT to allow mixed case for DBTBL25.
+		
+		Removed old revision history.
 	*/
 
 	quit			// No entry from top
 	
 	
-Public FIND(String DQTABLE,	// DATA-QWIK table [*]			/REQ/MECH=VAL
+public FIND(String DQTABLE,	// DATA-QWIK table [*]			/REQ/MECH=VAL
             Boolean NEW)	// 1 = new item, 0 = exists [*]		/REQ/MECH=VAL
      
 	/*
@@ -57,8 +56,8 @@ Public FIND(String DQTABLE,	// DATA-QWIK table [*]			/REQ/MECH=VAL
 		. RM		Error message				/TYP=T
 	*/
 	
-	type Public Boolean ER = 0
-	type Public String %FN, RM
+	type public Boolean ER = 0
+	type public String %FN, RM
 	
 	type Number %FRAME, OLNTB	
 	type String %NOPRMT, %READ, %TAB(), NAME, VFMQ
@@ -86,8 +85,8 @@ PP(String DQTABLE,	// DATA-QWIK table name				/REQ/MECH=VAL
 		. RM		Error message				/TYP=T
 	*/
 
-	type Public Boolean ER
-	type Public String I(), RM, X
+	type public Boolean ER
+	type public String I(), RM, X
 	
 	if 'X.isNull() do {
 		if '$$VALIDKEY(X) do {
@@ -111,7 +110,7 @@ PP(String DQTABLE,	// DATA-QWIK table name				/REQ/MECH=VAL
 	quit
 
 
-Public LIST(String DQTABLE,	// DATA-QWIK table [*]				/REQ/MECH=VAL
+public LIST(String DQTABLE,	// DATA-QWIK table [*]				/REQ/MECH=VAL
             String OPTION,	// "List", "Print", or nothing			/NOREQ/MECH=VAL
             String IO,		// Output device				/NOREQ/MECH=REF:W
             Boolean PNTDOC)	// Print documentation flag [*]			/NOREQ/MECH=REF:W
@@ -185,7 +184,7 @@ Public LIST(String DQTABLE,	// DATA-QWIK table [*]				/REQ/MECH=VAL
 	quit CNT
 
 
-Public LISTPP(String DQTABLE)	// DATA-QWIK table name			/REQ/MECH=VAL
+public LISTPP(String DQTABLE)	// DATA-QWIK table name			/REQ/MECH=VAL
 
 	/*
 	Post-processer for list of DQ elements,  Validate entry.
@@ -195,8 +194,8 @@ Public LISTPP(String DQTABLE)	// DATA-QWIK table name			/REQ/MECH=VAL
 		. RM		Error message				/TYP=T
 	*/
 
-	type Public Boolean ER
-	type Public String I(), RM, X
+	type public Boolean ER
+	type public String I(), RM, X
 
 	quit:X.isNull()
 	
@@ -241,7 +240,7 @@ Public LISTPP(String DQTABLE)	// DATA-QWIK table name			/REQ/MECH=VAL
 	quit
 	
 	
-Public LISTBLD(String DQID,	// DATA-QWIK element ID, *, or range	/REQ/MECH=VAL
+public LISTBLD(String DQID,	// DATA-QWIK element ID, *, or range	/REQ/MECH=VAL
 	       String DQTABLE)	// DATA-QWIK table			/REQ/MECH=VAL
 
 	/*
@@ -282,7 +281,7 @@ Public LISTBLD(String DQID,	// DATA-QWIK element ID, *, or range	/REQ/MECH=VAL
 	quit CNT
 	
 	
-Public BANNER(String FUNCNAME,	// Function Name		/REQ/MECH=VAL
+public BANNER(String FUNCNAME,	// Function Name		/REQ/MECH=VAL
 	      String ALTERNAT)	// Alternate if no function	/NOREQ/MECH=VAL
 	      
 	/*
@@ -339,8 +338,8 @@ TBLPRMPT(Number DQTABLE)	// DATA-QWIK table		/REQ/MECH=VAL
 	Return DATA-QWIK Prompt for this table
 	*/
 	
-	type Public Boolean ER
-	type Public String RM
+	type public Boolean ER
+	type public String RM
 	
 	type String KEY, LIB, return
 	
@@ -360,7 +359,15 @@ TBLPRMPT(Number DQTABLE)	// DATA-QWIK table		/REQ/MECH=VAL
 		set RM = $$^MSG(1766)
 	}
 	else  do {
-		set return = return_"/DES="_dbtbl1d.des_"/TYP=U/LEN="_+dbtbl1d.len
+		
+		type String typ = "U"
+		
+		/* Procedures can be mixed case.  We can't just change this to use
+		   dbtbl1d.typ unless we modify all the typ values for the keys in
+		   the various DBTBL tables, so do this for now.  */
+		if (DQTABLE = "DBTBL25") set typ = "T"
+		
+		set return = return_"/DES="_dbtbl1d.des_"/TYP="_typ_"/LEN="_+dbtbl1d.len
 		set return = return_"/TBL=["_DQTABLE_"]:QUERY ""["_DQTABLE_"]"_LIB_"=""""SYSDEV"""
 		
 		if 'dbtbl1d.xpo.isNull() set return = return_"/XPP="_dbtbl1d.xpo
@@ -370,7 +377,7 @@ TBLPRMPT(Number DQTABLE)	// DATA-QWIK table		/REQ/MECH=VAL
 	quit return
 	
 
-Public VALIDKEY(String X)	// Value to validate		/REQ/MECH=VAL
+public VALIDKEY(String X)	// Value to validate		/REQ/MECH=VAL
 	
 	/*
 	Validate X as a valid key string
@@ -384,7 +391,8 @@ Public VALIDKEY(String X)	// Value to validate		/REQ/MECH=VAL
 	type String char1 = X.extract()
 	
 	if '(char1 = "%" ! (char1 = "$") ! (char1 ? 1U)) quit 0
-	if X.isLike("%_") quit 0
+	// Allow underscores CR36952
+	// if X.isLike("%_") quit 0
 	
 	set X = X.extract(2,X.length())
 	if X.translate(" `~!@#$%^&*()-+={}[]:;|\,.?/<>vx", "") = X quit 1	// OK

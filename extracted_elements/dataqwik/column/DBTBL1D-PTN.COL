@@ -1,0 +1,67 @@
+NOD=DI
+LEN=60
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=MUMPS Pattern Match
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=6
+RHD=MUMPS Pattern Match
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+defined in the MUMPS programmers reference manual.  Some examples
+of options and valid syntax are:
+
+1. To check a social security number is input as three numbers, followed
+   by one dash (-), followed by two numbers, followed by another dash,
+   followed by four numbers; enter: 3N1"-"2N1"-"4N
+
+2. To check if the input value contains at least one number,
+   followed by three upper case letters, followed by two numbers;
+   enter: .E1N3U2N
+
+Valid pattern characters are:
+
+   E - Anything
+   U - Upper case alpha
+   L - Lower case alpha
+   N - Numbers
+   C - Control characters
+   A - Any alpha (upper or lower)
+
+   "Literal" - Specific chracters contained within quotes
+
+Placing a number before any of the pattern characters checks for the
+occurance of that many characters, a '.' means any number of
+characters.  Placing two pattern characters together checks for the
+occurance of either condition.
+
+Eg;  1A1"A".N1"."1N3L1"HI".E1UN would check for the folowing pattern:
+
+One alpha (upper or lower case) followed by the letter 'A', followed
+by any number of numbers, followed by a '.', followed by one alpha
+(upper or lower), followed by three lower case alpha characters
+followed by the letters 'HI', followed by anything, followed by one
+upper case alpha character or one number.
+
+A valid response would be - SA123.2sxsHI34Esd-W

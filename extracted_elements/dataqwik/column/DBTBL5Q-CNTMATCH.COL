@@ -1,0 +1,95 @@
+NOD=0
+LEN=8
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Match Count
+ITP=
+MIN=1
+MAX=99999999
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=7
+RHD=Match@Count
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+        MATCH COUNT:
+
+            If you wish to display only a few records, which satisfy the
+            query conditions in order to verify the query logic, enter
+            a number here to indicate that after the selected number of
+            records are selected and printed the report should be terminated.
+
+    -------------------------------------------------------------------------
+         The following examples demonstrate the use of RECORD COUNT and
+         MATCH COUNT options.
+    -------------------------------------------------------------------------
+
+
+    1) Regular QWIK report
+
+            Access File(s): DEP                ACCOUNT NUMBER   BALANCE
+              Data Item(s): CID,BAL          ----------------- ----------
+        Limit Record Count:                                 1      100.00
+               Match Count:                                 2       50.00
+                     Query:                                 3      125.00
+                                                            4       15.00
+                                                            5      200.00
+                                                            6      500.00
+                                                            7      900.00
+
+    2) Report with record count option
+
+
+            Access File(s): DEP                ACCOUNT NUMBER   BALANCE
+              Data Item(s): CID,BAL          ----------------- ----------
+        Limit Record Count: 4                               1      100.00
+               Match Count:                                 2       50.00
+                     Query:                                 3      125.00
+                                                            4       15.00
+
+    3) Report with match count option
+
+
+            Access File(s): DEP                ACCOUNT NUMBER   BALANCE
+              Data Item(s): CID,BAL          ----------------- ----------
+        Limit Record Count:                                 1      100.00
+               Match Count: 3                               3      125.00
+                     Query: [DEP]BAL>100                    5      200.00
+
+
+    4) Report with both record count and match count options
+       (select the first 5 records and stop if no matching record)
+
+
+            Access File(s): DEP                ACCOUNT NUMBER   BALANCE
+              Data Item(s): CID,BAL          ----------------- ----------
+        Limit Record Count: 5
+               Match Count: 1
+                     Query: [DEP]BAL>400
+
+
+    5) Report with both record and match count options
+       (select the first 10 records and stop after the first matching record)
+
+            Access File(s): DEP                ACCOUNT NUMBER   BALANCE
+              Data Item(s): CID,BAL          ----------------- ----------
+        Limit Record Count: 10                              6      500.00
+               Match Count: 1
+                     Query: [DEP]BAL>400

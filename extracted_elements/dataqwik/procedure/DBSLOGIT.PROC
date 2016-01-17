@@ -26,6 +26,9 @@ public DBSLOGIT(Record recobj, Number mode, String vx())	// Log table changes to
 				from filer
 
 	---- Revision History ------------------------------------------------
+	09/15/2008 - RussellDS - CR30801
+		Modified to replace getSchemaTable with getPSLTable level 0
+	
 	10/12/06 - RussellDS - CR22719 / 20613
 		   Modify to use table delimiter against vx array.
 		   
@@ -58,9 +61,9 @@ public DBSLOGIT(Record recobj, Number mode, String vx())	// Log table changes to
 	
 	set table = vobj(recobj, -1).piece("Record", 2, 99)
 	
-	type SchemaTable tblrec = Db.getSchemaTable(table)
+	type PSLTable tblrec = PSL.getPSLTable(table, 0)
 	
-	set delim = $C(tblrec.columnDelimiter)
+	set delim = tblrec.columnDelimiter.char()
 	set keys = tblrec.primaryKeys
 	
 	set keyvals = ""
@@ -83,7 +86,7 @@ public DBSLOGIT(Record recobj, Number mode, String vx())	// Log table changes to
 	set keyvals = keyvals.extract(1, keyvals.length() - 1)
 	
 	// Convert change info in vobj(,-100) into vx() array
-	if (vx.data() = 0) do AUDIT^UCUTILN(recobj, .vx(), tblrec.recordType, delim)
+	if (vx.data() = 0) do AUDIT^UCUTILN(recobj, vx(), tblrec.recordType, delim)
 	
 	do Runtime.start("CS")
 
@@ -129,7 +132,7 @@ public DBSLOGIT(Record recobj, Number mode, String vx())	// Log table changes to
 			}
 			
 			set collist = collist_column_","
-			set vallist = vallist_newval_$C(1)
+			set vallist = vallist_newval_1.char()
 		}
 	}
 

@@ -1,0 +1,37 @@
+NOD=1*
+LEN=12
+DFT=
+DOM=ACCOUNT_NUMBER
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Account Number
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Account@Number
+SRL=
+CNV=
+LTD=
+USER=
+MDD=CID
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The unique number identifying this account. When creating a new account,
+the system displays a default account number. This number is based on the
+account-numbering method designated in the routine listed in the Custom
+New Account Number column in the Institution Variables table (CUVAR.UCID).
+The default number can be overridden based on institution-defined
+procedures.

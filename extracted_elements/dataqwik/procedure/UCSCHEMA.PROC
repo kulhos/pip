@@ -1,10 +1,14 @@
 //DO NOT MODIFY  PSL Method Library - Schema Class|UCSCHEMA|||||||1
 	/*
 	ORIG:	FSANCHEZ - 10/02/2003
-	DESC:	PSL Method Library - SchemaColumn class and SchemaTable Class
-		Insensitive group
+	DESC:	PSL Method Library - Schema Class
+		Dictionary group. All entry points are DEPRECATED.
 
 	---- Revision History --------------------------------------------------
+	10/29/07 - Frans S.C. Witte - CR: 27800
+		delTable and newTable copied from UCGMC.
+		getSchCln, getSchTbl, isSchCln, isSchTbl moved to UCDB.
+
 	02/17/06 - Frans S.C. Witte - CRr: 18163 / 18164
 		Added isSchCln and isSchTbl.
 		Removed "computed" SchemaTable calls (now handled by
@@ -39,6 +43,8 @@
 	03/26/04 - RussellDS - CR9172
 		New procedure, part of movement of filers to PSL.
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -58,67 +64,128 @@
 	quit
 
 	// ---------------------------------------------------------------------
-private getName	// deprecated method Schema.getTableName(String)
-
-	do WARNDEP^UCGM("Schema.getTableName()")
-	set PSL.return = PSL.mExpr(PSL.actual(1)_".extract("_PSL.reClass.addQuotes()_".length()+1,"_PSL.actual(1)_".length())")
-	quit
-
-	// ---------------------------------------------------------------------
-private getSchCln	//void; method Db.getSchemaColumn(String,String)
-	/* ---------------------------------------------------------------------
-	INPUTS:
-	. PSL.actual(1) = name of table (dynamic value allowed)
-	. PSL.actual(2) = name of column (dynamic value allowed)
-
-	OUTPUTS:
-	. return = code to retrieve value at runtime (getSchCln^UCXDD)
+getName	// deprecated method Schema.getTableName(String)
+	/* This is a deprecated method. It is replaced by Record.getable().
 	*/
-	set PSL.return="$$getSchCln^UCXDD("_PSL.actual(1)_","_PSL.actual(2)_")"
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do WARNDEP^UCGM( 2.6, 3,"Schema.getTableName() - use Record.getTable()")
+	set PSL.return = PSL.mExpr(PSL.actual(1)_".extract(7,"_PSL.actual(1)_".length())")
 	quit
 
 	// ---------------------------------------------------------------------
-private getSchTbl	//void; method Db.getSchemaTable(String)
-	/* ---------------------------------------------------------------------
-	INPUTS:
-	. PSL.actual(1) = name of table (dynamic value allowed)
-
-	OUTPUTS:
-	. return = code to retrieve value at runtime (getSchTbl^UCXDD)
-	*/
-	set PSL.return="$$getSchTbl^UCXDD("_PSL.actual(1)_")"
-	quit
-
-	// ---------------------------------------------------------------------
-private getTable	// deprecated method Schema.getTableRecord(String)
+getTable	// deprecated method Schema.getTableRecord(String)
 	/* This is a deprecated method. It is replaced by Db.getSchemaTable.
 	*/
-
-	do WARNDEP^UCGM("Schema.getTableRecord() - use Db.getSchemaTable()")
-	do getSchTbl
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do WARNDEP^UCGM( 2.6, 3,"Schema.getTableRecord() - use Db.getSchemaTable()")
+	do getSchTbl^UCDB
 	quit
 
 	// ---------------------------------------------------------------------
-private isSchCln	//void; method Db.isSchemaColumn(String,String)
+newTable	// deprecated method Schema.createTable()
 	/* ---------------------------------------------------------------------
+	FSCW CR11445:
+	This method behaves like a compiler directive: The table is created
+	when the PSL compiler detects the method. All code following the
+	occurrence of the method can reference the table (until the associated
+	Schema.deleteTable() is encountered by the compiler).
+ 
 	INPUTS:
-	. PSL.actual(1) = name of table (dynamic value allowed)
-	. PSL.actual(2) = name of column (dynamic value allowed)
+	. actual(1)	Literal String TableName
+	. actual(2)	Literal String AccessKeys
+	. actual(3)	Literal String OtherColumnNames
+	. actual(4)	Literal String GlobalName		/TYP=T/DEF=ZTMPBCH
 
-	OUTPUTS:
-	. return = code to retrieve value at runtime (isColumn^UCXDD)
+	EXAMPLE:
+
+	do Db.createTable("TMP","JOB,SEQ","TOTAL,CNT","TMP99")
+
+	^TMP99(JOB,SEQ)=TOTAL|CNT
+
+	do Db.createTable("TMP",""BCHABC"",JOB,SEQ","COUNT")
+
+	^ZTMPBCH("BCHABC",JOB,SEQ)=COUNT
+
 	*/
-	set PSL.return="$$isColumn^UCXDD("_PSL.actual(1)_","_PSL.actual(2)_")"
+	if Runtime.isRdb do PSL.error("Schema.createTable() not supported for RDB") quit
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do WARNDEP^UCGM( 2.6, 3,"Schema.createTable() - use predefined tables")
+
+	type String table = PSL.actual(1).piece("""",2)
+
+	type String keys  = PSL.actual(2)
+	if keys.extract()="""" set keys=keys.extract(2, keys.length()-1)	// Remove "
+	set keys = keys.stripQuotes()
+
+	type String columns = PSL.actual(3)
+	if columns.extract()="""" set columns=columns.extract( 2, columns.length()-1)
+
+	type String global = PSL.actual(4)
+	if global.extract()="""" set global = global.extract( 2, global.length()-1)
+	if global="" set global="ZBCHTMP"
+	if global.length()>8 do PSL.error("Global name cannot exceed 8 characters") quit
+
+	#ACCEPT DATE=2006-03-14;PGM=FSCW;CR=20280;GROUP=BYPASS
+	#BYPASS
+	if $D(^DBTBL("SYSDEV",1,table)) D  I ER Q
+	.	N USER
+	.	S USER=$P(^DBTBL("SYSDEV",1,table,10),"|",11)
+	.	I USER=""!(USER="ZZZZZZ") Q
+	.	S RM="Invalid table name "_table
+	.	S ER=1 Q
+
+	K ^DBTBL("SYSDEV",1,table)
+	S ^DBTBL("SYSDEV",1,table,0)=global	; Global
+	S ^(10)="124|PBS|0||||||||ZZZZZZ|5"
+	S ^(12)="f"_table			; File short name
+	S ^(13)="",^(22)="",^(99)=""
+	S ^(16)=keys				; Access keys
+	S ^(100)="^"_global_"("_keys_"|1||0"	; Global refenence, record type
+	S ^(102)=keys
+	;
+	S lastkey=$P(keys,",",$L(keys,","))
+	F i=1:1:$L(keys,",") D			; Access keys
+	.	S di=$P(keys,",",i)
+	.	S ^DBTBL("SYSDEV",1,table,9,di)=i_"*|20|||||||T||S|||2|0|||||124|"
+	I columns'="" F i=1:1:$L(columns,",") D		; 12/16/98 BC
+	.	S di=$P(columns,",",i)
+	.	S ^DBTBL("SYSDEV",1,table,9,di)=lastkey_"|20|||||||T||S|||2|0|||||124|"_i
+	#ENDBYPASS
 	quit
 
 	// ---------------------------------------------------------------------
-private isSchTbl	//void; method Db.isSchemaTable(String)
+delTable	// method Schema.deleteTable()
 	/* ---------------------------------------------------------------------
-	INPUTS:
-	. PSL.actual(1) = name of table (dynamic value allowed)
+	Delete table schema (only files created with createTable method will
+	be deleted).
 
-	OUTPUTS:
-	. return = code to retrieve value at runtime (isTable^UCXDD)
+	FSCW CR11445:
+	This method behaves like a compiler directive: The table is deleted
+	when the PSL compiler detects the method. All code following the
+	occurrence of the method can not reference the table.
+
+	INPUTS:
+	. actual(1) = Literal String Table name
+
+	EXAMPLE:
+
+	do Db.deleteTable("BCHABC")
+
 	*/
-	set PSL.return="$$isTable^UCXDD("_PSL.actual(1)_")"
+	if Runtime.isRdb do PSL.error("Schema.deleteTable() not supported for RDB") quit
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do WARNDEP^UCGM( 2.6, 3, "Schema.deleteTable() - use predefined tables")
+	type String table= PSL.actual(1).piece("""",2)
+	if table.isNull() quit
+
+	type String sts
+
+	#ACCEPT DATE=2006-03-14;PGM=FSCW;CR=20280;GROUP=BYPASS
+	#BYPASS
+	S sts=$G(^DBTBL("SYSDEV",1,table,10))
+	;
+	; Dummy file without audit information (created by createTable method)
+	I $P(sts,"|",10)=""&($P(sts,"|",11)=""!($P(sts,"|",11)="ZZZZZZ"))&($P(sts,"|",12)=5) K ^DBTBL("SYSDEV",1,table) Q
+	#ENDBYPASS
+	do PSL.error("Invalid table name")
 	quit

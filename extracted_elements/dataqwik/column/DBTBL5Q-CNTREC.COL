@@ -1,0 +1,60 @@
+NOD=0
+LEN=8
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Record Count
+ITP=
+MIN=1
+MAX=99999999
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=6
+RHD=Record@Count
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         LIMIT RECORD COUNT
+
+             Report will be limited to this number of records.
+
+             This option is useful for testing the layout of the report
+             before printing the actual report.
+
+         _____________________________________________________________________
+         Example
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP,CIF
+           |       Data Item(s): CID,BAL,LNM,TAXID
+           |    Report Order By:
+           |           Break On:
+           |
+           |       Record Count: 2
+
+
+           Report Run ----------------------------------------------------
+           |
+           |      Account       Account    Report               Tax
+           |       Number       Balance  Short Name            Number
+           | ------------  ------------  --------------------  -----------
+           |          100         10.00  JOHN DOE              001-00-0001
+           |          215      1,250.00  JOE SMITH             123-45-6789
+           |               ============  ====================
+           |                   1,260.00                     2

@@ -1,0 +1,37 @@
+NOD=KEYWORD
+LEN=20
+DFT=
+DOM=
+TBL=[OBJECT]
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Class
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=Class
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+
+ An entity that defines the structure and behavior (i.e., data and code)
+ shared by a set of objects. Each object, therefore, has the structure and
+ behavior defined by its class. The class defines the allowable properties
+ of the objects in that class, as well as the methods that operate on the
+ objects in the class. 

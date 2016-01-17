@@ -1,0 +1,33 @@
+NOD=SEQ
+LEN=20
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Element Type
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Element Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The type of element being imported.  For example, BATCH, PROC (procedure),
+ROUTINE, etc.

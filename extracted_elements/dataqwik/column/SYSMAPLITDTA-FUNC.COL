@@ -1,0 +1,34 @@
+NOD=5*
+LEN=63
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Function
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Function
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+If the TABLE.COLUMN is used in a function that is referenced in a literal,
+then this column contains the function name, excluding the leading $$.   For 
+example, ABC^XYZ.  Otherwise, the value for FUNC will be zero (0).

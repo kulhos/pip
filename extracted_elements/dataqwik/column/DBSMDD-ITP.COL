@@ -1,0 +1,43 @@
+NOD=
+LEN=1
+DFT=
+DOM=
+TBL=,S#String,N#Real Number,A#Array,I#Integer
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Internal Data Type
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Intrnl@Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The data format in which the system stores values for this data item.  The
+system supports two internal data types:  string and binary (i.e., values
+stored as 0 or 1).
+
+For example, the statement print flag ([HIST]ITC9) internal data format within
+the [HIST]ITC data item is binary:
+
+                                        <-- ITC -->
+
+                     ^HIST(CID,TSEQ)=...|011011100|...
+                                                 ^
+                                                 |____ ITC9

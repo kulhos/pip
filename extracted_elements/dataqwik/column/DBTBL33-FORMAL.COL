@@ -1,0 +1,76 @@
+NOD=BCHID
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Formal List
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=24
+RHD=Formal List
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+A comma separated list of formal parameters that are passed from THREXEC to
+EXEC.
+
+Discussion
+----------
+Unless user defined code is inserted in THREXEC, the batch definition compiler
+automatically generates code that passes the access key(s) of the record(s)
+selected in SCHEXEC from THREXEC to EXEC (refer to Technical Specification
+19096TS.DOC titled 'Job Manager' for a more detailed discussion of the Job
+Manager).  Typically, the record object is then instantiated and processed
+in EXEC.
+
+In some cases, however, it may be preferable to insert user code in the THREXEC
+and to control the parameters that are passed to EXEC.  In these cases, the
+parameters to be passed to EXEC should be entered in the 'EXEC Parameter
+List' field.  Enter without parenthesis.  Note that the parameter list
+controls the parameters passed to EXEC, not to THREXEC.
+
+The following illustrates a batch definition that uses table ACN as the
+access file.  ACN has a single access key, CID (account number).
+
+Example 1
+---------
+If there were no special considerations that would require user code in
+THREXEC, the 'EXEC Parameter List' should be empty (null).
+
+           Access File: ACN
+      SQL Where Clause: __________________________________________________
+   SQL Distinct Clause: ________________________________________
+
+   EXEC Parameter List: ________________________________________
+
+
+Example 2
+---------
+If, on the other hand, the batch required user defined code to be inserted
+in THREXEC and the record to be instantiated in the THREXEC, the record
+object could be passed from THREXEC to EXEC.  This would, effectively,
+eliminate a second select of the object, thereby improving performance.
+
+           Access File: ACN
+      SQL Where Clause: __________________________________________________
+   SQL Distinct Clause: ________________________________________
+
+   EXEC Parameter List: RecordACN acn___________________________

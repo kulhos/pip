@@ -1,0 +1,52 @@
+NOD=DI
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Report Header
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=22
+RHD=Report Header
+SRL=
+CNV=
+LTD=
+USER=
+MDD=RHD
+VAL4EXT=1
+DEPREP=
+DEPOSTP=
+NULLIND=
+This data item is used to define the default heading for the QWIK
+Report function.  It is anticipated that the report heading will be
+somewhat shorter (more cryptic) than the description associated with
+the data item itself.  If no value is assigned to this field DATA-QWIK
+will use the full description as the default value.
+
+The correct syntax to create a report header that will split and print
+on 2 lines is <Heading to print on line 1> followed by the character
+'@' then <Heading to print on line 2>, eg; ACCOUNT@BALANCE will
+produce the heading:
+
+ACCOUNT
+BALANCE
+
+Headings will automatically appear right justified within the field
+length of the data item for <D> DATE, <$> DOLLAR and <N> NUMERIC
+data types, and left justified for <T> TEXT and <C> TIME data types.
+On multiple line headings, such as the previous example, the shorter
+of the lines will be centered in relation to the longer of the lines.
+
+The default report header can be overridden when the report is created.

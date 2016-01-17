@@ -1,0 +1,38 @@
+NOD=FKEYS
+LEN=1
+DFT=0
+DOM=
+TBL=[STBLFKOPT]
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Update Constraint
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=4
+RHD=Update Constraint
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+   Option 0 - Restrict update of foreign key in the child file if the
+              referenced key changed in the parent file.
+
+   Option 2 - Allow update of foreign key in the child file if the referenced
+              key changed in the parent file.  For example, change the
+              customer number of a CIF record will trigger the customer number
+              changes of all history records associated with that customer.

@@ -4,6 +4,10 @@
 	DESC: Library of DbSet methods
 	
 	---- Revision History --------------------------------------------------
+	06/07/2008 - RussellDS - CR30801
+		Modified getRecord to pass actual(3) = -1 to getRecord^UCDB if
+		using audit logging
+	
 	03/06/07 - Frans S.C. Witte - CRs: 25759 / 25760 / 25761
 		Added call to occMark^UCREC4OP() in $$propRef() for "nested
 		property"
@@ -33,6 +37,9 @@
 	02/14/03 - SPIER - 51423
 		bug fixes
 	*/
+	#PACKAGE framework.psl
+	#OPTION  ResultClass ON
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -52,7 +59,7 @@
 	quit
 
 	// ---------------------------------------------------------------------
-private getRecord	// method DbSet.getRecord ; Returns RecordTABLE record
+void getRecord	// method DbSet.getRecord ; Returns RecordTABLE record
 	/* ---------------------------------------------------------------------
 	INPUTS:
 	. PSL.actual(1) = table name or ""
@@ -95,6 +102,7 @@ private getRecord	// method DbSet.getRecord ; Returns RecordTABLE record
 	type public String atom		// "nested property", object expression
 	type public Number ptr		// "nested property", character pointer
 	
+	type static PSLClass
 	type public PSLTable pslTbl()
 
 	/* Get the TABLE name from the Db.selectDbSet() that instantiated the
@@ -110,12 +118,13 @@ private getRecord	// method DbSet.getRecord ; Returns RecordTABLE record
 
 	if table.isNull() do PSL.error( "Table parameter is required") quit
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do setOpti^UCGM( PSL.objectName, PSL.objectLevel, 0)
 
 	if ptr.get() set PSL.return = $$propRef(table, atom, .ptr) quit
 
 	set PSL.class = PSL.var.class
-	if ( PSL.reClass_table) '= PSL.class do PSL.error( "Cannot assign: "_ PSL.reClass_ table_ " to: "_ PSL.class) quit
+	if ( PSLClass.RECORDCLASS_table) '= PSL.class do PSL.error( "Cannot assign: "_ PSLClass.RECORDCLASS_ table_ " to: "_ PSL.class) quit
 
 	type PSLTable td   = PSL.cachePSLTable( pslTbl(), table)
 	type List     keys = td.primaryKeys
@@ -137,18 +146,27 @@ private getRecord	// method DbSet.getRecord ; Returns RecordTABLE record
 	set PSL.actual(2) = par.addQuotes()
 	set PSL.actual(3) = 1
 
-	do getRecord^UCDB
+	do getRec^UCDB(true)
         quit
 
 	// ---------------------------------------------------------------------
-propRef( String table,		// name of table
-	PSLExpression objExpr,	// dbsetvar.getRecord().property[.xyz] (*2)
-	Number  ptr)		// char pointer	(*3)	/MECH=REF:RW
+private String propRef( String table	// name of table
+		, PSLExpression objExpr	// dbsetvar.getRecord().property[.xyz] (*2)
+		, ret Number  ptr	// char pointer	(*3)	/MECH=REF:RW
+		)
 	/* ---------------------------------------------------------------------
+	NOTES:
+	. This code needs attention.
+		A property reference on a DbSet instance effectively references
+		a Record property. It is unclear why this needs special code in
+		this subroutine, as opposed to the general nested property
+		handling in the compilers main parsing loop.
+		All references to type(,) can probably be replaced.
 	*/
+	#ACCEPT CR=27800;Date=2007-10-09;PGM=Frans S.C. Witte;Group=DEPRECATED; use of type()
 	type public String type(,,)
-	type public Number forLevel
-	type public Number level
+
+	type static PSLClass
 
 	type String lvn
 	type String return = ""
@@ -160,18 +178,24 @@ propRef( String table,		// name of table
 	================ */
 
 	if 'type( PSL.objectLevel, PSL.objectName, "DbSet").exists() do {
-		if forLevel>0 do PSL.error("DbSet Reference can not be on for/while line") quit
+		if $$topFor^UCPSLST( PSL.pslSt)>0 do PSL.error("DbSet Reference can not be on for/while line") quit
 
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		type Number lnr = $$getDcLnr^UCGM()
 		set lvn = ""		// Push scope down
-		for  set lvn = type(level,lvn).order() quit:lvn=""  if $$getNew^UCGM(lvn,level)'<lnr set $P(type(level,lvn),9.char(),2)=lnr+1
 
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		for  set lvn = type(PSL.level,lvn).order() quit:lvn=""  if $$getNew^UCGM(lvn,PSL.level)'<lnr set type(PSL.level,lvn).piece( 9.char(), 2)=lnr+1
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set lvn=$$nxtSym^UCGM
 		set type( PSL.objectLevel, PSL.objectName, "DbSet") = lvn
 
 		//do setScop^UCGM(lvn,level,msrc+1,"NEW")
 		//do setType^UCGM(lvn,class,level)
-		do setScope^UCGM( lvn, "", "", "NEW", PSL.reClass_ table)
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do setScope^UCGM( lvn, "", "", "NEW", PSLClass.RECORDCLASS_ table)
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		do setInst^UCGM( lvn, lnr, "Db.getRecord("""_table_""",,1)")
 		do occMark^UCREC4OP()
 
@@ -180,19 +204,23 @@ propRef( String table,		// name of table
 		type PSLExpression atom = ""
 		type Number        ptr = 0
 		type PSLIdentifier var = lvn
-		type Number        varLevel = level
+		type Number        varLevel = PSL.level
 		type String        mcode
 
 		do getRecord
-		do incrLabel^UCGM(return)
 
-		set mcode=$$initLine^UCGM(level)_"N "_var_" S "_var_"="_return
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do incrLabel^UCGM(return)
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		set mcode=$$initLine^UCGM(PSL.level)_"N "_var_" S "_var_"="_return
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		do ADD^UCGM(mcode)
 	}
 	set lvn = type( PSL.objectLevel, PSL.objectName,"DbSet")
 
 	set ptr = ptr + 1	// skip dot
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type String property = $$ATOM^%ZS( objExpr, .ptr, ".", ,1)
 
-	quit $$curVal^UCCOLUMN( lvn, property, 0, objExpr, .ptr)
+	quit $$curVal^UCCOLUMN( lvn, table, property, 0, objExpr, .ptr)

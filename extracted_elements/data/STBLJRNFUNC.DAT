@@ -1,0 +1,22 @@
+CODE	DES	FUNC	PSLEQUIV
+%VNC	P/A Client Version	%ClientVersionID	%ClientVersionID
+%IDENT	Web user identifier	%Identifier	%Identifier
+%SVCHNID	Server Channel Identification	%ServerChannelID	%ServerChannelID
+%VN	P/A Server Version	%VersionID	%VersionID
+vdi	Column Name	ColName	
++$H	Current Date (Calendar)	CurrentDate	%CurrentDate
+$P($H,",",2)	Current Time	CurrentTime	%CurrentTime
+$G(EFD)	Effective Date	EffectiveDate	%EffectiveDate.get()
+vfmtable	File Maintenance Table	FmTable	
+vnew	New Column Value	NewValue	
+vold	Old Column Value	OldValue	
+%O	Process Mode (0=new 1=Upd 2=Inq 3=Del)	ProcessMode	%ProcessMode
+$T(+0)	Routine Name	RoutineName	%RoutineName
+%CRCD	System Base Currency	SystemCurrency	%SystemCurrency
+TJD	System Date	SystemDate	%SystemDate
+vtable	Table Name	TableName	
+TLO	Teller Location	TellerLoc	%UserStation
+%UCLS	User Class	UserClass	%UserClass
+%UID	User ID	UserId	%UserID
+$$USERNAM^%ZFUNC	User Name	UserName	%UserName
+(%O=2)	Verification Mode	VerifyMode	(%ProcessMode=2)

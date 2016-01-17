@@ -1,0 +1,42 @@
+NOD=0
+LEN=4
+DFT=80
+DOM=
+TBL=
+PTN=
+XPO=I X?1N.N S RSIZE=X
+XPR=
+TYP=N
+DES=Report Width
+ITP=
+MIN=10
+MAX=9999
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=5
+RHD=Report@Width
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         REPORT WIDTH                                  Default=80
+
+             Establishes whether the report is displayed in the
+             80-column mode, or the 132-column (compressed) mode
+             when it is displayed on the screen.
+
+             Enter 132 to display the report the compressed mode.
+
+             For FIXED LENGTH reports, this field defines the length
+             of each record in number of characters.  Records will be
+             padded with spaces, if necessary, to achieve the width.

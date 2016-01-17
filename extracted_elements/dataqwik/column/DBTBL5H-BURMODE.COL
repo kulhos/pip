@@ -1,0 +1,36 @@
+NOD=0
+LEN=1
+DFT=N
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Burrough Mode
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=Burrough@Mode
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         BURROUGH MODE (Y/N)                           Default=N
+
+              Y - Support VT220 and Burroughs mode output.
+
+              N - Support VT220 output mode only.

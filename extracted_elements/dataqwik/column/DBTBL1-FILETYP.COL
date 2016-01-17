@@ -1,0 +1,82 @@
+NOD=10
+LEN=1
+DFT=
+DOM=
+TBL=[DBCTLFILETYP]
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=File Type
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=12
+RHD=File@Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+This field indicates the type of file for purposes of the database schema
+representation.  It is a required field for the SYSDEV library, optional for
+all others.
+
+The field has no process implications, but is used to isolate specific file
+types when displaying relationships between files.
+
+Valid values are:
+
+        . Entity
+
+          A file representing a person, place, thing or information about a
+          person, place, or thing.  For example, a customer file represents
+          an entity, as does a branch code table containing information about
+          a branch, such as name, address, hours of operation, etc.
+
+        . Relationship
+
+          A file used to define a relationship between two entities that have
+          a many-to-many relationship.
+
+        . Domain
+
+          A file used to maintain valid values that may be used in data
+          fields.  Domains specify the universe of valid values.  Entities
+          may represent domains for certain relationships.
+
+          In general, a system table or user table is a domain if it's only
+          elements are codes and descriptions.
+
+        . Index
+
+          A file that defines an index, or set of pointers into another file.
+          New index files should not be created as separate file definitions.
+          Instead, use the DATA-QWIK index definition function.
+
+        . Dummy File
+
+          A DATA-QWIK file for the purpose of generating a screen or a
+          report, but which holds no permanent data.
+
+        . Journal File
+
+          A DATA-QWIK file for the purpose of recording information 
+	  information.
+
+        . GUI Client 
+
+          A DATA-QWIK file used exclusively by Profile for Windows. The
+          file definition is stored on the server, but all data is stored
+	  on the GUI client.

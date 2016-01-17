@@ -1,0 +1,56 @@
+NOD=
+LEN=7
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Maximum Field Length
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Max@Length
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The maximum length that the system allows as input for the screen and report
+fields referencing this master data dictionary data item.  DATA-QWIK does not
+accept input for a field that exceeds this value.  The value in the [DBSMDD]LEN
+data item defaults as the Maximum Field Length value ([DBTBL1D]LEN) for data
+items referencing the master data dictionary data item. The user can modify the
+defaulted value if the Protect Maximum Field Length data item ([DBSMDD]PRLEN)
+contains N (No).
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) links to the [MDDPBS]MINRATE master data dictionary data item,
+and the [MDDPBS]MINRATE data item specifies a maximum field length of 12, the
+system defaults 12 into the Maximum Field Length attribute ([DBTBL1D]DFT)
+associated with the [CRCD]MINRATE data item.
+
+DATA-QWIK (and MUMPS) stores records as variable length, delimiter-separated
+ASCII strings.  Records consume only as much disk space as is required to store
+the physical data.  The record grows and shrinks to accomodate changes in the
+physical storage requirements of the actual data; it is not related to this
+parameter (or any other dictionary parameter).
+
+The maximum length for a record in a Greystone MUMPS database is 32,667 bytes.
+However, most tables map to database regions which have much smaller block
+sizes (e.g., 1024 or 2048 bytes), and correspondingly smaller maximum lengths.
+As a matter of practice, and to provide compatibility with other database
+systems, a field length should not exceed 255 bytes.

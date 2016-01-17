@@ -17,6 +17,8 @@
 		Generated as in-line code by UCMETHOD
 	- PSLSubrou.getLvnMax
 		Generated as in-line code by UCMETHOD
+	- PSLSubrou.getName
+		Generated as in-line code by UCMETHOD
 	- PSLSubrou.getTagPrefix
 		Generated as in-line code by UCMETHOD
 	- PSLSubrou.insCode
@@ -34,6 +36,9 @@
 		manipulates append(,)
 
 	---- Revision History --------------------------------------------------
+	09/04/07 - Frans S.C. Witte - CR 27800
+		* changed .toString() to .getName()
+
 	07/24/06 - Frans S.C. Witte - CRs: 22720 / 22274
 		* Modified declarations to supply result class and added
 		  #OPTION ResultClass ON
@@ -45,6 +50,9 @@
 	06/06/06 - Frans S.C. Witte - CRs: 22060 / 22061
 		Initial element
 	*/
+	#PACKAGE framework.psl
+	#OPTION ResultClass ON
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -63,8 +71,6 @@
 	// *******************************************************************
 	quit
 
-	#OPTION ResultClass ON
-
 	/* ================================================================== */
 	/* Static methods                                                     */
 	/* ****************************************************************** */
@@ -75,8 +81,8 @@
 	/* ****************************************************************** */
 
 	// ---------------------------------------------------------------------
-private void addCode( local PSLSubrou sr,	// name of subroutine
-		local String code)		// line of code to add
+void addCode( PSLSubrou sr,	// name of subroutine
+		String code)		// line of code to add
 	/* ---------------------------------------------------------------------
 	Runtime implementation of PSLSubrou.addCode( code):
 	- Add the line to the subroutine buffer.
@@ -84,13 +90,13 @@ private void addCode( local PSLSubrou sr,	// name of subroutine
 	*/
 	type public String append(,)
 
-	set append( sr.toString(), append( sr.toString(), "").order(-1) + 1) = code
+	set append( sr.getName(), append( sr.getName(), "").order(-1) + 1) = code
 	if $$hasWrap^UCREC4OP(code) do srAdd^UCREC4OP( sr)
 	quit
 
 	// ---------------------------------------------------------------------
-private void addExe( local PSLSubrou sr,	// name of subroutine
-		local String code)		// line of code to add
+void addExe( PSLSubrou sr,	// name of subroutine
+		String code)		// line of code to add
 	/* ---------------------------------------------------------------------
 	Runtime implementation of PSLSubrou.addExe( code)
 
@@ -194,8 +200,8 @@ private void addExe( local PSLSubrou sr,	// name of subroutine
 
 	for  set y = code.find( "vsql(", y) quit:y=0  set yz =code.find(")", y) quit:yz=0  do {
 		set v = code.extract( y, yz - 2)
-		if 'append( sr.toString(), -3, v).exists() set append( sr.toString(), -3, v) = "vsql"_v
-		set v = append(sr.toString(), -3, v)
+		if 'append( sr.getName(), -3, v).exists() set append( sr.getName(), -3, v) = "vsql"_v
+		set v = append(sr.getName(), -3, v)
 		set code = code.extract( 1, y - 6) _ v_ code.extract( yz, code.length())
 		set y = y - 6 + v.length()
 	}
@@ -204,7 +210,7 @@ private void addExe( local PSLSubrou sr,	// name of subroutine
 	type literal String goto  = "S vsql="
 	type literal String goto2 = ",vsql="
 
-	type Number exeSub = append( sr.toString(), -2, -2).get( 0) + 1
+	type Number exeSub = append( sr.getName(), -2, -2).get( 0) + 1
 	type Number tagnr
 	type String taggo
 
@@ -226,9 +232,9 @@ private void addExe( local PSLSubrou sr,	// name of subroutine
 	/* NOTE: Do NOT move this line up!
 	   tagPatch() looks at and interprets the current value of
 	   append(sr,-2,-2) */
-	set append( sr.toString(), -2, -2) = exeSub
+	set append( sr.getName(), -2, -2) = exeSub
 
-	if append( sr.toString(), -2, exeSub).exists() set code = sr.getTag( exeSub)_" "_ code
+	if append( sr.getName(), -2, exeSub).exists() set code = sr.getTag( exeSub)_" "_ code
 	else  set code = " "_ code
 
 	do sr.addCode( code)
@@ -236,20 +242,20 @@ private void addExe( local PSLSubrou sr,	// name of subroutine
 	quit
 
 	// ---------------------------------------------------------------------
-private String getTag( local PSLSubrou sr, local Number tagnr)
+String getTag( PSLSubrou sr, Number tagnr)
 	/* ---------------------------------------------------------------------
 	Runtime implmentation of PSLSubrou.getTag( tagnr)
 	*/
 	type public String append(,)
 
-	quit append( sr.toString(), -2)_ "a"_ tagnr
+	quit append( sr.getName(), -2)_ "a"_ tagnr
 
 	/* ================================================================== */
 	/* LOCAL FUNCTIONS AND SUBROUTINES				      */
 	/* ------------------------------------------------------------------ */
 
 	// ---------------------------------------------------------------------
-local String tagGoto( local PSLSubrou sr, local Number tagnr)
+private String tagGoto( PSLSubrou sr, Number tagnr)
 	/* ---------------------------------------------------------------------
 	Return the code to insert instead of SET vsql=n.
 
@@ -263,12 +269,12 @@ local String tagGoto( local PSLSubrou sr, local Number tagnr)
 	*/
 	type public String append(,,)
 
-	type String v = append( sr.toString(), -2, tagnr).get()
+	type String v = append( sr.getName(), -2, tagnr).get()
 	if v.isNull() set v = "G "_ sr.getTag( tagnr)
 	quit v
 
 	// ---------------------------------------------------------------------
-local void tagPatch( local PSLSubrou sr, local Number tagnr)
+private void tagPatch( PSLSubrou sr, Number tagnr)
 	/* ---------------------------------------------------------------------
 	Store notification that the line that comes from exe(tagnr) needs a
 	label. If exe(tagnr) has already been processed, prepend the label to
@@ -290,10 +296,10 @@ local void tagPatch( local PSLSubrou sr, local Number tagnr)
 	*/
 	type public String append(,,)
 
-	if append( sr.toString(), -2, tagnr).exists() quit	// already handled
+	if append( sr.getName(), -2, tagnr).exists() quit	// already handled
 
-	type Number n = append( sr.toString(), -2, -2).get( 0)
-	if tagnr '> n set n = append( sr.toString(),"").order(-1) - n + tagnr, append( sr.toString(), n) = append( sr.toString(), -2)_ "a"_ tagnr_ append( sr.toString(), n)
-	set append( sr.toString(), -2, tagnr) = ""
+	type Number n = append( sr.getName(), -2, -2).get( 0)
+	if tagnr '> n set n = append( sr.getName(),"").order(-1) - n + tagnr, append( sr.getName(), n) = append( sr.getName(), -2)_ "a"_ tagnr_ append( sr.getName(), n)
+	set append( sr.getName(), -2, tagnr) = ""
 
 	quit

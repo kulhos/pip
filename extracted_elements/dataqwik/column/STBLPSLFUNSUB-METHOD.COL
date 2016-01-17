@@ -1,0 +1,40 @@
+NOD=TEMPLATE
+LEN=255
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Method template
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=20
+DEL=
+POS=1
+RHD=Method template
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+ PSL implements methods as records within the Class Methods database table
+ (OBJECTMET). The records include an M subroutine reference (e.g.,
+ getRow^UCDB) that is called by the PSL compiler when it encounters a
+ method reference in the source code. The subroutine acts as an extension
+ to the PSL compiler by generating M code to implement the method. The PSL
+ compiler processes the PSL input source code top to bottom and left to
+ right. When the PSL compiler calls the method-implementing subroutine,
+ its symbol table contains state information that can be utilized by the
+ subroutine.

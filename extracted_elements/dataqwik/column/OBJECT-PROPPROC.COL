@@ -1,0 +1,37 @@
+NOD=0
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Property Constructor Compiler Labelref
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=2
+RHD=Property Constructor Compiler Labelref
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The M entryref (label^routine) to be called by the PSL compiler to
+generate code for ALL properties of this class.
+This entryref takes precedence over ANY definition in table OBJECTPROP for
+this class. This includes acceptability of the property name, the
+property's datatype, and the generation of the appropriate target code.
+The called procedure can of course access the OBJECTPROP table as needed.

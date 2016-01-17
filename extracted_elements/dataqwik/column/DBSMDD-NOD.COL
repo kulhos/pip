@@ -1,0 +1,53 @@
+NOD=
+LEN=26
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Subscript Key
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Node
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+A code that indicates where the data item is physically located in the
+MUMPS global.  The mapping of a file links the data dictionary to the
+physical file structure.
+
+This value is appended to the physical access keys defined on the file control
+page to create the full MUMPS database reference.
+
+This value contains one of the following formats:
+
+        Alpha    - The value corresponding to the field location within the
+                   record (e.g., the TSEQ field ID within the Transaction
+                   History file [HIST]).
+
+        Numeric  - A value corresponding to the field location within the
+                   record (e.g., 1).
+
+        [FID]DI  - A valid data item name defining a sub-field within another
+                   field (e.g., [HIST]TAMT).  This option must be used in
+                   conjunction with the "Delimiter" and "Position" prompts.
+
+        Null     - A blank, if the field value is derived from a computed
+                   operation.

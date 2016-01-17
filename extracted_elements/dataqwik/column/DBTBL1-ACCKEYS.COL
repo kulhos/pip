@@ -1,0 +1,49 @@
+NOD=16
+LEN=100
+DFT=
+DOM=
+TBL=@SELDI^DBSFUN(FID,.X)
+PTN=
+XPO=D ACCKEYS^DBSFPP
+XPR=
+TYP=U
+DES=Primary Keys
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=60
+DEL=
+POS=1
+RHD=Access Keys
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The physical database key structure of the file.  This parameter can be a
+single key or composite (more than one) keys.  String and numeric
+literals can be used as keys.  Non-literal keys must be data items
+within the file.  The key or composite keys must be unique for each
+record in the file.
+
+String and numeric literal keys are usually used to differentiate
+DATA-QWIK files when more than one file is mapped to the same MUMPS
+global.
+
+Examples:
+                                            <<--------->>
+File     Description        Primary Keys    Physical Keys  Global Structure
+----     -----------------  ------------    -------------  ----------------
+CIF      Customer File      ACN             ACN            ^CIF(ACN
+CIFHH    Head of Household  ACN,HHTYP       ACN,HHTYP      ^CIF(ACN,HHTYP
+ACN      Account Master     CID             CID            ^ACN(CID
+HIST     Account History    CID,TSEQ        CID,TSEQ       ^HIST(CID,TSEQ

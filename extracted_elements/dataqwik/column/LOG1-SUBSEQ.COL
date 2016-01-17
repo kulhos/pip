@@ -1,0 +1,33 @@
+NOD=3*
+LEN=12
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=SUBSEQ
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=SUBSEQ
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+This column reflects the sub-sequence number of the table update.  Specific
+column information is contained on the sub-sequence level of table LOG1.

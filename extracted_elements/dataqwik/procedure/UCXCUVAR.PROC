@@ -1,5 +1,8 @@
 //DO NOT MODIFY  Institution Variable Defaults|UCXCUVAR|||||||1
-public UCXCUVAR( String COL)	// Institution Variable Run-time Value
+	#PACKAGE framework.psl.upgrade
+	#OPTION  ResultClass ON
+
+public Primitive UCXCUVAR( String COL)	// Return Institution Variable Run-time Value
 	/*
 	ORIG: Frans S.C. Witte
 	DESC: PSL compiler data loading, Data group, Upgradeable
@@ -82,11 +85,14 @@ public UCXCUVAR( String COL)	// Institution Variable Run-time Value
 	#ACCEPT CR=18247;DATE=2005-11-14;PGM=FSCW;REASON=Dynamic Select
 	type ResultSet rs = Db.select( COL, "CUVAR",,,,"/PSLBOOT")
 
-	if rs.next() quit rs.getCol(1)
+	// call rs.next() twice to ensure ResultSet will be closed by API
+	type String val
+	type Boolean ignore
+	if rs.next() set val = rs.getCol(1), ignore=rs.next() quit val
 	quit ""
 
 	// ---------------------------------------------------------------------
-public tbl2dat( String dir)	// create CUVAR.DAT based on current values
+public void tbl2dat( String dir)	// create CUVAR.DAT based on current values
 	/* ---------------------------------------------------------------------
 	This subroutine creates CUVAR.DAT in the specified or implied directory.
 
@@ -117,13 +123,19 @@ public tbl2dat( String dir)	// create CUVAR.DAT based on current values
 	type ResultSet rs = Db.select( "DI", "DBTBL1D", "%LIBS='SYSDEV' and FID='CUVAR' and DI<>'""*""' and CMP is null")
 	while rs.next() set col = rs.getCol(1), hdr = hdr_TAB_col, dat=dat_TAB_$$UCXCUVAR(col) 
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if dir.get().isNull() set dir = $$SCAU^%TRNLNM("DIR")
 
-	type String IO=$$FILE^%TRNLNM("CUVAR.DAT",dir)
-	if $$FILE^%ZOPEN(IO,"NEWVERSION",0,32767) do {
-		use IO
-		write hdr.extract( 2, hdr.length()),!
-		write dat.extract( 2, dat.length()),!
-		close IO
+	type IO io = Class.new("IO")
+	set io.directory = dir
+	set io.fileName = "CUVAR.DAT"
+	set io.openParams = "NEWV"
+
+	catch xIo {
+		if 'xIo.ident.contains( "OPEN") do io.close()
+		if 'xIo.ident.beginsWith("IO") throw xIo
 	}
+	do io.write( hdr.extract( 2, hdr.length()))
+	do io.write( dat.extract( 2, dat.length()))
+	do io.close()
 	quit

@@ -1,0 +1,43 @@
+NOD=0
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Description
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Description
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+Text that describes this user-defined data type.  This text appears when this
+data item is accessed or listed in reports or help screens.  The description is
+the default prompt on data entry and inquiry screens.  The value in the
+[DBSDOM]DES data item defaults as the Description data item in file definitinos
+referencing this data type ([DBTBL1D]DES).  The user can modify the defaulted
+value if the Protect Description data item ([DBSDOM]PRDES) contains N (No).
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+definition ([CRCD]MINRATE) specifies a user-defined data type of RATE, and the
+RATE data type specifies a description of Exchange Rate, the system defaults
+Exchange Rate into the Description attribute ([DBTBL1D]DES) associated with the
+[CRCD]MINRATE data item.

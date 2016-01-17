@@ -65,13 +65,17 @@ MRPC121(String RETURN,Number VERSION,String REQUEST,String CODE,String CMPTOK,St
 	      . $$      Message
 
 	---- Revision History ------------------------------------------------
+	
+	01/21/2008 - RussellDS - CR30801
+		Moved to Framework view.  Initial release with this CR.
+		
  	03/24/2003 - Allan Mattson - 51351
  		     Converted to PSL; consolidated/standardized original code.
 
  */
 
-	type Public Number ER
-	type Public String RM
+	type public Number ER
+	type public String RM
 	
 	set ER=0 
 	set RM=""

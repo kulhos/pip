@@ -1,0 +1,33 @@
+//DO NOT MODIFY  Before Update Restrict Columns|0|1|0|0|0|0|INSRESTRICT,UPDRESTRICT,DELRESTRICT,SELRESTRICT|||
+
+	/* ----- Revision History ---------------------------------------------
+	
+	01/13/2008 - RussellDS - CR30801
+		Created.
+	*/
+	
+	type List checkList = ""
+	type String errmsg
+	
+	/* Ensure that the userclass has WITH GRANT PRIVILEGES.  hasRights is
+	   in the BEFORE_INSERT trigger */
+	if this.isChanged("INSRESTRICT") set checkList = checkList.add("insert")
+	if this.isChanged("UPDRESTRICT") set checkList = checkList.add("update")
+	if this.isChanged("DELRESTRICT") set checkList = checkList.add("delete")
+	if this.isChanged("SELRESTRICT") set checkList = checkList.add("select")
+	
+	if 'this.HASRIGHTS(checkList, this.tablename, .errmsg) do this.throwError(errmsg)
+	
+	/* RESTRICT qualifiers are not valid on grants to this.
+	   
+	   If a RESTRICT qualifier is included in the insert, validate that the
+	   RESTRICT clause is valid for the table to which it applies. 
+	   
+	   Note that VALIDRESTRICT is included in the BEFORE_INSERT trigger. */
+	   
+	if 'this.insrestrict.isNull(), 'this.VALIDRESTRICT(this.insrestrict, .errmsg) do this.throwError(errmsg)
+	if 'this.updrestrict.isNull(), 'this.VALIDRESTRICT(this.updrestrict, .errmsg) do this.throwError(errmsg)
+	if 'this.delrestrict.isNull(), 'this.VALIDRESTRICT(this.delrestrict, .errmsg) do this.throwError(errmsg)
+	if 'this.selrestrict.isNull(), 'this.VALIDRESTRICT(this.selrestrict, .errmsg) do this.throwError(errmsg)
+
+	quit

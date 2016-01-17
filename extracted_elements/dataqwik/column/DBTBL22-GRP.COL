@@ -1,0 +1,45 @@
+NOD=AGID
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Group By
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=20
+DEL=
+POS=7
+RHD=Group By
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The aggregate information extracted is grouped by rows and columns, which is
+the basic form.  In addition, it can further be grouped based on the set of
+columns indicated in the Group By field.
+
+For example, to extract average balances by class, you can create two rows,
+one with a query ACN.CLS='D' and one with a query ACN.CLS='L', and a single
+column for AVG on ACN.BAL.  This would create an aggregate extract table,
+MATRIX'AGID', with a row and a column key.
+
+However, if, for example, you wanted this further broken down by branch code
+and currency code, you would specify BRCD,CRCD in the Group By field, in
+which case the MATTRIX'AGID' table would also include a column for BRCD and a
+column for CRCD and calculate the average balance by branch code and currency
+code within class.

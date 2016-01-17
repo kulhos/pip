@@ -1,29 +1,54 @@
 //DO NOT MODIFY  Before Insert/Update|1|1|0|0|0|0||||
 	/*
 	---- Revision History ------------------------------------------------
+	
+	10/20/2008 - RussellDS - CR35741/35918
+		* Added check to ensure that cannot assign a sub-field to a
+		  column that is not flagged as being a master.
+		* Added check on node not being null before memo/blob
+		  check to avoid computeds.
+	
+	03/31/2008 - RussellDS - CR30801
+		Modified to remove need for FKEYCHK.
+		
+		Changed record object references to 'this'.
+		
+		Add check that for rectyp>1 a node can either contain a BLOB/
+		memo or data, but not both.
+		
+		Modified to throw error instead of returning ER and RM.
+		
+		Removed old revision history.
+		
 	07/30/07 - RussellDS - CR28507
 		   Eliminated upate of user and date columns.  This is managed
 		   by the audit function of the filer.
 		   
 		   Removed old revision history.
-		   
-	08/31/06 - RussellDS - CR22719
-		   Add code to ensure that if a non-literal default value is
-		   provided, the table has a filer.  Otherwise, it's an error.
-		   
-	02/16/06 - RussellDS - CR19065
-		   Remove references to obsolete column DBTBL1D.DEL.
-	
-	02/13/06 - RussellDS - CR19556
-		   Added logic to set default value and required for logicals.
 	*/
 	
-	type public String FID, RM
-	type public Number ER
+	type PSLTable td = PSL.getPSLTable(this.fid)
 	
-	type RecordDBTBL1 dbtbl1=Db.getRecord("DBTBL1","%LIBS='SYSDEV',FID=:FID")
+	if (this.typ.oldVal'=this.typ) or ((this.len.oldVal'=this.len)) do {
+
+		type String FKEYS, TESTDI
 	
-	if (dbtbl1d.typ.oldVal'=dbtbl1d.typ)!((dbtbl1d.len.oldVal'=dbtbl1d.len)) do FKEYCHK(.dbtbl1d) quit:ER 
+		set TESTDI = ","_ this.di_ ","
+
+		type ResultSet rs=Db.select("FID,TBLREF,FKEYS", "DBTBL1F", "( TBLREF=:this.fid OR FID=:this.fid ) AND %LIBS='SYSDEV'")
+
+		while rs.next() do {
+			
+			set FKEYS = rs.getRow().toString() 
+
+			set FKEYS = ","_ FKEYS.translate(9.char(), ",")_ ","
+			quit:(FKEYS '[ TESTDI)
+			
+			// Foreign key to ~p1 table. Cannot modify attributes.
+			if (FKEYS.piece(",", 2) '= this.fid) do this.throwError($$^MSG(3963, FKEYS.piece(",", 2)))
+			do this.throwError($$^MSG(3963, FKEYS.piece(",", 3)))
+		}
+	}
 	
 	/* In the past, logical data types could have values of 0, 1, or null.
 	   This has created problems for database indepedence, so we've made a
@@ -34,37 +59,42 @@
 	   been modified to return logicals as required and with a default,
 	   regardless of the schema definition for older columns.
 	*/
-	if (dbtbl1d.typ = "L"),((%ProcessMode = 0) ! (dbtbl1d.typ.oldVal '= "L")) do {
+	if (this.typ = "L"), ((%ProcessMode = 0) or (this.typ.oldVal '= "L")) do {
 	
-		set dbtbl1d.req = 1
-		if dbtbl1d.dft.isNull() set dbtbl1d.dft = 0
+		set this.req = 1
+		if this.dft.isNull() set this.dft = 0
 	}
 	
-	if 'dbtbl1d.dft.isNull(), 'dbtbl1d.dft.isLiteral(), dbtbl1.udfile.isNull() do {
+	// Prohibit assignment of sub-field to a non-master column
+	if 'this.sfp.isNull() or 'this.sft.isNull() or 'this.sfd1.isNull() or 'this.sfd2.isNull() do {
+	
+		type ResultSet rs = Db.select("DI", "DBTBL1D", "%LIBS='SYSDEV' AND FID=:this.fid AND NOD=:this.nod AND POS=:this.pos AND ISMASTER=1")
+
+		if rs.isEmpty() do this.throwError("Cannot assign a subfield to a non-masterfield column")
+	}
+	
+	/* Prohibit a node in the rectyp 10 or 11 table from containing both a
+	   memo/blob and data. */
+	if (td.recordType > 1), 'this.nod.isNull() do {
 		
-		set ER = 1
-		set RM = "Non-literal default values require a filer for the table"
+		type Boolean isError = false
+		
+		if ((this.typ = "B") or (this.typ = "M")) do {
+			
+			type ResultSet rs = Db.select("DI", "DBTBL1D", "%LIBS='SYSDEV' AND FID=:this.fid AND NOD=:this.nod AND DI<>:this.di")
+			
+			if rs.next() set isError = true
+		}
+		else  do {
+			
+			type ResultSet rs = Db.select("DI", "DBTBL1D", "%LIBS='SYSDEV' AND FID=:this.fid AND NOD=:this.nod AND (TYP='M' OR TYP='B')")
+			
+			if rs.next() set isError = true
+		}
+		
+		if isError do this.throwError("Cannot have both memo/blob and data on same node")
 	}
+	
+	if (td.recordType = 11), ((this.typ = "M") or (this.typ = "B")), td.primaryKeys.contains(this.nod) do this.throwError("Record type 11 cannot have memo/blob on key node")
 	
 	quit
-	
-
-FKEYCHK(RecordDBTBL1D dbtbl1d, RecordDBTBL1 dbtbl1) // check foreign key relationship
-
-	type Public String DI,FID,RM
-	type Public Number ER
-
-	type String FKEYS,TESTDI,X
-	
-	set TESTDI=","_DI_","
-
-	type ResultSet rs=Db.select("FID,TBLREF,FKEYS","DBTBL1F","( TBLREF=:FID OR FID=:FID ) AND %LIBS='SYSDEV'")
-
-	while rs.next()  set FKEYS=rs.getRow()  do { quit:ER  
-		set FKEYS=","_$TR(FKEYS,$C(9),",")_","
-		if FKEYS'[TESTDI quit 
-		set ER=1
-		if $P(FKEYS,",",2)'=FID set RM=$$^MSG(3963,$P(FKEYS,",",2))
-		else  set RM=$$^MSG(3963,$P(FKEYS,",",3))
-		}
-	quit 

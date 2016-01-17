@@ -1,0 +1,34 @@
+NOD=0
+LEN=3
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=ASCII value of Delimiter
+ITP=S
+MIN=0
+MAX=255
+DEC=0
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=ASCII@of@Delim
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Integer value that specifies the ASCII code of the character that is used
+to delimit property values of instances of this class.
+If not supplied, the PSL compiler will use 124 (vertical bar).

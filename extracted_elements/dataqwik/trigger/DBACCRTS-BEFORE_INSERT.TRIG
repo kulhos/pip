@@ -1,0 +1,157 @@
+//DO NOT MODIFY  Before Insert|1|0|0|0|0|0||||
+
+	/* ----- Revision History ---------------------------------------------
+	
+	01/13/2008 - RussellDS - CR30801
+		Created.
+	*/
+	
+	type String errmsg
+	
+	/* Validate userclass, or keyword PUBLIC */
+	// Invalid userclass ~p1
+	if '(Db.isDefined("SCAU0", "UCLS=:this.userclass") ! (this.userclass = "PUBLIC")) do this.throwError($$^MSG(6755, this.userclass))
+	
+	/* Access rights are not managed for tables stored in an RDB */
+	
+	// Not valid for RDB Table
+	if $$rdb^UCDBRT(this.tablename) do this.throwError($$^MSG(6762))
+	
+	/* If the DBACCRTS table is empty, the only allowed entry is a new row 
+	   granting all privileges to table DBACCRTS for either PUBLIC or the
+	   userclass of the user performing the insert.  Since the initial entry
+	   to this table turns on table access rights processing, this table,
+	   which holds the rights grants, must be accessible. */
+	   
+	type ResultSet rs = Db.select("TABLENAME", "DBACCRTS")
+	
+	if rs.isEmpty() do {
+		
+		// Initial entry to access rights table (DBACCRTS) must be ALL PRIVILEGES
+		// with GRANT OPTION for either PUBLIC or your userclass, ~p1
+		if (this.tablename '= "DBACCRTS") do this.throwError($$^MSG(6758, %UserClass))
+		else  if (this.insertrts <> 2) do this.throwError($$^MSG(6758, %UserClass))
+		else  if (this.updaterts <> 2) do this.throwError($$^MSG(6758, %UserClass))
+		else  if (this.deleterts <> 2) do this.throwError($$^MSG(6758, %UserClass))
+		else  if (this.selectrts <> 2) do this.throwError($$^MSG(6758, %UserClass))
+		else  if '((this.userclass = "PUBLIC") ! (this.userclass = %UserClass)) do this.throwError($$^MSG(6758, %UserClass))
+	}
+	
+	/* Ensure that the userclass has WITH GRANT PRIVILEGES, except for
+	   initial entry to DBACCRTS */
+	else  do {
+		
+		type List checkList = ""
+		
+		if this.insertrts set checkList = checkList.add("insert")
+		if this.updaterts set checkList = checkList.add("update")
+		if this.deleterts set checkList = checkList.add("delete")
+		if this.selectrts set checkList = checkList.add("select")
+		
+		if 'this.HASRIGHTS(checkList, this.tablename, .errmsg) do this.throwError(errmsg)
+	}
+			
+	/* WHERE qualifiers are not valid on grants to this.
+	   
+	   If a WHERE qualifier is included in the insert, validate that the
+	   WHERE clause is valid for the table to which it applies. */
+	   
+	if 'this.insrestrict.isNull(), 'this.VALIDRESTRICT(this.insrestrict, .errmsg) do this.throwError(errmsg)
+	if 'this.updrestrict.isNull(), 'this.VALIDRESTRICT(this.updrestrict, .errmsg) do this.throwError(errmsg)
+	if 'this.delrestrict.isNull(), 'this.VALIDRESTRICT(this.delrestrict, .errmsg) do this.throwError(errmsg)
+	if 'this.selrestrict.isNull(), 'this.VALIDRESTRICT(this.selrestrict, .errmsg) do this.throwError(errmsg)
+	
+	quit
+	
+
+private Boolean HASRIGHTS(List checkList,		// Rights to check
+			  String tablename,		// Check for this table
+			  ret String errmsg)		// Error message		/MECH=REFNAM
+		     
+	/* A userclass that has a specific privilege to DBACCRTS along with the
+	   WITH GRANT OPTION, may grant or revoke that privilege to any other
+	   table.  Otherwise, a userclass must have the privilege along with
+	   the WITH GRANT OPTION to the table to which privileges are being
+	   granted or revoked.
+	   
+	   Note that need to look at both WITH GRANT capabilities, since
+	   could be split over both tablenames (DBACCRTS and the table in
+	   question.
+	   
+	   RETURNS:
+	   	. $$		true if all rights in checkList are granted
+	   			false otherwise
+	   */
+	
+	type Boolean hasRights = true
+	
+	type RecordDBACCRTS dbaccrts = Db.getRecord("DBACCRTS", "TABLENAME='DBACCRTS', USERCLASS=:%UserClass", 1)
+	type RecordDBACCRTS tblrts = Db.getRecord("DBACCRTS", "TABLENAME=:tablename, USERCLASS=:%UserClass", 1)
+		
+	if checkList.contains("insert"), '((this.insertrts = 2) ! (tblrts.insertrts = 2)) set hasRights = false		
+	if checkList.contains("update"), '((this.updaterts = 2) ! (tblrts.updaterts = 2)) set hasRights = false		
+	if checkList.contains("delete"), '((this.deleterts = 2) ! (tblrts.deleterts = 2)) set hasRights = false		
+	if checkList.contains("select"), '((this.selectrts = 2) ! (tblrts.selectrts = 2)) set hasRights = false
+		
+	// Userclass ~p1 does not have WITH GRANT OPTION for table ~p2
+	if 'hasRights set errmsg = $$^MSG(6765, %UserClass, this.tablename)
+	
+	quit hasRights
+	
+
+private Boolean VALIDRESTRICT(String restrict,		// Restrict clause to validate
+			      ret String errmsg)	// Error message
+		 
+	/* Note that this is also called by the BU_RESTRICT trigger.
+	
+	   If other tables are to be included as part of the RESTRICT clause, they
+	   must be included in a preamble to the RESTRICT clause as a valid FROM
+	   statement, including the join condition.  For example, if applying
+	   a RESTRICT qualifier to DEP with reference to CIF columns, then the
+	   clause must start with [FROM DEP LEFT JOIN CIF ON (DEP.ACN = CIF.ACN].
+	   Note the use of square brackets to delineate the FROM clause. */
+
+	type Boolean isError = false
+	type String fsn(), join(), rng(), vdd(), whr()
+	
+	set errmsg = ""
+	
+	if (this.tablename = "DBACCRTS") do {
+			
+		set isError = true
+		// GRANT with a RESTRICT qualifier is not allowed for the access rights table (DBACCRTS)
+		set errmsg = $$^MSG(6759)
+	}
+	
+	else  do {
+		
+		type Boolean ER = false				// Returned by ^SQLJ/^SQLQ
+		type String RM = ""				// Returned by ^SQLJ/^SQLQ
+		type String from = this.tablename
+		
+		if restrict.beginsWith("[FROM ") do { quit:isError
+		
+			set from = restrict.piece("[FROM ", 2).piece("]", 1)
+			set restrict = restrict.piece("]", 2, restrict.length()).trim()
+			
+			set from = $$^SQLJ(from, whr(), fsn(), join(), "")
+			
+			// Invalid FROM statement ~p1
+			if (ER or '({List}from).contains(this.tablename)) do {
+			
+				set isError = true
+				set errmsg = $$^MSG(1356, from)
+			}
+		}
+
+		do ^SQLQ(restrict, from, whr(), rng(), "", "", fsn(), vdd(), "")
+		
+		// Invalid WHERE statement ~p1
+		if ER do {
+			
+			set isError = true
+			set errmsg = $$^MSG(1507, RM.get())
+		}
+	}
+	
+	quit isError

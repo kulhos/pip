@@ -21,7 +21,7 @@
 ^DBTBL("SYSDEV",2,"DBTBL25",11)="4080*#192,0,0,0,0,0,0|*|||@ooe11|||||T|x"
 ^DBTBL("SYSDEV",2,"DBTBL25",12)="5001*#192,0,0,0,0,0,0|*|||@ooe12|||||T|x"
 ^DBTBL("SYSDEV",2,"DBTBL25",13)="5007*#65,0,0,0,0,0,0|*|||@ooe13|||||T| Run-time Routine:"
-^DBTBL("SYSDEV",2,"DBTBL25",14)="5026#66,0,0,0,0,0,0|@ooe13|8||[SYSDEV,DBTBL25]PGM|||1||U||1||||||T|||124|2"
+^DBTBL("SYSDEV",2,"DBTBL25",14)="5026#66,0,0,0,0,0,0|PROCID|31||[SYSDEV,DBTBL25]PGM|||1||T||1||||0||T|||124|2"
 ^DBTBL("SYSDEV",2,"DBTBL25",14,21)=" // Validate routine name"
 ^DBTBL("SYSDEV",2,"DBTBL25",14,22)=" type Public String V,X"
 ^DBTBL("SYSDEV",2,"DBTBL25",14,23)=" type Public Number ER"

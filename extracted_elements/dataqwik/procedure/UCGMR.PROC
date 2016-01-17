@@ -21,6 +21,21 @@
 	target language.
 
 	----- Revision History -------------------------------------------------
+	2008-10-20, Frans S.C. Witte - CRs 35741/35918/35922
+		Added call to garbageCollect^vRuntime() in ZX().
+
+	09/03/07 - Frans S.C. Witte - CR: 27800
+		* Removed $$isClass(). It is no longer called.
+		* Removed $$clsByName() because it just returned
+		  $$rtClsByName^UCXOBJ().
+		* Adapted cls* to call new UCXOBJ functions
+
+	08/20/07 - KWANL / Frans S.C. Witte - CR 28995
+		* Adapted to new CATCH/THROW mechanism
+		* Removed ZT() (not called, no referenced found in either of the
+		  crtns/*.m files in /p01dev1, /p04devlx, /v71devlx, or
+		  /v72dev_gtm).
+
 	04/27/06 - Frans S.C. Witte - CR 26334
 		Corrected value of $$clsByName() if class not found
 
@@ -68,6 +83,8 @@
 		Modified 'copy' and 'equals' sections to support record
 		type 1 file.
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -91,37 +108,19 @@
 	/* ****************************************************************** */
 
 	// ---------------------------------------------------------------------
-private clsByName(expr) // Return correct class name of class expr
+clsIsClass(c) // runtime wrapper for Class.isValid
 	/* ---------------------------------------------------------------------
-	If expr occurs in OBJECT as supplied, it will be returned unchanged,
-	else if is a Record class, and the table name (as supplied) is a valid
-	table name, then expr will be returned unchanged.
-	Else if a case-insensitve match is found in OBJECT, then the name of
-	that class (as spelled in OBJECT) will be returned,
-	else "" will be returned.
-
-	NOTES:
-	. The call to ^UCXOBJ in this function makes UCXOBJ part of the
-		runtime system. A cleaner solution would be to move ocClassName
-		into UCGMR, but that will have to be postponed until UCGMR is
-		converted to PSL.
-	*/
-	quit $$ocClassName^UCXOBJ(expr)
-
-	// ---------------------------------------------------------------------
-private clsIsClass(c) // runtime wrapper for Class.isValid
-	/* ---------------------------------------------------------------------
-	This function "wraps" the call to $$clsByName(). It checks for an
-	empty value, because that is not handled by $$clByName()
+	This function "wraps" the call to $$rtClsByName^UCXOBJ(). It checks for
+	an empty value, because that is not handled by $$rtClsByName^UCXOBJ()
 
 	ARGUMENTS:
 	. c = name of class
 	*/
 	if c="" quit ""
-	quit $$clsByName(c)'=""
+	quit $$rtClsByName^UCXOBJ(c)'=""
 
 	// ---------------------------------------------------------------------
-private clsIsAnc(a,d) // runtime wrapper for Class.isAncestor / Class.isDecendant
+clsIsAnc(a,d) // runtime wrapper for Class.isAncestor / Class.isDecendant
 	/* ---------------------------------------------------------------------
 	This function "wraps" the call to $$isAncestor^UCGM().
 	It validates input values (empty values are not accepted by
@@ -133,23 +132,9 @@ private clsIsAnc(a,d) // runtime wrapper for Class.isAncestor / Class.isDecendan
 	*/
 	if a="" quit ""
 	if d="" quit ""
-	if $$clsByName(a)="" quit 0
-	if $$clsByName(d)="" quit 0
-	quit $$ocIsAncestor^UCXOBJ(a,d)
-
-	// ---------------------------------------------------------------------
-private isClass(expr) // deprecated ; Return if expr is a class
-	/* ---------------------------------------------------------------------
-	*/
-	quit $$clsByName(expr)'=""
-	/* ======== DEAD CODE BELOW
-	new z
-	if expr=reClass quit 1
-	if $$isRecord^UCGM(expr) set z=$$getReTable^UCGM(expr) quit $$isTable^UCXDD(z)
-
-	if $D(^OBJECT(expr)) quit 1
-	quit $$ocGet^UCXOBJ(,expr)'=""
-	======== DEAD CODE ABOVE */
+	set a=$$rtClsByName^UCXOBJ(a) if a="" quit 0
+	set d=$$rtClsByName^UCXOBJ(d) if d="" quit 0
+	quit $$rtClsIsAnc^UCXOBJ(a,d)
 
 	// ---------------------------------------------------------------------
 public LOWER( String S) // Return S.lowerCase()
@@ -167,12 +152,13 @@ public UPPER( String S) // Return S.upperCase()
 	*/
 	quit S.upperCase()
 
+	#IF 1
 	/* ================================================================== */
 	/* MTL code                                                           */
 	/* ****************************************************************** */
 
 	// ---------------------------------------------------------------------
-private copy( Number v1) // MTL runtime for Object.copy()
+public copy( Number v1) // MTL runtime for Object.copy()
 	/* ---------------------------------------------------------------------
 	MTL copy instantiates a new entry in vobj() and MERGEs the source vobj()
 	tree into the new target vobj() tree. It returns the object id of the
@@ -189,7 +175,7 @@ private copy( Number v1) // MTL runtime for Object.copy()
 	quit vOid
 
 	// ---------------------------------------------------------------------
-private equals( Number p1, Number p2) // MTL runtime for Object.equals()
+public equals( Number p1, Number p2) // MTL runtime for Object.equals()
 	/* ---------------------------------------------------------------------
 	MTL Object.equals() compares two vobj() trees.
 	To compare equal, both the structure and the contents must be identical:
@@ -208,7 +194,7 @@ private equals( Number p1, Number p2) // MTL runtime for Object.equals()
 	set z2 = "vobj("_ p2, z2e = z2, z2 = z2_ ")"
 
 	set equals = 1
-	I @z1.get() '= @z2.get() quit 0		// compare top nodes
+	if @z1.get() '= @z2.get() quit 0	// compare top nodes
 	for  set z1 = @z1.query(), z2 = @z2.query()  quit:z1.extract( 1, z1e.length())'=z1e  do { if equals=0 quit
 
 		if z1.extract( z1e.length()+1, z1.length()) '= z2.extract( z2e.length()+1, z2.length()) set equals = 0
@@ -217,7 +203,7 @@ private equals( Number p1, Number p2) // MTL runtime for Object.equals()
 	quit equals
 
 	// ---------------------------------------------------------------------
-private toString( Number p1) // MTL runtime for Object.toString()
+public toString( Number p1) // MTL runtime for Object.toString()
 	/* ---------------------------------------------------------------------
 	MTL Object.toString() produces a TAB separated List of node-value pairs,
 	with node the list of subscripts descending from vobj(p1).
@@ -239,28 +225,8 @@ private toString( Number p1) // MTL runtime for Object.toString()
 	quit return.extract( 1, return.length()-1)
 
 	// ---------------------------------------------------------------------
-ZT( String voexe, List vorefs, Number voptr)  // MTL Object cleanup error trap
-	/* ---------------------------------------------------------------------
-	MTL runtime code that
-	- deletes all nodes from vobj() with vOid>voptr
-	- deletes all nodes from vobj() that occur in List vorefs
-	- XECUTEs voexe
-
-	NOTES:
-	. This subroutine is coded as a single #BYPASS block because there is
-		no additional advange to coding one or two lines in "basic PSL".
-	*/
-	#ACCEPT CR=22720; Date=2006-08-18; PGM=Frans S.C. Witte; Group=BYPASS
-	#BYPASS
-	for  set voptr=voptr+1 quit:'$data(vobj(voptr))  kill vobj(voptr)
-	if vorefs'="" for voptr=1:1:$length(vorefs,",")  kill vobj($get(@$piece(vorefs,",",voptr)))
-	xecute $get(voexe)
-	#ENDBYPASS
-
-	quit
-
-	// ---------------------------------------------------------------------
-private ZX( Number voPtr, String voGoto, String voTag)  // MTL General error handler
+public ZX( Number voPtr, String voGoto, String voTag)  // MTL General error handler
+	//public ZX( Number voPtr )
 	/* ---------------------------------------------------------------------
 	Note related to %ZTPTRAP usage -- %ZTPTRAP is set by the PBSSRV server
 	to specify the error handling action for GTM-TPTIMEOUT error.  This
@@ -276,15 +242,140 @@ private ZX( Number voPtr, String voGoto, String voTag)  // MTL General error han
 
 	NOTES:
 	. This subroutine is coded as a single #BYPASS block because there is
-		no additional advange to coding one or two lines in "basic PSL".
+		no additional advantage to coding one or two lines in "basic
+		PSL".
+	. Code generated by UCGM per CR28995 does no longer pass the voGoto and
+		voTag parameters. However, code that has not yet been recompiled
+		may end up in catch-blocks that passes these parameters, and
+		expects ZX^UCGMR() to break down the stack. To deal with this,
+		the current version contains all 3 parameters, and if the second
+		is supplied at runtime, it expects the third to be present as
+		well, and will break down the stack inside this subroutine.
+		If the second parameter is not present, then the "new" behavior
+		will be exhibited. Cleanup can occur as soon as CR28995 has
+		been included in a Framework label, because that ensures that
+		all Phase 0 / Phase 1 elements will be distributed with the
+		correct runtime behavior.
 	*/
 	#ACCEPT CR=22720; Date=2006-08-18; PGM=Frans S.C. Witte; Group=BYPASS
 	#BYPASS
-	do @voTag
-	if $data(vobj) for  set voPtr=$order(vobj(voPtr)) quit:voPtr=""  kill vobj(voPtr)
-	if $get(%ZTPTRAP)'="",$piece($zstatus,",",3)["%GTM-E-TPTIMEOUT" xecute "set %ZTPTRAP="""" "_%ZTPTRAP
-	zgoto voGoto-1
+	;;do @voTag
+	;
+	; reset $EC to end error processing mode
+	SET $ECODE="",$ZERROR=""
+	;
+	IF $DATA(vobj) FOR  SET voPtr=$ORDER(vobj(voPtr)) QUIT:voPtr=""  KILL vobj(voPtr)
+	DO garbageCollect^vRuntime($STACK-1)
+	IF $GET(%ZTPTRAP)'="",$PIECE($ZSTATUS,",",3)["%GTM-E-TPTIMEOUT" XECUTE "set %ZTPTRAP="""" "_%ZTPTRAP
+	;;zgoto voGoto-1
+	IF $DATA(voGoto) ZGOTO @("voGoto:"_voTag)
 	#ENDBYPASS
+	quit
 
-	quit	// will never be reached, but the compiler wants to see it
+	// ---------------------------------------------------------------------
+public vobjDfer( String vObjDfer)  //
+	/* ---------------------------------------------------------------------
+	Run-time support utility to conditionally destroy the objects in the
+	"deferred destroy" list.
+
+	NOTES:
+	. This entry will not be called until the vobj-management proposal has
+		been implemented.
+	*/
+	#ACCEPT CR=27800; Date=2007-07-12; PGM=Frans S.C. Witte; Group=BYPASS
+	#BYPASS
+	NEW vD,vN,vO,vS
+	SET vS=+vobjDfer
+	FOR vN=2:1:$LENGTH(vobjDfer,",") SET vO=$PIECE(vobjDfer,",",vN) IF vO]"""",$PIECE($GET(vobj(vO,-1)),$CHAR(9),2)'<vS DO
+	.	SET vD=$PIECE(vobj(vO,-1),$CHAR(9),3)
+	.	IF vD="" KILL vobj(vO) QUIT
+	.	DO @(vD_"(vO)")
+	#ENDBYPASS
+	quit	
+
+	// ---------------------------------------------------------------------
+public vobjDes( Number vS, Object vO)  //
+	/* ---------------------------------------------------------------------
+	Runtime support ustility that destroys the object who's ID is supplied,
+	provided the object's STACK level is greater than or equal to vS.
+
+	NOTES:
+	. This entry will not be called until the vobj-management proposal has
+		been implemented.
+	*/
+	#ACCEPT CR=27800; Date=2007-07-12; PGM=Frans S.C. Witte; Group=BYPASS
+	#BYPASS
+	QUIT:vO=""  QUIT:$PIECE($GET(vobj(vO,-1)),$CHAR(9),2)<vS
+	NEW vD SET vD=$PIECE(vobj(vO,-1),$CHAR(9),3)
+	IF vD="" KILL vobj(vO) QUIT
+	DO @(vD_"(vO)")
+	#ENDBYPASS
+	quit	
+
+	//---------------------------------------------------------------------
+private ZE // General error handler pre-processor
+	/* --------------------------------------------------------------------
+	This subroutine is a error handler pre-processor that constructs the 
+	value of $ZE from $ZS if $ZE is empty, before executing the error trap.
+	*/
+
+	#ACCEPT CR=28995; Date=2007-08-12; PGM=KWANL; Group=BYPASS
+	#BYPASS
+	if $ZE="" set $ZE="0,"_$P($ZS,",",2,999)
+	#ENDBYPASS
+	quit
+
+	//---------------------------------------------------------------------
+public LOG(String vLabref, Error vErr) // Entry point to call error logger
+	/* --------------------------------------------------------------------
+	This is a wrapper subroutine to call the logger specified in the catch-
+	statement. There are several reasons to use a wrapper:
+	1) Any logger, including the default error logger in UTLERR, may contain
+		a catch-statement, which resets the value of $ECODE to the empty
+		string.
+		Because the $ETRAP constructed by the compiler relies on a
+		non-empty $ECODE to "unwind" the DO stack until the DO-level of
+		the catch-block is reached, this wrapper will have to ensure
+		that $ECODE is non-empty on quit from this subroutine.
+	2) The logger may itself throw an exception.
+		The effect of such an exception depends on the M processing mode
+		when the exception is thrown. It that were in Errorhandling mode
+		then M will automatically pop a DO-level, and invoke the $ETRAP
+		at that DO-level. If, on the other hand, the exception occurs
+		while in Normal mode, M will invoke the current $ETRAP value at
+		the DO-level whre the exception occurs. If the $ETRAP that
+		called this wrapper is still in effect, this will end in a
+		stack overflow.
 	
+	The wrapper calls the logger under the protection of a catch-statement.
+	This ensures that the logger is called in M Normal processing mode.
+	However this also implies that the wrapper must (re)throw vErr (as
+	modified by the logger) to force a non-empty $ECODE. As this exception
+	will be handled by the $ETRAP tyhat called the wrapper, vErr.logged is
+	set to true to prevent additional calls to this wrapper and the logger.
+
+	Any exception thrown by the logger will be ignored (i.e. the logger will
+	never cause side effects other than its logging activitity).
+
+	As a result, a logger will be called exactly once per thrown exception
+	within the scope of the catch-statement.
+	*/
+	do {	// call logger under protection of an ignore-all catch-statement
+		catch xIgnore {
+		}
+
+		#ACCEPT CR=28995; Date=2007-08-12; PGM=KWANL; Group=BYPASS
+		#BYPASS
+		do @(vLabref_"(.vErr)")
+		#ENDBYPASS
+	}  // end code protected by catch
+
+	/* Indicate that the logger has been called regardless of the result,
+	   and (re)throw vErr as modified by the logger.
+	   */
+	set vErr.logged = true
+	throw vErr
+	quit	// will never be reached
+
+	/* ======== END TARGET = M ======== */
+	#END

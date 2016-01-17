@@ -1,0 +1,37 @@
+NOD=10
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=New Page At Key Breaks #10
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=2
+RHD=NPAKB@#10
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         NEW PAGE AT KEY BREAKS (Y/N)
+
+             Y - Starts group section on a new page.
+
+             N - Prints each group section without breaking
+                 to a new page.

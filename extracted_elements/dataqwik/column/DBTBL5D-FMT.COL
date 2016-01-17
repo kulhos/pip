@@ -1,0 +1,32 @@
+NOD=ITMSEQ
+LEN=20
+DFT=
+DOM=
+TBL=[DBCTL]CODE,DESC:QU "[DBCTL]NAME=""RFMT"""
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Format
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=Format
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The format used to display the specific column data.

@@ -1,0 +1,46 @@
+NOD=1
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=TARGET STAT
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=TARGET@STAT
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         DATA ITEM
+
+             Enter the data item for which statistics are to be
+             calculated.
+
+             Enter the data item in the format [FID]DI where FID
+             is the file ID and DI is the data item.
+
+             Example:  [LN]BAL - to create a report analyzing
+             loan balances based on criteria supplied in the
+             BASED ON column.
+
+             See help for BASED ON and STATISTICS INCREMENTS for
+             examples of how to use those fields in conjunction
+             with the DATA ITEM field.

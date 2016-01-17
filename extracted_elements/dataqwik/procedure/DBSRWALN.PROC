@@ -13,6 +13,11 @@ DBSRWALN(String RID,String IO,Number COUNT)	/* Private - Part DBSRW*
 		. COUNT		Alignment cound		/REQ/NONULL/MECH=VAL
 
 	------ Revision History ------------------------------------------------
+	
+	2009-03-11 - RussellDS - CRs 35741/38660
+		* Modified to replace $C(128) with "|" when load prompts.  128
+		  is substituted by FORMDQ5* to avoid problems with "|" in
+		  the record.
 
         07/26/05 - SkariahV- CR16679
 	           Removed #WARN directive.
@@ -72,7 +77,7 @@ DBSRWALN(String RID,String IO,Number COUNT)	/* Private - Part DBSRW*
 
 		set SIZE=dbtbl5d.size
 		set TYPE=dbtbl5d.fmt
-		set VAR=dbtbl5d.prompt
+		set VAR=dbtbl5d.prompt.translate(128.char(),"|")	// Restore up-bar
 
 		if dbtbl5d.item?1"@".E,VAR["," do {		// Convert type and size
 			type Number I
@@ -84,12 +89,12 @@ DBSRWALN(String RID,String IO,Number COUNT)	/* Private - Part DBSRW*
 
 		// Set up to print 99999 or XXXX  based on format type
 
-		if TYPE="N" set OUT=$E(ALL9,1,SIZE)
-		else  if TYPE="$"!(TYPE="E") set OUT=$E(ALL9,1,SIZE-3)_".99"
+		if TYPE="N" set OUT=ALL9.extract(1,SIZE)
+		else  if TYPE="$"!(TYPE="E") set OUT=ALL9.extract(1,SIZE-3)_".99"
 		else  if TYPE="T",VAR'?1"@".E,dbtbl5d.name?1"@".E,VAR'?1"<<".E set OUT=VAR
 
 		// <<VAR,D,SIZE>>
-		else  if VAR?1"<<"1E.E1">>",$P(VAR,",",2)="D" set OUT="MM/DD/YY"
+		else  if VAR?1"<<"1E.E1">>",VAR.piece(",",2)="D" set OUT="MM/DD/YY"
 
 		// @CHR
 		else  if dbtbl5d.name?1"@".E,VAR?1"@CHR(".E do {
@@ -101,7 +106,7 @@ DBSRWALN(String RID,String IO,Number COUNT)	/* Private - Part DBSRW*
 			for I=1:1:SIZE S OUT=OUT_X
 			}
 
-		else  set OUT=$E(ALLX,1,SIZE)
+		else  set OUT=ALLX.extract(1,SIZE)
 
 		set BLANK=$J("",TAB-1-PRINT(LINE).length())
 		set PRINT(LINE)=PRINT(LINE)_BLANK_OUT
@@ -111,7 +116,7 @@ DBSRWALN(String RID,String IO,Number COUNT)	/* Private - Part DBSRW*
 		type Number J,K,LINE
 
 		set LINE=""
-		for J=1:1 set LINE=$O(PRINT(LINE)) quit:LINE=""  do {
+		for J=1:1 set LINE=PRINT(LINE).order() quit:LINE=""  do {
 			if LINE<RPTFROM!(LINE>RPTTO) write PRINT(LINE),!
 			else  do {				// Repeat Group
 				type String BLANK

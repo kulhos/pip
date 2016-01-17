@@ -1,0 +1,34 @@
+NOD=1*
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=User ID
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=User ID
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The operating system level user ID.  This ID will identify the user a control
+the user class of the user and what local procedures, based on user class
+authorization, the user is allowed to execute.

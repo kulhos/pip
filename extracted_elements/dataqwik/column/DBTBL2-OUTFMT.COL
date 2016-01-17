@@ -1,0 +1,38 @@
+NOD=0
+LEN=20
+DFT=VT220
+DOM=
+TBL=
+PTN=
+XPO=@OUTFMT
+XPR=
+TYP=T
+DES=Output Compile Formats
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=14
+RHD=Output compile formats
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The terminal environment(s) to compile screen programs for.  A
+screen can be compiled to one or many output environments.  The
+correct format is TYPE1,TYPE2,TYPE3,TYPE(n).
+
+The default option (no selection made) is VT220 mode.
+
+The current supported output formats are VT220, and BPS.

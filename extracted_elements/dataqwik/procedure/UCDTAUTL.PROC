@@ -41,11 +41,20 @@
 	keywords  - Load table STBLSYSKEYWD into array passed by reference
 
 	---- Revision History --------------------------------------------------
+	2009-05-08, Frans S.C. Witte, CRs: 41380
+		Corrected issue with default time mask
+
+	06/01/07 - Frans S.C. Witte - CR: 27800
+		* Replaced commands(,) by pslPrsr(,)
+		* Replaced 'public' by 'ret' in fp declarations, and removed the
+		  modifier for arrays.
+		* UCINIT() moved to PSLCC.
+
 	05/30/07 - Frans S.C. Witte - CR: 27486
 		* Subroutine keywords(): Added .toString() to convert Row to String
 
 	02/11/07 - Frans S.C. Witte - CRs: 25185 / 25186 / 25187
-		Added assignment of commands("mask","Boolean") to masks().
+		Added assignment of pslPrsr("mask","Boolean") to masks().
 
 	07/24/06 - Frans S.C. Witte - CRs: 21397 / 22061
 		* Added $$kwdRow() and $$kwdRowDef(), and modified $$getSysKwd()
@@ -80,6 +89,9 @@
 		  /PSLBOOT qualifier, which places the unit in the Upgrade
 		  group.
 	*/
+	#PACKAGE framework.psl
+	#OPTION  ResultClass ON
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -96,10 +108,9 @@
 	// * Keep these comments as single line to ensure they exist in the  *
 	// * generated M code.                                               *
 	// *******************************************************************
-	quit
 
 	// ---------------------------------------------------------------------
-public JRNFUNCS( String KEYWORDS())	// DEPRECATED;
+private void JRNFUNCS( String KEYWORDS())	// DEPRECATED;
 	/* ---------------------------------------------------------------------
 	No-op. Used to load table STBLJRNFUNC into array passed by reference
 
@@ -119,8 +130,9 @@ public JRNFUNCS( String KEYWORDS())	// DEPRECATED;
 	quit 
 
 	// ---------------------------------------------------------------------
-public getSysKwd( local String KWD,	// requested keyword
-		 public String caKwd())	// optional keyword cache
+public String getSysKwd( noret String KWD	// requested keyword
+		  , String caKwd()		// optional keyword cache
+		  )	// Get the keyword translation from the cache, load if needed
 	/* ---------------------------------------------------------------------
 	Get the keyword translation from the cache, and load the cache with the
 	keyword data if needed.
@@ -128,11 +140,12 @@ public getSysKwd( local String KWD,	// requested keyword
 	OUTPUTS:
 	. $$ = translation of keyword (DES column)
 	*/
-	type Row kwdRow = $$kwdRow( KWD, .caKwd()).toRow( "#$$kwdRowDef^UCDTAUTL")
+	type Row kwdRow = $$kwdRow( KWD, caKwd()).toRow( "#$$kwdRowDef^UCDTAUTL")
 	quit kwdRow.des
 
 	// ---------------------------------------------------------------------
-public keywords( public String KWDS())	// supported keywords
+public void keywords( String KWDS()	// supported keywords
+		)	// Load table STBLSYSKEYWD into supplied array
 	/* ---------------------------------------------------------------------
 	Load table STBLSYSKEYWD into array passed by reference
 
@@ -181,8 +194,9 @@ public keywords( public String KWDS())	// supported keywords
 	quit
 
 	// ---------------------------------------------------------------------
-public kwdRow( local String KWD,	// requested keyword
-		public String caKwd())	// optional keyword cache
+public String kwdRow( noret String KWD	// requested keyword
+		, String caKwd()	// optional keyword cache
+		)	// Get the keyword descriptor row from the cache, load if needed
 	/* ---------------------------------------------------------------------
 	Get the keyword descriptor row from the cache, and load the cache with
 	the keyword data if needed.
@@ -201,7 +215,7 @@ public kwdRow( local String KWD,	// requested keyword
 		converted to upper-case for SQL compliance, and ease of
 		processing inside UCDBRT).
 	*/
-	if 'caKwd.data() do keywords( .caKwd())
+	if 'caKwd.data() do keywords( caKwd())
 
 	// found as supplied, return complete descriptor, cf UCGM
 	if caKwd( KWD).exists() quit KWD_"|"_caKwd( KWD)
@@ -218,31 +232,31 @@ public kwdRow( local String KWD,	// requested keyword
 	quit kwd_ "|"_ caKwd( kwd)
 
 	// ---------------------------------------------------------------------
-public kwdRowDef()	// return defintion of Row returned by $$kwdRow()
+public String kwdRowDef()	// return defintion of Row returned by $$kwdRow()
 	/* ---------------------------------------------------------------------
 	*/
 	type literal String KWDROWDEF = "KEYWORD,DES,GLOBALSCOPE,CLASS"
-	quit {Row}(KWDROWDEF_ 9.char()_ 124)
+	quit KWDROWDEF_ 9.char()_ 124
 
 	// ---------------------------------------------------------------------
-public masks( String co(,))	// compiler options	/MECH=REFARR:RW
+public void masks( PSLParser prsr)	// compiler options	/MECH=REFARR:RW
 	/* ---------------------------------------------------------------------
-	Load string mask defaults into co("mask",className)
+	Load string mask defaults into prsr("PSL",className_"Mask")
 	For each class for which a default mask applies, the following algoritm
 	is maintained:
-	- if co( "mask", class).exists() don't overwrite
-	- else if the soft-coded value exists, store it in co( "mask", class)
-	- else use a hard-coded default
+	- if 'prsr.getSetting( "PSL", class_"Mask", "").isNull() don't overwrite
+	- else if DBCTLDVFM row exists, add it to prsr
+	- else add a hard-coded default
 
 	OUTPUTS:
-	. co("mask","Boolean") = default Boolean mask
-		Soft-coded default: %MSKL.extract(1)_","_%MSK.extract(2)
+	. do prsr.addSetting("PSL", "BooleanMask", default Boolean mask)
+		Soft-coded default: SELECT MSK FROM DBCTLDVFM WHERE TYP='L'
 		Hard-coded default: "+,-"
-	. co("mask","Date") = default Date mask
-		Soft-coded default: %MSKD
+	. do prsr.addSetting("PSL", "DateMask", default Date mask)
+		Soft-coded default: SELECT MSK FROM DBCTLDVFM WHERE TYP='D'
 		Hard-coded default: "YEAR-MM-DD" (ISO / SQL compliant)
-	. co("mask","Time") = default Time mask
-		Soft-coded default: %MSKT
+	. do prsr.addSetting("PSL", "TimeMask", default Time mask)
+		Soft-coded default: SELECT MSK FROM DBCTLDVFM WHERE TYP='C'
 		Hard-coded default: "24:60:SS" (ISO / SQL compliant)
 
 	NOTES:
@@ -265,10 +279,11 @@ public masks( String co(,))	// compiler options	/MECH=REFARR:RW
 	type String msk
 
 	// Ensure Boolean mask value
-	if 'co( "mask" "Boolean").exists() do {
-		/* Soft-coded from standard var */
+	if prsr.getSetting( "PSL", "BooleanMask", "").isNull() do {
+		/* ================ Soft-coded from standard var
 		type public String %MSKL
-		if '%MSKL.get().isNull() set co( "mask", "Boolean") = %MSKL.extract()_","_%MSKL.extract(2) quit
+		if '%MSKL.get().isNull() do prsr.addSetting( "PSL", "BooleanMask", %MSKL.extract()_","_%MSKL.extract(2)) quit
+		================ */
 
 		/* Soft-coded from DBCTLDVFM */
 		set msk = ""
@@ -279,17 +294,18 @@ public masks( String co(,))	// compiler options	/MECH=REFARR:RW
 			type ResultSet rsD = Db.select( "MSK", "DBCTLDVFM", "TYP='L'")
 			if rsD.next() set msk = rsD.getCol(1)
 		}
-		if 'msk.isNull() set co( "mask", "Boolean") = msk.extract()_","_msk.extract(2) quit
+		if 'msk.isNull() do prsr.addSetting( "PSL", "BooleanMask", msk.extract()_","_msk.extract(2)) quit
 
 		/* Hard-coded */
-		set co( "mask", "Boolean") = MASKBOOL
+		do prsr.addSetting( "PSL", "BooleanMask", MASKBOOL)
 	}
 
 	// Ensure Date mask value
-	if 'co( "mask" "Date").exists() do {
-		/* Soft-coded from standard var */
+	if prsr.getSetting( "PSL", "DateMask", "").isNull() do {
+		/* ================ Soft-coded from standard var
 		type public String %MSKD
-		if '%MSKD.get().isNull() set co( "mask", "Date") = %MSKD quit
+		if '%MSKD.get().isNull() do prsr.addSetting( "PSL", "DateMask", %MSKD) quit
+		================ */
 
 		/* Soft-coded from DBCTLDVFM */
 		set msk = ""
@@ -300,17 +316,18 @@ public masks( String co(,))	// compiler options	/MECH=REFARR:RW
 			type ResultSet rsD = Db.select( "MSK", "DBCTLDVFM", "TYP='D'")
 			if rsD.next() set msk = rsD.getCol(1)
 		}
-		if 'msk.isNull() set co( "mask", "Date") = msk quit
+		if 'msk.isNull() do prsr.addSetting( "PSL", "DateMask", msk) quit
 
 		/* Hard-coded */
-		set co( "mask", "Date") = MASKDATE
+		do prsr.addSetting( "PSL", "DateMask", MASKDATE)
 	}
 
 	// Ensure Time mask value
-	if 'co( "mask" "Time").exists() do {
-		/* Soft-coded from standard var */
+	if prsr.getSetting( "PSL", "TimeMask", "").isNull() do {
+		/* ================ Soft-coded from standard var
 		type public String %MSKT
-		if '%MSKT.get().isNull() set co( "mask", "Time") = %MSKT quit
+		if '%MSKT.get().isNull() do prsr.addSetting( "PSL", "TimeMask", %MSKT) quit
+		================ */
 
 		/* Soft-coded from DBCTLDVFM */
 		set msk = ""
@@ -318,77 +335,12 @@ public masks( String co(,))	// compiler options	/MECH=REFARR:RW
 			catch vEx {
 				set msk = ""
 			}
-			type ResultSet rsT = Db.select( "MSK", "DBCTLDVFM", "TYP='T'")
+			type ResultSet rsT = Db.select( "MSK", "DBCTLDVFM", "TYP='C'")
 			if rsT.next() set msk = rsT.getCol(1)
 		}
-		if 'msk.isNull() set co( "mask", "Time") = msk quit
+		if 'msk.isNull() do prsr.addSetting( "PSL", "TimeMask", msk) quit
 
 		/* Hard-coded */
-		set co( "mask", "Time") = MASKTIME
+		do prsr.addSetting( "PSL", "TimeMask", MASKTIME)
 	}
-	quit 
-
-	// ---------------------------------------------------------------------
-private UCINIT( String commands(,))	// Compiler commands	/NOREQ/MECH=REFARR:RW
-	/* ---------------------------------------------------------------------
-	Set up variables and arrays needed by PSL compiler which can vary
-	by environment. The environment specific overwrites are optained as
-	follows:
-	- It reads and interprets the WARN, OPTIMIZE and Options setting from
-		the file specified by the environment variable SCAU_UCOPTS.
-		Settings obtained from this file will be merged into
-		commands(,), without overwriting existing values.
-		This step can and will be performed independent of the setting
-		of the boot restriction level.
-	- Next, if the boot restriction level is greater than 2, the function
-		returns. In that case, only settings from the file specified
-		by SCAU_UCOPTS will have been merged.
-	- Otherwise it calls ^UCOPTS(.Options) to obtain the default WARN,
-		OPTIMIZE and Options settings that are ON for this environment.
-		Settings obtained from this call will be merged into
-		commands(,), without overwriting existing values.
-
-	OUTPUTS:
-	. commands(,) Several subtrees will have been added to the supplied array.
-		Options that are already present in the array will not be
-		overwritten.
-
-	NOTES:
-	. This subroutine calls ^UCOPTS if commands("boot","restrcitionlevel")<3
-		In that case, it assumes the call is appropriate.
-	*/
-	type String grp,val
-	type String usrOpts(,)		// values from $HOME/UCOPTS.ini
-
-	// Step 1: User supplied overwrites
-	type String file = $$SCAU^%TRNLNM("UCOPTS")
-	if 'file.isNull() do {
-		type String path = $$PARSE^%ZFUNC( file, "DIR")
-		if file[path set file = file.extract( path.length() + 1, file.length())
-		do decodeFile^UCGMC( path, file, .usrOpts(,))
-		for grp="WARN","INFO","OPTIMIZE","Options" do {
-			set val = ""
-			for  set val = usrOpts( grp, val).order() quit:val=""  do {
-				if 'commands( grp, val).exists() set commands( grp, val) = usrOpts( grp, val)
-			}
-		}
-	}
-
-	// Step 2: Environment standard values
-	if commands("boot","restrictionlevel").get()'<3 quit
-
-	type Number N
-	type String opt,Options()
-
-	do ^UCOPTS(.Options())
-	for grp="WARN","INFO","OPTIMIZE","Options" do {
-		set opt = Options( grp).get()
-		for N = 1:1:opt.length(",") do {
-			set val = opt.piece(",",N)
-			if val.isNull() quit
-			if commands(grp,val).exists() quit
-			set commands(grp,val) = 1
-		}
-	}
-
 	quit

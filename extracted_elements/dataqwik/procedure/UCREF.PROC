@@ -1,10 +1,56 @@
 //DO NOT MODIFY  Methods of PSL Class Reference|UCREF|||||||1
-
 	/*
 	ORIG: Frans S.C. Witte 
 	DESC: PSL Object Class Library - Methods of Class Reference 
 
-	******** Revision History *********************************************
+	---- Comments ----------------------------------------------------------
+	The M implementation of Reference objects uses the local array vobj(,)
+	to store the objects. The first subscript is an integer object id (oid).
+	This value will be assigned to the instance variable.
+	The state of the object is stored in the lvns vobj(oid), and
+	vobj(oid,node). The lvn vobj(oid) is called the top node.
+	Negative numeric node values are reserved for use by PSL. All other
+	nodes (including the top node, and non-numeric nodes) are available to
+	the class designer.
+
+	PSL uses the following specical purpose nodes:
+	vobj(oid,-1) = className _ 9.char() _ stackLevel _ 9.char()_ destructor
+		* The className can be accessed as Object.getClass(oid)
+		* The stackLevel contains the runtime stackLevel ($STACK) of the
+			outermost variable or property that may reference the
+			object.
+		* The destructor contains the M_lableref that need to be called
+			just prior to the object's destruction.
+	vobj(oid,-999,) = stored value container
+		vobj(oid,-999,valueId) = stored value
+		Use Reference.setStoredValue(valueID,value) to assign a value,
+		use Reference.getStoredValue(valueID) to obtain the value.
+
+	Other PSL Intrinsic Classes that use special purpose nodes:
+	- Record	see UCRECORD
+	- ResultSet	see UCRESULT
+	- RowSet	see UCROWSET
+
+	Limitations of the current M implementation
+	===========================================
+	The current implementation of Reference objects has a couple of
+	limitations that almost all have to do with the scope maintenance of the
+	objects in the vobj(,) array:
+	* Multiple Rerefence
+		If a Reference descendant is referenced by 2 variables that have
+		different scope, the compiler will generate code that deletes
+		the object when the innermost reference goes out of scope.
+
+	---- Revision History --------------------------------------------------
+	07/04/07 - Frans S.C. Witte - CR 27800
+		* Added description of vobj() structure and the nodes that are
+		  reserved for all Reference descendants.
+		* Modified setValue to generate SET instead of DO.
+		* Modified getPointer to deal with cases where ObjectName is not
+		  a variable (e.g. when it is a function or another method call)
+		* Modified all method generating code that would accept a
+		  String implementation of a Reference descendant.
+
 	12/23/05 - Frans S.C. Witte - CRs: 18727 / 18728
 		Replaced this. by PSL. and removed #XECUTE
 
@@ -12,6 +58,8 @@
 		Code from PSL procedure UCOBJECT moved to this PSL procedure.
 		
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -30,27 +78,23 @@
 	// *******************************************************************
 	quit
 
-private copy	// method Reference.copy; Returns Reference
+	// ---------------------------------------------------------------------
+copy	// method Reference.copy; Returns Reference
 	/*
 	INPUTS:
 	. PSL.objectName
 
 	OUTPUTS:
 	. PSL.return = $$copy^UCGMR(PSL.objectName)
-		OR	PSL.objectName (iff $$primVar^UCPRIM())
-
-		Although the method applies to Reference classes only, the
-		implementation of the class may be primitive.
 	*/
-	
-	type String class=$$getClass^UCGM(PSL.objectName,PSL.objectLevel)
-	
-	if $$primVar^UCPRIM(class) set PSL.return=PSL.objectName
-	else  	set PSL.return="$$copy^UCGMR("_PSL.objectName_")"
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type String class = $$getClass^UCGM(PSL.objectName,PSL.objectLevel)
+
+	set PSL.return="$$copy^UCGMR("_PSL.objectName_")"
 	quit
 	
-
-private equals	//method Reference.equals; Returns boolean
+	// ---------------------------------------------------------------------
+equals	//method Reference.equals; Returns boolean
 	/*
 	INPUTS:
 	. PSL.objectName
@@ -58,33 +102,26 @@ private equals	//method Reference.equals; Returns boolean
 
 	OUTPUTS:
 	. PSL.return = $$equals^UCGMR(PSL.objectName,PSL.actual(1))
-		OR	PSL.objectName = PSL.actual(1) (iff $$primVar^UCPRIM())
 
-		Although the method applies to Reference classes only, the
-		implementation of the class may be primitive.
 	NOTES:
-	* If comparing RecordXXX classes, need to turn Object optimization off.
+	. If comparing RecordXXX classes, need to turn Object optimization off.
 	  However, even then the outcome depends on the nodes that have actually
 	  been loaded from the database.
 	*/
-	
 	type String class1,class2
-	
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set class1=$$getClass^UCGM(PSL.objectName)
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set class2=$$getClass^UCGM(PSL.actual(1))
 
 	if class1'=class2 do PSL.error("Objects must the same type") quit
 
-	/* FSCW CR11441: replaced following two lines
-	if class1="String" set PSL.return="("_PSL.objectName_"="_PSL.actual(1)_")"
-	else  set PSL.return="$$equals^UCGMR("_PSL.objectName_","_PSL.actual(1)_")"
-	*/
-	if $$primVar^UCPRIM(class1) set PSL.return="("_PSL.objectName_"="_PSL.actual(1)_")"
-	else  set PSL.return="$$equals^UCGMR("_PSL.objectName_","_PSL.actual(1)_")"
+	set PSL.return="$$equals^UCGMR("_PSL.objectName_","_PSL.actual(1)_")"
 	quit
 	
-
-private getPointer     // method Reference.getPointer; returns Number (integer)
+	// ---------------------------------------------------------------------
+getPointer     // method Reference.getPointer; returns Number (integer)
 	/*
 	INPUTS:
 	. PSL.objectName
@@ -96,13 +133,17 @@ private getPointer     // method Reference.getPointer; returns Number (integer)
 	. object optimization unconditionally turned on
 	*/
 
-	do WARNDEP^UCGM("Reference.getPointer() - consider using Object.exists()")
-	set PSL.return="$G("_PSL.objectName_")"
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do WARNDEP^UCGM( 2.7, 0,"Reference.getPointer() - consider using Object.exists()")
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if $$isVar^UCGM( PSL.objectName) ! $$isArr^UCGM( PSL.objectName) set PSL.return="$G("_PSL.objectName_")"
+	else  set PSL.return="+"_PSL.objectName
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if $$getOpti^UCGM(PSL.objectName,PSL.objectLevel)>PSL.msrc do setOpti^UCGM(PSL.objectName,PSL.objectLevel,0)
         quit
 	
-
-private getValue	// method Reference.getStoredValue(String tag)
+	// ---------------------------------------------------------------------
+getValue	// method Reference.getStoredValue(String tag)
 	/*
 	INPUTS:
 	. PSL.objectName
@@ -110,23 +151,18 @@ private getValue	// method Reference.getStoredValue(String tag)
 	
 	OUTPUTS:
 	. PSL.return = $GET(PSL.olvn(PSL.objectName,-999,PSL.actual(1)))
-
-		Although method applies to Reference classes only, the
-		implementation of the class may be primitive.
-		In that case a compiletime error is returned.
 	*/
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type String class = $$getClass^UCGM(PSL.objectName,PSL.objectLevel)	
 
-	type String class=$$getClass^UCGM(PSL.objectName,PSL.objectLevel)	
-
-	if $$primVar^UCPRIM(class) do PSL.error("Method is invalid for class with primitive implementation") quit
 	if PSL.actual(1).isNull(1) do PSL.error("Tag parameter is required")
 
 	set PSL.return="$G("_PSL.oLvn_"("_PSL.objectName_",-999,"_PSL.actual(1)_"))"
 
 	quit
 
-
-private setValue	// method Reference.setStoredValue(String tag,Object value)
+	// ---------------------------------------------------------------------
+setValue	// method Reference.setStoredValue(String tag,Object value)
 	/*
 	INPUTS:
 	. PSL.objectName
@@ -134,53 +170,26 @@ private setValue	// method Reference.setStoredValue(String tag,Object value)
 	. PSL.actual(2) = value of runtime property /REQ
 	
 	OUTPUTS:
-	. PSL.return = vObjStor(PSL.objectName,PSL.actual(1),PSL.actual(2))
-	. new PSLBuffer with vObjStor
-
-		Although method applies to Reference classes only, the
-		implementation of the class may be primitive.
-		In that case a compiletime error is returned.
+	. PSL.return = S:PSL.postcond vobj(PSL.objectName, -999, PSL.actual(1)) = PSL.actual(2)
+	. mcode backed up
 	*/
-
-	type String class=$$getClass^UCGM(PSL.objectName,PSL.objectLevel)	
-
-	// if class.isPrimitive() do PSL.error("Method is invalid for Primitive objects") quit
-
-	if $$primVar^UCPRIM(class) do PSL.error("Method is invalid for class with primitive implementation") quit
-	if PSL.actual(1).isNull(1) do PSL.error("Tag parameter is required")
- 
-        type String label="vObjStor"
- 
-	if 'PSL.subrouExists(label) do {
-        
-		type PSLBuffer buf=PSL.openBuffer("(String object,String p1,String p2)","Object.storeValue")
-		do buf.add("type Public String "_PSL.oLvn)
-		do buf.add("if object.get().isNull() quit")
-		do buf.add("set "_PSL.oLvn_"(object,-999,p1)=p2.get()")
-		do buf.add("quit")
-		do buf.insert(label)
-	}
- 
-        set PSL.return=label_"("_PSL.objectName_","_PSL.actual(1)_","_PSL.actual(2)_")"
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set PSL.mcode  = $$backup^UCGM( PSL.mcode)
+        set PSL.return = "S"_ PSL.postCond_ " "_ PSL.oLvn_ "("_ PSL.objectName_",-999,"_PSL.actual(1)_")="_PSL.actual(2)
 	quit
 
-
-private toString	// method Reference.toString; Returns String
+	// ---------------------------------------------------------------------
+toString	// method Reference.toString; Returns String
 	/*
 	INPUTS:
 	. PSL.objectName
 	
 	OUTPUTS:
 	. PSL.return = $$toString^UCGMR(PSL.objectName)
-		OR	PSL.objectName (iff $$primVar^UCPRIM())
-
-		Although method applies to Reference classes only, the
-		implementation of the class may be primitive.
 	*/
-	
-	type String class=$$getClass^UCGM(PSL.objectName,PSL.objectLevel)
-	
-	if $$primVar^UCPRIM(class) set PSL.return=PSL.objectName
-	else  set PSL.return="$$toString^UCGMR("_PSL.objectName_")"
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type String class = $$getClass^UCGM(PSL.objectName,PSL.objectLevel)
+
+	set PSL.return="$$toString^UCGMR("_PSL.objectName_")"
 	quit
 	

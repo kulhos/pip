@@ -1,0 +1,51 @@
+NOD=JRNID
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Description
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Description
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+Freeform text to describe the journal table name. 
+For example History Maintenance
+
+               Create journal entry under following condition
+
+      Transaction Type        Financial: N        Online: Y        Batch: N
+Yes or No prompt to determine whether or not the table entry will be recorded
+via financial, online, or batch transactions.
+
+
+       Processing Mode           Insert: Y        Update: N       Delete: N
+Yes or No prompt to determine whether or not the table entry will be recorded
+via Insert (create), Update (modify), Delete transactions.
+
+Effective Dated Option          Non-EFD: Y           EFD: N                
+Yes or No prompt to determine whether or not the table entry will be recorded
+via an effective dated transaction.
+
+
+

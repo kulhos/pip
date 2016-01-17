@@ -1,0 +1,80 @@
+NOD=
+LEN=78
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Computed Expression
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Computed Expression
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+A process the system performs to define the value of a related data item.  The
+process can be a mathematical expression or relationship, a MUMPS command, a
+MUMPS routine, or any combination of these.  The related data item does not
+physically exist in the database.
+
+After the system calculates this value, DATA-QWIK provides the same
+functionality for this data item as it does for a data item that contains
+physical data in the database.  The institution can use the computed data item
+value for reporting, sorting, inquiries, transfer, etc.  Although screens may
+contain computed data items, the user cannot directly modify their values.
+
+Examples of uses of computed data items:
+
+1. Mathematical Relationships
+
+   ""<<BAL>>*[LN]IRN/36500
+
+        Indicates that the system multiplies the loan's ledger balance
+        (<<BAL>>) by the loans interest rate ([LN]IRN), and divides by 36500.
+
+   [INV]QTY*[INV]COST
+
+        Indicates that the system multiplies the quantity of inventory
+        ([INV]QTY) by the cost of the inventory ([INV]COST).
+
+   ""<<CID>>#100
+
+        Indicates that the system returns the last two digits of the account
+        number (<<CID>>).
+
+2. MUMPS Commands
+
+   $P([LN]LNM," ",1)
+
+        Indicates that the system returns the first piece of the [LN]LNM data
+        item with the delimiter being the space character.
+
+   $S([LN]LTD+60<$H:"",1:"NOT")_" DELINQUENT"
+
+        Indicates that the system returns the value DELINQUENT if the value for
+        the [LN]LTD data item is more than 60 days prior to today.  Otherwise,
+        the system returns the value NOT DELINQUENT.
+
+3. MUMPS Routines
+
+   D ^ROUTINE
+
+        Indates that DATA-QWIK calls the user-defined MUMPS program called
+        ROUTINE.

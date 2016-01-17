@@ -1,0 +1,40 @@
+NOD=DI
+LEN=58
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Default Value
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=Default
+SRL=
+CNV=
+LTD=
+USER=
+MDD=DFT
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The initial value that the field will assume when a new record is
+loaded.  It can be modified if it is not protected.  
+
+The default parameter supports the following types of expressions:
+
+        - <<[^]glvn>>              MUMPS Global/Local Variable Reference
+        - <<$[$^]function>>        MUMPS Functions and Extrinsic Functions
+        - FID.DI or [FID]DI        DATA-QWIK Data Item Reference
+        - ...                      Alphanumeric Literal (All other)

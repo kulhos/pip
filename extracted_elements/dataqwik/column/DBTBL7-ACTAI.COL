@@ -1,0 +1,37 @@
+NOD=TRGID
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=After INSERT
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=5
+RHD=After@INSERT
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+An after insert trigger is responsible for integrity checking after a record
+has been created.
+
+Sanchez will release only one before_insert and one after_insert trigger but
+clients may create a Z named before_insert and after_insert trigger for custom
+changes.

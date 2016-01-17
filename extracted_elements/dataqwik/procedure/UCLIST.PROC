@@ -10,6 +10,10 @@
 		which makes this unit CharacterSet dependent.
 
 	---- Revision History --------------------------------------------------
+	09/10/07 - Frans S.C. Witte - CRs 27800
+		* Clean up to conform to stricter PSL rules
+		* Added implementation to List.isEmpty
+
 	09/20/06 - Frans S.C. Witte - CRs 22720 / 22274
 		Modified use of PSL.mExpr to include calls to $$tokenPush /
 		$$tokenPop
@@ -70,6 +74,8 @@
 		This implies that canonic Numbers sort numerically, and
 		preceed Strings when intermixed.
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -88,8 +94,7 @@
 	// *******************************************************************
 	quit
 
-
-	/* ****************************************************************** */
+	// ---------------------------------------------------------------------
 private add	// Method: List.add(element,delimiter,allowDuplicate,inOrder)
 	/* Generate code for List.add(,,,) method that adds an element to the List
 	INPUTS:
@@ -132,14 +137,14 @@ private add	// Method: List.add(element,delimiter,allowDuplicate,inOrder)
 		else  set PSL.return = "$S("_ obj_ ".isNull():"_ ap1_ ",1:"_ obj_ "_"_ ap2_ "_"_ ap1_ ")"
 		
 		/* Use explicit cast {List} because objectName can be literal, in which case its class will be String */
-		if 'allowDup set PSL.return = "$S({List}"_ obj_ ".contains("_ ap1_ ","_ ap2_"):"_ obj_ ",1:"_ PSL.return_ ")"
+		if 'allowDup set PSL.return = "$S(({List}"_ obj_ ").contains("_ ap1_ ","_ ap2_"):"_ obj_ ",1:"_ PSL.return_ ")"
 
 		// translate PSL expression to M expression
 		set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr( PSL.return), 3)
 
 	}
 
-	type String label="vLstAdd"
+	type literal String label = "vLstAdd"
 
 	if 'PSL.subrouExists(label) do {
 		
@@ -147,7 +152,7 @@ private add	// Method: List.add(element,delimiter,allowDuplicate,inOrder)
 
 		do buf.add("if object.isNull() quit p1")
 		do buf.add("if p2.isNull() set p2="",""")
-		do buf.add("if 'p3,'p3.isNull(),{List}object.contains(p1,p2) quit object")
+		do buf.add("if 'p3,'p3.isNull(),({List}object).contains(p1,p2) quit object")
 		do buf.add("if 'p4 quit object_p2_p1")
 		do buf.add("")
 		do buf.add("if object.piece(p2,1)]]p1 quit p1_p2_object")
@@ -157,15 +162,14 @@ private add	// Method: List.add(element,delimiter,allowDuplicate,inOrder)
 		do buf.add("for i=1:1:object.length(p2) if object.piece(p2,i)]]p1 quit")
 		do buf.add("quit object.piece(p2,1,i-1)_p2_p1_p2_object.piece(p2,i,object.length())")
 
-		do buf.insert(label)
+		do buf.insert(label, "List")
 	}
 
 	set PSL.return="$$"_label_"("_PSL.objectName_","_PSL.actual(1)_","_PSL.actual(2)_","_allowDup_","_inOrder_")"
 
 	quit
 
-
-	/* ****************************************************************** */
+	// ---------------------------------------------------------------------
 private contains	// Method List.contains(String expr,String delimiter,Boolean ignoreCase) 
 	/* Generate code for List.contains(,,,) method that adds an element to the List
 	INPUTS:
@@ -188,7 +192,7 @@ private contains	// Method List.contains(String expr,String delimiter,Boolean ig
 	if ap3.isLiteral(),ap3.stripQuotes() do {
 
 		if PSL.return.isLiteral() set PSL.return = PSL.return.upperCase()
-		else  set PSL.return = PSL.return_".upperCase()"
+		else  set PSL.return = "({String}"_PSL.return_").upperCase()"
 
 		if ap1.isLiteral() set ap1 = ap1.upperCase()
 		else  set ap1=ap1_".upperCase()"
@@ -202,12 +206,12 @@ private contains	// Method List.contains(String expr,String delimiter,Boolean ig
 	}
 
 	//if 'PSL.return.isLiteral() set PSL.return="("_ap2_"_"_PSL.return_"_"_ap2_")"
-	if 'PSL.return.isLiteral() set PSL.return="("_ap2_"_{String}"_PSL.return_"_"_ap2_")"
+	if 'PSL.return.isLiteral() set PSL.return="("_ap2_"_"_PSL.return_"_"_ap2_")"
 	if 'ap1.isLiteral() set ap1="("_ap2_"_"_ap1_"_"_ap2_")"
 
 	//set PSL.return=PSL.mExpr("({String}"_PSL.return_"["_ap1_")")
 	if ap3.isLiteral() set PSL.return = "("_ PSL.return_ "["_ ap1_ ")"
-	else  set PSL.return = "$S("_ ap3_ ":"_ PSL.return_ ".upperCase()["_ ap1_ ".upperCase(),1:"_ PSL.return_ "["_ ap1_ ")"
+	else  set PSL.return = "$S("_ ap3_ ":({String}"_ PSL.return_ ").upperCase()["_ ap1_ ".upperCase(),1:{String}"_ PSL.return_ ")["_ ap1_ ")"
 
 	set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr( PSL.return), 4)
 
@@ -215,8 +219,7 @@ private contains	// Method List.contains(String expr,String delimiter,Boolean ig
 
 	quit
 
-
-	/* ****************************************************************** */
+	// ---------------------------------------------------------------------
 private count	// Method: List.count(String delimiter) - Number of elements in a list
 	/* Generate code for List.count() method that counts the elements of the
 	   List.
@@ -229,11 +232,10 @@ private count	// Method: List.count(String delimiter) - Number of elements in a 
 	*/
 
 	if PSL.actual(1).isNull(1) set PSL.actual(1) = ",".addQuotes()
-	set PSL.return=PSL.mExpr("$S({String}"_PSL.objectName_".isNull():0,1:{String}"_PSL.objectName_".length("_PSL.actual(1)_"))")
+	set PSL.return=PSL.mExpr("$S(({List}"_PSL.objectName_").isEmpty():0,1:({String}"_PSL.objectName_").length("_PSL.actual(1)_"))")
 	quit
 
-
-	/* ****************************************************************** */
+	// ---------------------------------------------------------------------
 private elemAt    // Method: List.elementAt(Number position,String delimiter)
  	/* Generate code for List.elementAt(,) method that returns a single
  	   element. This method is the equivalent of String.piece(delim,pos).
@@ -247,11 +249,23 @@ private elemAt    // Method: List.elementAt(Number position,String delimiter)
 	. PSL.actual(2) = String delimiter, the element delimiter (see general notes)
 	*/
 	if PSL.actual(2).isNull(1) set PSL.actual(2) = ",".addQuotes()
-	set PSL.return = PSL.mExpr( "{String}"_PSL.objectName_".piece("_PSL.actual(2)_","_PSL.actual(1)_")")
+	set PSL.return = PSL.mExpr( "({String}"_PSL.objectName_").piece("_PSL.actual(2)_","_PSL.actual(1)_")")
 	quit
 
+	// ---------------------------------------------------------------------
+private isEmpty	// Method: List.isEmpty() - Shorthand for List.count() = 0
+	/* ---------------------------------------------------------------------
+	Generate code for List.isEmpty() method
+	INPUTS:
+	. PSL.objectName = source object
+	
+	OUTPUTS:
+	PSL.return = code generated for {String}objectName.piece(PSL.actual(1),PSL.actual(2))
+	*/
+	set PSL.return= "("_ PSL.objectName_"="""")"
+	quit
 
-	/* ****************************************************************** */
+	// ---------------------------------------------------------------------
 private position    // Method: List.position(String expr,String delimiter,Boolean ignoreCase) - String is at list position
  	/* Generate code for List.position(,,,) method that adds an element to the List
 	INPUTS:
@@ -266,7 +280,7 @@ private position    // Method: List.position(String expr,String delimiter,Boolea
         */
  
  	// reduce source object to Constant if possible
-	type PSLExpression expr=PSL.objectName.toValue()
+	type PSLExpression exp = PSL.objectName.toValue()
 
 	type String val=PSL.actual(1)		// element to look for
 	type String del=PSL.actual(2)		// delimiter
@@ -280,13 +294,13 @@ private position    // Method: List.position(String expr,String delimiter,Boolea
 
 	if del.isLiteral(),ignore.isLiteral(),'ignore.stripQuotes() do { quit
 
-		if expr.isLiteral() set expr=(del.stripQuotes()_expr.stripQuotes()_del.stripQuotes()).addQuotes()
-		else  set expr="("_del_"_{String}"_expr_"_"_del_")"
+		if exp.isLiteral() set exp = (del.stripQuotes()_exp.stripQuotes()_del.stripQuotes()).addQuotes()
+		else  set exp = "("_del_"_{String}("_exp_")_"_del_")"
 
 		if val.isLiteral() set val=(del.stripQuotes()_val.stripQuotes()_del.stripQuotes()).addQuotes()
 		else  set val=del_"_"_val_"_"_del
 
-		set PSL.return=PSL.mExpr(expr_".piece("_val_",1).length("_del_")")
+		set PSL.return=PSL.mExpr("({String}"_exp_").piece("_val_",1).length("_del_")")
 	}
 
 	type String label="vlstPos"
@@ -303,15 +317,14 @@ private position    // Method: List.position(String expr,String delimiter,Boolea
 		do buf.add("if object'[p1 quit 0")
 		do buf.add("quit object.piece(p1,1).length(p2)")
 
-		do buf.insert(label)
+		do buf.insert(label, "Number")
 	}
 
 	set PSL.return="$$"_label_"("_PSL.objectName_","_PSL.actual(1)_","_del_","_PSL.actual(3)_")"
 
 	quit
 
-
-	/* ****************************************************************** */
+	// ---------------------------------------------------------------------
 private sort	// Method: List.sort( String delimiter, Boolean allowDuplicate) - Sort a list in collating order
 	/*
 	INPUTS:
@@ -337,7 +350,6 @@ private sort	// Method: List.sort( String delimiter, Boolean allowDuplicate) - S
 		do buf.add("type String e")
 		do buf.add("type Number n,s()")
 		do buf.add("if p1.isNull() set p1="",""")
-		do buf.add("if p2.isNull() set p2=1")
 		do buf.add("for n=1:1:object.length(p1) do {")
 		do buf.add("  set e=object.piece(p1,n)")
 		do buf.add("  if e.isNull() quit")
@@ -351,7 +363,7 @@ private sort	// Method: List.sort( String delimiter, Boolean allowDuplicate) - S
 		do buf.add("}")
 		do buf.add("quit object")
 
-		do buf.insert(label)
+		do buf.insert(label, "List")
 	}
 
 	set PSL.return="$$"_label_"("_PSL.objectName_","_PSL.actual(1)_","_PSL.actual(2)_")"

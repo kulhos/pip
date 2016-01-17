@@ -1,0 +1,50 @@
+NOD=0
+LEN=1
+DFT=0
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Fixed Length Record
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=8
+RHD=FIXED@LENGTH RECORD
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         FIXED LENGTH (Y/N)                            Default=N
+
+             N - For standard columnar reports in which numeric
+                 data is right-aligned and text data is left-aligned.
+
+             Y - For a report using data in a fixed-length format.
+                 Used for reports that will be copied to tape or
+                 microfiche.
+
+                 This option will pad each record with spaces to
+                 make the record length equal to the value in
+                 the REPORT WIDTH field.
+
+                 For fixed length reports, the format type for each
+                 data item should usually be set to one of the
+                 fixed-length formats, such as I$, I$n, or IN.
+                 The fixed-length formats pad numeric fields to the
+                 left with zeros and pad text fields to the right
+                 with spaces.

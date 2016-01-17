@@ -1,0 +1,44 @@
+NOD=USERCLASS
+LEN=1
+DFT=0
+DOM=
+TBL=[STBLDBACCRTS]
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=INSERT Rights
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=0
+SFD=
+SIZ=1
+DEL=
+POS=1
+RHD=INSERT@Rights
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+An indicator as to whether or not the userclass has INSERT rights to the table,
+and, if so, whether it includes the right to grant INSERT rights to others.
+For userclasses other than the key work PUBLIC ,if the value of this column is
+1 or 2, the userclass can perform INSERTs to the table.  If the value is 0,
+then the value for INSERTRTS for the userclass PUBLIC will be used.  If that
+value is 0, or if there is no PUBLIC userclass, then no INSERT rights are
+granted to this userclass.
+
+Valid options are:
+
+     0 - privilege not granted
+     1 - privilege granted, without GRANT OPTION
+     2 - privilege granted, with GRANT OPTION

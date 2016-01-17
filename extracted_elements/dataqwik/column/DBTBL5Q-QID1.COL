@@ -1,0 +1,157 @@
+NOD=1
+LEN=78
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=I X'="" D ^DBSQRY
+XPR=
+TYP=T
+DES=Query Line 1
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Query Line 1
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+         QUERY DEFINITION
+
+             To limit the scope of your report, enter a query.
+
+             A query consists of a data item, a query operator, and
+             a data value.  When you list the data item, you must
+             specify the file ID in square brackets in front of the
+             data item name ([FID]DI).
+
+             You can use either the symbol listed below, or you
+             can spell out the word in your query definition.
+
+             SYMBOL   WORD            COMMENTS
+
+               =      EQUAL
+               >      GREATER THAN
+               <      LESS THAN
+               &      AND             Listing on separate lines
+                                      also means "and"
+               '      NOT             Apostrophe
+               [      CONTAINS
+               ,      OR              Use a comma for "or" in a
+                                      list of values
+                      FROM _ TO _     For a range
+
+         _____________________________________________________________________
+         Example - Query with all AND conditions (AND is implied by
+                   listing on separate lines)
+
+          [DEP]BAL>100____________________________
+          [DEP]LNM CONTAINS "DOE"_________________
+          [DEP]IRN>11.5___________________________
+
+          Meaning:  Balance is greater than 100 AND Last Name contains "DOE"
+                    AND Interest Rate is greater than 11.5
+
+         _____________________________________________________________________
+         Example - Query with OR conditions
+
+          [DEP]BAL>100 OR [DEP]LNM CONTAINS "DOE" OR [DEP]IRN>11.5_____
+
+          Meaning:  Balance is greater than 100 or Last Name contains "DOE"
+                    or Interest Rate is greater than 11.5
+
+         _____________________________________________________________________
+         Example - Query with OR conditions related to the same data item
+
+          [DEP]BOO=1,3,5,8__________________________
+          [DEP]TYPE=100,200,500_____________________
+
+          Meaning:  (Branch of Ownership is 1 or 3 or 5 or 8) and
+                    (Type is 100 or 200 or 500)
+
+         _____________________________________________________________________
+         Example - Query with mixed OR and AND conditions
+
+          [DEP]BAL>100 OR [DEP]IRN>11.5_____________
+          [DEP]LNM CONTAINS "DOE" OR [DEP]CLS="D"___
+
+          Meaning:  (Balance is greater than 100 or Interest Rate is
+                    greater than 11.5) and (Last Name contains "DOE" or
+                    Class is "D")
+
+
+         Line Continuation Character
+
+             For a complex query expression that requires more than one
+             line to define, enter a space, then a semicolon (;) at the
+             end of the first line.
+
+         _____________________________________________________________________
+         Example - Query Using the Line Continuation Character
+
+               [DEP]BOO=1 OR [DEP]BOO=2 OR [DEP]BOO=5 ;
+               OR [DEP]BOO>20
+
+
+         Queries Using Text
+
+             For queries using text-type data items, the query value
+             must be enclosed in double quotes.
+
+         _____________________________________________________________________
+         Examples - Queries Using Text-type Data Item
+
+               [DEP]LNM CONTAINS "SMITH"
+
+               [CIF]TAXID="012-34-5678"
+
+               [DEP]CLS="D"
+
+               [DEP]GRP="DDA"
+
+               [DEP]ICF="1MA1"
+
+
+         Date Options for Queries
+
+             For date-type data items, you can use the following
+             options:
+
+                [DEP]TLD=C                Today's date
+
+                [DEP]TLD=C-1              Yesterday
+
+                [DEP]TLD=C+30             30 days from now
+
+                [DEP]TLD=10/20/89
+
+
+         Options for Logical Data Items
+
+             For data items defined as LOGICAL, valid comparison
+             values can be Y, N, T, F, 1, or 0.
+
+                [DEP]IAF=Y is the same as [DEP]IAF=1
+
+                [DEP]IAF=N is the same as [DEP]IAF=0
+
+
+         Null Value in a Query
+
+             To test for a null value in a query, use the MUMPS
+             function $L to check for a length of zero.
+
+             Example:  $L([DEP]LNM)=0

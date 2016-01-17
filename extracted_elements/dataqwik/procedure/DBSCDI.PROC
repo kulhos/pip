@@ -248,7 +248,10 @@ VALPGM(pgm) 	// Validate routine name syntax and also not in MRTNS directory
 	new %ZI,%ZR
 	set %ZI(pgm)="" do INT^%RSEL	   // Search routine name
 	// Duplicate name in MRTNS
-	if $$UPPER^%ZFUNC($G(%ZR(pgm)))["MRTNS" set RM=$$^MSG(871)_""_%ZR(pgm)_pgm_".m" quit 1
+	if '%ZR(pgm).exists() quit 0
+	type String pgmStr = %ZR(pgm)
+	set pgmStr=pgmStr.upperCase()
+	if pgmStr["MRTNS" set RM=$$^MSG(871)_""_%ZR(pgm)_pgm_".m" quit 1
 	// Duplicate name in CRTNS
-	if $$UPPER^%ZFUNC($G(%ZR(pgm)))["CRTNS" set RM=$$^MSG(871)_""_%ZR(pgm)_pgm_".m" quit 1
+	if pgmStr["CRTNS" set RM=$$^MSG(871)_""_%ZR(pgm)_pgm_".m" quit 1
 	quit 0

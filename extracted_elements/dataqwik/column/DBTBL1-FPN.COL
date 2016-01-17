@@ -1,0 +1,46 @@
+NOD=99
+LEN=4
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Data Item Protection Filename
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=Protection@Filename
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ Enter a value in this field only if data item protection was required for data
+ items from this file ID.  All data item protection is driven by compiled
+ protection routines, with one protection routine defined for each file ID for
+ which protection is indicated.  Specifically, the entry in this field will be
+ used to construct the unique program name for the protection program that will
+ be compiled to support the protection logic.
+
+    Example:
+
+   We have a FID="TEST", we enter "TEST" in this field.  Subsequently, we define
+   data item protection for the data item [TEST]BAL (SYSTEM or PRD library).
+   The required compilation of the protection routine would reveal that a
+   program name "VP01TEST" was being defined.  The "TEST" in the program name
+   was pulled from the control page of our example file.  The prefix VP01 will
+   be used for all protection routines.

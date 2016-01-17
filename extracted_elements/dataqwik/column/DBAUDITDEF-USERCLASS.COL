@@ -1,0 +1,34 @@
+NOD=2*
+LEN=12
+DFT=
+DOM=
+TBL=[SCAU0]:NOVALIDATE
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Userclass
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Userclass
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The userclass, or the keyword PUBLIC, for which the audit logging settings
+apply.  PUBLIC settings apply for any userclass that does not have its own
+settings.

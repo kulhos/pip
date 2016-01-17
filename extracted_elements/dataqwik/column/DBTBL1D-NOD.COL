@@ -1,0 +1,78 @@
+NOD=DI
+LEN=26
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Subscript Key
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Node
+SRL=
+CNV=
+LTD=
+USER=
+MDD=NOD
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+This field determines where the data item is physically located in the
+MUMPS global.  The mapping of a file links the data dictionary to the
+physical file structure.
+
+The value of this field is appended to the physical access keys
+defined on the file control page to create the full MUMPS database
+reference.
+
+      This field contains one of the following formats:
+
+  [Alpha]Numeric - The Sub Record ID (MUMPS node name) within the record
+  
+      Bottom Key - Defined that the data item maps to the bottom key
+                   of the access structure.
+
+            NULL - The data item is either computed or the file type is
+                   0 (not a physical database)
+
+      Example:
+
+      +------------------------------------------------------------------+
+      |       File Name: DEP                                             |
+      |       Data Item: CRCD            Currency Code                   |
+      |                                                                  |
+      |   Sub Record ID: 50                           Column: 21         |
+      |                                                                  |
+      +------------------------------------------------------------------+
+      +------------------------------------------------------------------+
+      |       File Name: HIST                                            |
+      |       Data Item: EFD            Effective Date                   |
+      |                                                                  |
+      |   Sub Record ID: TSEQ                         Column:  5         |
+      |                                                                  |
+      +------------------------------------------------------------------+
+
+      +------------------------------------------------------------------+
+      |       File Name: CIF                                             |
+      |       Data Item: AGE           Customer Age                      |
+      |                                                                  |
+      |   Sub Record ID:                          Column:                |
+      |     Window Size: 2         Compression Reference:                |
+      |                                                                  |
+      |                     Computed Expression                          |
+      |                                                                  |
+      |D AGE^CIFU1 ; [CIF]DOB                                            |
+      |                                                                  |
+      +------------------------------------------------------------------+

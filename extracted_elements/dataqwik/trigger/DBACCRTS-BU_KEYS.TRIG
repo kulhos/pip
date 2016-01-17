@@ -1,0 +1,20 @@
+//DO NOT MODIFY  Before Update Keys Columns|0|1|0|0|0|0|TABLENAME,USERCLASS|||
+
+	/* ----- Revision History ---------------------------------------------
+	
+	01/13/2008 - RussellDS - CR30801
+		Created.
+	*/
+	
+	type String keyname
+	
+	/* Prohibit update of key columns.  Keeps rights management logic
+	   in triggers simpler. */
+	   
+	if this.isChanged("TABLENAME") set keyname = "TABLENAME"
+	else  if this.isChanged("USERCLASS") set keyname = "USERCLASS"
+	
+	// Cannot update access key ~p1
+	do this.throwError($$^MSG(8556, keyname))
+		
+	quit

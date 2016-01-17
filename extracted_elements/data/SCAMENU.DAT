@@ -1,0 +1,169 @@
+FUNMENU	MDESC	MNUMB	SNUMB
+810	File Definition	800	1
+820	Screen Definition	800	2
+850	Report Definition	800	3
+860	QWIK Report Definition	800	4
+840	Query Definition	800	5
+895	Data Entry	800	6
+898	Documentation System	800	7
+899	Utilities	800	8
+814	Data Item Protection	800	9
+830	PROFILE/SQL	800	10
+805	Filer Definition	800	11
+897	Aggregate Definitions	800	12
+833	Batch Definition	800	13
+825	Procedure Definition	800	14
+807	Trigger Definition	805	1
+808	Index File Definition	805	2
+809	Journal File Definition	805	3
+819	Foreign Key Definition	805	4
+825	Procedure Definition	805	5
+DBSFILB	Build Run-Time Filer Routine	805	6
+DBSTRGC	Create Trigger Definition	807	1
+DBSTRGM	Modify Trigger Definition	807	2
+DBSTRGL	List Trigger Definition	807	3
+DBSTRGD	Delete Trigger Definition	807	4
+DBSIDXC	Create Index File Definition	808	1
+DBSIDXM	Modify Index File Definition	808	2
+DBSIDXL	List Index File Definition	808	3
+DBSIDXD	Delete Index File Definition	808	4
+DBSIDXCO	Copy Index File Definition	808	5
+DBSIDXEX	Rebuild Index Files	808	6
+DBSJRNC	Create Journal File Definition	809	1
+DBSJRNM	Modify Journal File Definition	809	2
+DBSJRND	Delete Journal File Definition	809	3
+DBSJRNCO	Copy Journal File Definition	809	4
+DBSJRNL	List Journal File Definition	809	5
+DBSDFC	Create File Definition	810	1
+DBSDFM	Modify File Definition	810	2
+DBSDFL	List File Definition	810	3
+DBSDFCO	Copy File Definition	810	4
+DBSDFD	Delete File Definition	810	5
+DBSDF9	Rebuild Data Item Control Files	810	6
+811	User-Defined Data Types Functions	810	7
+812	Master Data Dictionary	810	8
+DBSDOM	Modify User-Defined Data Type	811	1
+DBSDOML	List User-Defined Data Types	811	2
+DBSDOMREL	Display Data Type Relationships	811	3
+DBSDOMBLD	Rebuild Data Type Relationships	811	4
+SCASYS	Define System MDD Linkage	812	1
+DBSMDDL	List Master Data Dictionary	812	2
+DBSMDDBLD	Rebuild MDD Relationships	812	3
+DBSPROTC	Create Data Item Protection	814	1
+DBSPROTM	Modify Data Item Protection	814	2
+DBSPROTL	List Data Item Protection	814	3
+DBSPROTD	Delete Data Item Protection	814	4
+DBSPROTB	Build Run-Time Protection Routine	814	5
+DBSPROTMC	Mass Recompile Screens/Reports	814	6
+DBSPROTBALL	Mass Recompile Protection Routines 	814	7
+DBSSPB	Build Stored Procedures	814	8
+DBSFK	Foreign Key Definition Maintenance	819	1
+DBSFKL	List Foreign Key Definition	819	2
+DBSFKL1	Foreign Key Report	819	3
+DBSFKB	Rebuild Foreign Key Index File	819	4
+DBSDSC	Create Screen Definition	820	1
+DBSDSM	Modify Screen Definition	820	2
+DBSDSL	List Screen Definition	820	3
+DBSDSP	Print Screen Definition	820	4
+DBSDSCO	Copy Screen Definition	820	5
+DBSDSD	Delete Screen Definition	820	6
+DBSDRV	Create Function Menu	820	7
+DBSDSMC	Build Run-Time Routine	820	8
+DBSPROCC	Create Procedure Definition	825	1
+DBSPROCM	Modify Procedure Definition	825	2
+DBSPROCD	Delete Procedure Definition	825	3
+DBSPROCL	List Procedure Definition	825	4
+DBSPROCCO	Copy Procedure Definition	825	5
+DBSPROCB	Build Run-time Procedure Routine	825	6
+DBSMSQL	SQL Interactive Editor	830	1
+DBSCACHEL	List SQL Cache Table	830	2
+DBSCACHEP	Purge SQL Cache Table	830	3
+DBSSPL	List Stored Procedures	830	4
+DBSSPB	Build Stored Procedure Routines	830	5
+DBSSTFSQL	Rejected store and forward report	830	6
+DBSBCHC	Create Batch Definition	833	1
+DBSBCHM	Modify Batch Definition	833	2
+DBSBCHD	Delete Batch Definition	833	3
+DBSBCHL	List Batch Definition	833	4
+DBSBCHCO	Copy Batch Definition	833	5
+DBSBCHB	Build Run-time routine	833	6
+DBSMM	PSL Interactive Editor	833	7
+DBSQRYC	Create Query Definition	840	1
+DBSQRYM	Modify Query Definition	840	2
+DBSQRYL	List Query Definition	840	3
+DBSQRYCO	Copy Query Definition	840	4
+DBSQRYD	Delete Query Definition	840	5
+DBSEXEC	Create Report Definition	850	1
+DBSEXEM	Modify Report Definition	850	2
+DBSEXEL	List Report Definition	850	3
+DBSEXEP	Print Report Definition	850	4
+DBSEXECO	Copy Report Definition	850	5
+DBSEXED	Delete Report Definition	850	6
+DBSEXEB	Build Run-Time Report	850	7
+DBSEXER	Run Report	850	8
+DBSEXEFN	Create Report Writer Function	850	9
+DBSRWQR	QWIK Report To RW Report Conversion	850	10
+DBSEXERDIST	Run Report (Distribution Mode)	850	11
+DBSEXEFNDIST	Create RW Function (Distribution)	850	12
+DBSQRC	Create QWIK Report Definition	860	1
+DBSQRM	Modify QWIK Report Definition	860	2
+DBSQRCO	Copy QWIK Report Definition	860	3
+DBSQRD	Delete QWIK Report Definition	860	4
+DBSQRL	List QWIK Report Definition	860	5
+DBSQRR	Run QWIK Report	860	6
+DBSQRB	Build Run-time Report	860	7
+DBSEXEQFN	Create QWIK Report Function	860	8
+DBSRWQR	QWIK Report To RW Report Conversion	860	9
+DBSPPC	Create Pre/Post-Processor Library	880	1
+DBSPPM	Modify Pre/Post-Processor Library	880	2
+DBSPPCO	Copy Pre/Post-Processor Library	880	3
+DBSPPD	Delete Pre/Post-Processor Library	880	4
+DBSPPL	List Pre/Post-Processor Library	880	5
+DBSPPX	Index Pre/Post-Processor Library	880	6
+DBSDOCT	Modify	881	1
+DBSDOCLST1	Display	881	2
+MAT001	Add Rates by Effective Date	883	1
+MAT002	Modify Rates by Effective Date	883	2
+MAT003	Display Rates by Effective Date	883	3
+MAT004	Delete Rates by Effective Date	883	4
+REP615	Mass Matrix Change Report	883	5
+DBARCHIVE	Archive Journal Tables	891	1
+DBARCHSTOP	Stop Archive Process	891	2
+DBARCHIST	Archive History Report	891	3
+DBSDEC	Create a Single Record	895	1
+DBSDEM	Modify a Single Record	895	2
+DBSDEI	Inquiry	895	3
+DBSDED	Delete a Single Record	895	4
+DBSEDITOR	General Purpose Data File Editor	895	5
+DBSEXPC	Create Export File Definition	896	1
+DBSEXPM	Modify Export File Definition	896	2
+DBSEXPD	Delete Export File Definition	896	3
+DBSEXPRR	List Export File Definition	896	4
+DBSEXPE	Export DATA-QWIK Definitions	896	5
+DBSEXPI	Import DATA-QWIK Definitions (V5.0)	896	6
+DBSEXPCO	Copy Export Definition	896	7
+DBSEXPR	Import Log	896	8
+DBTBL22C	Create Aggregate Definition	897	1
+DBTBL22M	Modify Aggregate Definitions	897	2
+DBTBL22D	Delete Aggregate Definition	897	3
+DBTBL22R	Run an Aggregate Procedure	897	4
+DBTBL22CPY	Copy Aggregate Definition	897	5
+DBSDOC2	Single File Documentation	898	1
+DBSDOCD	Data Item Documentation	898	2
+DBSDOCM	Copy Data Item Documentation	898	3
+DBSDOCDEL	Delete Data Item Documentation	898	4
+DBSDOCP	Print Screen Documentation	898	5
+DBSDOCF	Print File Documentation	898	6
+881	Table Value Documentation	898	7
+DBSDOCSCR	Screen Documentation	898	8
+DBSDOCRPT	Report Documentation	898	9
+880	Pre/Post-Processor Library	899	1
+DBSTEST	DATA-QWIK Function Verification	899	2
+DBSUTL3	Data Item X-REF File Maintenance	899	3
+DBSUTL5	Remove Run-Time Routine Names	899	4
+DBSQA	Check Run-Time Routine Integrity	899	5
+DBSUTL9	Rebuild DATA-QWIK Index Files	899	6
+DBSFMT	DATA-QWIK Format Type Maintenance	899	7
+896	Import/Export DATA-QWIK Definitions	899	8
+DBSMM	PSL Interactive Editor	899	9
+891	Archiving Functions	899	10

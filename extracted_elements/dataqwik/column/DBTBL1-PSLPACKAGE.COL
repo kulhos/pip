@@ -1,0 +1,35 @@
+NOD=22
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=PSL package to which this table belongs
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=11
+RHD=Package
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The name of the PSL package that this table is associated with.  When Record
+Class code for this table is generated, it will be generated for the package
+indicated.  If no package is indicated, it will be generated for the profile
+package.

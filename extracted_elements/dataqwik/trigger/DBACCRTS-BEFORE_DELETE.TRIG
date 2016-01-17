@@ -1,0 +1,89 @@
+//DO NOT MODIFY  Before Delete|0|0|1|0|0|0||||
+
+	/* ----- Revision History ---------------------------------------------
+	
+	12/02/2008 - RussellDS - CRs 35741/36981
+		* Added error handling code to avoid issue if filer not
+		  built for a table when check to make sure all access
+		  rights have.
+		* Excluded DBACCRTS from check of RecordTABLE code not
+		  yet recompiled, since it needs to be the last row
+		  removed, which must be done prior to its recompile
+	
+	01/13/2008 - RussellDS - CR30801
+		Created.
+	*/
+	
+	type Boolean hasPriv
+	type String errmsg
+	
+	/* If a row in DBACCRTS is being deleted, it is either through a SQL 
+	   DELETE or because of an update that sets all the rights to off (see
+	   the AU_RIGHTS trigger).  Therefore, userclass must either have
+	   DELETE to DBACCRTS or UPDATE privileges on the table being
+	   referenced.
+	   
+	   HASRIGHTS is in the BEFORE_INSERT trigger.
+	   
+	   First, check to see if has DELETE.  If not, check UPDATE.  If
+	   has neither, it's an error. */
+	
+	set hasPriv = this.HASRIGHTS("delete", "DBACCRTS", .errmsg)
+	if 'hasPriv set hasPriv = this.HASRIGHTS("update", this.tablename, .errmsg)
+	
+	if 'hasPriv do this.throwError(errmsg)
+	
+	/* Check that if the grant table involved in the delete is DBACCRTS,
+	   that at least one userclass, or PUBLIC, with all privileges and
+	   the WITH GRANT OPTION remains set up for the table, unless this
+	   is the final row being deleted from DBACCRTS, in which case, check
+	   to ensure that no Record Class code remains that enables access
+	   rights, other than for DBACCRTS table.  That filer will have
+	   to be regenerated once this final row is deleted.
+	   
+	   This supports turning table access rights processing off, but
+	   requires that access rights first be removed from all tables,
+	   other than DBACCRTS, and then removed from that table. */
+	
+	quit:(this.tablename '= "DBACCRTS")
+	   
+	type ResultSet rs1 = Db.select("USERCLASS", "DBACCRTS", "TABLENAME='DBACCRTS' AND USERCLASS<>:this.userclass AND INSERTRTS=2 AND UPDATERTS=2 AND DELETERTS=2 AND SELECTRTS=2")
+	
+	if rs1.isEmpty() do {
+		
+		// If this is the last row, then it's OK to delete
+		type ResultSet rscnt = Db.select("COUNT(TABLENAME)", "DBACCRTS")
+		
+		// Revoke all other access rights and regenerate all Record Class code before deleting final GRANT entry
+		if rscnt.next(), (rscnt.getCol(1) > 1) do this.throwError($$^MSG(6760))
+	}
+	
+	type ResultSet rs2 = Db.select("FID", "DBTBL1", "%LIBS='SYSDEV' AND FID <> 'DBACCRTS'")
+	
+	while rs2.next() do {
+		
+		type List ckrts = ""
+		type String table = rs2.getCol("FID")
+		
+		/* Access rights only apply to M.  Use of the execute avoids
+		   having to support checkAccessRights as part of the Record
+		   class.  The trap ensures that it's not a problem if the
+		   RecordTABLE code is not compiled for this table. */
+		   
+		do {
+			catch err {
+				
+				set ckrts = ""
+			}
+			
+			#ACCEPT Date=06/30/2008; Pgm=RussellDS; CR=30801; Group=BYPASS
+			#BYPASS
+			X "S ckrts=$$vcheckAccessRights^Record"_table
+			#ENDBYPASS
+		}
+		
+		// Regenerate all Record Class code before deleting final GRANT entry
+		if 'ckrts.isNull() do this.throwError($$^MSG(6761))
+	}
+	
+	quit

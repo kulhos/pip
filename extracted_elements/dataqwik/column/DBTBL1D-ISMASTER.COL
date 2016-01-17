@@ -1,0 +1,38 @@
+NOD=DI
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Column is a Master Field
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=17
+RHD=Master Field
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+A one in this field indicates that the field is a masterfield.
+A zero indicates that this field is not a masterfield.
+The interpretation of a NULL in this field depends on the Profile version:
+For Profile versions 7.0 and higher, a NULL is treated as a zero.
+For Profile versions 6.4 and lower, a NULL indicates "unknown", and forces 
+the PSL compiler and the SQL engine to use the DBTBL1D NODEPOS index to 
+derive if the field is a masterfield.

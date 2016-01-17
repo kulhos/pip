@@ -1,0 +1,20 @@
+//DO NOT MODIFY  Before Insert|1|0|0|0|0|0||||
+
+	/* ----- Revision History ---------------------------------------------
+	
+	01/13/2008 - RussellDS - CR30801
+		Created.
+	*/
+	
+	type public Boolean ER = false
+	type public String RM
+	
+	/* Validate userclass, or keyword PUBLIC */
+	if ('Db.isDefined("SCAU0", "UCLS=:dbauditdef.userclass") or (dbauditdef.userclass = "PUBLIC")) do { quit
+	
+		set ER = true
+		// Invalid userclass ~p1
+		set RM = $$^MSG(6755, dbauditdef.userclass)
+	}
+	
+	quit

@@ -1,0 +1,38 @@
+NOD=FKEYS
+LEN=1
+DFT=0
+DOM=
+TBL=[STBLFKOPT]
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Delete Constraint
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=3
+RHD=Delete Constraint
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+   Option 0 - Restrict deletion of foreign key in the child file if the
+              referenced key changed in the parent file.
+
+   Option 2 - Allow deletion of child records if the referenced foreign key(s)
+              were deleted in the parent file.  For example, delete a customer
+              record will trigger the deletion of all history records
+              associated with that customer.

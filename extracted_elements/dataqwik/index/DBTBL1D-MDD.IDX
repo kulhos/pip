@@ -1,4 +1,4 @@
-
+Data Dictionary Data Items
 NULLFLG=1
 GLOBAL=DBINDX
 ORDERBY=%LIBS,"MDD",MDD,FID,DI

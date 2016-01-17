@@ -1,0 +1,47 @@
+NOD=SEQ
+LEN=3
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Column Size
+ITP=
+MIN=1
+MAX=508
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=Column@Size
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         SIZE
+
+             The number of spaces allocated for the column.  Also
+             referred to as the column width.
+
+             The value for column size comes from the definition of
+             the data item in the file definition.
+
+             In the "E" format, the size includes the decimal point
+             and commas.
+
+             You can increase or decrease the size of any column.  If
+             data doesn't fit, if it is text-type data, the extra
+             characters will be truncated.  However, if it is numeric-
+             type data, it will print in its full width regardless of
+             the column size.

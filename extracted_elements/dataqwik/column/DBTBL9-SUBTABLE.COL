@@ -1,0 +1,33 @@
+NOD=JRNID
+LEN=12
+DFT=
+DOM=
+TBL=[DBTBL1]FID,DES:QU "[DBTBL1]FILETYP=6"
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Journal Table Name
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=2
+RHD=Journal Table@Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+  The name of the data file that is used to store this journal file
+  information. For example ^CIFH

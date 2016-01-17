@@ -101,6 +101,52 @@
 		This scenario seems unrealistic.
 
 	---- Revision History --------------------------------------------------
+	12/09/2008 - RussellDS - CR37111/35741
+		* Modified get section to fix placement of setting of isNew.
+	
+	01/21/2008 - RussellDS - CR30801
+		Eliminated tests in save section to determine if there is a
+		filer defined - now, there always is.
+		
+		Modified classNew to include code to deal with constructor
+		for Class.new("RecordTABLE", keys).
+		
+		Modified bypassSave to use save if there are INSERT or UPDATE
+		access restrictions, or if there are INSERT, UPDATE, or
+		DELETE audit logging requirements.
+		
+		Modified get to consider SELECT access rights.
+		
+		Corrected propSet() for assignment to (RDB) blob/memo
+		Corrected propGet() for retrieval of RDB blob/memo
+		Corrected propGet for lowercase characters in column name
+	
+	01/10/2008 - RussellDS - CR27800
+		Eliminated numerous PSL warnings and did some code clean-up.
+		
+	09/30/2007 - RussellDS - CR29295
+		Modified bypassSave to replace call to obsolete VOBJ^DBSDBASE
+		with call to new save code - rdbSaveC^UCDBRT.
+		
+		Modified code calling getLodCode^UCXDD to include lvpm(-161)
+		for RDB tables.
+		
+		Modified comments related to node -151 to now refer to -152
+		to reflect the change that -151 is no longer used, the
+		WHERE clause is built in, using host variables, and -152
+		contains the host variable value list.
+		
+		Modified propSet to ensure no change to $Test and to deal
+		with possibility to getUpdateCode returns string too long
+		to execute due to masterfield.
+		
+		Modified classNew to use getNewCode^UCXDD.
+	
+	07/18/07 - Frans S.C. Witte - CR 27800
+		* Modified calls to $$newObj^UCCLASS() and to
+		  PSLClass.tableNameOf().
+		* Added #OPTION ResultClass ON
+
 	05/18/07 - Frans S.C. Witte - CR 27486
 		RECNOFL exception now puts table name in Error.context.
 
@@ -138,6 +184,8 @@
 	09/23/05 Frans S.C. Witte - CRs: 15592 / 15593
 		Initial program.
 	*/
+	#PACKAGE framework
+	#OPTION ResultClass ON
 
 	// I18N=QUIT
 	// *******************************************************************
@@ -162,27 +210,67 @@
 	/* ------------------------------------------------------------------ */
 
 	// ---------------------------------------------------------------------
-private classNew
+private void classNew
 	/* ---------------------------------------------------------------------
-	Implementation of Class.new("Record",tablename)
-	This code defers the Class assignment until runtime.
+	Implementation of Class.new("Record",tablename) or
+	Class.new("RecordTABLE", keys).
+	
+	For the first case, this code defers the Class assignment until runtime.
 	This is the compile time subroutine that will be called by method^UCGM
 	when the PSL source code contains the above leftexpr.
+	
+	For the second case, it generates code to invoke the vcdmNew method of
+	the appropriate RecordTABLE class, and provides the requested key
+	assignments.
 	*/
-	type literal String label = "vReNew"
+	
+	// Implementation of Class.new("Record",tablename)
+	if (PSL.class = "Record") do {
+		
+		/* actual(1) = "Record"
+		   actual(2) = tablename */
+		
+		type literal String label = "vReNew"
 
-	do setOpti^UCGM( PSL.var, $$getLevel^UCGM(PSL.var), -1)
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		type Number lvl = $$getLevel^UCGM( PSL.var)
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do setOpti^UCGM( PSL.var, lvl, -1)
 
-	if 'PSL.subrouExists( label) do {
-		type PSLSubrou sr = PSL.addSubrou( label, "(vTbl)", "new Record")
-		do sr.addCode(" new vOid set vOid="_ $$newObj^UCCLASS("Record""_vTbl_"""))
-		do sr.addCode(" set "_ PSL.oLvn_"(vOid,-2)=0")
-		do sr.addCode(" new vT set vT=$$getPslTbl^UCXDD(vTbl,0)")
-		do sr.addCode(" if $piece(vT,""|"",4)#10 set vobj(vOid)=""""")
-		do sr.addCode(" Q vOid")
+		if 'PSL.subrouExists( label) do {
+			type PSLSubrou sr = PSL.addSubrou( label, "(vS,vTbl)", "new Record")
+			do sr.addCode(" new vT,vXcode")
+			do sr.addCode(" set vT=$$getPslTbl^UCXDD(vTbl,0)")
+			do sr.addCode(" set vXcode=$$getNewCode^UCXDD(vT,""vOid"",0,0) xecute vXcode")
+			do sr.addCode(" quit vOid")
+		}
+
+		set PSL.return = "$$"_ label_ "("_ $$newObjSt^UCCLASS( PSL.var.get())_ ","_ PSL.actual(2) _")"
 	}
+	
+	// M Implementation of Class.new("RecordTABLE", keys)
+	else  do {
+		
+		/* actual(1) = "RecordTABLE"
+		   actual(2) = access keys */
+		   
+		type static PSLClass
+		   
+		type String tableName = PSLClass.tableNameOf(PSL.actual(1).stripQuotes())
+		type PSLTable td = PSL.getPSLTable(tableName, 0)
 
-	set PSL.return = "$$"_ label_ "("_ PSL.actual(2) _")"
+		set PSL.return = "$$vcdmNew^Record"_ tableName_ "()"
+		
+		// Add initialization of keys
+		if 'PSL.actual(2).get().isNull() do {
+		
+			type public String pslP1Ap
+		
+			type String assignCode = $$akey2asgn^UCDB(td, PSL.var, PSL.actual(2), true)
+			
+			if 'assignCode.isNull() set pslP1Ap = assignCode //PSL.return = PSL.return_ assignCode
+		}
+	}
 
 	quit
 
@@ -191,7 +279,7 @@ private classNew
 	/* ------------------------------------------------------------------ */
 
 	// ---------------------------------------------------------------------
-public bypassSave( Number vOid)		// the Record instance (*1)
+public void bypassSave( Number vOid)		// the Record instance (*1)
 	/* ---------------------------------------------------------------------
 	Runtime store of dynamic Record instance.
 	Stores the available data in the underlying database without performing
@@ -221,62 +309,95 @@ public bypassSave( Number vOid)		// the Record instance (*1)
 		availability of "save processing" features cannot be guaranteed.
 	*/
 	type public String vobj(,,)
-	type String vTbl = $$getReTable^UCGM(vobj(vOid,-1))
+	type static PSLClass
+
+	type String vTbl = PSLClass.tableNameOf(vobj(vOid,-1).piece(9.char()))
 
 	type PSLTable vT = PSL.getPSLTable( vTbl, 0)
 	type String vDlm = vT.columnDelimiter			// delimiter
+	
+	type List rights = vT.checkAccessRights(false)
+	type List auditLog = vT.getLogging(false)
 
 	if vT.isRdb do {					// RDB code
+		
+		type String where = vT.getPrimaryKeyWhere()
 
-		// Remove this when we eventually can deal with the proper passing
-		// of an object and use of the object pointer.  See VOBJ^DBSDBASE
-		#ACCEPT CR=22719; Pgm=RussellDS; Date=09/06/2006;Group=MISMATCH
-		do VOBJ^DBSDBASE( vOid, vDlm)
+		/* Remove this ACCEPT when we eventually can deal with the proper
+		   passing of an object and use of the object pointer.
+		   See rdbSaveC^UCDBRT
+		*/
+		#ACCEPT Date=09/30/2007; Pgm=RussellDS; CR=29295; Group=MISMATCH
+		do rdbSaveC^UCDBRT( vOid, vDlm, where)
+	}
+	/* If uses INSERT or UPDATE access rights, use save code, not bypass.
+	   Similarly with auditLogging. */
+	else  if (rights.contains("insert") or rights.contains("insertRestrict") or rights.contains("update") or rights.contains("updateRestrict") or auditLog.contains("insert") or auditLog.contains("update") or auditLog.contains("delete")) do { quit
+
+		#ACCEPT GROUP=ACCESS;CR=30801;DATE=2008-06-21;PGM=RussellDS
+		do save( vOid, $$bypassQual^UCRECORD)	
 	}
 	else  do {						// MDB code
 		type Number vMod = vobj(vOid,-2)		// record Mode
-		type Number ftyp = vT.recordType		// record type
-		type String gbl  = $$getGbl^UCXDD( vT, "vOid")	// global
+		type Number vTyp = vT.recordType		// record type
+		type String vGbl  = $$getGbl^UCXDD( vT, "vOid")	// global
 
-		if ftyp#2>0  do {	// top node depends on $D(vobj(vOid))
-			type String gblTop = gbl.extract( 1, gbl.length()-1)
-			if gblTop["(" set gblTop = gblTop_")"
-			set @gblTop = vobj(vOid)
+		if vTyp#2>0  do {	// top node depends on $D(vobj(vOid))
+			type String vTop = vGbl.extract( 1, vGbl.length()-1)
+			if vTop["(" set vTop = vTop_")"
+			set @vTop = vobj(vOid)
 		}
 
-		if ftyp>1 set gbl=gbl_"vSub)"	// add type 10/11 node subscript
+		if vTyp>1 set vGbl=vGbl_"vSub)"	// add type 10/11 node subscript
 
 		type String vNod = ""			// -100 node iterator
 		type String vSub			// Subscript in global
 
 		for  set vNod = vobj(vOid,-100,vNod).order() quit:vNod=""  do {
-			if 'vobj(vOid,vNod).data() quit		// 0*, 1*, etc.
+			if 'vobj(vOid,vNod).data(),'vNod.endsWith(",1") quit	// 0*, 1*, etc.
 
 			/* For negative node subscripts, vNod and vSub are
-			   different. For all others, they are identical. */
+			   different. For Blob/Memo vSub will be the proper
+			   subscript in vobj() and the global, and vNod will be
+			   ignored. For all others, they are identical. */
 			if vNod?1"v".N.1"."1.N set vSub = - vNod.extract( 2, vNod.length())
+			else  if vNod.endsWith(",1") set vSub = vNod.extract( 1, vNod.length() - 2)
 			else  set vSub = vNod
 
-			if vobj(vOid,vNod).data()>1 do {	// blob or memo
-				type String gblBm = gbl.extract( 1, gbl.length()-1)_ ",vBms)"
+			/* Using vSub in the following statement is dangerous
+			   but OK for now. In combination with >1 it will return
+			   the correct result even for negative values of vSub,
+			   as long as vobj(vOid,-n,x) will not be used for any
+			   purpose. */
+			if vobj(vOid,vSub).data()>1 do {	// blob or memo
+				type String vGblBm = vGbl.extract( 1, vGbl.length()-1)_ ",vBms)"
 				type Number vBmi	// chunck iterator
 				type Number vBms = 0	// chunck subscript
 				type literal Number vBmsz = PSL.maxDataLength - 1
 
-				if (vobj(vOid,vNod,1)="")!(vMod=2) ZWITHDRAW:vMod>0 @gblBm quit
+				if (vobj(vOid,vSub,1)="")!(vMod=2) do { quit
+					
+					#ACCEPT Date=01/12/2008; Pgm=RussellDS; CR=27800; Group=Bypass
+					#BYPASS
+					IF (vMod>0) ZWITHDRAW @vGbl
+					#ENDBYPASS
+				}
 
-				for vBmi=1:PSL.maxDataLength:vobj(vOid,vNod,1).length() set vBms=vBms+1,@gblBm=vobj(vOid,vNod,1).extract( vBmi, vBmi + vBmsz)
+				for vBmi=1:PSL.maxDataLength:vobj(vOid,vSub,1).length() set vBms=vBms+1,@vGblBm=vobj(vOid,vSub,1).extract( vBmi, vBmi + vBmsz)
 			} /* end if blob or memo */
 			else  do {
-				if vDlm = 124 set vobj(vOid,vNod) = $$RTBAR^%ZFUNC( vobj(vOid,vNod))
+				if vDlm = 124 set vobj(vOid,vNod) = vobj(vOid,vNod).trim(1,124.char())
 
 				/* If node not empty, not DELETE, then store
 				   (and done) */
-				if 'vobj(vOid,vNod).isNull(), vMod < 2 set @gbl = vobj(vOid,vNod) quit
+				if 'vobj(vOid,vNod).isNull(), vMod < 2 set @vGbl = vobj(vOid,vNod) quit
 				
 				/* Node empty or DELETE: withdraw if not insert
 				   */
-				if vMod > 0 ZWITHDRAW @gbl
+				#ACCEPT Date=01/12/2008; Pgm=RussellDS; CR=27800; Group=Bypass
+				#BYPASS
+				IF vMod>0 ZWITHDRAW @vGbl
+				#ENDBYPASS
 			} /* end ordinary node */
 		}  /* end for each node in -100 tree */
 	} /* end MDB code */
@@ -286,7 +407,7 @@ public bypassSave( Number vOid)		// the Record instance (*1)
 	quit
 
 	// ---------------------------------------------------------------------
-public dispose( Record vOid)		// object ID
+public void dispose( Record vOid)		// object ID
 	/* ---------------------------------------------------------------------
 	Runtime function that disposes of a RecordTBL object.
 
@@ -299,7 +420,7 @@ public dispose( Record vOid)		// object ID
 	quit
 
 	// ---------------------------------------------------------------------
-public new( String TBL)		// table name
+public Record new( String TBL)		// table name
 	/* ---------------------------------------------------------------------
 	Runtime function that returns a new instance of a RecordTBL object.
 
@@ -307,6 +428,7 @@ public new( String TBL)		// table name
 	. $$ = Object ID of new RecordTBL
 		vobj($$,-1) will be set to RecordTBL
 		vobj($$,-2) will be set to zero (new record)
+		vobj($$,-161/-162) will be initialized
 		vobj($$) will be set to ""
 			if and only if PSL.getPSLTable(TBL).recordType in (1,11)
 
@@ -316,11 +438,11 @@ public new( String TBL)		// table name
 		effects such as setting ACN.CLS for RecordDEP or RecordLN are
 		the responsibility of the caller.
 	*/
-	type Record rec = Class.new("Record", TBL)
+	type Record rec = Class.new("Record", TBL.upperCase())
 	quit rec
 
 	// ---------------------------------------------------------------------
-public get(	Number vOid,		// the Record instance (*1)
+public void get( Number vOid,		// the Record instance (*1)
 		Boolean allowNew)	// accept non-existing row?
 	/* ---------------------------------------------------------------------
 	Runtime retrieval of dynamic Record instance from database.
@@ -330,12 +452,15 @@ public get(	Number vOid,		// the Record instance (*1)
 		vobj(vOid) shall have be initialized as follows:
 		- vobj(vOid,-1) = runtime Record class descendant
 		- vobj(vOid,-3), vobj(vOid,-4), ... = primary key column values
+		- vobj(vOid,-161/-162) = RDB tracking, if appropriate
 
 	OUTPUT:
 	. vobj(vOid) loaded with initial node
 		vobj(vOid,-2) reflects actual recordmode
-		vobj(vOid,-151) will have been set for RDB tables that may need
-		incremetnal loading.
+		vobj(vOid,-152) will have been set for RDB tables that may need
+		incremental loading.
+	. vobj(vOid,-100) is always killed to simulate the behavior of a
+		standard Db.getRecord() or Class.new().
 
 	NOTES:
 	. To be completely structure independent, callers shall use calls to
@@ -344,30 +469,55 @@ public get(	Number vOid,		// the Record instance (*1)
 		record instance when the record does not exist. It merely
 		suppresses the RECNOFL exception, and it sets the record mode.
 	*/
-	type PSLTable vT = PSL.getPSLTable( $$getReTable^UCGM(vobj(vOid,-1)), 0)
+	type static PSLClass
+
+	type PSLTable vT = PSL.getPSLTable( PSLClass.tableNameOf(vobj(vOid,-1).piece(9.char())), 0)
 
 	type String vData,vEr,vRm	// NEW local vars used by RDB code
 
-
 	/* get the initial load code and xecute it */
-	type String load()
-	type Number i
-	do getRecCode^UCXDD( vT, "vOid", , .load())
+	type String vLoad()
+	type Number vI
+	do getRecCode^UCDB( vT, "vOid", , vLoad())
 	#ACCEPT CR=18163;DATE=2005-11-29;PGM=FSCW;GROUP=XECUTE
-	for i=1:1:load("").order(-1) xecute load(i)
+	for vI=1:1:vLoad("").order(-1) xecute vLoad(vI)
 
-	type Boolean isNew = $T	// save $TEST as set by load code
+	type Boolean isNew
+	
+	/* save $TEST as set by load code 
+	   DO NOT PLACE ANY OTHER CODE BETWEEN THE EXECUTION OF vLoad and this section */
+	#ACCEPT Date=01/12/2008; Pgm=RussellDS; CR=27800; Group=Bypass
+	#BYPASS
+	SET isNew=$T
+	#ENDBYPASS
+			
+	type List rights = vT.checkAccessRights(false)
+	
+	if (rights.contains("select") or rights.contains("selectRestrict")) do {
+		
+		type Boolean isOK
+		type String table = vT.table
+		
+		#ACCEPT Date=05/21/2008; Pgm=RussellDS; CR=30801; Group=BYPASS
+		#BYPASS
+		xecute ("S isOK=$$vselectOK^Record"_table_"(vOid,%UCLS)")
+		#ENDBYPASS
+		
+		// No access rights for tabel ~p1
+		if 'isOK throw Class.new("Error", "%PSL-E-ACCESS,"_ $$^MSG(6754, vT.table))
+	}
 
 	if isNew, 'allowNew throw Class.new("Error", "%PSL-E-RECNOFL,Record"_ vT.table_ " not found,"_ vT.table)
-	set vobj( PSL.return, -2) = 'isNew
+	set vobj( vOid, -2) = 'isNew
+	kill vobj(vOid, -100)
 
-	/* Need -151 node for RDB tables that are not single node */
+	/* Need -152 node for RDB tables that are not single node */
 	#ACCEPT CR=18163;DATE=2005-11-29;PGM=FSCW;GROUP=XECUTE
-	if vT.isRdb, 'isNew, '$$isOneNode^UCXDD( vT) xecute vT.getUpdateKey( "return")
+	if vT.isRdb, 'isNew, '$$isOneNode^UCXDD( vT) xecute vT.getUpdateKey( "vOid")
 	quit
 
 	// ---------------------------------------------------------------------
-public propGet(	Number vOid,		// the Record instance (*1)
+public String propGet(	Number vOid,	// the Record instance (*1)
 		String vProp)		// column expression (*2)
 	/* ---------------------------------------------------------------------
 	Runtime retrieval of named column of dynamic Record instance.
@@ -391,7 +541,11 @@ public propGet(	Number vOid,		// the Record instance (*1)
 		recursively obtain the values of the columns that participate in
 		the computation. This is obviously one of the worst cases.
 	*/
-	type String vTbl = $$getReTable^UCGM(vobj(vOid,-1))
+	type static PSLClass
+
+	type String vTbl = PSLClass.tableNameOf(vobj(vOid,-1).piece(9.char()))
+	
+	set vProp = vProp.upperCase()		// Indirection may use lowercase
 
 	type PSLColumn vP = PSL.getPSLColumn( vTbl, vProp)
 	type PSLTable vT = PSL.getPSLTable( vTbl, 0)
@@ -408,8 +562,14 @@ public propGet(	Number vOid,		// the Record instance (*1)
 		   the correct IF to check the existance. Because most nodes are
 		   numeric, the IF before the xecute will prevent unnecessary
 		   xecutes in most cases. */
+		type String lvpm()
+		if vT.isRdb do {
+			set lvpm(-161) = "vobj(vOid,-161,"
+			set lvpm(-162) = "vobj(vOid,-162,"
+		}
 		#ACCEPT CR=15592;DATE=2005-09-23;PGM=FSCW;GROUP=XECUTE
-		if 'vobj(vOid,vNod).exists() xecute $$getLodCode^UCXDD(vT,"vOid",vNod,+vobj(vOid,-2).get(),1,"")
+		if 'vobj(vOid,vNod).exists() xecute $$getLodCode^UCXDD(vT,"vOid",vP.getPurposeNode(),+vobj(vOid,-2).get(),1,lvpm())
+
 	}
 
 	/* For recordType>1, a computed expression may require columnvalues from
@@ -419,7 +579,7 @@ public propGet(	Number vOid,		// the Record instance (*1)
 
 	if 'vCmp.isNull(),vT.recordType>1 do {
 		type String vpt()
-		do parseCmp^UCXDD( vCmp, .vpt())
+		do parseCmp^UCXDD( vCmp, vpt())
 		type Number vCnt = vpt("").order(-1)
 		type String vVal
 		type Number vElm
@@ -439,14 +599,19 @@ public propGet(	Number vOid,		// the Record instance (*1)
 	quit vRet
 
 	// ---------------------------------------------------------------------
-public propSet(	Number  vOid,		// the Record instance (*1)
+public void propSet( Number  vOid,	// the Record instance (*1)
 		String  vProp,		// column expression (*2)
 		String  vVal,		// value to assign (*3)
-		Boolean vAudit)		// audit changes? (*4)
+		Boolean vAudit,		// audit changes? (*4)
+		Boolean vExternal)	// external formats? (*5)
 	/* ---------------------------------------------------------------------
 	Runtime assignment to named column of arbitrary Record instance.
 	This subroutine supports incremental loading of data nodes. 
-
+	
+	Because the call to this label is via a DO, yet is used in
+	dynamic^UCCOLUMN for indirection, it must ensure that the value
+	of $T does not get changed.
+	
 	ARGUMENTS:
 	(*1) vOid = record instance
 		vobj(vOid) shall have its class node (vobj(vOid,-1)) set to the
@@ -464,6 +629,11 @@ public propSet(	Number  vOid,		// the Record instance (*1)
 		Note that this subroutine provides dynamic runtime specification
 		of the value whereas the Record.setAuditFlag() property has a
 		restricted compile time scope.
+	(*5) vExternal = external format?
+		For calls from within PSL code, such as column indirection, the
+		supplied value will be in internal format. However when called
+		for Record.overlay(), or from other sources, the values may
+		still be in external format.
 
 	NOTES:
 	. The code generated by this function will be capable to retrieve a
@@ -476,39 +646,82 @@ public propSet(	Number  vOid,		// the Record instance (*1)
 		Programmers should be discouraged against runtime indirection of
 		computed columns even though this code works.
 	*/
-	type String vTbl = $$getReTable^UCGM(vobj(vOid,-1))
+	type static PSLClass
+
+	type String vTbl = PSLClass.tableNameOf(vobj(vOid,-1).piece(9.char()))
+	type PSLExpression vXcode
+	
+	#ACCEPT Date=01/12/2008; Pgm=RussellDS; CR=27800; Group=Bypass
+	#BYPASS
+	NEW vTestIn SET vTestIn=$T
+	#ENDBYPASS
+	
+	set vProp = vProp.upperCase()		// Indirection may use lowercase
 
 	type PSLColumn vP = PSL.getPSLColumn( vTbl, vProp)
 
 	if 'vP.computation.isNull() throw Class.new("Error","%PSL-E-INVALIDREF,"_ vTbl_ "."_ vProp)
 
 	type String vNod = vP.getCurrentNode(1)
-	if 'vNod.isNull(),vNod.toNumber()'<0 do {
+	
+	/* Load the node that contains the column if needed. Do not load if
+		- column resides on top node (vNod.isNull())
+		- column is key column (vNod.toNumber()<0)
+		- column is blob or memo and no audit (vNod.contains(",")!vAudit)
+	   */
+	if 'vNod.isNull(),vNod.toNumber()'<0,'vNod.contains(",")!vAudit do {
 		/* If the node does not yet exist, load it. The code below is
 		   slightly different from the code in $$propGet(), because we
 		   need to be sure that the node will only be retrieved once: A
 		   second retrieval may overwrite modifications. By including the
 		   $DATA() in the XECUTE, and concatenating vNod the code always
 		   references the correct node. */
+		type String lvpm()
+		type PSLTable tblDes = PSL.getPSLTable( vTbl, 0)
+		if tblDes.isRdb do {
+			set lvpm(-161) = "vobj(vOid,-161,"
+			set lvpm(-162) = "vobj(vOid,-162,"
+		}
 		#ACCEPT CR=15592;DATE=2005-09-23;PGM=FSCW;GROUP=XECUTE
-		xecute "IF '$D(vobj(vOid,"_vNod_")) "_$$getLodCode^UCXDD( PSL.getPSLTable( vTbl, 0), "vOid", vNod, +vobj(vOid,-2).get(), 1, "")
+		xecute "IF '$D(vobj(vOid,"_vNod_")) "_$$getLodCode^UCXDD( tblDes, "vOid", vP.getPurposeNode(), +vobj(vOid,-2).get(), 1, lvpm())
 	}
 
-	/* Assignment will create the node if needed */
+	if vExternal.get() {		// convert external to internal
+		type String vTyp = vP.dataType
+		#ACCEPT GROUP=ACCESS;CR=35741;DATE=2008-10-23;PGM=Frans S.C. Witte
+		if "CDLU"[vTyp set vVal=$$INT^%ZM(vVal,vTyp)
+		#ACCEPT GROUP=ACCESS;CR=35741;DATE=2008-10-23;PGM=Frans S.C. Witte
+		if "$N"[vTyp,'vVal.isNull()!vP.isNullToZero set vVal=+$$INT^%ZM(vVal,vTyp,,vP.precision)
+	}
+
+	/* Assignment will create the node if needed.  Since executable line
+	   may be too long, e.g., if masterfield, break it if necessary */
+	set vXcode = vP.getUpdateCode("vOid", "vVal", vAudit, 1)
+	if 'vXcode.fitsLineLength( ) {
+		type Number vI
+		for vI = 1:1:vXcode.length(9.char()) {
+			#ACCEPT CR=29295;Date=2007-10-05;PGM=RussellDS;GROUP=XECUTE
+			xecute vXcode.piece(9.char(), vI)
+		}
+	}
 	#ACCEPT CR=15592;DATE=2005-09-23;PGM=FSCW;GROUP=XECUTE
-	xecute vP.getUpdateCode("vOid", "vVal", vAudit)
+	else  xecute vXcode
+	
+	// Make sure $T is same as on entry
+	#ACCEPT Date=01/12/2008; Pgm=RussellDS; CR=27800; Group=Bypass
+	#BYPASS
+	IF vTestIn
+	#ENDBYPASS
 
 	quit
 
 	// ---------------------------------------------------------------------
-public save(	Number vOid,		// the Record instance (*1)
+public void save( Number vOid,		// the Record instance (*1)
 		String vQual)		// applicable filer qualifiers
 	/* ---------------------------------------------------------------------
 	Runtime store of dynamic Record instance.
 	Stores the available data in the underlying database by calling the
-	filer if one is defined for the table.
-	If there is no filer, it will call ^DBSLOGIT() if applicable before
-	calling bypassSave().
+	filer.
 
 	ARGUMENTS:
 	(*1) vOid = record instance
@@ -522,23 +735,20 @@ public save(	Number vOid,		// the Record instance (*1)
 
 	NOTES:
 	*/
-	type String vTbl = $$getReTable^UCGM(vobj(vOid,-1))
+	type static PSLClass
+
+	type String vTbl = PSLClass.tableNameOf(vobj(vOid,-1).piece(9.char()))
 
 	type PSLTable vT = PSL.getPSLTable( vTbl, 0)
-	type String vFlr = vT.filerPGM
+	type String vFlr
 
 	/* standardize and add debugs if needed */
 	set vQual=$$fileQual^UCDB("Record.save",vQual)
 
 	do Runtime.start("CS")		// start transaction
 
-	/* block needed to protect IF-ELSE !! */
-	if vFlr.isNull() do {
-		#ACCEPT CR=21101;DATE=2005-11-29;PGM=FSCW;GROUP=MISMATCH
-		if vT.isAutoLog do ^DBSLOGIT( vOid, vobj(vOid,-2))	// LOG if applicable
-		do bypassSave( vOid)	// no filer, call bypassSave
-	}
-	else  set vFlr = "^"_ vFlr_ "(vOid,vQual)" do @vFlr	// call filer
+	set vFlr = "vSave^Record"_ vTbl_ "(vOid,vQual,0)"
+	do @vFlr			// call save method
 
 	do Runtime.commit()		// commit transaction
 	do ccAftSave( vOid, vT)		// common after save code
@@ -550,7 +760,7 @@ public save(	Number vOid,		// the Record instance (*1)
 	/* ------------------------------------------------------------------ */
 
 	// ---------------------------------------------------------------------
-ccAftSave(	Number vOid,		// the Record instance (*1)
+private void ccAftSave( Number vOid,		// the Record instance (*1)
 		PSLTable vT)
 	/* ---------------------------------------------------------------------
 	Common after-save after-bypassSave code:
@@ -560,9 +770,9 @@ ccAftSave(	Number vOid,		// the Record instance (*1)
 	*/
 	kill vobj(vOid,-100)
 	set vobj(vOid,-2) = 1
-	
+
 	/* If RDB, update the WHERE key= */
 	#ACCEPT CR=15592;DATE=2005-09-23;PGM=FSCW;GROUP=XECUTE
 	if vT.isRdb xecute vT.getUpdateKey("vOid") 
 
-	quit	
+	quit

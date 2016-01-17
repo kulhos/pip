@@ -1,0 +1,38 @@
+NOD=0
+LEN=1
+DFT=Y
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Modify Text Flag
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=MODIFY@TEXT FLAG
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+
+Select modify option
+
+         Y - Modify processor library header information & user
+             defined mumps code.
+
+         N - Modify header information only.

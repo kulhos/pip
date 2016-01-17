@@ -1,0 +1,88 @@
+NOD=DI
+LEN=12
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Sub-Field Tag
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=~126~~1
+SIZ=12
+DEL=
+POS=18
+RHD=Sub@Tag
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The unique name used to identify a subfield within a field.  The name must be
+accompanied by a prefix delimiter and a suffix delimiter (SFD1 and SFD2) so
+that it will comprise a unique string within a field.  The prefix and suffix
+delimiters can be the same character.
+
+This record construction (using subfield tags) is useful when a record
+contains many fields which are optional.  For example, a transaction
+record layout may have some fields which are required for all
+transactions and a large number of optional fields or qualifiers that
+are only use by a small subset of transactions, or are defined under
+special conditions.  The subfield tags identify the specific data items
+which exist in a record.  If a subfield tag is not physically contained
+in a record DATA-QWIK evaluates the value of the field as a NULL.
+
+Multiple fields can be stored within a subfield tag with the subfield
+position parameter.
+
+Examples:   The TTX Record Definition is: CID|ITC|ETC|TAMT|EFD|TLO|TSO|TCMT|...
+                                                                    |
+                                                        Comprised of Subfields
+ 
+  A physical record looks like: 1212|1|DD|100.12||Branch|EC#12001~CK#1001
+                                                         |        | 
+                                                      ~Subfield_Tag#Value...
+                                                        
+                                             Note(s): The first subfield prefix
+                                                      delimiter is stripped in
+                                                      the physical record.
+                                                      
+                                                      The subfield storage
+                                                      order is first in front		
+											
++-----------------------------------------------------------------------------+
+|             File Name: TTX                                                  |
+|             Data Item: EC                Error Correct Sequence             |
+|                                                                             |
+|         Sub Record ID: TSEQ                             Column: 7           |
+|           Window Size: 12                Compression Reference: ___________ |
+|                                                                             |
+|                       Special Sub-Field Definitions                         |
+|                                                                             |
+|                                                   Delimiters       Position |
+|         Sub-field Tag: EC                  Prefix: 126  Suffix: 35          |
++-----------------------------------------------------------------------------+
+													
++-----------------------------------------------------------------------------+
+|             File Name: TTX                                                  |
+|             Data Item: CK                Error Correct Sequence             |
+|                                                                             |
+|         Sub Record ID: TSEQ                             Column: 7           |
+|           Window Size: 12                Compression Reference: ___________ |
+|                                                                             |
+|                       Special Sub-Field Definitions                         |
+|                                                                             |
+|                                                   Delimiters       Position |
+|         Sub-field Tag: CK                  Prefix: 126  Suffix: 35          |
++-----------------------------------------------------------------------------+

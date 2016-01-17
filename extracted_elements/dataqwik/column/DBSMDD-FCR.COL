@@ -1,0 +1,41 @@
+NOD=
+LEN=12
+DFT=
+DOM=
+TBL=[DBTBL1D]:MU "I {DBTBL1D.REQ}=1"
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Field Compression Reference
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Field Compression@Reference
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+A reference that defines the data storage relationship between this master data
+dictionary data item and another data item in the master data dictionary.  If
+the values of both data items are the same, the system can store the value of
+this data item as a null value to save some external storage space.
+
+For example, if the value of the effective date of a transaction
+(e.g., [TTX]EFD) is the same as the actual transaction date (e.g., [TTX]TJD),
+the system can store the effective date as a null value.  The [DBSMDD]FCR data
+item contains the reference to the TJD data item where the system stores the
+actual date value.

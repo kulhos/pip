@@ -1,0 +1,51 @@
+NOD=1
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Protect Description
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Prot Description
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+An indicator which specifies whether (Y) or not (N) the system allows users to
+change the value in the Description data item in file definitions
+([DBTBL1D]DES) referencing this user-defined data type.  The value in the
+Description data item in the user-defined data type definition ([DBSDOM]DES)
+defaults as the [DBTBL1D]DES value for data items referencing the user-defined
+data type.
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+definition ([CRCD]MINRATE) specifies a user-defined data type of RATE, and the
+RATE data type specifies a description of Exchange Rate, the system defaults
+Exchange Rate into the Description attribute ([DBTBL1D]DES) associated with the
+[CRCD]MINRATE data item.
+
+If Y (Yes), the user can modify the [DBTBL1D]DES value for the data item
+referencing this data type (e.g., the user can modify the value in the
+Description attribute associated with the [CRCD]MINRATE data item).
+
+If N (No), the user cannot modify the [DBTBL1D]DES value for the data item
+referencing this data type (e.g., the user cannot modify the defaulted value of
+Exchange Rate for the description associated with the [CRCD]MINRATE data item).

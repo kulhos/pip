@@ -5,12 +5,13 @@
 	
 	/*
 	-----Revision History--------------------------------------------------
-	04/29/04 - RussellDS - CR9172
-		   Cleaned up variable scoping
-
+	06/14/2008 - RussellDS - CR30801
+		Cleaned up code to eliminate PSL warnings.
+		
+		Removed old revision history.
 	*/
 	
-	type Public String FID
+	type public String FID
 	
 	type String nparfid,oparfid
 	

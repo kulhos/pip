@@ -1,0 +1,34 @@
+NOD=3*
+LEN=8
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Device Type
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Device Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The code that identifies the type of device.Profile supports the following 
+device types: MT for magnetic tape unit; PTR for printer; PNTQ for print 
+queue; and TRM for terminal.

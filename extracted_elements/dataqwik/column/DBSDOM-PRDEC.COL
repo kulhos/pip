@@ -1,0 +1,51 @@
+NOD=1
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Protect Decimal Precision
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=15
+RHD=Protect@Decimal Precision
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+An indicator which specifies whether (Y) or not (N) the system allows users to
+change the value in the Decimal Precision data item in file definitions
+([DBTBL1D]DEC) referencing this user-defined data type.  The value in the
+Decimal Precision data item in the user-defined data type definition
+([DBSDOM]DEC) defaults as the [DBTBL1D]DEC value for data items referencing the
+user-defined data type.
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+definition ([CRCD]MINRATE) specifies a user-defined data type of RATE, and the
+RATE data type specifies 5 digits to the right of the decimal, the system
+defaults 5 into the Decimal Precision attribute ([DBTBL1D]DEC) associated with
+the [CRCD]MINRATE data item.
+
+If Y (Yes), the user can modify the [DBTBL1D]DEC value for the data item
+referencing this data type (e.g., the user can modify the value in the Decimal
+Precision attribute associated with the [CRCD]MINRATE data item).
+
+If N (No), the user cannot modify the [DBTBL1D]DEC value for the data item
+referencing this data type (e.g., the user cannot modify the defaulted value of
+5 for the decimal precision associated with the [CRCD]MINRATE data item).

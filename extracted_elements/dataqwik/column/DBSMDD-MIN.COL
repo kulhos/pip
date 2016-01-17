@@ -1,0 +1,44 @@
+NOD=
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Minimum Value
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Minimum
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The minimum value that data items linked to this master data dictionary data
+item may have.  The system does not permit users to specify values less than
+this value in fields referencing linked data items.  The value in the
+[DBSMDD]MIN data item defaults as the Minimum Value ([DBTBL1D]MIN) for data
+items referencing the master data dictionary data item.  The user can modify
+the defaulted value if the Protect Minimum Value data item ([DBSMDD]PRMIN)
+contains N (No).
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) links to the [MDDPBS]MINRATE master data dictionary data item,
+and the [MDDPBS]MINRATE data item specifies a minimum value of 3.00, the system
+defaults 3.00 into the Minimum Value attribute ([DBTBL1D]MIN) associated with
+the [CRCD]MINRATE data item.

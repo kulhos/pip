@@ -1,0 +1,38 @@
+NOD=DI
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Required Indicator
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=15
+RHD=Req'd
+SRL=
+CNV=
+LTD=
+USER=
+MDD=REQ
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+If "Y" is entered, the filer routine will verify that there is valid
+data in this field before the record is filed.  The record will not be
+filed and a new record created until valid data is entered in the
+required field.
+
+This option can be used to define the minimum information for a
+particular file by defining the minimum information as required.

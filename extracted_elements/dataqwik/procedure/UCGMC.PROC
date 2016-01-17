@@ -1,15 +1,31 @@
 //DO NOT MODIFY  Compiler commands - Dictionary Group|UCGMC|||||||1
-private UCGMC(	local String cmd,
-		local String m2src(),
-		public Number lptr,
-		local String str,
-		public Number ptr,
-		local String tok)	//
+	#PACKAGE framework.psl
+	#OPTION  ResultClass ON
+
+private String UCGMC( noret String cmd,
+		noret String m2src(),
+		ret   Number lptr,
+		noret String str,
+		ret   Number ptr,
+		noret String tok)	//
 	/*
 	ORIG: FSANCHEZ - 25 DEC 1998 
 	DESC: Interprets Extended M compiler options 
 
 	---- Revision History --------------------------------------------------
+	2008-03-27, Frans S.C. Witte, CR: 33569
+		* Corrected IF: argument must be tokenized for $$condBool^UCGM()
+		* Corrected PSL: missing quotes around keyword false.
+
+	12/21/06 - Frans S.C. Witte, L. Kwan - CRs: 27800
+		* Added #CLASSDEF, #PACKAGE, #PROPERTYDEF, and #PSL
+		* added $$allPSL()
+		* Replaced commands(,) by pslPrsr(,)
+		* Replaced 'public' by 'ret' or removed the modifier for arrays
+		* Removed defWARN (now handled by UCOPTS.ini)
+		* Removed #BREAK (not used, and not portable to Java)
+		* Removed support for ASK in #XECUTE, and $ask()
+
 	01/22/07 - RussellDS - CRs: 24902 / 24903 / 24974
 		Replaced use of variable true with isTrue to avoid conflict
 		with new PSL intrinsic variable
@@ -74,8 +90,8 @@ private UCGMC(	local String cmd,
 		* Removed function $$related() and procedure checkparam(), because
 		  this is now handled exclusively by UCLABEL.
 		* Added READ to list of all warnings.
-		* Value assigned to commands("WARN",cond) is now 1 (was ""). This
-		  allows $DATA(commands("WARN",cond)) to be replaced by $GET().
+		* Value assigned to pslPrsr("WARN",cond) is now 1 (was ""). This
+		  allows $DATA(pslPrsr("WARN",cond)) to be replaced by $GET().
 		* Added functions $$allWARN(), $$defWARN() $$allOPTIMZE(),
 		  $$defOPTIMIZE(), and $$allOptions().
 		* All #CompCommands that insert comment now properly call
@@ -185,14 +201,16 @@ private UCGMC(	local String cmd,
 	set cmd = cmd.extract( 2, cmd.length())
 
 	if cmd="ACCEPT"             quit $$ACCEPT( m2src(), lptr, str, .ptr, tok)
-	if cmd="BREAK"              quit $$BREAK( str, .ptr, tok)
 	if cmd="BYPASS"             quit $$BYPASS( m2src(), .lptr, .ptr)
+	if cmd="CLASSDEF"           quit $$ignore( str, .ptr, tok)
 	if cmd="IF"                 quit $$IF( m2src(), .lptr, str, .ptr, tok)
 	if cmd="ELSE",  fCompile>0  quit $$ELSE( m2src(), .lptr, .ptr)
 	if cmd="END",   fCompile>0  quit $$END( .ptr)
 	if cmd="ENDIF", fCompile>0  quit $$END( .ptr)
 	if cmd="OPTIMIZE"           quit $$OPTIMIZE( str, .ptr, tok)
 	if cmd="OPTION"             quit $$OPTION( str, .ptr, tok)
+	if cmd="PACKAGE"            quit $$ignore( str, .ptr, tok)
+	if cmd="PROPERTYDEF"        quit $$ignore( str, .ptr, tok)
 	if cmd="WARN"               quit $$WARN( str, .ptr, tok)
 	if cmd="INFO"               quit $$INFO( str, .ptr, tok)
 	if cmd="WHILE"              quit $$WHILE( m2src(), .lptr, str, .ptr, tok)
@@ -202,19 +220,30 @@ private UCGMC(	local String cmd,
 	set ptr = 0
   	quit "; "_str
 
+	// ---------------------------------------------------------------------
+private String ignore( noret String str,
+		ret   Number ptr,
+		noret String tok)
+	/* ---------------------------------------------------------------------
+	return comment string for commands that are ignored here
+	*/
+	set ptr=0
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	quit "; "_$$UNTOK^%ZS(str,tok)
+
 	/* ================================================================== */
-	/* Compiler directives                                                */
+	/* Compiler directives that occur in PSL source code                  */
 	/* ****************************************************************** */
 
 	// ---------------------------------------------------------------------
-ACCEPT( local String m2src(),
-	local Number lptr,
-	local String str,
-	public Number ptr,
-	local String tok)	// Accept a warning and quiet the compiler
+private String ACCEPT( noret String m2src(),
+		noret Number lptr,
+		noret String str,
+		ret   Number ptr,
+		noret String tok)	// Accept a warning and quiet the compiler
 	/* ---------------------------------------------------------------------
 	*/
-	type public String commands(,,)
+	type public String pslPrsr(,,)
 
 	type String atom = "", kwd,return
 	type List   val
@@ -224,16 +253,18 @@ ACCEPT( local String m2src(),
 
 	for kwd="DATE","PGM" do {
 		set val = atom.getSub( kwd, ";", "=", 1)
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		if val.isNull() do warnGroup^UCGM( "SYNTAX", "Accept requires "_kwd_" field")
 	}
 
-	/* CR field is required for V7.0 and up only.
-	   To prevent warnings for "old" #ACCEPTS that carried into V7.0 +,
+	/* CR field is required for PSL v2.7 and up only.
+	   To prevent warnings for "old" #ACCEPTS that carried into PSL v2.7 +,
 	   try to extract the YEAR from the DATE keyword (delimiter + 4 digits
 	   at the end, or 4 digits + delimiter at the beginning, programmers
 	   that still use 2 digit years will get what they deserve).
 	   If the year is before 2005, don't warn. */
-	if %VersionID '< 7 do {
+	if pslPrsr("cs","PSL","Version") '< 2.7 do {
 		set val = atom.getSub( "CR", ";", "=", 1)
 		if val.isNull() do {
 			type String dat = atom.getSub( "DATE", ";", "=", 1)
@@ -241,6 +272,7 @@ ACCEPT( local String m2src(),
 			else   if dat?4N1P.E set dat = dat.extract(1, 4)
 			if dat?4N, dat.toNumber()<2005 quit
 
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			do warnGroup^UCGM( "SYNTAX", "Accept requires CR field")
 		}
 	}
@@ -249,32 +281,15 @@ ACCEPT( local String m2src(),
 	   */
 	set ptr = 0
 	set val = atom.getSub("GROUP", ";", "=", 1).upperCase()
-	if val.isNull() set commands( "ACCEPT", llptr) = ""
-	else  for elm=1:1:val.count() set commands( "ACCEPT", llptr, val.elementAt(elm)) = ""
+	if val.isNull() set pslPrsr( "ACCEPT", llptr) = ""
+	else  for elm=1:1:val.count() set pslPrsr( "ACCEPT", llptr, val.elementAt(elm)) = ""
 
 	quit "; "_ str
 
 	// ---------------------------------------------------------------------
-BREAK( local String str,
-	public Number ptr,
-	local String tok)	// Break in the compiler
-	/* ---------------------------------------------------------------------
-	*/
-	new $ZT set $ZT="B"
-
-	if '$$ask( .str, .ptr, tok) quit ""
-	if str="" break  quit ""
-
-	#ACCEPT DATE=2006-03-14;PGM=FSCW;CR=20280;GROUP=XECUTE
-	xecute "ZB "_str
-
-	quit ""
-
-	// ---------------------------------------------------------------------
-BYPASS( local String m2src(),
-	public Number lptr,
-	public Number ptr)
-	// Bypass the M++ compiler
+private String BYPASS( noret String m2src(),
+		ret   Number lptr,
+		ret   Number ptr)	// Bypass the M++ compiler
 	/* --------------------------------------------------------------------	
 	All lines following this line, until the line that contains the
 	"#ENDBYPASS" is directly inserted into the target code.
@@ -284,10 +299,13 @@ BYPASS( local String m2src(),
 	type String  mcode
 	type Boolean stop = 0
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do warnGroup^UCGM( "BYPASS", "Embedded M code bypassing compiler")
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set init = $$initLine^UCGM( PSL.level)
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do ADD^UCGM( init_";*** Start of code by-passed by compiler")
 
 	while 'stop  set lptr = m2src(lptr).order() quit:lptr=""  do {
@@ -295,48 +313,24 @@ BYPASS( local String m2src(),
 		set mcode = m2src(lptr)
 		if mcode.upperCase()["#ENDBYPASS" set stop=1 quit
 		set mcode=init_ mcode.translate( 9.char()," ").trim(-1)
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		do ADD^UCGM( mcode)
 	}
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do resetType^UCGM()	// Invalidate assignments to Primitives
 
 	set ptr = 0
 	quit ";*** End of code by-passed by compiler ***"
 
-	// ---------------------------------------------------------------------
-DEFINE( local String str,
-	public Number ptr,
-	local String tok)
-	/* ---------------------------------------------------------------------
-	#DEFINE name value
-	*/
-	type literal String BINOPS = "'+-*/\#_!&()"
-	type public Boolean commands(,)
-
-	type PSLExpression name = $$ATOM^%ZS( str, .ptr, "", tok)
-	if 'name.isVariable() do PSL.error( "Variable name expected")
-
-	type PSLExpression expr = ""
-	type String atom
-	while ptr>0 do {
-		set atom = $$ATOM^%ZS( str, .ptr, BINOPS, tok)
-		if BINOPS[atom set expr = expr_atom quit
-		if atom.isLiteral() set expr = expr_atom quit
-		if 'commands( "DEFINE", atom).exists() do PSL.error("Invalid experession element: "_atom) set ptr=0 quit
-		set expr=expr_commands( "DEFINE", atom)
-	}
-
-	#ACCEPT Date=2006-04-25; PGM=FSCW; CR=20280; Group=XECUTE
-	xecute "set commands(""DEFINE"",name)="_expr
-
-	quit "; "_str
 
 	// ---------------------------------------------------------------------
-IF(	local String m2src(),
-	public Number lptr,
-	local String str,
-	public Number ptr,
-	local String tok)	// Process #IF
+private String IF( noret String m2src(),
+		ret   Number lptr,
+		noret String str,
+		ret   Number ptr,
+		noret String tok)	// Process #IF
 	/* ---------------------------------------------------------------------
 	There are two forms of #IF:
 	1) #IF condition
@@ -356,8 +350,6 @@ IF(	local String m2src(),
 		the current implementation treats the follwoing combination as a
 		case of #IF conditition code:
 			#IF condition // comment
-		This could be relaxed if str were replaced by
-		$$stripCmt^UCPSLLR(str) before calling $$atom^%ZS()
 	. The functions IF, ELSE, END, and WHILE use public variable fCompile()
 		to keep track of the outcome of nested #IFs:
 		- if a #IF block is detected, fCompile is incremented, and the
@@ -369,13 +361,17 @@ IF(	local String m2src(),
 	*/
 	type public String fCompile()
 	type public String struct(,)
-	type public String sysmap(,,)
+	type public PSLParser pslPrsr
 
 	type String  atom,cmdDel
 	type Number  cmdNum
 	type Boolean isTrue
 
-	set atom=$$ATOM^%ZS(str,.ptr,";",tok)
+	/* Do not untokenize str here, because atom will be passed to
+	   $$condBool^UCGM(), and that function expects a tokenized string.
+	   */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set atom=$$ATOM^%ZS(str,.ptr,";",,1)
 
 	// Find any extrinsic functions ($$) used in #IF
 	if atom["$$" do {
@@ -384,24 +380,30 @@ IF(	local String m2src(),
 
 		set fptr = 0
 		for  do { quit:fptr=0
-			set fatom=$$ATOM^%ZS(atom,.fptr,"+-*/\#_'=><[]&!?",tok,1)
+			/* Don't need to untokenize here either, because only
+			   the method^module are used here. */
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+			set fatom=$$ATOM^%ZS(atom,.fptr,"+-*/\#_'=><[]&!?",,1)
 			quit:fatom.extract(1,2)'="$$"
 			set func = fatom.piece( "(", 1)
 			set func = func.extract( 3, func.length())
-			set sysmap( "#IF", "FUNC", func) = ""
+			do pslPrsr.addSysmap( "#IF", "FUNC", func, "")
 		}
 	}
-	set cmdDel = $S(ptr:str.extract(ptr+1),1:""),cmdNum=0
+	set cmdDel = $select(ptr:str.extract(ptr+1),1:""),cmdNum=0
 
-	set atom=$$condBool^UCGM(atom) if PSL.ER quit ""
+	type Number ER = 0
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set atom=$$condBool^UCGM(atom) if ER quit ""
 
 	do {
 		catch ifEx {
-			do PSL.error(" Runtime exception in #IF: "_{String}ifEx)
+			do PSL.error(" Runtime exception in #IF: "_ifEx.toString())
 		}
 
 		#ACCEPT DATE=20060314;PGM=FSCW;CR=20280;GROUP=XECUTE
-		xecute ("I "_atom) set isTrue=$T
+		xecute ("S isTrue="_atom)
 
 		if 'isTrue set ptr = 0	// Don't process the rest of the line
 
@@ -418,30 +420,30 @@ IF(	local String m2src(),
 	quit ""
 
 	// ---------------------------------------------------------------------
-INFO( local String str,
-	public Number ptr,
-	local String tok)
+private String INFO( noret String str,
+		ret Number ptr,
+		noret String tok)
 	/* ---------------------------------------------------------------------
 	#INFO groups switch
 
 	INFO groups are the same as WARN groups, even though most groups will
 	have no associated INFO messages.
 	*/
-	type public Boolean commands(,)
+	type public PSLParser pslPrsr
 
-	type List    all  = $$allWARN
+	type List    all  = $$allINFO
 	type List    atom = $$getExpr( str, .ptr, tok, $$allWARN)
 	type Boolean switch=$$getSwitch(str, .ptr, tok, 1)
 
-	do setCmds( "INFO", atom, switch, all, .commands(,))
+	do setCmds( "INFO", atom, switch, all, pslPrsr)
 
 	set ptr = 0
 	quit ""
 
 	// ---------------------------------------------------------------------
-ELSE(	local String m2src(),
-	public Number lptr,	// Process #ELSE
-	public Number ptr)
+private String ELSE( noret String m2src(),
+		ret Number lptr,	// Process #ELSE
+		ret Number ptr)
 	/* ---------------------------------------------------------------------
 	*/
 	type public String fCompile()
@@ -451,7 +453,7 @@ ELSE(	local String m2src(),
 	quit ""
 
 	// ---------------------------------------------------------------------
-END( public Number ptr)	// Process #END or #ENDIF
+private String END( ret Number ptr)	// Process #END or #ENDIF
 	/* ---------------------------------------------------------------------
 	*/
 	type public String fCompile()
@@ -472,65 +474,74 @@ END( public Number ptr)	// Process #END or #ENDIF
 	quit ""
 
 	// ---------------------------------------------------------------------
-OPTIMIZE( local String str,
-	public Number ptr,
-	local String tok)
+private String OPTIMIZE( noret String str,
+		ret   Number ptr,
+		noret String tok)
 	/* ---------------------------------------------------------------------
 	#OPTIMIZE options switch
 	*/
-	type public Boolean commands(,)
+	type public PSLParser pslPrsr
 
 	type List    all  = $$allOPTIMIZE
 	type List    atom = $$getExpr( str, .ptr, tok, all)
 	type Boolean switch = $$getSwitch(str, .ptr, tok, 1)
 
-	do setCmds( "OPTIMIZE", atom, switch, all, .commands(,))
+	do setCmds( "OPTIMIZE", atom, switch, all, pslPrsr)
 
 	set ptr = 0
 	quit "; "_str
 
 	// ---------------------------------------------------------------------
-OPTION( local String str,
-	public Number ptr,
-	local String tok)
+private String OPTION( noret String str,
+		ret   Number ptr,
+		noret String tok)
 	/* ---------------------------------------------------------------------
 	#OPTION options switch
 	*/
-	type public Boolean commands(,)
+	type public PSLParser pslPrsr
 
-	type List    all  = $$allOptions
+	type List all  = $$allOptions
+
+	do {
+		catch xClsdes {
+			// ignore exception on clsdes (eg dummy or null moduleName)
+			}
+			type PSLClass clsdes = pslPrsr.getPSLClass( pslPrsr.moduleName)
+			if clsdes.classType > -1 set all = all.piece(",ResultClass")_all.piece(",ResultClass",2)
+	}
+
 	type List    atom = $$getExpr( str, .ptr, tok, all)
 	type Boolean switch = $$getSwitch(str, .ptr, tok, 1)
 
-	do setCmds( "Options", atom, switch, all, .commands(,))
+	do setCmds( "Options", atom, switch, all, pslPrsr)
 
 	set ptr = 0
 	quit "; "_str
 
 	// ---------------------------------------------------------------------
-WARN( local String str,
-	public Number ptr,
-	local String tok)
+private String WARN( noret String str,
+		ret   Number ptr,
+		noret String tok)
 	/* ---------------------------------------------------------------------
 	#WARN groups switch
 	*/
-	type public Boolean commands(,)
+	type public PSLParser pslPrsr
 
 	type List    all  = $$allWARN
-	type List    atom = $$getExpr( str, .ptr, tok, $$allWARN)
+	type List    atom = $$getExpr( str, .ptr, tok, all)
 	type Boolean switch=$$getSwitch(str, .ptr, tok, 1)
 
-	do setCmds( "WARN", atom, switch, all, .commands(,))
+	do setCmds( "WARN", atom, switch, all, pslPrsr)
 
 	set ptr = 0
 	quit ""
 
 	// ---------------------------------------------------------------------
-WHILE( local String m2src(),
-	public Number lptr,
-	local String str,
-	public Number ptr,
-	local String tok)	// Process #WHILE
+private String WHILE( noret String m2src(),
+		ret   Number lptr,
+		noret String str,
+		ret   Number ptr,
+		noret String tok)	// Process #WHILE
 	/* ---------------------------------------------------------------------
 	*/
 	type public String fCompile()
@@ -538,9 +549,10 @@ WHILE( local String m2src(),
 	type String expr
 	type Number ER,i,lptrb,lptre
 
-	// condition as PSL expression, and 
+	// condition as PSL expression
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type PSLExpression atom=$$ATOM^%ZS(str,.ptr,";",tok)
-	type String        cmdDel=$S(ptr:str.extract(ptr+1),1:""),
+	type String        cmdDel=$select(ptr:str.extract(ptr+1),1:""),
 	type Number        cmdNum=0
 
 	set (lptrb,lptre)=lptr
@@ -554,6 +566,7 @@ WHILE( local String m2src(),
 	for i=1:1:1000 do { if bQuit quit
 
 		set ER=0
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set expr=$$condBool^UCGM(atom) if ER set bQuit=1 quit
 
 		do {
@@ -569,10 +582,12 @@ WHILE( local String m2src(),
 
 			/* Single line #WHILE
 			   */
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			if (lptr=lptre) do line^UCGM( m2src(lptr).extract( ptr+1, PSL.maxLineLength)) quit
 
 			/* Multiple line #WHILE
 			   */
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			for  set lptr = m2src(lptr).order() quit:(lptr'<lptre)  do line^UCGM( m2src( lptr)) if ER quit
 		}
 	}
@@ -582,28 +597,214 @@ WHILE( local String m2src(),
 	quit ""
 
 	// ---------------------------------------------------------------------
-XECUTE( local String str,
-	public Number ptr,
-	local String tok)	// xecute a string in the compiler
+private String XECUTE( noret String str,
+		ret   Number ptr,
+		noret String tok)	// xecute a string in the compiler
 	/* ---------------------------------------------------------------------
 	Ignored in BOOT mode (all levels)
 	*/
-	type public Primitive commands(,)
+	if PSL.getSetting("boot","restrictionlevel",0)>0 set ptr=0 quit ""
 
-	if commands("boot","restrictionlevel").get()>0 set ptr=0 quit ""
-	if '$$ask( .str, .ptr, tok) quit ""
-
-	#ACCEPT DATE=2006-03-14;PGM=FSCW;CR=20280;GROUP=XECUTE
-	if 'str.isNull() xecute str
+	#ACCEPT DATE=2006-03-14;PGM=FSCW;CR=20280;GROUP=ACCESS,XECUTE
+	xecute $$UNTOK^%ZS(str.extract( ptr + 2, str.length()),tok)
+	set ptr = 0
 
 	quit ""
+
+	/* ================================================================== */
+	/* Compiler directives that occur in UCOPS files                      */
+	/* ****************************************************************** */
+
+	// ---------------------------------------------------------------------
+private void DEFINE( PSLParser prsr
+		, noret String str
+		, ret   Number ptr
+		, noret String tok
+		) // #DEFINE [section.]name value
+		
+	/* ---------------------------------------------------------------------
+	This directive is only allowed in UCOPTS files.
+
+	The value can be a literal (Sting or Number only), or it can be a simple
+	expression composed of literals, and the string operator (_), the
+	arithmatic operators (+, -, *, /, \, and #) or logical operators (', &,
+	and !) and parenthesis.
+	*/
+	type literal String BINOPS = "+-*/\#_'!&()"
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type PSLExpression name = $$ATOM^%ZS( str, .ptr, "", tok)
+	type String sect = "DEFINE"
+
+	if name["." set sect = name.piece( "."), name = name.extract( name.find("."), name.length())
+	if '({List}"boot,DEBUG,DEFINE").contains( sect) do PSL.error( "Invalid section '"_ sect_ "'") set ptr = 0
+	if 'name.isVariable() do PSL.error( "Variable name expected") set ptr = 0
+
+	type PSLExpression expr = ""
+	type String atom,atomsect
+	while ptr>0 do {
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		set atom = $$ATOM^%ZS( str, .ptr, BINOPS, tok)
+		if BINOPS[atom set expr = expr_atom quit
+		if atom.isLiteral() set expr = expr_atom quit
+		set atomsect = sect
+		if atom [ "." set atomsect = atom.piece( "."), atom = atom.extract( atom.find("."), atom.length())
+		if atomsect '= sect do PSL.error( "Invalid section '"_ atomsect_ "'") set ptr=0 quit
+		if 'prsr.hasSetting( sect, atom) do PSL.error("Invalid experession element: "_atom) set ptr=0 quit
+		set expr = expr_ prsr.getSetting( sect, atom)
+	}
+
+	#ACCEPT Date=2006-04-25; PGM=FSCW; CR=20280; Group=XECUTE
+	xecute "set expr="_expr
+	do prsr.addSetting( sect, name, expr)
+
+	quit
+
+	// ---------------------------------------------------------------------	
+private void PSL( PSLParser prsr	// parser that wants to receive the setting
+		, noret String str
+		, ret Number ptr
+		, noret String tok
+		) // #PSL settingName value
+	/* ---------------------------------------------------------------------
+	The #PSL compiler command supports the assignment of an arbitrary literal 
+	value to a single compiler setting.
+
+	The value found in the string will be validated here. Incorrect values
+	will not be added to the PSLParser.
+	All mismatches are reported as warnings, because UCGMCU will force
+	default values for every settingName. As a result, incorrect #PSL
+	compiler command lines will effectively be ignored.
+	*/
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type String name = $$ATOM^%ZS(str,.ptr,"",tok)
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if name.isNull()!$$isComment(name) do warnGroup^UCGM("MISMATCH","missing settingName in #PSL") quit
+
+	type String value = ""
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if ptr>0 set value = $$ATOM^%ZS(str,.ptr,"",tok)
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if value.isNull()!$$isComment(value) do warnGroup^UCGM("MISMATCH","missing value in #PSL") quit
+	if value = "true" set value = 1
+	else  if value = "false" set value = 0
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	else  if 'value.isLiteral() do warnGroup^UCGM("MISMATCH","Invalid #PSL String value '"_value_"'") quit
+	if 'value.isNumber() set value = value.stripQuotes()
+
+	// check settingName and value
+	type List all = $$allPSL()
+	type Number pos = all.position( name, , 1)
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if pos = 0 do warnGroup^UCGM("MISMATCH","Invalid #PSL settingName '"_ name_ "'") quit
+	if 'all.contains( name) {
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do warnGroup^UCGM("MISMATCH","#PSL settingName ("_ name_") is case sensitive")
+		set name = all.elementAt( pos)
+	}
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if prsr.hasSetting( "PSL", name) do warnGroup^UCGM("MISMATCH","Ignored duplicate #PSL "_ name) quit
+
+	if name = "BooleanMask" {
+		/* #PSL BooleanMask String
+		   The value follows the pattern trueWord,falseWord, and shall
+		   not contain quotes. Or it shall be "".
+		   See UCOPTS.ini for the meaning of an empty mask.
+		   */
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		if 'value.isNull(), value.length(",")'= 2 ! value.contains("'")! value.contains("""") do warnGroup^UCGM("MISMATCH","Invalid #PSL BooleanMask value '"_value_"'") quit
+
+		do prsr.addSetting( "PSL", "BooleanMask", value)
+	}
+	else  if name = "CompileSummary" {
+		/* #PSL CompileSummary Boolean
+		   The value must be a PSL boolean (0, 1, false, true).
+		   */
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		if '({List}"0,1").contains( value) do warnGroup^UCGM("MISMATCH","Invalid #PSL CompileSummary value '"_ value_ "'") quit
+
+		do prsr.addSetting( "PSL", "CompileSummary", value)
+	}
+	else  if name = "DateMask" {
+		/* #PSL DateMask String
+		   The value must be a valid date mask, or it must be "".
+		   See UCOPTS.ini for the meaning of an empty mask.
+		   */
+		catch xmask { // if exception is thrown, the mask is invalid
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+			do warnGroup^UCGM("MISMATCH","Invalid #PSL DateMask value '"_value_"'")
+		}
+		/* Try the mask on %CurrentDate. If it fails, report a warning.
+		   The call to addSetting() will only execute if no exception
+		   was thrown.
+		   */
+		type String ign
+		if 'value.isNull() set ign = %CurrentDate.toString( value)
+
+		do prsr.addSetting( "PSL", "DateMask", value) // seems OK !
+	}
+	else  if name = "TimeMask" {
+		/* #PSL TimeMask String
+		   The value must be a valid time mask, or it must be "".
+		   See UCOPTS.ini for the meaning of an empty mask.
+		   */
+		catch xmask { // if exception is thrown, the mask is invalid
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+			do warnGroup^UCGM("MISMATCH","Invalid #PSL TimeMask value '"_value_"'")
+		}
+		/* Try the mask on %CurrentTime. If it fails, report a warning.
+		   The call to addSetting() will only execute if no exception
+		   was thrown.
+		   */
+		type String ign
+		if 'value.isNull() set ign = %CurrentTime.toString( value)
+
+		do prsr.addSetting( "PSL", "TimeMask", value) // seems OK !
+	}
+	else  if name="Version" {
+		/* #PSL Version Number
+		   The value must be a Number between the minimum version and
+		   the maximum (= current) version that can be handled by the
+		   compiler ($$getPSLMinVersion^PSLC() and
+		   $$getPSLVersion^PSLC())
+		   */
+		type Number minVersion = $$getPSLMinVersion^PSLC()
+		type Number pslVersion = $$getPSLVersion^PSLC()	
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		if '(value.isNumber()) do warnGroup^UCGM("MISMATCH","invalid #PSL Version value '"_ value_ "'") quit
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		if value<minVersion do warnGroup^UCGM("MISMATCH","#PSL Version cannot be less than "_ minVersion) quit
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		if value>pslVersion do warnGroup^UCGM("MISMATCH","#PSL Version cannot be greater than "_ pslVersion) quit
+
+		do prsr.addSetting( "PSL", "Version", value)
+	}
+
+	quit
 
 	/* ================================================================== */
 	/* public and private functions and subroutines                       */
 	/* ****************************************************************** */
 
 	// ---------------------------------------------------------------------
-public allOPTIMIZE() // return list of all possible OPTIMIZE options
+public List allINFO() // return list of all possible INFO options
+	/* ---------------------------------------------------------------------
+	This function returns a List of all possible INFO options.
+
+	The values that are site configurable are described in UCOPTS.ini. In
+	addition the following values are intended for system use only:
+	INTERNAL	report internal compiler warnings (such as unexpected
+			calls or values).
+	*/
+	quit $$allWARN
+
+	// ---------------------------------------------------------------------
+public List allOPTIMIZE() // return list of all possible OPTIMIZE options
 	/* ---------------------------------------------------------------------
 	This function returns a sorted List of all possible optimization
 	options. It can be used by supporting code for validation, or to turn
@@ -614,7 +815,7 @@ public allOPTIMIZE() // return list of all possible OPTIMIZE options
 	quit "FUNCTIONS,OBJECTS"
 
 	// ---------------------------------------------------------------------
-public allOptions() // return list of all possible Option options
+public List allOptions() // return list of all possible Option options
 	/* ---------------------------------------------------------------------
 	This function returns a sorted List of all possible Option options.
 	It can be used by supporting code for validation, or to turn Options
@@ -624,13 +825,21 @@ public allOptions() // return list of all possible Option options
 
 	The values that are site configurable are described in UCOPTS.ini. In
 	addition the following values are intended for system use only:
-	boot		compiler bootstrap level
 	nolink		suppress automatic ZLINK of compiled routine
 	*/
-	quit "$GetEFD,AllowGOTO,AutoPublicERRM,ResultClass"
+	quit "$GetEFD,AutoPublicERRM,nolink,ResultClass"
 
 	// ---------------------------------------------------------------------
-public allWARN() // return list of all possible WARN options
+public List allPSL() // return list of all possible PSL commands
+	/* ---------------------------------------------------------------------
+	This function returns a List of all possible PSL settingNames.
+
+	The values that are site configurable are described in UCOPTS.ini. 
+	*/
+	quit "BooleanMask,CompileSummary,DateMask,TimeMask,Version"
+
+	// ---------------------------------------------------------------------
+public List allWARN() // return list of all possible WARN options
 	/* ---------------------------------------------------------------------
 	This function returns a sorted List of all possible warning options.
 	It can be used by supporting code for validation, or to turn warning
@@ -649,31 +858,40 @@ public allWARN() // return list of all possible WARN options
 	quit WARN
 
 	// ---------------------------------------------------------------------
-private decode( String line, String commands(,)) // decompose a line
+private void decode( PSLParser pslPrsr, String line) // decompose a line
 	/* ---------------------------------------------------------------------
-	This subroutine decodes a line that contains a #WARN, #OPTIMIZE or
-	#OPTION compiler command.
+	This subroutine decodes a line that contains a #INFO, #WARN, #OPTIMIZE,
+	#OPTION or #DEFINE compiler command.
+
+	NOTES:
+	. The name of the PSLParser parameter must be equal to the name that is
+		used in the type public PSLParser defintions of the compiler
+		instracutions that are decoded.
 	*/
 
 	// declare and hide PUBLIC vars of all #command implementations
-	type String fCompile(),RM,struct(,),sysmap(,,)
+	type String fCompile(),RM,struct(,)
 	type Number ER
 
 	type Number ptr = 0
 	type String tok
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set line = $$TOKEN^%ZS( line, .tok)
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type String cmd = $$ATOM^%ZS( line, .ptr, ";").upperCase()
 
 	if $$isComment( cmd) quit
-	if {List}"#INFO,#OPTIMIZE,#OPTION,#WARN".contains(cmd) set cmd = $$UCGMC( cmd, , 0, line, ptr, tok) quit
+	if ({List}"#INFO,#OPTIMIZE,#OPTION,#WARN").contains(cmd) set cmd = $$UCGMC( cmd, , 0, line, ptr, tok) quit
 
-	if cmd="#DEFINE" set cmd = $$DEFINE( line, ptr, tok) quit
+	if cmd="#DEFINE" do DEFINE( pslPrsr, line, ptr, tok) quit
+	if cmd="#PSL" do PSL( pslPrsr, line, ptr, tok) quit
 
 	quit
 
 	// ---------------------------------------------------------------------
-private decodeFile( String sDir, String sFil, String cmds(,)) // decompose a file
+void decodeFile( String sDir, String sFil, PSLParser prsr) // decompose a file
 	/* ---------------------------------------------------------------------
 	This subroutine decodes a line that contains a #WARN, #OPTIMIZE or
 	#OPTION compiler command.
@@ -690,12 +908,12 @@ private decodeFile( String sDir, String sFil, String cmds(,)) // decompose a fil
 			if xIO.type'["OPEN" do rIO.close()
 		}
 		do rIO.open()
-		for lptr=1:1 do decode( rIO.read().translate( 9.char(), " "), .cmds(,))
+		for lptr=1:1 do decode( prsr, rIO.read().translate( 9.char(), " "))
 	}	
 	quit
 
 	// ---------------------------------------------------------------------
-public defOPTIMIZE() // return list of default OPTIMIZE options
+public List defOPTIMIZE() // return list of default OPTIMIZE options
 	/* ---------------------------------------------------------------------
 	This function returns a sorted List of all optimization options that
 	are "ON" by default.
@@ -705,161 +923,63 @@ public defOPTIMIZE() // return list of default OPTIMIZE options
 	quit $$allOPTIMIZE()
 
 	// ---------------------------------------------------------------------
-public defWARN() // return list of default WARN options
+String replaceAndNotOr( String src)	// replace keywords and/or/not
 	/* ---------------------------------------------------------------------
-	This function returns a sorted List of all warning options that are
-	"ON" by default.
-	It is used by UCDTASYS.proc to set the default set of options if
-	UCOPT did not provide an environment specific value.
-
-	This function uses %VN (at "runtime") to return a version-dependent
-	value.
+	Support function, called by $$lineAndNotOr^UCGM() to replace the
+	keywords and, or, and not by the associated boolean operator.
 	*/
-	type public Number %VN
+	type literal List KWDS = "and,not,or"
+	type literal List BOPS = "&,',!"
 
-	type String grp
-	type String wrn = $$allWARN()
+	type public PSLParser pslPrsr
 
-	for grp="FUNCTION,","READ," set wrn = wrn.piece(grp)_ wrn.piece( grp, 2)
-	if %VN'>6.4 for grp="ACCESS,","DEPRECATED,","SCOPE," set wrn = wrn.piece(grp)_ wrn.piece( grp, 2)
+	quit:pslPrsr.getSetting("PSL","Version")<3 src
 
-	quit wrn
+	type String cd, ct, kw, lc, rc
+	type Number c1 = PSL.maxStringLength+2 ,c2 = PSL.maxStringLength+2, wc
+
+	if src.contains("//") set c1 = src.find("//")
+	if src.contains(";")  set c2 = src.find(";")
+	if c1<c2 set cd = src.extract(1, c1-2)
+	else  set cd = src.extract(1, c2 - 2)
+	set ct = src.extract( cd.length() + 1, src.length())
+
+	for wc = 1:1:KWDS.count() {
+		set kw = KWDS.elementAt( wc) quit:cd'[kw
+		for lc = " ",")" if cd.contains( lc_ kw) {
+			for rc = " ", "(" if cd.contains( lc_ kw_ rc) set cd = cd.replace( lc_kw_rc, lc_ BOPS.elementAt(wc)_ rc)
+		}
+	}
+	quit cd_ct
 
 	// ---------------------------------------------------------------------
-private newTable	// deprecated method Schema.createTable()
-	/* ---------------------------------------------------------------------
-	FSCW CR11445:
-	This method behaves like a compiler directive: The table is created
-	when the PSL compiler detects the method. All code following the
-	occurrence of the method can reference the table (until the associated
-	Schema.deleteTable() is encountered by the compiler).
- 
-	INPUTS:
-	. actual(1)	Literal String TableName
-	. actual(2)	Literal String AccessKeys
-	. actual(3)	Literal String OtherColumnNames
-	. actual(4)	Literal String GlobalName		/TYP=T/DEF=ZTMPBCH
-
-	EXAMPLE:
-
-	do Db.createTable("TMP","JOB,SEQ","TOTAL,CNT","TMP99")
-
-	^TMP99(JOB,SEQ)=TOTAL|CNT
-
-	do Db.createTable("TMP",""BCHABC"",JOB,SEQ","COUNT")
-
-	^ZTMPBCH("BCHABC",JOB,SEQ)=COUNT
-
-	*/
-	if $$rtIsRdb^UCXDD() do PSL.error("Schema.createTable() not supported for RDB") quit
-	do warnGroup^UCGM("DEPRECATED","Schema.createTable() - use predefined tables")
-
-	type String table = PSL.actual(1).piece("""",2)
-
-	type String keys  = PSL.actual(2)
-	if $E(keys)="""" set keys=$E(keys,2,$L(keys)-1)	; Remove "
-	set keys = keys.stripQuotes()
-
-	type String columns = PSL.actual(3)
-	if $E(columns)="""" set columns=$E(columns,2,$L(columns)-1)
-
-	type String global = PSL.actual(4)
-	if $E(global)="""" set global=$E(global,2,$L(global)-1)
-	if global="" set global="ZBCHTMP"
-	if $L(global)>8 do PSL.error("Global name cannot exceed 8 characters") quit
-
-	#ACCEPT DATE=2006-03-14;PGM=FSCW;CR=20280;GROUP=BYPASS
-	#BYPASS
-	if $D(^DBTBL("SYSDEV",1,table)) D  I ER Q
-	.	N USER
-	.	S USER=$P(^DBTBL("SYSDEV",1,table,10),"|",11)
-	.	I USER=""!(USER="ZZZZZZ") Q
-	.	S RM="Invalid table name "_table
-	.	S ER=1 Q
-
-	K ^DBTBL("SYSDEV",1,table)
-	S ^DBTBL("SYSDEV",1,table,0)=global	; Global
-	S ^(10)="124|PBS|0||||||||ZZZZZZ|5"
-	S ^(12)="f"_table			; File short name
-	S ^(13)="",^(22)="",^(99)=""
-	S ^(16)=keys				; Access keys
-	S ^(100)="^"_global_"("_keys_"|1||0"	; Global refenence, record type
-	S ^(102)=keys
-	;
-	S lastkey=$P(keys,",",$L(keys,","))
-	F i=1:1:$L(keys,",") D			; Access keys
-	.	S di=$P(keys,",",i)
-	.	S ^DBTBL("SYSDEV",1,table,9,di)=i_"*|20|||||||T||S|||2|0|||||124|"
-	I columns'="" F i=1:1:$L(columns,",") D		; 12/16/98 BC
-	.	S di=$P(columns,",",i)
-	.	S ^DBTBL("SYSDEV",1,table,9,di)=lastkey_"|20|||||||T||S|||2|0|||||124|"_i
-	#ENDBYPASS
-	
-	quit
-
-	// ---------------------------------------------------------------------
-private delTable	// method Schema.deleteTable()
-	/* ---------------------------------------------------------------------
-	Delete table schema (only files created with createTable method will
-	be deleted).
-
-	FSCW CR11445:
-	This method behaves like a compiler directive: The table is deleted
-	when the PSL compiler detects the method. All code following the
-	occurrence of the method can not reference the table.
-
-	INPUTS:
-	. actual(1) = Literal String Table name
-
-	EXAMPLE:
-
-	do Db.deleteTable("BCHABC")
-
-	*/
-	if $$rtIsRdb^UCXDD() do PSL.error("Schema.deleteTable() not supported for RDB") quit
-	do warnGroup^UCGM("DEPRECATED","Schema.deleteTable() - use predefined tables")
-	type String table= PSL.actual(1).piece("""",2)
-	if table.isNull() quit
-
-	type String sts
-
-	#ACCEPT DATE=2006-03-14;PGM=FSCW;CR=20280;GROUP=BYPASS
-	#BYPASS
-	S sts=$G(^DBTBL("SYSDEV",1,table,10))
-	;
-	; Dummy file without audit information (created by createTable method)
-	I $P(sts,"|",10)=""&($P(sts,"|",11)=""!($P(sts,"|",11)="ZZZZZZ"))&($P(sts,"|",12)=5) K ^DBTBL("SYSDEV",1,table) Q
-	#ENDBYPASS
-
-	do PSL.error("Invalid table name")
-	quit
-
-	// ---------------------------------------------------------------------
-private SetLit( local PSLExpression mcode,	// M code under construction
-	local PSLExpression atom,		// target variable
-	local PSLExpression expr) 		// value to assign
+String SetLit( noret PSLExpression mcode,	// M code under construction
+		noret PSLExpression atom,		// target variable
+		noret PSLExpression expr) 		// value to assign
 	/* ---------------------------------------------------------------------
 	Set a value to it's literal
 	*/
-	new $ZT set $ZT="D XERROR^UCGMC(""LITERAL assignment"") ZG "_($ZL-1)
-
-	/* Strip "S " from end of mcode, and decrement number of commands
-	   */
-	set PSL.cmdNum = PSL.cmdNum-1
- 
-	if 'expr.fitsLineLength( "S expr=".length()) set expr = $$bigExpr(expr)
-	#ACCEPT DATE=20060314;PGM=FSCW;CR=20280;GROUP=XECUTE
-	else  xecute ("S expr="_expr)
-
+	do {
+		catch xLit {
+			set xLit.ident = "LITERAL"
+			throw xLit
+		}
+		if 'expr.fitsLineLength( "S expr=".length()) set expr = $$bigExpr(expr)
+		#ACCEPT DATE=20060314;PGM=FSCW;CR=20280;GROUP=XECUTE
+		else  xecute ("S expr="_expr)
+	}
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do setInst^UCGM( atom, "", expr.toByteString().toPSLExpression())
 
+	/* Strip "S " from end of mcode
+	   */
 	quit mcode.extract( 1, mcode.length()-2)
 
 	// ---------------------------------------------------------------------
-private splitCode( local String expr,	// long string
-	   local Number extra,		// extra room (*2)
-	   local String at,		// characters at which to split (*3)
-	  public String split())	// chunks
+void splitCode( noret String expr,	// long string
+		noret Number extra,		// extra room (*2)
+		noret String at,		// characters at which to split (*3)
+		String split())		// chunks
 	/* ---------------------------------------------------------------------
 	Split a long string into chuncks that fit within the (byte)length limits
 	imposed by the GT.M implementation.
@@ -894,76 +1014,23 @@ private splitCode( local String expr,	// long string
 	}
 	quit
 
-	// ---------------------------------------------------------------------
-private XERROR(msg)
-	/* ---------------------------------------------------------------------
-	Called by ^UCGM and SetLit
-	*/
-	do ERROR^UCGM($G(msg)_": "_$P($ZS,",",3,999))
-	quit
-
 	/* ================================================================== */
 	/* local support functions and subroutines                            */
 	/* ****************************************************************** */
 
 	// ---------------------------------------------------------------------
-ask(	public String str,
-	public Number ptr,
-	local String tok)
-	/* ---------------------------------------------------------------------
-	Return string (ask if ask qualifier was used).
-
-	If str does not contain the word ASK, then str is modified to contain
-	the untokenized remainderOfLine, and the function returns 1.
-
-	If str does contain the keyword ASK, then the entire (untokenized)
-	string is displayed, and a response is read from $P.
-	If the answer is "Y" or "YES" (case insensitive), then this is treated
-	as if ASK was absent.
-	In all other cases, str will be set to "" and the function will return 0
-	(zero).
-
-	ARGUMENTS:
-	(*1) str = #COMMAND remainderOfLine or #COMMAND ASK remainderOfLine
-
-	INPUTS:
-	. %TO = default timeout value (60 if undefined)
-	*/
-	type public Number %TO
-
-	type String atom
-	type Number timeout = %TO.get(60)
-	type String yn = 1
-
-	if ptr=0 set atom=""
-	else     set atom = str.extract( ptr+2, str.length())
-
-	if atom.piece(" ").upperCase() = "ASK" do {
-
-		use $P
-		write !,$$UNTOK^%ZS(str,tok)_" : "
-		read yn:timeout else  set yn=0
-
-		set atom = atom.piece(" ", 2, atom.length())
-		set yn = yn.upperCase()
-
-		if (yn="Y")!(yn="YES") set yn = 1
-		else  set yn = 0
-
-	}
-	set str = $$UNTOK^%ZS(atom,tok), ptr = 0
-	quit yn
-
-	// ---------------------------------------------------------------------
-bigExpr(local String expr)	// Execute an expression that's bigger than the M line length !!
+private String bigExpr(noret String expr)	// Execute an expression that's bigger than the M line length !!
 	/* ---------------------------------------------------------------------
 	*/
 	type String tok,vox()
 	type Number sub
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set expr = $$TOKEN^%ZS( expr, .tok)
 	for  quit:'(expr[0.char())  do {
 		set sub =  vox("").order(-1)+1
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set vox(sub) = $$UNTOK^%ZS( 0.char()_ expr.piece( 0.char(), 2)_ 0.char(), tok)
 		set vox(sub) = vox(sub).stripQuotes()
 		set expr=expr.piece(0.char(),1)_"vox("_sub_")"_expr.piece( 0.char(),3,9999)
@@ -975,15 +1042,18 @@ bigExpr(local String expr)	// Execute an expression that's bigger than the M lin
 	quit expr
 
 	// ---------------------------------------------------------------------
-getExpr( local String str,
-	public Number ptr,
-	local String tok,
-	local String dft)	// Return expression value
+private String getExpr( noret String str,
+		ret   Number ptr,
+		noret String tok,
+		noret String dft
+		)	// Return expression value
 	/* ---------------------------------------------------------------------
 	*/
 	if ptr = 0 quit dft		// Default expression
 
-	new atom
+	type String atom
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set atom = $$ATOM^%ZS(str,.ptr,"",tok).upperCase()
 
 	if $$isComment(atom) do {		// Hit a comment, use default
@@ -995,10 +1065,10 @@ getExpr( local String str,
 	quit atom
 
 	// ---------------------------------------------------------------------
-getSwitch( local String str,
-	public Number ptr,
-	local String tok,
-	local String dft)	// Return switch value
+private String getSwitch( noret String str,
+	ret   Number ptr,
+	noret String tok,
+	noret String dft)	// Return switch value
 	/* ---------------------------------------------------------------------
 	*/
 	type Boolean atom = $$getExpr(str, .ptr, tok, dft)
@@ -1011,16 +1081,16 @@ getSwitch( local String str,
 	quit atom
 
 	// ---------------------------------------------------------------------
-isComment( local String expr)	quit (expr=";")!(expr="//")!(expr="/*")
+private Boolean isComment( noret String expr)	quit (expr=";")!(expr="//")!(expr="/*")
 
 	// ---------------------------------------------------------------------
-setCmds( local String cls,	// level 1 subscript in cmds()
-	local List vals,	// List of assignment targets (*2)
-	local String switch,	// value to store
-	local List valid,	// List of valid values (*4)
-	public String cmds(,))	// output array (*5)
+private void setCmds( noret String cls,	// level 1 subscript in cmds()
+		noret List vals,	// List of assignment targets (*2)
+		noret String switch,	// value to store
+		noret List valid,	// List of valid values (*4)
+		PSLParser cmds)		// output array (*5)
 	/* ---------------------------------------------------------------------
-	support function that sets commands(cls,val)=switch for each val in vals
+	support function that sets pslPrsr(cls,val)=switch for each val in vals
 
 	ARGUMENTS:
 	(*2) vals = List of assignment targets
@@ -1046,14 +1116,14 @@ setCmds( local String cls,	// level 1 subscript in cmds()
 	for elm=1:1:vals.count() do {
 		set val = vals.elementAt(elm)
 		set pos = valid.position( val, , 1)
-		if pos>0 set cmds( cls, valid.elementAt(pos)) = switch
+		if pos>0 do cmds.addSetting( cls, valid.elementAt(pos), switch)
 	}
 	quit
 
 	// ---------------------------------------------------------------------
-skip(	local String m2src(),
-	public Number lptr,
-	local String cmd)
+private void skip(	noret String m2src(),
+		ret   Number lptr,
+		noret String cmd)
 	/* ---------------------------------------------------------------------
 	Skip over code section, stop at #ELSE or #END[IF] on #IF level
 	*/
@@ -1065,13 +1135,18 @@ skip(	local String m2src(),
 	for  set lptr = m2src(lptr).order() quit:lptr=""  do { if (fCompile<stop)!(stop=0) quit
 
 		set ptr=1
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set rec  = $$TOKEN^%ZS( m2src(lptr).translate( 9.char(), " "),.tok)
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set atom = $$ATOM^%ZS(rec,.ptr,";",.tok).upperCase()
 
 		if atom="#END"   set atom=$$END(.ptr) quit	// #END
 		if atom="#ENDIF" set atom=$$END(.ptr) quit	// #ENDIF
 		if atom="#ELSE",fCompile=stop set stop=0 quit
 		if atom="#IF" do {				// Nested #IF
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			set atom = $$ATOM^%ZS(rec,.ptr,";",tok)
 			if ptr=0!(rec.extract(ptr+1)'=" ") set fCompile = fCompile + 1
 		}

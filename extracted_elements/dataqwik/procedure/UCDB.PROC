@@ -32,13 +32,87 @@
 	vOpenNN		Open cursor code for Db.select() and Db.selectDbset()
 
 	---- Revision History --------------------------------------------------
+	2009-04-21, Frans S.C. Witte, CRs 35741/39733
+		* Modified addMSaveByspass to deal with qual.isNull()
+		* Added support for DEBUG,IOCOUNT in Db.select()
+
+	2008-12-16, Frans S.C. Witte, CRs 35741/36952/36954
+		* Modified isDefined for MDB to account for code that calls
+		  $$BYTECHAR^SQLUTL() at the beginning of all SQL code.
+
+	2008-10-16, Frans S.C. Witte, CRs 35741/35918/35922
+		* Modified code generated for dynamic select to support tracking
+		  of open cursors.
+		* Corrected issue for Db.getOneRow(,,,delim). All callers of
+		  $$RsMsXV^UCDBRT() now supply the 'delimiter' parameter and
+		  use PSLTable.columnDelimiter in the calls to %DBAPI
+		* Modified delRdb() to work with TCOMMIT after RDB commit
+
+	2008-10-04, Frans S.C. Witte, CR 35741/35828/36013
+		* Db.select() on type LITERAL ResultSet now handled by UCRESULT.
+
+	06/13/2008 - RussellDS - CR 30801
+		* Modified delete section to remove filerPGM reference and
+		  related logic
+		* Modified delByFiler, getRecSr, keyVal sections to change
+		  filerPGM reference to RecordTABLE
+		* Modified insert and update sections to unconditionally add
+		  audit, instead of basing on if filer
+		* Modified delRdb to remove consideration for logging, since
+		  if logging is enabled for a table, it will be handled by
+		  a call to the filer in the delete section.  Moved delRcode
+		  into delRdb since no longer multiple calls.
+		* Modified getRecSr, and added getRecSrCode, to use
+		  RecordTABLE methods to get records
+		* Modified getRecord section to turn on auditFlag when
+		  updateRestrict access rights apply to a table
+		* Modified select to patch M code for access rights
+		* Modified keyVal to use SELECT (like rdb) if there are select
+		  rights on the table
+		* Modified fastDel to correctly check for literal keys that
+		  are missing
+		* Modified getRecord to deal wtih call for DbSet when audit
+		  logging is in use
+		* Added akey2asgn to build key assignment code for use by
+		  classNew^DBSDYNRA
+		* Moved getRecCode and getRecQid1 from UCXDD
+		  
+	2008-04-02 - Frans S.C. Witte - CR 33569
+		* Code generated for vFetchN() will now set row to "" when after
+		  the last row.
+
+	09/24/2007 - RussellDS - CR29295
+		* Modified getRecSr section to eliminate node -150 and add
+		  handling for nodes -161/-162 for RDB for constructioon of
+		  insert/update code.  Eliminated call to UCCLASS and now
+		  use method getNewCode for initial instantiation code.
+		* Modified getRecSr section to include new node -152 as
+		  replacement for -151.
+	
+	08/15/07 - Frans S.C. Witte - CR: 27800
+		* Replaced commands(,) by pslPrsr(,)
+		* Replaced 'public' by 'ret' in fp declarations
+		* Replaced sysmap assignment with call to PSLParser.addSysmap()
+		* Converted get1row, insert, and update to PSL
+		* Changed PSLubrou.toString() to PSLSubrou.getName()
+		* moved commands("DEBUG") to
+		  PSLParser.getSetting("DEBUG","FILEQUAL")
+		* Added getSchCln, getSchTbl, isSchCln, isSchTbl from UCSCHEMA
+		* corrected LitInst.
+		* Moved procPars to UCRUNTIM.PROC, and modified calls to UCRUNTIM
+		  to use method call syntax.
+
+	08/20/07 - KWANL / Frans S.C. Witte - CR 28995
+		* Adapted to new CATCH/THROW mechanism
+
 	05/16/07 - Frans S.C. Witte - CR: 27486
 		* RECNOFL exceptions now put table name in Error.context
 		* Removed dead (M) code from previous version of keyVal().
 		* Converted getRecPr to PSL.
 		* Added support for Cache.getRecord(,,classNew) and
 		  Cache.isDefined(,)
-		* Added support for pslPrsr("DEBUG","DBIOCOUNT") in getRecSr()
+		* Added support for PSLParser.getSetting("DEBUG","DBIOCOUNT") in
+		  getRecSr()
 		* Corrected sql2akey() to deal with SQL strlits in whereclause
 
 	04/17/07 - Frans S.C. Witte - CR: 26334
@@ -72,7 +146,7 @@
 		  called.
 		* Converted procPar() to PSL
 		* getRecSr() now uses PSLTable.getUpdateKey() to construct the
-		  -151 node.
+		  -152 node.
 		* calls to %DBAPI now pass 0 (zero) instead of "" for vIndex.
 		* Corrected problem in CacheSr() for tables without primary key.
 
@@ -88,7 +162,7 @@
 		* Replaced '255' by PSL.maxLitLength (and converted M to PSL).
 		* Rewrote select and isDefined to PSL, using new PSLSubrou
 		  capabilities. Removed subVar and tagcheck because this code
-		  now resides in addExe^UCPSLLR().
+		  now resides in addExe^UCPSLSR().
 
 	05/24/06 - Frans S.C. Witte - CRs: 21394 / 21395
 		* Warnings now reported through warnGroup^UCGM()
@@ -248,7 +322,7 @@
 		  vobj(object,-2) ($$vFetch0 instead of $$vOpen0).
 
 	12/16/04 - Frans S.C. Witte - CRs 11445 / 11446
-		* Changed $D(commands("WARN",)) to $G(commands("WARN",)
+		* Changed $D(pslPrsr("WARN",)) to $G(pslPrsr("WARN",)
 		  (2 occurrences).
 		* Subroutine selectDyn(): the lvns used by dynamic select are now
 		  checked against and added to type().
@@ -269,7 +343,7 @@
 		* Subroutines insert and update: remove new of variable X from
 		  the generated code.
 		* subroutine Cache: REPLACED if ftype#2 BY if ftype#2 do
-		* Subroutine filequal(): filer qualifiers in commands("SQLPARS")
+		* Subroutine filequal(): filer qualifiers in pslPrsr("SQLPARS")
 		  are used again when present. Since no part of the compiler will
 		  set this node, the net effect will be a no-op in these versions.
 		  The presence of this statement ensures compatibility with
@@ -333,6 +407,8 @@
 		     Minor fixes and code optimizations to RfastDel,Rdelete
 		     WHR,RgetRecord section
 	*/
+	#PACKAGE framework.psl
+
 	// I18N=QUIT
 	// *******************************************************************
 	// * IMPORTANT NOTE:                                                 *
@@ -351,9 +427,67 @@
 	// * generated M code.                                               *
 	// *******************************************************************
 	quit
+	
+	// --------------------------------------------------------------------
+addAuditLogCode(String operation,	// UPDATE or DELETE
+		PSLBuffer buf,		// PSL buffer
+		PSLTable td,		// PSLTable
+		String statement,	// SQL statement
+		String where)		// WHERE clause
+	/* --------------------------------------------------------------------
+	Add code to do audit logging and to return DBAUDITLOG.SEQ number for
+	use in potential later detail logging by individual records.
+	
+	This method is used by delByFiler and update to add the code needed
+	to check for audit logging, call the audit log if appropriate, and
+	return the value for the audit log sequence, which indicates if the
+	individual statement has already been logged, or not, and allows
+	separate records to be logged under that sequence, if a multi-row
+	operation.
+	
+	If the WHERE clause contains host variables, we need to turn them into
+	a using statement at runtime.
+	*/
+			
+	type String code
+	type String hostVars = ""
+		
+	do buf.add(" type Number vauditLogSeq = 0")
+		
+	// Build host variable clause
+	if where.isLike("%:%") do {
+			
+		// ^SQLQ variables
+		type String exe(), vsql(), vsub()
+			
+		#ACCEPT DATE=06/18/2008; PGM=Dan Russell; CR=30801; Group=ACCESS	
+		do ^SQLQ(where, td.table)
+			
+		set hostVars = vsql("hostVars").get()
+			
+		if 'hostVars.isNull() do {
+			
+			do buf.add(" type String using")
+			do buf.add(" #ACCEPT Date=06/05/2008; Pgm=RussellDS; CR=30801; Group=BYPASS")
+			do buf.add(" #BYPASS")
+			do buf.add(" X "_ ("S using="_ hostVars).addQuotes())
+			do buf.add(" #ENDBYPASS")
+		}
+	}
+		
+	do buf.add(" type static Record"_ td.table)
+		
+	set code = " if Record"_ td.table_ ".logUserclass("""_ operation_ """) set vauditLogSeq = $$auditLog^SQLAUDIT("""_ operation_ """, """_ td.table_ ""","""_ statement_""","
+	if hostVars.isNull() set code = code_ """"")"
+	else  set code = code_ "using)"
+		
+	do buf.add(code)
+
+	quit "vauditLogSeq"
+	
 
 	// ---------------------------------------------------------------------
-private akey2apl( PSLTable td,		// table descriptor
+akey2apl( PSLTable td,		// table descriptor
 		PSLIdentifier var,	// object variable (*2)
 		String akeys,		// access key expression (*3)
 		Number sparse,		// sparse indicator (*4)
@@ -413,10 +547,15 @@ private akey2apl( PSLTable td,		// table descriptor
 	type String xref()	// key column cross references
 
 	if akeys.extract()="""" set akeys = akeys.stripQuotes()
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	else  do:'akeys.isNull() warnGroup^UCGM("MISMATCH","Literal parameter expected")
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set akeys = $$TOKEN^%ZS(akeys,.tok)	// APPEND to existing !!
 
 	for i=1:1:fkeys.count() set xref(fkeys.elementAt( i)) = i
-
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	for  set expr = $$nextExpr^UCGM( akeys, .ptr, tok, 1) do { if ptr=0 quit
 
 		if expr="",sparse quit			// missing key
@@ -448,7 +587,7 @@ private akey2apl( PSLTable td,		// table descriptor
 		if expr.extract()="'",expr.extract( expr.length())="'",expr.length("'")=3 set expr = expr.translate("'", """")
 		
 		/* TAB xxx TAB (patched reference) */
-		else  if expr.extract() = PSL.tab, expr.extract(expr.length()) = PSL.tab, expr.length( PSL.tab)=3
+		else  if $$hasPatch^UCPATCH(expr)
 
 		/* wrapped column reference */
 		else  if $$hasWrap^UCREC4OP(expr)
@@ -459,13 +598,17 @@ private akey2apl( PSLTable td,		// table descriptor
 		   FSCW CR18163: NOTE valExpr uses 'tok' as public variable !!!
 		   */
 		else  do {
+			type Number ER = 0
 			if expr.extract()=":" set expr = expr.extract( 2,expr.length())
 			if expr[(PSL.oLvn_"(") quit
-			set expr = $$valExpr^UCGM( expr) if PSL.ER set ptr=0
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+			set expr = $$valExpr^UCGM( expr) if ER throw Class.new( "Error", "%PSL-E-INVALIDREF, Invalid key value expression for "_keyNam)
 		}
 
 		set lvpm(-keyNum-2) = expr
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		if $$isVar^UCGM(expr),$$isVar^UCGM(var) do {
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			type Number newPtr = $$getNew^UCGM(var)
 			set patch( -3, PSL.subRou, var, newPtr, -2 - keyNum) = expr
 		}
@@ -489,10 +632,73 @@ private akey2apl( PSLTable td,		// table descriptor
 	/* Remove ALL trailing commas from return value
 	   */
 	// quit $$UNTOK^%ZS( return.extract( 1, return.length() - 1), tok)
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	quit $$UNTOK^%ZS( return.trim( 1, ","), tok)
+	
+	
+	// ---------------------------------------------------------------------
+akey2asgn( PSLTable td,		// table descriptor
+		PSLIdentifier var,	// object variable
+		String akeys,		// access key expression
+		Boolean ignNull,	// ignore missing values (*4)
+		String lvpm())		// purpose mapping	  /MECH=REFARR:W
+	/* ---------------------------------------------------------------------
+	Transform access key expression into assignment string and local
+	variable purpose mapping.
+
+	ARGUMENTS:
+		All arguments are identical to akey2apl, except ingNull.
+		
+		(*4) ignNull =  ignore null values
+			if set, do not include setting of keys to null
+
+	OUTPUTS:
+	. $$ = assignment of primary key values, e.g.,
+		vobj(var,-3)="ABC",vobj(var,-4)=X
+		This value can be used for the key assignment, for example,
+		for Class.new("RecordTABLE") code generation.
+	. lvpm(keynum_"*") = key expression
+		For each key supplied in akeys
+	*/
+	
+	type public PSLColumn pslCln()
+	type public PSLTable pslTbl()
+	
+	type List fkeys = td.primaryKeys
+
+	if fkeys.isNull() quit ""
+	
+	type Boolean bHasRoot
+	type List keyvals
+	type Number accPos, i
+	type String assignCode, val
+		
+	set keyvals = $$akey2apl(td, var, akeys, 1, lvpm())
+	
+	set assignCode = ""
+	for i = 1:1:fkeys.count() do {
+		
+		quit:(ignNull and 'lvpm(-i - 2).exists())
+		
+		if 'ignNull, 'lvpm(-i - 2).exists() set val = """"""
+		else  set val = lvpm(-i - 2)
+		
+		type PSLColumn cd = PSL.cachePSLColumn(pslCln(), td.table_"."_fkeys.elementAt(i), pslTbl())
+		
+		set accPos = $$clnByOvs^UCREC4OP( PSL.subRou, var, cd, false, true, .bHasRoot)
+		
+		type Number decPos = $$getDec^UCREC4OP( PSL.subRou, var, accPos)
+
+		type String return = $$clnAsn1^UCREC4OP( decPos, accPos, val)
+		
+		set assignCode = assignCode_ return
+	}
+	
+	quit assignCode
+	
 
 	// ---------------------------------------------------------------------
-private Cache	// method Cache.getRecord ; Returns Record<Class> object
+Cache	// method Cache.getRecord ; Returns Record<Class> object
 	/* ---------------------------------------------------------------------
 	This subroutine generates a vCaX() subroutine that returns the
 	top/default node of the requested Record from the Cache (as supplied in
@@ -521,10 +727,8 @@ private Cache	// method Cache.getRecord ; Returns Record<Class> object
 	. PSL.actual(1) = table name (literal String)
 	. PSL.actual(2) = access key expression (literal String)
 
-	. PSL.pslTbl()
+	. PSLpslTbl()
 		The table descriptor cache
-	. PSL.reClass
-		The literal "Record"
 	. PSL.var
 		The target variable to receive the cached RecordTABLE instance
 		Note also that this implies that "nested calls" must allocate
@@ -544,6 +748,7 @@ private Cache	// method Cache.getRecord ; Returns Record<Class> object
 		the subscript in vobj() to access the initial node, and copy it
 		in the cache.
 	*/
+	type static PSLClass
 	type public PSLTable  pslTbl()
 
 	type String table = PSL.actual(1)
@@ -559,19 +764,21 @@ private Cache	// method Cache.getRecord ; Returns Record<Class> object
 	   separate subroutines, so this distinction must be reflected in the
 	   comment.
 	   */
-	set PSL.class = PSL.reClass_ table
+	set PSL.class = PSLClass.RECORDCLASS_ table
 	//set PSL.actual(3) = 0
 	type Number clsNew = PSL.actual(3).toNumber()
 	set PSL.actual(3) = 1
 	do getRecord
 
-	type PSLTable td    = PSL.cachePSLTable( .pslTbl, table)
+	type PSLTable td    = PSL.cachePSLTable( pslTbl(), table)
 	type String   akeys = $$akey2apl( td, PSL.var, PSL.actual(2), 0)
 	type String   cmmnt = "vobj()=({Cache}"_ PSL.objectName_ ".getRecord("_ table_ ","_ clsNew_ ")"
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type String   label = $$findSubr^UCGM( "vCa", cmmnt)
 
 	/* Increment reference count for lblGetRec */
 	type String lbGetRec = PSL.return.piece( "(")
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do incrLabel^UCGM( lbGetRec)
 
 	/* Mark the record-mode purpose variable as being used.
@@ -590,7 +797,7 @@ private Cache	// method Cache.getRecord ; Returns Record<Class> object
 	quit
 
 	// ---------------------------------------------------------------------
-private CacheDef	// method Cache.isDefined
+CacheDef	// method Cache.isDefined
 	/* ---------------------------------------------------------------------
 	This subroutine generates the code for Cache.isDefined() as a simple
 	PSL wrapper:
@@ -613,6 +820,7 @@ private CacheDef	// method Cache.isDefined
 
 	type String cmt = "{Cache}"_ PSL.objectName_ ".isDefined("_ PSL.actual(1)_ ","_ PSL.actual(2)_ ")"
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type String lbl = $$findSubr^UCGM( "vCaEx", cmt)
 
 	set PSL.return = "$$"_ lbl_ "()"
@@ -624,13 +832,13 @@ private CacheDef	// method Cache.isDefined
 		do buf.add(" type Record"_ tbl_ " vRec = "_ PSL.objectName_ ".getRecord("_ PSL.actual(1)_ ","_ PSL.actual(2)_ ",1)")
 		do buf.add(" quit vRec.getMode() = 1")
 
-		do buf.insert( lbl)
+		do buf.insert( lbl, "Boolean")
 	}
 
 	quit
 
 	// ---------------------------------------------------------------------
-private CacheSr( PSLTable td,		// table descriptor
+CacheSr( PSLTable td,		// table descriptor
 		Boolean useVobj,
 		String label,
 		String comment,
@@ -716,13 +924,14 @@ private CacheSr( PSLTable td,		// table descriptor
 
 	type String  code			// code construction
 	type String  fpl = ""			// formal parameter list
+	type String  fplAudit = ""		// formal parameters, including fromDBSet
 	type Number  ftype = td.recordType	// record type
 	type Boolean isArchived = false
 	type Number  k				// key iterator
 	type String  lvn			// cacheNm(v1,v2,v3)
 	type String  lvn1			// cacheNm(v1,v2,v3,
 	type String  lvnInit			// cache node for initial load
-	type String  lvpm()			// map passed to getRecCode^UCXDD()
+	type String  lvpm()			// map passed to getRecCode()
 	type String  nodExis = td.existsNode	// exists node
 	type String  nodInit = $$getRecPur^UCXDD( td)	// initial node
 	type List    pkl = td.primaryKeys	// primary key columns
@@ -737,7 +946,14 @@ private CacheSr( PSLTable td,		// table descriptor
 		set fpl = fpl_ "v"_ k
 		set lvpm( k_"*") = "v"_ k
 	}
-
+	
+	// Add fromDBSet parameter
+	if 'td.isRdb do {
+		
+		if fpl.isNull() set fplAudit = "0"
+		else  set fplAudit = ",0"
+	}
+	
 	if useVobj set vobjHead = PSL.oLvn_ "(vOid"
 
 	if cacheNm.endsWith( ")") set lvn = cacheNm.extract( 1, cacheNm.length() - 1)_ ","
@@ -781,17 +997,21 @@ private CacheSr( PSLTable td,		// table descriptor
 		set:isArchived code = ({List}code).add("vArch")
 		do:'code.isNull() sr.addCode(" .  N "_ code)
 	}
-	do sr.addCode(" .  I $G("_ cacheNm_ ")>"_ PSL.maxCacheSize_ " S "_ ucn_ "="_ ucn_ "-"_ cacheNm_ " KILL "_ cacheNm)
-	do sr.addCode(" .  S "_ cacheNm_ "=$G("_ cacheNm_ ")+1,"_ ucn_ "=$G("_ ucn_ ")+1")
+	//do sr.addCode(" .  I $G("_ cacheNm_ ")>"_ PSL.maxCacheSize_ " S "_ ucn_ "="_ ucn_ "-"_ cacheNm_ " KILL "_ cacheNm)
+	//do sr.addCode(" .  S "_ cacheNm_ "=$G("_ cacheNm_ ")+1,"_ ucn_ "=$G("_ ucn_ ")+1")
+	do sr.addCode(" .  I $G("_ cacheNm_ ")>"_ PSL.maxCacheSize_ " KILL "_ cacheNm)
+	do sr.addCode(" .  S "_ cacheNm_ "=$G("_ cacheNm_ ")+1")
 	if useVobj do {
-		do sr.addCode(" .  S vOid="_ lbGetRec_ "("_ fpl_ ")")
+		do sr.addCode(" .  S vOid="_ lbGetRec_ "("_ fpl_ fplAudit_ ")")
 		if isArchived do sr.addCode(" .  S "_ lvn1_"-99)="_ vobjHead_ ",-99)")
 		do sr.addCode(" .  S "_ lvn1_"-2)="_ vobjHead_ ",-2)")
 		if 'nodInit.isNull() do sr.addCode(" .  S "_ lvnInit_ "="_ vobjInit)
 	}
 	else  do {
-		
-		set code = " .  S "_lvnInit_ "="_ lbGetRec_ "("_ ({List}fpl).add(".v2out")
+		type String fplmod = fpl_ fplAudit
+		if fplmod.isNull() set fplmod = ".v2out"
+		else  set fplmod = fplmod_ ",.v2out"
+		set code = " .  S "_lvnInit_ "="_ lbGetRec_ "("_ fplmod
 		if isArchived set code = code_ ",.vArch),"_ lvn1_ "-99)=vArch,"_ lvn1_ "-2)=v2out"
 		else  set code = code_ "),"_ lvn1_ "-2)=v2out"
 		do sr.addCode(code)
@@ -803,7 +1023,7 @@ private CacheSr( PSLTable td,		// table descriptor
 	if useVobj do {
 		/* vobj mode: instantiate new record,
 		   set mode to whatever was returned by Db.getRecord,
-		   set keys. Do not set -151 (not yet supported). */
+		   set keys. Do not set -152 (not yet supported). */
 		do sr.addCode(" E  D")
 		do sr.addCode(" . "_ $$cdNewObj^UCCLASS( "vOid", """Record"_ td.table_ """"))
 		do sr.addCode(" .  S "_ vobjHead_ ",-2)="_ lvn1_ "-2)")
@@ -817,7 +1037,7 @@ private CacheSr( PSLTable td,		// table descriptor
 	// If not Cache.getRecord(,,1), add code that throws %PSL-E-RECNOFL
 	// Else add the code that sets v2out when entry found in cache
 	if clsNew = 0 {
-		do sr.addCode(" I "_ lvn1_"-2)=0 S $ZS=""-1,""_$ZPOS_"",%PSL-E-RECNOFL,,"_ td.table_ """ X $ZT")
+		do sr.addCode(" I "_ lvn1_"-2)=0 S $ZE=""0,""_$ZPOS_"",%PSL-E-RECNOFL,,"_ td.table_ """,$EC="",U1001,""")
 	}
 	else  if 'useVobj do sr.addCode(" E  S v2out="_ lvn1_"-2)")
 
@@ -829,11 +1049,12 @@ private CacheSr( PSLTable td,		// table descriptor
 	   for incremental loads of MDB and RDB blob/memo columns.
 	   Note that the code below does not call $$getLodCode^UCXDD() */
 	if ftype>1 do {
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		if td.isRdb do warnGroup^UCGM("INTERNAL","Incremental loads will bypass Cache for : "_cacheNm_".getRecord("_td.table_")") quit
 
 		if isArchived set lvpm(-99) = lvn1_"-99)"
 
-		type String gbl = $$getDataNode^UCXDD( td, "vOid", "vn", 0, .lvpm(), .pslCln())
+		type String gbl = $$getDataNode^UCXDD( td, "vOid", "vn", 0, lvpm(), pslCln())
 
 		if 'fpl.isNull() set fpl = fpl_ ","
 
@@ -853,11 +1074,11 @@ private CacheSr( PSLTable td,		// table descriptor
 	quit
 
 	// --------------------------------------------------------------------
-private delete	// Db.delete(table_name,where_clause,filer_qualifier)
+delete	// Db.delete(table_name,where_clause,filer_qualifier)
 	/* --------------------------------------------------------------------
-	For MDB tables and RDB tables, if there is a filer, and we need to call
-	it, generate a subroutine that uses Db.selecteDbSet() and iterates over
-	the matching rows to call the filer with %O=3 for each row.
+	For MDB tables and RDB tables, if we need to call the filer, generate
+	a subroutine that uses Db.selecteDbSet() and iterates over the matching
+	rows to call the filer with %O=3 for each row.
 
 	Otherwise, the MDB case and the RDB case differ.
 
@@ -869,8 +1090,13 @@ private delete	// Db.delete(table_name,where_clause,filer_qualifier)
 	NOTES:
 	. Even though the MDB code and the RDB code may differ, they behave
 		"functionally equivalent".
-		In particular, if there is no filer, the deletes will not be
-		logged, regardless of the value of SchemaTable.isAutoLog !!
+	. All generated code treats the Db.delete() as a single database
+		operation. Runtime.start() and Runtime.commit() will be added
+		to make it "atomic". However, no catch-blocks are added, so the
+		code relies on the throw/catch logic to do the implied
+		Runtime.rollback() in case of a runtime exception.
+	. FUTURE - make delete act as fastDelete for MDB if it meets all the
+		qualifications for fastDelete.
 	*/
 	type public PSLTable pslTbl()
 
@@ -878,23 +1104,30 @@ private delete	// Db.delete(table_name,where_clause,filer_qualifier)
 	type String where = PSL.actual(2).stripQuotes()
 	type String qual  = $$fileQual( "Db.delete", PSL.actual(3))
 
-	type PSLTable td = PSL.cachePSLTable( .pslTbl(), table)
+	type PSLTable td = PSL.cachePSLTable( pslTbl(), table)
 
 	/* Call mapPSLvar to handle case of :record.column as host variable
 	   to map to variable prior to call to delete sub-routine */
 	if where[":" set where=$$mapPSLvar(where)
-	
+
 	/* See if the where-clause references a single row by primary key */
 	type String akey = $$sql2akey( td, where)
 
 	/* If RDB wide table with WHERE-clause, call DelByFiler(), because the
 	   WHERE-clause may span multiple tables.
 	   NOTE that the call to delByFiler() is based on the assumption that
-	   wide tables will always have a filer.
+	   all tables will always have a filer.
 	   */
 	if td.isRdb,td.recordType>1,'where.isNull() do delByFiler( td, where, akey, qual) quit
+	
+	/* If there are access rights restrictions on delete or audit logging on
+	   delete, need to use the filer. */
+	type List rights = td.checkAccessRights(false)
+	
+	if (rights.contains("delete") or rights.contains("deleteRestrict")) do delByFiler( td, where, akey, qual) quit
+	if ({List}(td.getLogging(false))).contains("delete") do delByFiler( td, where, akey, qual) quit
 
-	/* Check no filer present, or not needed.
+	/* Check not needed.
 	   Check filer logic that is reported as being required, but that is not
 	   supported by inline PSL code. If the filer qualifier is not literal,
 	   then $$getFlrLgc(,,"") will not be called. As a result, $$getFlrLgc()
@@ -904,12 +1137,11 @@ private delete	// Db.delete(table_name,where_clause,filer_qualifier)
 	   that calls the filer is the case where the filer can always be
 	   bypassed (no journals, no triggers). */
 	type List flrLgc = $$getFlrLgc^UCXDD(td, "DELETE", qual, 1)
-	if 'td.filerPGM.isNull(),'flrLgc.isNull() do delByFiler( td, where, akey, qual) quit
-	if 'flrLgc.isNull(),flrLgc'="LOG" do PSL.error("Cannot generate inline DELETE code for /"_flrLgc.translate(",","/")) quit
+	if 'flrLgc.isEmpty() do delByFiler( td, where, akey, qual) quit
 
-	if td.isRdb do delRdb( td, where, akey) quit
+	if td.isRdb do delRdb( td, where) quit
 
-	/* MDB delete one or more rows when there is no (need to call the)
+	/* MDB delete one or more rows when there is no need to call the
 	   filer.
 	   If delete-by-accesskey, then replace DO:postCond by KILL:postCond
 	   else generate subroutine.
@@ -918,20 +1150,22 @@ private delete	// Db.delete(table_name,where_clause,filer_qualifier)
 	   */
 	type PSLIdentifier lvpm()
 
-	if 'akey.isNull()!td.primaryKeys.isNull(),flrLgc.isNull() do {
-		type String dummy = $$akey2apl(td, "", akey, 0, .lvpm())
+	if 'akey.isNull()!td.primaryKeys.isNull() do {
+		type String dummy = $$akey2apl(td, "", akey, 0, lvpm())
 		type Number k
 
 		/* Copy from lvpm( -k-2) to lvpm( k_"*") */
 		for k=1:1:td.primaryKeys.count() set lvpm( k_"*") = lvpm( -k-2)
 
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set PSL.mcode  = $$backup^UCGM( PSL.mcode)
-		set PSL.return = $$delMcode( td, .lvpm(), PSL.postCond)
+		set PSL.return = $$delMcode( td, lvpm(), PSL.postCond)
 	}
 	else  do {
 		type String comment = "DELETE FROM "_td.table
 		if 'where.isNull() set comment = comment_ " WHERE "_ where
 
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		type String label = $$findSubr^UCGM( "vDbDe", "")	// generate new label
 
 		set PSL.return = label_ "()"
@@ -955,20 +1189,9 @@ private delete	// Db.delete(table_name,where_clause,filer_qualifier)
 		do buf.add( line)
 		do buf.add( " do Runtime.start(""CS"")")
 
-		if 'flrLgc.isNull() do {
-			do buf.add(" type Record"_ td.table_ " vRec=Class.new(""Record"_ td.table_ """)")
-			do buf.add(" do vRec.setMode(3)")
-		}
-
 		do buf.add( " type ResultSet vRs=Db.select("""_ pkeys_ ""","""_td.table_""","""_where_""")")
 		do buf.add( " while vRs.next() do {")
 		do buf.add( "   "_ getKeys)
-
-		if 'flrLgc.isNull() do {
-			do buf.add( "   "_ setKeys)
-			do buf.add( "   #ACCEPT CR=21101;DATE=2006-05-11;PGM=FSCW;GROUP=DEPRECATED")
-			do buf.add( "   do ^DBSLOGIT(vRec.getPointer(),3)")
-		}
 
 		do buf.add( "   #ACCEPT CR=18163;DATE=2006-01-09;PGM=FSCW;GROUP=BYPASS")
 		do buf.add( "   #BYPASS")
@@ -978,15 +1201,15 @@ private delete	// Db.delete(table_name,where_clause,filer_qualifier)
 		do buf.add( " do Runtime.commit()")
 		do buf.add( " quit")
 
-		do buf.insert( label)
+		do buf.insert( label, "void")
 	}
 	quit
 
 	// --------------------------------------------------------------------
-delByFiler( PSLTable td,	// table descriptor
-	String where,		// WHERE-clause
-	String acckey,		// access key (or "" if not applicable)
-	PSLExpression qual)	// filer qualifiers ("normalized")
+private delByFiler( PSLTable td,	// table descriptor
+		String where,		// WHERE-clause
+		String acckey,		// access key (or "" if not applicable)
+		PSLExpression qual)	// filer qualifiers ("normalized")
 	/* --------------------------------------------------------------------
 	MDB and RDB DELETE code when the filer needs to be called is identical
 
@@ -997,16 +1220,23 @@ delByFiler( PSLTable td,	// table descriptor
 	other deletes or db modifications, that all shall be treated as an
 	atomic operation.
 	*/
-	type String comment = "DELETE FROM "_td.table
-	if 'where.isNull() set comment = comment_ " WHERE "_ where
+	type String sqlstat = "DELETE FROM "_td.table
+	if 'where.isNull() set sqlstat = sqlstat_ " WHERE "_ where
+	
+	type String auditParam = "0"
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type String label = $$findSubr^UCGM( "vDbDe", "")	// generate new label
 
 	set PSL.return = label_ "()"
 
 	if PSL.subrouExists( label) quit
 
-	type PSLBuffer buf = PSL.openBuffer( "()", comment)
+	type PSLBuffer buf = PSL.openBuffer( "()", sqlstat)
+	
+	/* Add check for audit logging - do not make table specific to avoid
+	   mass recompiles. */
+	if $$usingAuditLog^SQLAUDIT set auditParam = $$addAuditLogCode("DELETE", buf, td, sqlstat, where)
 
 	do buf.add(" do Runtime.start(""CS"")")
 	if acckey.isNull() do {
@@ -1014,7 +1244,11 @@ delByFiler( PSLTable td,	// table descriptor
 		do buf.add(" while vDs.next() do {")
 		do buf.add("   type Record"_ td.table_ " vRec = vDs.getRecord("""_td.table_""")")
 		do buf.add("   do vRec.setMode(3)")
-		do buf.add("   do ^"_ td.filerPGM_ "(vRec,"_ qual_ ",1)")
+		if 'td.isRdb do {
+		
+			do addMSaveBypass(buf, td.table, "vRec", qual, auditParam)
+		}
+		else  do buf.add("   do vRec.save("_ qual_ ")")
 		do buf.add(" }")
 	}
 	else  do {
@@ -1023,19 +1257,55 @@ delByFiler( PSLTable td,	// table descriptor
 		   executes under TP and cannot QUIT if "not found". It has to
 		   go through the commit even if there is nothing to commit
 		   */
-		do buf.add(" type Record"_ td.table_ " vRec = Db.getRecord("""_td.table_""","_acckey.addQuotes()_",1)")
-		do buf.add(" if vRec.getMode()=1 do vRec.setMode(3),^"_ td.filerPGM_ "(vRec,"_ qual_ ",1)")
+		   
+		type String code
+		
+		do buf.add(" type Record"_ td.table_ " vRec = Db.getRecord("""_td.table_""","_acckey_",1)")
+		
+		set code = " if vRec.getMode()=1 do vRec.setMode(3)"
+		
+		if 'td.isRdb do {
+		
+			do buf.add(code_ " do {")
+			do addMSaveBypass(buf, td.table, "vRec", qual, auditParam)
+			do buf.add("  }")
+		}
+			
+		else  do buf.add(code_ ",vRec.save("_ qual_ ")")
 	}
 	do buf.add(" do Runtime.commit()")
 	do buf.add(" quit")
-	do buf.insert( label)
+	do buf.insert( label, "void")
 
+	quit
+	
+	// --------------------------------------------------------------------
+private addMSaveBypass(PSLBuffer buf,		// Buffer
+		String tableName,		// Table name
+		String objRef,			// Object reference
+		PSLExpression qual,		// Save qualifiers
+		String auditParam)		// Audit parameter value
+	/* --------------------------------------------------------------------
+	Support function that inserts BYPASS code for call to record save on
+	MDB.  This is necessary because MDB version has another parameter
+	related to audit logging that is not exposed as a save method
+	parameter.
+	
+	Used by delByFiler and update
+	*/
+	set:qual.isNull() qual=""""""
+
+	do buf.add("   #ACCEPT Date=07/09/2008; Pgm=RussellDS; CR=30801; Group=BYPASS")
+	do buf.add("   #BYPASS")
+	do buf.add("   D vSave^Record"_ tableName_ "("_ objRef_ ","_ qual_","_ auditParam_ ")")
+	do buf.add("   #ENDBYPASS")
+	
 	quit
 
 	// --------------------------------------------------------------------
-delMcode( PSLTable td,		// table descriptor
-	String lvpm(),		// keys
-	String mpc)		// M_postcond (incl ":", or "")
+private delMcode( PSLTable td,		// table descriptor
+		String lvpm(),		// keys
+		String mpc)		// M_postcond (incl ":", or "")
 	/* --------------------------------------------------------------------
 	Support function that returns the KILL or ZWITHDRAW statement for a
 	singe row MDB delete.
@@ -1043,67 +1313,19 @@ delMcode( PSLTable td,		// table descriptor
 	global node (recordType = 1 and no blobs or memos)
 	Otherwise KILL will be used.
 	*/
-	type String code = $$getGvn^UCXDD( td, "", .lvpm())
+	type String code = $$getGvn^UCXDD( td, "", lvpm())
 
 	if td.isOneNode() quit " ZWI"_mpc_" "_code
 
 	quit " K"_mpc_" "_ code
 
-	// ---------------------------------------------------------------------
-delRcode( PSLTable td, String where, Boolean doTrunct, PSLBuffer delBuf)
-	/* ---------------------------------------------------------------------
-	Code that inserts M code with call to RDB API to perform the DELETE.
-
-	The code will add the #ACCEPT and #BYPASS at the beginning,
-	but will NOT add the #ENDBYPASS at the end.
-	The reason for this is that the caller may need to add TRAILING M code,
-	but is not expected to have added LEADING M code.
-	*/
-	do delBuf.add("#ACCEPT CR=21101;DATE=2006-05-11;PGM=FSCW;GROUP=BYPASS")
-	do delBuf.add("#BYPASS")
-
-	if doTrunct do {			// Use truncate, if possible
-		type Number i
-		type List tables = td.internalNames
-
-		do delBuf.add( "N vEr,vRm")
-
-		// do delBuf.add( "I 0,$TLEVEL=0 D  Q  ; TRUNCATE requires $TLEVEL=0")
-		// do delBuf.add( ". ; Note - this code will not yet execute")
-		// for i=1:1:tables.count() do delBuf.add( "."_$s(i>1:" I vEr'<0",1:"")_" S vEr=$$EXECUTE^%DBAPI(0,""TRUNCATE TABLE "_tables.elementAt(i)_""","""","""",.vRm)")
-		// do delBuf.add( ". I vEr<0 S $ZS=""-1,""_$ZPOS_"",%PSL-E-SQLDELFAIL,""_$TR($G(vRm),$C(10,44),$C(32,126)) X $ZT")
-		// do delBuf.add( ". ; Note - no commit here, since if $Tlevel=0, we do truncate")
-
-		for i=1:1:tables.count() do delBuf.add( $s(i>1:"I vEr'<0",1:"")_" S vEr=$$EXECUTE^%DBAPI(0,""DELETE FROM "_tables.elementAt(i)_""","""","""",.vRm)")
-
-		do delBuf.add( "I vEr<0 S $ZS=""-1,""_$ZPOS_"",%PSL-E-SQLDELFAIL,""_$TR($G(vRm),$C(10,44),$C(32,126)) X $ZT")
-	}
-	else  do {
-		type String hvMap()
-		type String vListCd
-		type String sql = "DELETE FROM "_ td.internalNames
-
-		do delBuf.add( "N vEr,vRm")
-
-		if 'where.isNull() do {
-			set where    = $$where^UCDBR( td.table, where, .hvMap())
-			set vListCd = $$RsMsXV^UCDBRT( hvMap(),.where))
-			set sql = sql_ " WHERE "_where
-		}
-		else  set vListCd = """"""
-
-		do delBuf.add(" S vEr=$$EXECUTE^%DBAPI(0,"""_ sql_ """,$C(9),"_ vListCd_ ",.vRm)")
-		do delBuf.add(" I vEr<0 S $ZS=""-1,""_$ZPOS_"",%PSL-E-SQLDELFAIL,""_$TR($G(vRm),$C(10,44),$C(32,126)) X $ZT")
-	}
-	quit
 
 	// ---------------------------------------------------------------------
-delRdb( PSLTable td,		// table descriptor
-	String where,		// where clause (*2)
-	String akeys)		// access key (*3)
+private delRdb( PSLTable td,		// table descriptor
+		String where)		// where clause (*2)
 	/* ---------------------------------------------------------------------
-	SQL DELETE statement for RDB table, when we don't have a filer or we do
-	have parameters that would make no reason to call the filer.
+	SQL DELETE statement for RDB table, when we have parameters that would
+	make no reason to call the filer.
 	
 	If in addition we don't have a WHERE clause, then we can use
 	TRUNCATE or a direct delete call to the RDB, since we're deleting the
@@ -1120,36 +1342,11 @@ delRdb( PSLTable td,		// table descriptor
 	Note that because TRUNCATE does it's own commit automatically, we don't
 	want to use it if already under TP at runtime.
 
-	A complicating factor is the PSLTable.isAutoLog property. A table can
-	have this flag set, even if there is no filer. In that case, the call to
-	the LOG processor must be generated here. Because the LOG processor
-	expects a single object per call, a separate ResultSet is used to deal
-	with LOG. To mimimize the number of calls to the RDB, a single DELETE
-	will be passed to delete all rows after they have been logged.
-	To ensure that LOGging and DELETE will be part of the same transaction,
-	the generated code uses Runtime.start() and Runtime.commit().
-	This leads to the following cases:
-	A) td.isAutoLog & 'akeys.isNull()
-		Single row delete with log. Use akeys to construct the Record
-		object to pass to DBSLOGIT. Include Runtime.start(), singel call
-		to DBSLOGIT, call to RDB API and Runtime.commit()
-	B) td.isAutoLog & akeys.isNull()
-		Multiple row delete with log. Use ResultSet to obtain rows that
-		need to be LOGged. Include Runtime.start(), Db.select(),
-		ResutlSet.next()/ DBSLOGIT per row, call to RDB API and
-		Runtime.commit()
-	C) 'td.isAutoLog
-		The number of rows to delete is irrelevant. Generate calls to
-		RDB API for delete and for commit.
-
 	ARGUMENTS:
 	(*2) where = WHERE-clause
 		This function relies on the fact that the caller has already
 		transformed the clause into a SQL compliant expression (e.g.
 		by calling $$mapPSLvar())
-	(*3) akeys = access key
-		If non-empty, then the delete is a single row delete.
-		This will be used only if td.isAutoLog.
 
 	NOTES:
 	. Because there will be no call to a filer, there is no need to deal
@@ -1164,6 +1361,7 @@ delRdb( PSLTable td,		// table descriptor
 
 	if 'where.isNull() set sqlcmt=sqlcmt_" WHERE "_where
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type String label = $$findSubr^UCGM( "vDbDe", "")	// generate new label
 
 	set PSL.return = label_ "()"
@@ -1173,72 +1371,64 @@ delRdb( PSLTable td,		// table descriptor
 	/* Need to generate the subroutine */
 	type PSLBuffer buf = PSL.openBuffer( "()", sqlcmt)
 
-	// Case A) Delete single row with LOG ----------------
-	if td.isAutoLog, 'akeys.isNull() do {
-		do buf.add( "do Runtime.start(""CS"")")
-		do buf.add( "type Record"_ td.table_ " vRec=Class.new(""Record"_ td.table_""","_ akeys.addQuotes()_")")
-		do buf.add( "do vRec.setMode(3)")
-		do buf.add( "#ACCEPT CR=21101;DATE=2006-05-11;PGM=FSCW;GROUP=DEPRECATED")
-		do buf.add( "do ^DBSLOGIT(vRec.getPointer(),3)")
-	
-		do delRcode( td, where, 0, buf)
+	// NOTE: doTrunct is only used to indicate "no WHERE clause" (see intro)
+	type static UCRUNTIM
+	type Boolean doTrunct = ( where.isNull())
 
-		do buf.add( "#ENDBYPASS")
-		do buf.add( "do Runtime.commit()")
+	/* Both code variations need to include calls to simulate
+	   Runtime.start() and Runtime.commit() if needed.
+
+	   NOTE: IF we ever decide to use TRUNCATE, then this "leading"
+	   code needs to move into delRcode(), because the TSTART must
+	   be postponed until the runtime code decided between TRUNCATE
+	   and DELETE.
+	   */
+	do buf.add( "#ACCEPT CR=35741;DATE=2008-09-29;PGM=FSCW;GROUP=BYPASS")
+	do buf.add( "#BYPASS")
+	do buf.add( "N vEr,vRm")
+	do buf.add( "N vTp S vTp=($TL=0) TS:vTp (vobj):transactionid=""CS"" D:vTp "_ UCRUNTIM.callStart())
+
+	if doTrunct do {			// Use truncate, if possible
+		type Number i
+		type List tables = td.internalNames
+
+		// do buf.add( "I 0,$TLEVEL=0 D  Q  ; TRUNCATE requires $TLEVEL=0")
+		// do buf.add( ". ; Note - this code will not yet execute")
+		// for i=1:1:tables.count() do buf.add( "."_$select(i>1:" I vEr'<0",1:"")_" S vEr=$$EXECUTE^%DBAPI(0,""TRUNCATE TABLE "_tables.elementAt(i)_""","""","""",.vRm)")
+		// do buf.add( ". I vEr<0 S $ZE=""0,""_$ZPOS_"",%PSL-E-SQLDELFAIL,""_$TR($G(vRm),$C(10,44),$C(32,126)),$EC="",U1001,""")
+		// do buf.add( ". ; Note - no commit here, since if $Tlevel=0, we do truncate")
+
+		for i=1:1:tables.count() do buf.add( $select(i>1:"I vEr'<0",1:"")_" S vEr=$$EXECUTE^%DBAPI(0,""DELETE FROM "_tables.elementAt(i)_""","""","""",.vRm)")
+
+		do buf.add( "I vEr<0 S $ZE=""0,""_$ZPOS_"",%PSL-E-SQLDELFAIL,""_$TR($G(vRm),$C(10,44),$C(32,126)),$EC="",U1001,""")
 	}
+	else  do {
+		type String hvMap()
+		type String vListCd
+		type String sql = "DELETE FROM "_ td.internalNames
+		type Integer delim = td.columnDelimiter
 
-	// Case B) Delete multiple rows with LOG ----------------
-	if td.isAutoLog, akeys.isNull() do {
-
-		type Number k
-		type List   pkeys = td.primaryKeys
-		type String setKeys = "set "
-
-		for k=1:1:pkeys.count() do {
-			if k>1 set setKeys = setKeys_","
-			set setKeys = setKeys_ "vRec."_ pkeys.elementAt(k)_ "=vRs.getCol("_k_")"
+		if 'where.isNull() do {
+			set where    = $$where^UCDBR( td.table, where, hvMap(,))
+			set vListCd = $$RsMsXV^UCDBRT( hvMap(,), .where, 0, delim)
+			set sql = sql_ " WHERE "_where
 		}
+		else  set vListCd = """"""
 
-		do buf.add( "do Runtime.start(""CS"")")
-		do buf.add( "type Record"_ td.table_ " vRec=Class.new(""Record"_ td.table_""","_ akeys.addQuotes()_")")
-		do buf.add( "do vRec.setMode(3)")
-		do buf.add( "type ResultSet vRs=Db.select("""_ pkeys_ ""","""_td.table_""","_where.addQuotes()_")")
-		do buf.add( "while vRs.next() do {")
-		do buf.add( "   "_ setKeys)
-		do buf.add( "   #ACCEPT CR=21101;DATE=2006-05-11;PGM=FSCW;GROUP=DEPRECATED")
-		do buf.add( "   do ^DBSLOGIT(vRec.getPointer(),3)")
-		do buf.add( "}")
-
-		do delRcode( td, where, 0, buf)
-
-		do buf.add( "#ENDBYPASS")
-		do buf.add( "do Runtime.commit()")
-	}
-
-	// Case C) Delete without LOG ----------------
-	if 'td.isAutoLog do {
-		// NOTE: doTrunct is only used to indicate "no WHERE clause" (see intro)
-		type Boolean doTrunct = ( where.isNull())
-
-		/* Both code variations need to include a call to RunTime.commit()
-		   */
-		type String labelc
-		do CommitC^UCRUNTIM(.labelc)	// need to commit explicitly
-		
-		do delRcode( td, where, doTrunct, buf)
-
-		do buf.add( "I ($Tlevel=0) D "_ labelc)
-		do buf.add( "#ENDBYPASS")
+		do buf.add(" S vEr=$$EXECUTE^%DBAPI(0,"""_ sql_ """,$C("_ delim_ "),"_ vListCd_ ",.vRm)")
+  		do buf.add(" I vEr<0 S $ZE=""0,""_$ZPOS_"",%PSL-E-SQLDELFAIL,""_$TR($G(vRm),$C(10,44),$C(32,126)),$EC="",U1001,""")
 	}
 
 	// common exit
+	do buf.add( "D:vTp "_ UCRUNTIM.callCommitCS())
+	do buf.add( "#ENDBYPASS")
 	do buf.add( "quit")
 
-	do buf.insert( label)
+	do buf.insert( label, "void")
 	quit
 
 	// ---------------------------------------------------------------------
-private fastDel	// void; method Db.fastDelete
+fastDel	// void; method Db.fastDelete
 	/* ---------------------------------------------------------------------
 	Db.fastDelete() is considered a special case of db.delete(), just like
 	Record.bypassSave() is considered a special case of Record.save().
@@ -1248,9 +1438,6 @@ private fastDel	// void; method Db.fastDelete
 	As off CR18163 Db.fastDelete() for an MDB table and for a RDB table
 	behave identical. In particular, referential integrity will be observed,
 	and index tables will be maintained.
-
-	The necessity to call the filer is determined by a call to
-	$$statusd^SQLCMP() in which the above parameters are supplied
 
 	NOTES:
 	. Before CR18163, Db.fastDelete() of an MDB table would result in an
@@ -1264,13 +1451,15 @@ private fastDel	// void; method Db.fastDelete
 	*/
 	type public PSLTable  pslTbl()
 
-	type String akeys
-	type String gbl
+	type Boolean checkDelete = false
+	type Boolean useDelete = false
+	type List allkeys, delkeys
+	type String akeys, gbl, tok
 	type Number i
 	type String map()
-	type PSLTable td = PSL.cachePSLTable( .pslTbl(), PSL.actual(1).stripQuotes())
+	type PSLTable td = PSL.cachePSLTable( pslTbl(), PSL.actual(1).stripQuotes())
 
-	set akeys = $$akey2apl( td, "", PSL.actual(2), -1, .map())
+	set akeys = $$akey2apl( td, "", PSL.actual(2), -1, map())
 
 	/* Copy map( -2-key) to map( key_"*" for call to $$getGvn^UCXDD.
 	   Remove trailing keys that are missing. Note that missing intermediate
@@ -1278,12 +1467,61 @@ private fastDel	// void; method Db.fastDelete
 	   in the global. */
 	for i = 1:1:td.primaryKeys.count() set map( i_"*") = map( -2-i).get()
 	for i = td.primaryKeys.count():-1:1 quit:'map( i_"*").isNull()  kill map(i_"*")
-	set gbl = $$getGvn^UCXDD( td, "", .map())
+	set gbl = $$getGvn^UCXDD( td, "", map())
 
 	if gbl["()" set gbl = gbl.piece( "()")
 
-	// If there were literal keys (that are now missing), do regular delete
-	if (gbl["(,")!(gbl[",,")!td.isRdb do {
+	/* If there were literal keys (that are now missing), or,
+	   if there is access rights checking necessary, or,
+	   if table is RDB, or,
+	   if access rights rules indicate, do regular delete */
+	#ACCEPT DATE=06/18/2008; PGM=Dan Russell; CR=30801; Group=ACCESS
+	set delkeys = $$TOKEN^%ZS(gbl.piece("(", 2, 999), .tok)
+	#ACCEPT DATE=06/18/2008; PGM=Dan Russell; CR=30801; Group=ACCESS
+	set allkeys = $$TOKEN^%ZS(td.global.piece("(", 2, 999), .tok)
+	for i = delkeys.count()+1:1:allkeys.count() if allkeys.elementAt(i).isLiteral() or allkeys.elementAt(i).beginsWith(0.char()) set useDelete = true quit
+	
+	// If DBTBL1.QID1 is not null, need to use regular delete
+	if '$$RsMsQID1^UCDBRT(td.table).isNull() set useDelete = true
+	
+	if 'useDelete, ((gbl["(,") or (gbl[",,")) set useDelete = true
+	
+	if 'useDelete do {
+	
+		/* Rules related to access rights (if we're already using
+		   regular delete, we don't need to worry about this here):
+		   
+		    - If there is a WHERE clause, SELECT rights come
+		      into play, so must use regular delete if either
+		      SELECT or DELETE rights.
+	
+		    - If no WHERE clause (deleting entire table) OK if no
+		      delete or deleteRestrict rights ; add check if
+		      delete rights; do regular delete (row by row) if
+		      deleteRestrict.  Delete of entire table does not
+		      require SELECT rights
+		      
+		   If audit logging is set for delete, need to use delete,
+		   not fast delete.
+		*/
+	
+		type List rights = td.checkAccessRights(false)
+		
+		// No WHERE clause
+		if PSL.actual(2).isNull() do {
+			
+			if rights.contains("delete") set checkDelete = true
+			else  if rights.contains("deleteRestrict") set useDelete = true
+		}
+	
+		// WHERE clause, and DELETE or SELECT rights
+		else  if (rights.contains("delete") or rights.contains("deleteRestrict") or rights.contains("select") or rights.contains("selectRestrict")) set useDelete = true
+		
+		// Check audit logging
+		if ({List}(td.getLogging(false))).contains("delete") set useDelete = true
+	}
+	
+	if (useDelete or td.isRdb) do {
 		set PSL.actual(2) = $$akey2sql( PSL.actual(2).stripQuotes(), td.primaryKeys)
 		set PSL.actual(3) = """/NOJOURNAL/NOTRIGAFT/NOTRIGBEF"""
 		do delete
@@ -1293,14 +1531,17 @@ private fastDel	// void; method Db.fastDelete
 		/* Strip missing subscripts at the end */
 		if gbl [ ",)" set gbl = gbl.piece( ",)")_ ")"
 	
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set PSL.mcode = $$backup^UCGM( PSL.mcode)
-		set PSL.return =" K"_ PSL.postCond_ " "_ gbl
+		if checkDelete set PSL.return = " S:'$$deleteOK^Record"_ td.table_ "("""",%UCLS) $ZE=""0,""_$ZPOS_"",%PSL-E-ACCESS,""_$TR($$^MSG(6754,"""_ td.table_ """),$C(10,44),$C(32,126)),$EC="",U1001,"" "
+		else  set PSL.return = " "
+		set PSL.return = PSL.return_ "K"_ PSL.postCond_ " "_ gbl
 	}
 	quit
 
 	// ---------------------------------------------------------------------
-private fileQual( local String method,		// calling method (*1)
-		local PSLExpression qualarg)	// applicable qualifiers (*2)
+fileQual( String method,		// calling method (*1)
+		PSLExpression qualarg)	// applicable qualifiers (*2)
 	/* ---------------------------------------------------------------------
 	Filer qualifier passing logic.
 	Determine the filer qualifiers to use when calling a filer routine
@@ -1308,24 +1549,21 @@ private fileQual( local String method,		// calling method (*1)
 	ARGUMENTS:
 	(*1) method = calling method
 		This value is not interpreted here, but the value will be
-		compared to commands("DEBUG") to determine if it needs to force
-		/VALDD/VALRI for this call
+		compared to pslPrsr.getSetting("DEBUG","FILEQUAL") to determine
+		if it needs to force /VALDD/VALRI for this call.
 	(*2) qualarg = qualifier argument as modified by pass 1 of the PSL
 		compiler. So a literal value will have quotes, but the value
 		may contain a simple expression such as a variable name or even
 		a complete expression with binary operators or function calls.
 
 	INPUTS:
-	. commands("SQLPARS")
-		If this entry exists at compiletime, and contains a non-empty
-		value, then these values will be PREPENDED to qualarg.
-	. commands("DEBUG")
+	. pslPrsr.getSetting("DEBUG","FILEQUAL")
 		This entry will either contain "*" or it will contain the name
-		of a single method. If commands("DEBUG")="*", then the
-		qualifiers /VALDD/VALRI will be APPENDED to qualarg for all
-		methods. If commands("DEBUG") has a different value, then these
-		qualifiers will only be appended if the value passed as the
-		method parameter matches the value of commands("DEBUG")
+		of a single method. If it contains "*", then the qualifiers
+		/VALDD/VALRI will be APPENDED to qualarg for all methods. If it
+		has a different value, then these qualifiers will only be
+		appended if the value passed as the method parameter matches the
+		value of this setting.
 
 	OUTPUT:
 	. $$ = qualifier string as it shall be inserted in the code that calls
@@ -1333,7 +1571,7 @@ private fileQual( local String method,		// calling method (*1)
 		- If qualarg.isLiteral(), then $$setPar^UCUTLN("",modQualarg)
 			will have been called to deal with duplicates and
 			conflicts.
-		- Else if commands() settings force compile time modifications,
+		- Else if pslPrsr() settings force compile time modifications,
 			then the return value will be a call to
 			$$setPar^UCUTILN() that includes qualarg and the forced
 			settings.
@@ -1341,11 +1579,14 @@ private fileQual( local String method,		// calling method (*1)
 		by the time the value ends up in the filer.
 
 	NOTES:
-	. Looking at commands("SQLPARS") for specific standard values is a left-
+	. Looking at pslPrsr("SQLPARS") for specific standard values was a left-
 		over from p01_rel03_01. method^UCGM would fill this node from
-		OBJECTMET.QUALIFIERS, that has meanwhile been obsoleted. 
+		OBJECTMET.QUALIFIERS, but this column has meanwhile been
+		obsoleted. As the current version of the compiler is no longer
+		backward compatible with p01 versions of the compiler, there is
+		no reason to keep looking at this value.
 	. The batch compiler DBSBCH has provisions that will result in the
-		setting of commands("DEBUG").
+		setting of pslPrsr.cs("DEBUG","FILEQUAL").
 	. The value of the method parameter is hard-coded in the callers:
 		delete^UCDB passes "Db.delete"
 		insert^UCDB and update^UCDB pass "Db.update"
@@ -1353,23 +1594,30 @@ private fileQual( local String method,		// calling method (*1)
 	. The history of OBJECTMET.QUALIFIERS has not been documented, so it is
 		unknown what the original intend was, as is the reason to
 		obsolete. Presumably OBJECTMET was not the best place to put
-		default quailifiers, given that only very few methods use them.
+		default qualifiers, given that only very few methods use them.
 		On the other hand, the idea of environment specific default
 		qualifiers makes sense. If this is to be (re)introduced, it will
 		most likely be through the UCOPTS.ini file.	
 	*/
-	type public String commands()
+	type public PSLParser pslPrsr
 
 	type String par = qualarg
 
 	// standardize if literal
 	if par.isLiteral() set par = $$setPar^UCUTILN( "", par.stripQuotes().upperCase()).addQuotes()
 
+	/* ================ commented out - begin ================
+	   FSCW, CR27800: The current version of UCDB is no longer backward
+	   compatible with p01_rel03_0 (or any p01 version of UCGM), so it does
+	   not make sense to keep this code, even more so because it does not
+	   fit into the current PSLParser.xxxSetting() methodology.
+
 	// PREPEND command("SQLPARS") defaults (backward comp. w. p01_rel03_01)
-	if 'commands("SQLPARS").get().isNull() set par = "$$setPar^UCUTILN("""_ commands("SQLPARS")_ """,par)"
+	if 'pslPrsr("SQLPARS").get().isNull() set par = "$$setPar^UCUTILN("""_ pslPrsr("SQLPARS")_ """,par)"
+	================ commented out - end ================ */
 
 	// APPEND debug settings if applicable
-	type String  debug = commands("DEBUG").get()
+	type String  debug = pslPrsr.getSetting("DEBUG","FILEQUAL","")
 
 	if debug = "*" ! (debug = method) set par = "$$setPar^UCUTILN("_ par_ ",""/VALDD/VALRI"")"
 
@@ -1380,24 +1628,130 @@ private fileQual( local String method,		// calling method (*1)
 	quit par
 
 	// ---------------------------------------------------------------------
-private getList // method Db.getList returns String (comma separated list of matches)
-	/* ---------------------------------------------------------------------
-	Method not supported.
+get1Row // void; method Db.getOneRow
+        /* ---------------------------------------------------------------------
+	Syntax: Db.getOneRow(select_list,Table_name,Access_keys,delimiter)
+
+	. select_list	A list of column names
+	. table_name	DQ table name (support single table only)
+	. access_keys	Primary access keys
+	. delimiter	Field delimiter (not required, default to Tab)
+
+	Example:
+		S data=Db.getOneRow("TJD","CUVAR")
+		S data=Db.getOneRow("CID,BAL,LNM,BOO,IRN","DEP","XCID")
+		S data=Db.getOneRow("ACN,TAXID,AGE","CIF","XACN")
+		S data=Db.getOneRow("TAMT","HIST","xcid,tseq",124)
 
 	NOTES:
-	. This subroutine performed a general SELECT, and returned the result as
-		a single, comma separated list of column values. Because none of
-		the supplied arguments was validated, the subroutine produced a
-		compile time literal for almost everything
-		(provided actual(5) = 0).
-	. The description of this method never occurred in any PSL Help document
-		and no calls to this mathods have been found in Profile01 and
-		Profile04.
+	. For RDB it is probably more efficient to translate this into a SQL
+		SELECT that retrieves the row, especially if the number of
+		requested columns is small compared to the total number of
+		columns of the underlying RDB table.
 	*/
-	do PSL.error( "Invalid method: Db.getList") quit
+	type public PSLTable pslTbl()
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+        do WARNDEP^UCGM(2.6, 0, "Db.getOneRow")
+
+	type String list  = PSL.actual(1).stripQuotes()	// column list
+	type String table = PSL.actual(2).stripQuotes() // table name
+	type String keys  = PSL.actual(3).stripQuotes()	// access keys
+	type String delim = $select(PSL.actual(4).get().translate( " ", ""):PSL.actual(4),1:9)	// Delimiter
+	type PSLTable td = PSL.cachePSLTable( pslTbl(), table, 0)
+	type PSLBuffer buf
+	type String cmt = "Db.GetOneRow( "_ PSL.actual(1)_ ", "_ PSL.actual(2)_ ", "_ PSL.actual(3)_ ", "_ delim_ ")"
+
+	/* Strip keyword distinct if present */
+	if list.piece( " ") = "DISTINCT" set list = list.piece( "DISTINCT ",2)
+	set list = list.upperCase()
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type String label = $$findSubr^UCGM("vDbRow","")	// Get next label
+
+	if td.isRdb {
+		type Number k
+		type List pkl = td.primaryKeys
+		type String fpl = "(", whr = ""
+
+		for k = 1:1:pkl.count() {
+			if k>1 set fpl = fpl_",", whr = whr_ " AND "
+			set fpl = fpl_ " String v"_ k
+			set whr = whr_ pkl.elementAt(k)_ "=:V"_ k
+		}
+
+		// create SQL SELECT statement by calling UCDBRT
+		type String map(,), sql = $$RsDyRT^UCDBRT( list, table, whr, "", "", "", map(,))
+		type String hvl = $$RsMsXV^UCDBRT( map(,),.sql, 0, delim).translate("V","v")
+		type String code = "type String vData,vRm"
+		type String split()
+
+		set buf = PSL.openBuffer( fpl_ ")", cmt)
+		if ({PSLExpression}sql).fitsLineLength( 80) {
+			set sql = sql.addQuotes()
+		}
+		else  {
+			set code = code_",vSql"
+			do splitCode^UCGMC( sql, 40, "", split())
+			set sql = "vSql"
+		}
+
+		do buf.add( code)	// add declaration
+		set k = split("").order(-1)
+		if k>1 {
+			do buf.add( " set vSql = "_split(1).addQuotes())
+			for k = 2:1:k do buf.add( " set vSql = vSql_ "_split(1).addQuotes())
+		}
+		do buf.add( "type Number vEr = $$SELECT^%DBAPI(0,"_ sql_ ","_ delim_ ".char(),"_ hvl_ ",.vData,.vRM)")
+		do buf.add( "quit vData")
+		set PSL.return = "$$"_ label_ "("_ $$akey2apl( td, "", keys, 0)_ ")"
+	}
+	else  do {
+		set buf = PSL.openBuffer( "()", cmt)
+
+		do buf.add( "type Record"_table _" vRec = Db.getRecord("""_table_""","""_keys_""",1)")
+
+		/* Create PSL code that concatenates 8 columns per line
+		   If the total number of columns is less than 9, this will be
+		   quit-argument as well. Otherwise, for the 9th column insert
+		   code that declares + assigns the value to vRow. For each
+		   following boundary generate set vRow=vRow_ code.
+		   At the end of the loop expr will contain the complete value
+		   to be returned.
+		   NB: All code is generated WITHOUT additional whitespace to
+		   ensure that the value of expr does not start with a blank,
+		   which would turn the QUIT into an argumentless QUIT ...
+		   */
+		type Number I
+		type String expr = "", prop
+		for I=1:1:list.length(",") {
+			if I>1 {
+				if I#8=1 {
+					if I=9 {
+						do buf.add( "type String vRow="_ expr)
+					}
+					else    do buf.add( "set vRow="_ expr)
+					set expr = "vRow"
+				}
+				set expr = expr_ "_"_ delim_ ".char()_"
+			}
+			set prop = list.piece( ",", I)
+			if prop = "" quit
+			//if prop'["." set prop = "vRec."_ prop.lowerCase()
+			set expr = expr_ "vRec."_ prop.lowerCase()
+		}
+
+		do buf.add("quit "_ expr)
+		set PSL.return = "$$"_ label_ "()"
+	}
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do autoERRM^UCGM()
+	do buf.insert( label, "String")
+	quit
 
 	// ---------------------------------------------------------------------
-private getRecCN( String df)	// value of ClassNew parameter
+getRecCN( String df)	// value of ClassNew parameter
 	/* ---------------------------------------------------------------------
 	Helper function to provide a consistent value for the ClassNew parameter
 	on Db.getRecord(,,df).
@@ -1409,45 +1763,75 @@ private getRecCN( String df)	// value of ClassNew parameter
 	quit ''df
 
 	// ---------------------------------------------------------------------
-private getRecord	// method Db.getRecord; returns RecordTABLE
+getRecord	// method Db.getRecord; returns RecordTABLE
 	/* ---------------------------------------------------------------------
 	INPUTS:
 	. PSL.actual(1) = table name (literal String)
 	. PSL.actual(2) = access key expression (literal String)
-	. PSL.actual(3) = record not fond mode
-
-	. PSL.pslTbl()
-		The table descriptor cache
-	. PSL.ptr
+	. PSL.actual(3) = record not found mode
+	
+	. public Number ptr
 		If the value of this variable is greater than zero, parsing of
 		the expression is not yet complete, and we are dealing with a
 		"nested property reference": Db.getRecord(t,k,m).column
+	*/
+
+	type public Number    ptr	// BAD USAGE !!
+
+	if ptr do getRecPr quit	// 7813 - Handle nested property syntax
+	
+	do getRec(false)
+	
+	quit
+	
+	// ---------------------------------------------------------------------
+getRec(Boolean bFromDbSet)	// Building DbSet.getRecord indicator
+	/* ---------------------------------------------------------------------
+	Db.getReoord and DbSet.getRecord builder; returns RecordTABLE
+	
+	Used by getRecord^UCDB and getRecord^UCDBSET
+	
+	INPUTS:
+	. PSL.actual(1) = table name (literal String)
+	. PSL.actual(2) = access key expression (literal String)
+	. PSL.actual(3) = record not found mode
+	
+	. PSLpslTbl()
+		The table descriptor cache
 	. PSL.var
 		The target variable to receive the new RecordTABLE instance
 		Note that objectName="Db", and cannot be used.
 		Note also that this implies that "nested calls" must allocate
 		and supply a scratch variable to use as assignment target.
 	*/
+	type static PSLClass
 	type public PSLColumn pslCln()
-	type public PSLTable  pslTbl()
-
-	if PSL.ptr do getRecPr quit	// 7813 - Handle nested property syntax
-
-	type PSLTable td  = PSL.cachePSLTable( .pslTbl(), PSL.actual(1).stripQuotes())
-	type Number deflt = $$getRecCN( PSL.actual(3))
+	type public PSLTable  pslTbl()	
+	
+	type PSLTable td = PSL.cachePSLTable( pslTbl(), PSL.actual(1).stripQuotes())
+	type Boolean  deflt = $$getRecCN( PSL.actual(3))
 
 	set PSL.return = $$akey2apl( td, PSL.var, PSL.actual(2), 0)
+	
+	if 'td.isRdb do {
+		
+		// Null if CUVAR-like with no keys
+		if 'PSL.return.isNull() set PSL.return = PSL.return_ ","_ bFromDbSet
+		else  set PSL.return = bFromDbSet
+	}
 
 	/* FSCW CR18163: Original code used deflt=-1 to kill vobj() on RECNOFL,
 	   and quit "" without throwing an exception. Any occurrence of this
-	   undocumented behavior is flagged here: */
-	if deflt<0 do warnGroup^UCGM("INTERNAL","Db.getRecord( "_ PSL.actual(1)_ ", "_ PSL.actual(2)_ ", "_ PSL.actual(3)_ ")")
+	   undocumented behavior is now an error (using the original actual(3)
+	   because deflt is now 0 or 1): */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if '((+PSL.actual(3)=0) or (+PSL.actual(3)=1)) do ERROR^UCGM("Db.getRecord( "_ PSL.actual(1)_ ", "_ PSL.actual(2)_ ", "_ PSL.actual(3)_ ")")
 
+	set PSL.class = PSLClass.RECORDCLASS_ td.table
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type String scope = $$getScope^UCGM( PSL.var, PSL.varLevel)
 
-	set PSL.class = PSL.reClass_ td.table
-	type String scope = PSL.var.scope
-
-	if scope="LITERAL" do LitInst( PSL.var, td.table, PSL.return, deflt, .PSL.level) quit
+	if scope="LITERAL" do LitInst( PSL.var, td.table, PSL.return, deflt, PSL.level) quit
 
 	/* ================================
 	   The code in this block is questionable for more than one reason:
@@ -1466,23 +1850,29 @@ private getRecord	// method Db.getRecord; returns RecordTABLE
 	if scope="FORMAL",td.recordType>1 do {			// Runtime test
 		type String code = "$G("_ var_ ")"
 		if PSL.mcode[("'"_code) quit
-		set code="I "_code_" S $ZS=""-1,""_$ZPOS_"",%PSL-E-RECEXISTS"" X $ZT"
+  		set code="I "_code_" S $ZE=""0,""_$ZPOS_"",%PSL-E-RECEXISTS"",$EC="",U1001,"""
 		do ADD^UCGM($$initLine^UCGM(.level)_code,msrc+.001)
-		if $G(commands("WARN","RECEXISTS")) do WARN^UCGM("Possible runtime error RECEXISTS")
+		if $G(pslPrsr("WARN","RECEXISTS")) do WARN^UCGM("Possible runtime error RECEXISTS")
 	}
 	================================ */
 	
-	// find a matching vDbN() subroutine (or create a new one).
+	/* Turn on audit flag if table has updateRestrict access rights.
+	   Because updateRestrict rights checking checks the old value,
+	   it must be tracked.  */
+	#ACCEPT CR=30801;Date=04-06-2008;PGM=RussellDS;Group=DEPRECATED; use of type()
+	type public String type(,)
+	
+	if td.checkAccessRights(false).contains("updateRestrict") set type(PSL.level, PSL.var).piece( 9.char(), 12) = 1
+	
+	// Get appropriate method in RecordTABLE
 	type String comment = PSL.oLvn_ "()=Db.getRecord("_ td.table_ ",,"_ deflt_ ")"
-	type String label = $$findSubr^UCGM( "vDb", comment)
-	set PSL.return = "$$"_ label_ "("_ PSL.return_ ")"
-
-	if 'PSL.subrouExists( label) do getRecSr( td, "vOid", label, comment, deflt)
-
+	set PSL.return = $$getRecSr( td, false, deflt)_ "("_ PSL.return_ ")"
+	
 	quit
+	
 
 	// ---------------------------------------------------------------------
-local getRecPr	// Db.getRecord has properties
+private getRecPr	// Db.getRecord has properties
 	/* ---------------------------------------------------------------------
 	This subroutine deals with contraucts such as:
 
@@ -1506,59 +1896,113 @@ local getRecPr	// Db.getRecord has properties
 		subroutine ...
 		If any of these levels NEWs atom, this subroutine will generate
 		incorrect code.
-	. PSL.ptr must be set to zero at the end of the subroutine, because it
+	. lvn ptr must be set to zero at the end of the subroutine, because it
 		is needed to construct the quit-argument.
 	. This subroutine will use the key variables as public variables,
 		without declaring them public. This relies on the suppression of
 		warnings by PSLBuffer.insert().
 	*/
+	type static PSLClass
 	type public String atom
+	type public Number ptr
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte	
 	if PSL.fset do ERROR^UCGM("Expression is not updateable") quit
 
 	type String table = PSL.actual(1).stripQuotes()
 
 	/* Append code to PSL source and create a unique label */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type String var=$$nxtSym^UCGM
-	type String label="vDbGr"_$P(var,"vo",2)	// Create unique label
+	type String label="vDbGr"_ var.piece("vo",2)	// Create unique label
 
 	/* Always need to generate the subroutine */
 	type PSLBuffer buf = PSL.openBuffer( "()", "nested Db.getRecord() using "_ var)
-	do buf.add(" type "_ PSL.reClass_ table_ " "_ var_ "=Db.getRecord("_ PSL.actual(1)_ ","_ PSL.actual(2)_ ","_ PSL.actual(3)_ ")")
-	do buf.add(" quit "_ var_ $$UNTOK^%ZS(atom.extract( PSL.ptr + 1, atom.length()), PSL.tok))
+	do buf.add(" type "_ PSLClass.RECORDCLASS_ table_ " "_ var_ "=Db.getRecord("_ PSL.actual(1)_ ","_ PSL.actual(2)_ ","_ PSL.actual(3)_ ")")
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do buf.add(" quit "_ var_ $$UNTOK^%ZS(atom.extract( ptr + 1, atom.length()), PSL.tok))
 
-	do buf.insert( label)
+	do buf.insert( label, "String")
 
 	set PSL.return = label_ "()"
 	set PSL.class  = "String"
-	set PSL.ptr    = 0
+	set ptr = 0	// PUBLIC Number ptr
 
 	quit
+	
+	
+	// ---------------------------------------------------------------------
+getRecSr( PSLTable td,	// table descriptor
+		Boolean useOpt,		// use optimization call
+		Boolean clsNew)		// value of ClassNew parameter (0, 1)
+	/* ---------------------------------------------------------------------
+	Return appropriate Db.getRecord call, based on parameters.  Options are:
+	
+	  RecordTABLE.vRCgetRecord0    - if clsNew = false and useOpt = false
+	  RecordTABLE.vRCgetRecord1    - if clsNew = true and useOpt = false
+	  RecordTABLE.vRCgetRecord0Opt - if clsNew = false and useOpt = true
+	  RecordTABLE.vRCgetRecord1Opt - if clsNew = true and useOpt = true
+	*/
+	
+	// M-code generation only at this point.  Will need reconsideration for Java
+	
+	type String label = "vRCgetRecord"_ clsNew
+	
+	if useOpt set label = label_ "Opt"
+	
+	quit "$$"_ label_ "^Record"_ td.table
+	
 
 	// ---------------------------------------------------------------------
-private getRecSr( PSLTable td,	// table descriptor
-	String recInst,		// record variable or declaration position (*2)
-	String label,		// name of subroutine to generate
-	String comment,		// comment line of subroutine
-	Number clsNew)		// value of ClassNew parameter (0, 1, "")
+getRecSrCode( PSLTable td,		// table descriptor
+		String recInst)		// record variable
 	/* ---------------------------------------------------------------------
-	This subroutine generates the subroutine that implements the
-	Db.getRecord method for the specified table and ClassNew combination.
-
-	The generated subroutine can have one of seven signatures (assuming a
-	table with 2 key columns):
-	- label(v1,v2)
-		This signature will be used when vobj() is used, or when
-		none of the -2, -99, nor -151 purpose nodes are needed.
-	- The following combinations, based on which of the purpose nodes are
-	  needed:
-	  	- label(v1,v2,v2out)
-	  	- label(v1,,v2,v99out)
-	  	- label(v1,,v2,v151out)
-	  	- label(v1,,v2,v2out,v99out)
-	  	- label(v1,,v2,v2out,v151out)
-	  	- label(v1,,v2,v99out,v151out)
-	  	- label(v1,,v2,v2out,v99out,v151out)
+	Function that returns the complete M (or eventually Java) code to form 
+	the RecordTABLE.vRCgetRecord methods (see getRecSr) for this table.
+	The four methods generated implement the various Db.getRecord method
+	options based on the combination of ClassNew and optimization.
+	
+	Generated code will consider whether there are SELECT access rights
+	involved in this table and generate the appropriate checking and
+	error handling (throw error).  Because the various access rights
+	check methods are instance methods, and because the code being
+	generated here is creating the record, the calls to the access
+	rights checking are done under the #BYPASS, since there is not
+	yet knowledge at a PSL level of the new record (i.e., "this"
+	cannot be used).
+	
+	Generated code will also consider whether there is SELECT audit
+	logging and generate the appropriate checking and audit log call.
+	
+	This function is called by PSLRecordBuilder when construction
+	RecordTABLE code.
+	
+	Return value is a string, with individual lines of code separated by
+	tabs.  It is up to the caller to split this to build the method.  All four
+	methods will be included in the string.
+	
+	The generated methods will have the following signatures (assuming a
+	table with 2 key columns), based on the getRecord classNew parameter:
+	
+		- vRCgetRecord0(v1,v2)
+		- vRCgetRecord1(v1,v2)
+	
+	  For optimized methods vRCgetRecord0Opt and vRCgetRecord1Opt, the
+	  signature will vary based on whether or not a table is archivable,
+	  and whether or not the table is an RDB table, as follows:
+	  
+	  	- vRCgetRecordnOpt(v1,v2,v2out)
+	  	- vRCgetRecordnOpt(v1,v2,v2out,v99out)
+	  	- vRCgetRecordnOpt(v1,v2,v2out,v152out,use152)
+	  	- vRCgetRecordnOpt(v1,v2,v2out,v99out,v152out,vuse152)
+	
+	  For each of the above signatures, if MDB, the parameter vfromDBset,
+	  for use by audit logging, will follow the keys.
+	
+	Usage of the optimized forms will need to consider all the possible
+	purpose nodes for the table, even if not using all of them.  The
+	Boolean vuse152 will indicate if the caller cares about -152 in order
+	to avoid setting it in vRCgetRecordnOpt if not necessary.
 
 	Because the signatures will be different, the caller must be aware of
 	the signature that is associated with the call to the supplied label.
@@ -1567,220 +2011,738 @@ private getRecSr( PSLTable td,	// table descriptor
 	(*2) recInst = record variable or declaration position
 		If a record variable is supplied, the generated code will use
 		vobj(recInst), and all assignments to negative nodes (key, -1,
-		-2, -150, -151) will be included.
+		-2, -150, -152) will be included.
 		If a declaration position is supplied, the generated code will
 		assume the voxn mode. In this case, the code returned by
-		getRecCode^UCXDD() will always be included. Assignements to
+		getRecCode() will always be included. Assignements to
 		variables that represent key columns will never be made because
 		the subroutine may be called from different places that use
 		different key pupose variables. Assignments to the special
-		purpose nodes -2 and -151 will only be included if the
-		associated purpose ID is defined ($$lvpm^UCREC4OP() not empty).
+		purpose node -2 will always be included; assignment to the
+		special purpose node -99 will only be included for archivable
+		tables; and to special purpose node -152 only if an RDB table.
+		.
 		The values will be passes out of the subroutine using additional
 		formal parameters.
-
-	NOTES:
-	. lvpm() = local variable purpose map
-		For all modes, this subroutine will force the mappings for
-		keyOrdinal_"*" (primary keys in retrieval).
-		For vobj mode, the subroutine forces the entries for
-		-keyOrdinal - 2 (primary key in assignment), and for the special
-		purpose nodes -2, -99, and -151 (even if on MDB)
-		For voxn mode, nodes will only be copied from $$lvpm^UCREC4OP(),
-		if they exist.
-	. The code that determines whether to generate assignments to (default)
-		key / special purpose nodes in located in the first part of the
-		subroutine, by setting lvmp(). Code in the second part of the
-		subroutine will just generate what it is told to do based on the
-		nodes present in lvpm().
 	*/
+	
+	/* At the present this is M-code generation only and will need reconsideration
+	   for Java.  The optimization aspects will not be Java issues and therefore
+	   those methods will not exist. */
+	
+	type literal String TAB = 9.char()
+	
 	type public PSLColumn pslCln()
 	type public PSLTable  pslTbl()
+	
+	type PSLColumn cd
+	type PSLExpression init161 = ""
+	type PSLExpression set161 = ""
 
-	type String  archRef = ""	// archive reference
+	type Boolean auditSelect = false
+	type Boolean useAudit = $$usingAuditLog^SQLAUDIT
+	type String  archref
 	type String  archTbl = td.getArchiveTable()
 	type String  code
+	type List    accessChecks = td.checkAccessRights(false)
 	type List    fkeys = td.primaryKeys
-	type List    fpl = ""		// formal parameter list
-	type Number  i			// iterator
-	type String  load()		// load code by getRecCode^UCXDD
-	type String  loadNod = ""	// node corresponding to the lvn
-	type String  lvn		// scratch local var name
-	type String  lvpm()		// map passed to getRecCode^UCXDD()
-	type Boolean useVobj = 'recInst.isNumber()
-	type String  retVal
-
-	if 'fkeys.isNull() do {
-		for i=1:1:fkeys.count() do {
-			if i>1 set fpl = fpl_ ","
-			set fpl = fpl_ "v"_i, lvpm( i_"*") = "v"_i
-			if useVobj set lvpm( -2-i) = PSL.oLvn_ "("_ recInst_ ","_ (-2-i)_ ")"
-			//else  set lvn=$$lvpm^UCREC4OP( recInst,-2-i, 0) if 'lvn.isNull() set lvpm(-2-i) = lvn
+	type List    fpl = ""			// formal parameter list (no optimize)
+	type List    fplOpt = ""		// formal parameter list (optimize)
+	type List    archParams = ""		// parameters for archive
+	type Number  i, j			// iterators
+	type Number  maxOpt
+	type String  auditCode = " if "
+	type String  loadOpt(), loadNoOpt()	// load code by getRecCode()
+	type String  loadNod = ""		// node corresponding to the lvn
+	type String  lvpmNoOpt(), lvpmOpt()
+	type String  methCode()			// method code for each of the methods
+	type String  optRef = td.table.lowerCase()
+	type String  recClass = "Record"_ td.table
+	type String  retVal()
+	type Number  selectChk = 0		// 1 = select, 2 = selectRestrict
+	type String  selErrCode
+	
+	if accessChecks.contains("select") set selectChk = 1
+	else  if accessChecks.contains("selectRestrict") set selectChk = 2
+	
+	if useAudit set auditSelect = ({List}(td.getLogging(false)).contains("select"))
+	
+	if auditSelect do {
+		
+		type Boolean isPositiveList
+		type List userclasses
+		
+		if $$shouldLog^SQLAUDIT(td.table, "SELECT", "log", .userclasses, .isPositiveList) do {
+			
+			type String uclsCheck
+			
+			if (userclasses.count() = 0) set uclsCheck = ""		// No check necessary, do them all
+			else  if (userclasses.count() = 1) set uclsCheck = "(%UserClass = "_userclasses.addQuotes()_ ")"
+			else  set uclsCheck = "({List}"_ userclasses.addQuotes()_ ").contains(%UserClass)"
+	
+			/* Positive list will always have elements.  Negative list may
+	 		   be empty, in which case there is not checking as it means
+	 		   that PUBLIC is being logged and there are no exceptions. */
+			
+			if 'isPositiveList, 'uclsCheck.isNull() set uclsCheck = "'"_ uclsCheck
+			
+			if 'uclsCheck.isNull() set auditCode = auditCode_ uclsCheck_ ", "
+			
+			set auditCode = auditCode _ "'vfromDbSet set vauditLogSeq = $$auditLog^SQLAUDIT(""SELECT"", """_ td.table_ """, ""SELECT * FROM "_ td.table
 		}
 	}
 
-	if useVobj do {
-		/* lvpm(-1) is needed for parent/child recordMode updates */
-		set lvpm(-1) = PSL.oLvn_ "("_ recInst_ ",-1)"
-		set lvpm(-2) = PSL.oLvn_ "("_ recInst_ ",-2)"
-		if td.isRdb set lvpm(-151) = PSL.oLvn_ "("_ recInst_ ",-151)"
+	if 'fkeys.isNull() do {
+	
+		if auditSelect set auditCode = auditCode_ " WHERE "
+	
+		for i=1:1:fkeys.count() do {
+			set lvpmNoOpt( i_ "*") = "v"_ i
+			set lvpmOpt(i_ "*") = "v"_ i
+			set fpl = fpl.add( "String v"_ i)
+			set fplOpt = fplOpt.add( "String v"_ i)
+			set archParams = archParams.add("v"_ i)
+			set lvpmNoOpt( -2-i) = PSL.oLvn_ "("_ recInst_ ","_ (-2-i)_ ")"
+			
+			if auditSelect do {
+				
+				type String column = fkeys.elementAt(i)
+				
+				type PSLColumn cd = PSL.getPSLColumn(td.table, column)
+				
+				if (i > 1) set auditCode = auditCode_ "_"" AND "
+				set auditCode = auditCode_ column_ "="
+				if '({List}("T,U,F")).contains(cd.dataType) set auditCode = auditCode_ """_ v"_ i
+				else  set auditCode = auditCode_ "'""_ v"_ i_ "_""'"""
+			}
+		}
+		
+		if auditSelect set auditCode = auditCode_", """")"
 	}
-	else  for i = -2,-99,-151 do {
-		if $$lvpm^UCREC4OP( recInst, i, 0).isNull() quit
-		set lvpm(i) = "v"_ (-i)_ "out", fpl = fpl.add( lvpm(i))
+	
+	// In case using audit logging, add fromDbSet parameter to formal list
+	if 'td.isRdb set fpl = fpl.add( "Boolean vfromDbSet"), fplOpt = fplOpt.add( "Boolean vfromDbSet")
+
+	/* lvpm(-1) is needed for parent/child recordMode updates */
+	set lvpmNoOpt(-1) = PSL.oLvn_ "("_ recInst_ ",-1)"
+	set lvpmNoOpt(-2) = PSL.oLvn_ "("_ recInst_ ",-2)"
+
+	set lvpmOpt(-2) = "v2out", fplOpt = fplOpt.add( "Number "_ lvpmOpt(-2))
+	
+	if 'archTbl.isNull()  do {
+	
+		set lvpmNoOpt(-99) = PSL.oLvn_ "("_ recInst_ ",-99)"
+		set lvpmOpt(-99) = "v99out", fplOpt = fplOpt.add( "String "_ lvpmOpt(-99))
 	}
-
-	type PSLSubrou sr = PSL.addSubrou( label, "("_ fpl_ ")", comment, 0)
-
+	if td.isRdb do {
+		
+		set lvpmNoOpt(-152) = PSL.oLvn_ "("_ recInst_ ",-152)"
+		set lvpmOpt(-152) = "v152out", fplOpt = fplOpt.add( "String "_ lvpmOpt(-152)), fplOpt = fplOpt.add("Boolean vuse152")
+	}
+	
+	/* Build the code for each of the methods in methCode(0-3).  At
+	   the end, concatenate to create single return value.
+	   
+	   Non-optimized methods will return a RecordTABLE class.
+	   Optimized methods will return a String.
+	
+	   methCode indexes - 	0 = clsNew = false, optimize = false
+				1 = clsNew = true, optimize = false
+				2 = clsNew = false, optimize = true
+				3 = clsNew = true, optimize = true */
+	set code = "public static "
+	for i = 0, 1 set methCode(i) = code_ recClass_ " vRCgetRecord"_ i_ "("_ fpl_ ")"
+	for i = 2, 3 set methCode(i) = code_ "String vRCgetRecord"_ (i - 2)_ "Opt"_ "("_ fplOpt_ ")"
+	
 	/* code to NEW local vars, and to create new object:
-	   If vobj mode use RecInst, else get the node that will receive the
-	   initial retrieval. Use this node locally as well, but NEW it (because
-	   that variable will also receive the return from the function call).
-	   We must use the same variable(s) as mapped by $$lvpm^UCREC4OP(),
-	   because the code generated by getRecCode^UCXDD() may use these nodes
-	   to deal with DBTBL1.QID1 !!
+	   For non-optimized modes, use RecInst, else get the node that will
+	   receive the initial retrieval. Use this node locally as well, but
+	   NEW it (because that variable will also receive the return from the
+	   function call).  We must use the same variable(s) as mapped by
+	   $$lvpm^UCREC4OP(), because the code generated by getRecCode()
+	   may use these nodes to deal with DBTBL1.QID1 !!
 	   */
-	if useVobj set retVal = recInst, code = " N "_retVal
-	else  do {
-		set loadNod = $$getRecPur^UCXDD( td)
-		if loadNod.isNull() set retVal = """""", code =""
-		else  set (lvpm( loadNod), retVal) = $$lvpm^UCREC4OP( recInst, loadNod), code = " N "_retVal
+	   
+	for i = 0, 1 set retVal(i) = recInst, methCode(i) = methCode(i)_ TAB_ " type "_ recClass_ " "_ retVal(i)
+	if auditSelect for i = 0:1:3 set methCode(i) = methCode(i)_ TAB_ " type Number vauditLogSeq"
+	set loadNod = $$getRecPur^UCXDD( td)
+	for i = 2, 3 do {
+		
+		if loadNod.isNull() set retVal(i) = """"""
+		else  do {
+			
+			set (lvpmOpt(loadNod), retVal(i)) = optRef
+			set methCode(i) = methCode(i)_ TAB_ " type String "_ retVal(i)
+		}
+	}
+	
+	// Provide variable for %UserClass for use under bypass
+	if (selectChk > 0) do {
+		
+		// No access rights for table ~p1
+		set selErrCode = "S $ZE=""0,""_$ZPOS_"",%PSL-E-ACCESS,""_$$^MSG(6754,"""_ td.table_ """),$EC="",U1001,"""
+		
+		for i = 0:1:3 set methCode(i) = methCode(i)_ TAB_ " type String vUcls = %UserClass.get()"
 	}
 
-	if td.isRdb set code = code_ " N vData,vEr,vRm"
-	do sr.addCode( code)
-	if useVobj do sr.addCode( $$cdNewObj^UCCLASS( recInst, """Record"_ td.table_ """"))
-
+	// M implementation - that's all there is for now
+	for i = 0:1:3 do {
+		
+		set methCode(i) = methCode(i)_ TAB_ " #ACCEPT DATE=02/26/2008; PGM=Dan Russell; CR=30801; Group=BYPASS"
+		set methCode(i) = methCode(i)_ TAB_ " #BYPASS"
+		
+		if td.isRdb set methCode(i) = methCode(i)_ TAB_ " N vData,vEr,vRm"
+	}
+	
+	/* If basic SELECT access, classNew = 0, test immediately, since user
+	   has no access to the table.  Use object ID of 0 since the vselectOK
+	   method does not reference the record object when there is no restrict
+	   clause, i.e., not selectRestrict.
+	   
+	   If classNew = 1, need to wait until see if new record or not. */
+	if (selectChk = 1) for i = 0, 2 set methCode(i) = methCode(i)_ TAB_ " I '$$vselectOK(0,vUcls) "_ selErrCode
+	
+	for i = 0, 1 set methCode(i) = methCode(i)_ TAB_ td.getNewCode( recInst, 1, true)
+	
 	/* If database IO counts are requested, insert code here, so we count
 	   unsuccessful calls as well */
-	if PSL.hasSetting("DEBUG","DBIOCOUNT") do sr.addCode(" D "_ PSL.getSetting("DEBUG","DBIOCOUNT")_"("""_td.table_""",""READ"")")
+	if PSL.hasSetting("DEBUG", "DBIOCOUNT") for i = 0:1:3 set methCode(i) = methCode(i)_ TAB_ " D "_ PSL.getSetting("DEBUG", "DBIOCOUNT")_ "("""_ td.table_ """,""READ"")"
 
 	// Initialize archive directory purpose node, get archive key
 	if 'archTbl.isNull() do {
-
-		if 'lvpm(-99).exists() set lvpm(-99) = "vobj(vOid,-99)"
-		set archRef = lvpm(-99)
 	
-		set code = " S "_ archRef_ "="""""
-
-		do sr.addCode( code)
+		for i = 0, 1 set methCode(i) = methCode(i)_ TAB_ " S "_ lvpmNoOpt(-99)_ "="""""
+		for i = 2, 3 set methCode(i) = methCode(i)_ TAB_ " S "_ lvpmOpt(-99)_ "="""""
 	}
 
 	// add initial load code - strip any archive reference
-	do getRecCode^UCXDD( td, recInst, .lvpm(), .load(), .pslCln())
-	for i = 1:1:load("").order(-1) do sr.addCode( load(i).replace("|"_archRef_"|", ""))
+	do getRecCode( td, recInst, lvpmNoOpt(), loadNoOpt(), pslCln())
+	/* pass numeric for recInst to force use of lvpm() map */
+	do getRecCode( td, 1, lvpmOpt(), loadOpt(), pslCln())
+	set maxOpt = loadNoOpt("").order(-1)
+	if (loadOpt("").order(-1) > maxOpt) set maxOpt = loadOpt("").order(-1)
+	for j = 1:1:maxOpt do {
+		
+		type String archref
+		
+		if lvpmNoOpt(-99).exists() set archref = lvpmNoOpt(-99)
+		else  set archref = ""
+		
+		if loadNoOpt(j).exists() for i = 0, 1 set methCode(i) = methCode(i)_ TAB_ loadNoOpt(j).replace("|"_ archref_ "|", "")
+		
+		if 'archref.isNull() set archref = lvpmOpt(-99)
+		
+		if loadOpt(j).exists() for i = 2, 3 set methCode(i) = methCode(i)_ TAB_ loadOpt(j).replace("|"_ archref_ "|", "")
+	}
 	
-	if lvpm(-2).exists() do sr.addCode( " S "_ lvpm(-2)_ "="_ $SELECT(clsNew:"'$T",1:"1"))
-
+	set methCode(0) = methCode(0)_ TAB_ " S "_ lvpmNoOpt(-2)_ "=1"
+	set methCode(1) = methCode(1)_ TAB_ " S "_ lvpmNoOpt(-2)_ "='$T"
+	set methCode(2) = methCode(2)_ TAB_ " S "_ lvpmOpt(-2)_ "=1"
+	set methCode(3) = methCode(3)_ TAB_ " S "_ lvpmOpt(-2)_ "='$T"
+	
 	// Append RECNOFL exception, and record mode assignment
 	if archTbl.isNull() do {
-		if clsNew = 1 set code=" ;"
-		else  do {
-			set code = " I $T "
-			if useVobj set code = code_ "K "_ PSL.oLvn_ "("_ recInst_ ") "
-			if clsNew=-1 set code = code_ "Q """""
-			else  set code = code_ "S $ZS=""-1,""_$ZPOS_"",%PSL-E-RECNOFL,,"_ td.table_ """ X $ZT"
-		}
-		do sr.addCode( code)
+		
+		set code = "S $ZE=""0,""_$ZPOS_"",%PSL-E-RECNOFL,,"_ td.table_ """,$EC="",U1001,"""
+		set methCode(0) = methCode(0)_ TAB_ " I $T K "_ PSL.oLvn_ "("_ recInst_ ") "_ code
+		set methCode(2) = methCode(2)_ TAB_ " I $T "_ code
 	}
 	else  do {
 		
 		type Number archKey = td.getArchiveKey(true)
 		type PSLTable tdarch = PSL.getPSLTable(archTbl)
 		
-		do sr.addCode(" I $T D  ; Try archive")
-		do sr.addCode(" .  N vArch")
-		set code = " .  S vArch=$$ARCHFILE^"_tdarch.filerPGM_"("""_td.table_""",1,"
-		if archKey > 1 set code = code_ fpl.piece(",", 1, archKey - 1)_","
-		set code = code_ fpl.piece(",", archKey)_"-1E-10)"
-		do sr.addCode( code)
-		set code = " .  I vArch="""""
-		
-		// If not in archive, OK to create new
-		if clsNew = 1 set code = code_ " Q"
-		do sr.addCode( code)
-		
-		// Try to load from archive
-		for i = 1:1:load("").order(-1) do {
+		for i = 0:1:3 do {
+
+			type Boolean isClsNew = ((i # 2) = 1)
+			type Boolean isOpt = (i > 1)
 			
-			if clsNew = 1 set code = " . "
-			else  set code = " .  E "
+			set methCode(i) = methCode(i)_ TAB_ " I $T D  ; Try archive"
+			set methCode(i) = methCode(i)_ TAB_ " . N vArch"
+		
+			set code = " . S vArch=$$getArchiveFile^Record"_ td.table_ "("""_ td.table_ """,1,"
+			set code = code_ archParams.toString().piece( ",", 1, archKey)_ "-1E-10)"
 			
-			// Load code will have ^|vobj(vOid,-99| - replace
-			set code = code_ load(i).replace(archRef, "vArch")
-			do sr.addCode( code)
+			set methCode(i) = methCode(i)_ TAB_ code
+			set code = " . I vArch="""""
+			
+			// If not in archive, OK to create new
+			if isClsNew set code = code_ " Q"
+			set methCode(i) = methCode(i)_ TAB_ code
+		
+			// Try to load from archive
+			for j = 1:1:loadNoOpt("").order(-1) do {
+				
+				if isClsNew set code = " ."
+				else  set code = " . E "
+			
+				// Load code will have ^|vobj(vOid,-99| - replace
+				if 'isOpt set code = code_ loadNoOpt(j).replace(lvpmNoOpt(-99), "vArch")
+				else  set code = code_ loadOpt(j).replace(lvpmOpt(-99), "vArch")
+				set methCode(i) = methCode(i)_ TAB_ code
+			}
+		
+			if isClsNew set code = " . ;"
+			else  set code = " . I $T K vobj(vOid) S $ZE=""0,""_$ZPOS_"",%PSL-E-RECNOFL,,"_ td.table_ """,$EC="",U1001,"""
+			set methCode(i) = methCode(i)_ TAB_ code
+		
+			// Update archive directory purpose node even if clsNew=1 and
+			// no record since this record would have been in archive range
+			if 'isOpt set methCode(i) = methCode(i)_ TAB_ " . S "_ lvpmNoOpt(-99)_ "=vArch"
+			else  set methCode(i) = methCode(i)_ TAB_ " . S "_ lvpmOpt(-99)_ "=vArch"
+
+			// Done earlier and won't change if clsNew = 0
+			if (i = 3) set methCode(i) = methCode(i)_ TAB_ " . S "_ lvpmOpt(-2)_ "='$T"
 		}
-		
-		// Ignore possibility of clsNew = -1 (check with Frans if OK)
-		if clsNew = 1 set code = " .  ;"
-		else  set code = " .  I $T K vobj(vOid) S $ZS=""-1,""_$ZPOS_"",%PSL-E-RECNOFL,,"_ td.table_ """ X $ZT"
-		do sr.addCode( code)
-		
-		// Update archive directory purpose node even if clsNew=1 and
-		// no record since this record would have been in archive range
-		set code = " .  S "_ archRef_ "=vArch"
-		do sr.addCode( code)
-		
-		// Done earlier and won't change if clsNew = 0
-		if clsNew = 1, lvpm(-2).exists() do sr.addCode( " .  S "_ lvpm(-2)_ "="_ $SELECT(clsNew:"'$T",1:"1"))
 	}
 
-	// code to assign keys, and -150/-151 for Rdb
-	type PSLColumn cd
-	type String set150 = ""
-	//type String set151 = ""
-	type String typ
-	for i=1:1:fkeys.count() do {
-		if lvpm(-2-i).exists() do sr.addCode( " S "_ lvpm(-2-i)_ "=v"_ i)
-
-		if 'td.isRdb quit
+	/* code to assign keys, and -161/-162 for Rdb
+	   For clsNew, need to initialize -161/-162 and node for wide tables,
+	   and need to set up key values into -161/-162 in all cases since may
+	   end up as insert.  If not clsNew, just set up -152.  Only need
+	   post-overhead for setting -161/-162 since key values set in all cases.
+	*/
+	for j=1:1:fkeys.count() do {
 			
-		if i>1 /* set set151 = set151_ "_"" AND " */ if useVobj set set150 = set150_ ","
-
-		set cd = PSL.cachePSLColumn( pslCln(), td.table_"."_ fkeys.elementAt(i), pslTbl())
-		set typ =cd.dataType
-
-		// B, and M do not occur in key
-		// F, U, and T map to character type
-		// $, C, D, L, and N map to numeric type
-		//if "FUT"[typ set typ = "$$QADD^%ZS(v"_ i_ ",""'"")"
-		//else  set typ = "(+v"_ i_ ")"
+		for i = 0:1:3 do {
+				
+			if (i < 2) set methCode(i) = methCode(i)_ TAB_ " S "_ lvpmNoOpt( -2-j)_ "=v"_ j
+			//else  set methCode(i) = methCode(i)_ TAB_ lvpmOpt( -2-j)_ "=v"_ j
 			
-		//set set151 = set151_ cd.internalColumn_ "=""_"_ typ
-
-		// -150 maintained only if using vobj()
-		if useVobj set set150 = set150_ $$getRdbAsn^UCXDD(cd, retVal)
+			quit:'td.isRdb
+			quit:(i <> 1)
+				
+			/* -161/-162 maintained only if using vobj() and
+			   if clsNew */
+			set cd = PSL.cachePSLColumn( pslCln(), td.table_ "."_ fkeys.elementAt(j), pslTbl())
+			type String updOvh = $$getUpdOvh^UCXDD( cd, td, retVal(i), td.isAutoLog, 2)
+			set set161 = set161_ updOvh.piece(9.char(), 2)
+			set init161 = td.getInitCode( retVal(i), false)
+		}
 	}
 
 	/* Note that vEr at this point can only be 0 (success) or 100
-	   (no record found), and that a non-empty value of set150 implies a
-	   non-empty value of set151. However, even if vobj() is not used,
-	   set151 will be non-empty if incremental loading or bypassSave
+	   (no record found), and that a non-empty value of set161 implies a
+	   non-empty value of set152. However, whether optimizing or not,
+	   -152 will be non-empty if incremental loading or bypassSave
 	   apply to this declaration. */
-	if clsNew, 'set150.isNull() do {
-		do sr.addCode( " I vEr=100 S "_set150)
-		set code = " E "
+	if 'set161.isNull() do {
+	
+		// Use function form if code is too long
+		if 'set161.fitsLineLength(20) do {
+			
+			set set161 = ""
+			for j=1:1:fkeys.count() do {
+				
+				set cd = PSL.cachePSLColumn( pslCln(), td.table_ "."_ fkeys.elementAt(j), pslTbl())
+				type String updOvh = $$getUpdOvh^UCXDD( cd, td, retVal(1), td.isAutoLog, 3)
+				set set161 = set161_ updOvh.piece(9.char(), 2)
+			}
+		}
+	
+		if 'init161.isNull() do {
+			
+			set methCode(1) = methCode(1)_ TAB_ " I vEr=100 do"
+			set methCode(1) = methCode(1)_ TAB_ "  . "_ init161
+			set methCode(1) = methCode(1)_ TAB_ "  . "_ set161
+		}
+		else  set methCode(1) = methCode(1)_ TAB_ " I vEr=100 "_set161
+		
+		if 'fkeys.isNull() set methCode(1) = methCode(1)_ TAB_ " E "_ td.getUpdateKey( recInst, lvpmNoOpt())
 	}
-	else  set code = ""
+	
+	if td.isRdb do {
 
-	//if 'set151.isNull(),lvpm(-151).exists() do sr.addCode( code_ " S "_ lvpm(-151)_ "="" WHERE "_ set151)
-	if lvpm(-151).exists(),'fkeys.isNull() do sr.addCode( code_ td.getUpdateKey( recInst, lvpm()))
+		for i = 0, 1 if '((i = 1) and 'set161.isNull()) set methCode(i) = methCode(i)_ TAB_ td.getUpdateKey( recInst, lvpmNoOpt())
+		set methCode(2) = methCode(2)_ TAB_ " I $G(vuse152)"_ td.getUpdateKey( retVal(2), lvpmOpt())
+		set methCode(3) = methCode(3)_ TAB_ " E  I $G(vuse152)"_ td.getUpdateKey( retVal(3), lvpmOpt())
+	}
+			
+	for i = 0:1:3 do {
+		
+		/* Delay check for classNew = true with select access restriction.
+		   If selectRestrict, need to delay check as well. */
+		
+		if (selectChk > 0) do {
+			
+			type Number recInst
+			
+			set code = ""
+			
+			if (selectChk = 1) do {		// select
+				
+				set recInst = 0		// Don't need instance for select
+				
+				if (i = 1) set code = " I "_ lvpmNoOpt(-2)_ "=1,"
+				else  if (i = 3) set code = " I "_ lvpmOpt(-2)_ "=1,"
+			}
+			else  do {			// selectRestrict
+				
+				set recInst = retVal(i)
+				
+				if ((i = 0) or (i = 2)) set code = " I "
+				else  if (i = 1) set code = " I "_ lvpmNoOpt(-2)_ "=1,"
+				else  set code = " I "_ lvpmOpt(-2)_ "=1,"
+			}
+		
+			if 'code.isNull() do {
+			
+				if (i < 2) set code = code_ "'$$vselectOK("_ recInst_ ",vUcls"
+				else  set code = code_ "'$$vselectOptmOK(vUcls,"_ recInst
+								
+				if (i > 1) for j = 1:1:fkeys.count() set code = code_ ",v"_ j
+				
+				set code = code_ ") "_ selErrCode
+				
+				set methCode(i) = methCode(i)_ TAB_ code
+			}
+		}
+		
+		set methCode(i) = methCode(i)_ TAB_ " #ENDBYPASS"
+		if auditSelect set methCode(i) = methCode(i)_ TAB_ auditCode
+		// Avoid warning on vOid being undefined
+		if (i < 2) set methCode(i) = methCode(i)_ TAB_ " #ACCEPT DATE=02/26/2008; PGM=Dan Russell; CR=30801; Group=SCOPE"
+		set methCode(i) = methCode(i)_ TAB_ " quit "_ retVal(i)
+	}
+	
+	set code = ""
+	for i = 0:1:3 set code = code_ ""_ TAB_ methCode(i)_ TAB
 
-	do sr.addCode(" Q "_retVal)
-	quit
+	quit code.extract(1, code.length() - 1)
+	
 
 	// ---------------------------------------------------------------------
-private getSchTab	// method Db.getSchemaTable(String tablename)
+getRecCode( PSLTable tblDes,	// table descriptor
+		String recInst,		// record instance variable
+		PSLIdentifier lvpm(),	// loc var pur map	/NOREQ/MECH=REFARR:R
+		String mcd(),		// generated M code	/MECH=REFARR:W
+		PSLColumn clnDes())	// PSLColumn cache	/NOREQ/MECH=REFARR:RW
+	/* ---------------------------------------------------------------------
+	ARGUMENTS:
+	(*4) lvpm() = local variable purpose mapping
+		If the generated code needs to use local variables e.g. vN for
+		key columns, then lvpm() shall contain these mappings.
+		In particular, this entry will pass $$lvpm(N*) in vsub(keyN) to
+		the SQL engine when dealing with DBTBL1.QID1
+		If lvpm(-1) exists, it is copied into the array that will be
+		passed to getRecQid1(), to generate code that overwrites the -1
+		node with the runtime record class of the child.
+	(*5) mcd() = generated M code
+		This array will contain the minimum number of lines that are
+		needed to
+		- validate the table's view condition
+		- load the top node or the default node (if one exists)
+		- set $TEST to reflect "record not found"
+	NOTES:
+	. If the table has a query (DBTBL1.QID1 IS NOT NULL), that contains
+		columns that are neither key columns nor columns that are stored
+		on the top / exists node, then it is the callers responsibility
+		to maintain the node variables, except if the standard vobj(,)
+		node mapping is used.
+	. Aside from the special entry lvpm(-1), the lvpm() array will be used
+		to obtain the variables that contain the primary key values, and
+		the variables that will receive the nodes of the initial load.
+		A word of caution is needed with respect to the latter: The code
+		that evaluates DBTBL1.QID1 is generated by $$getRecQid1(), that
+		will use the vsub(qcn) mechanism of the SQL engine to specify
+		"column retrieval expression". getRecQid1() will obtain this
+		expression by calling $$getCurExpr(). Because $$getCurExpr()
+		uses the lvpm() array for this purpose, callers shall supply
+		consistent lvpm() values for all nodes that may occur in QID1.
+	*/
+	type List   fkeys = tblDes.primaryKeys
+	type Number i
+	type String nodes()		// nodes that need to be pre-loaded
+	type String qid1code()		// code that deals with QID1
+	type String tbl = tblDes.table	// DQ table name
+	type String vsub()		// variable substitutes for SQL engine
+
+	for i=1:1:fkeys.count() set vsub( tbl_"."_ fkeys.elementAt(i)) = $$lvpm^UCXDD( recInst, i_"*", lvpm())
+
+	/* Add additional constraints for VIEWs and Parent/Child relationships
+	   to mcode(). Copy lvpm(-1) to nodes(-1) before calling getRecQid1(),
+	   and remove nodes(-1) after the call to prevent it from being
+	   "loaded".  */
+	if lvpm(-1).exists() set nodes(-1) = lvpm(-1)
+	type Boolean isPc = false
+	if PSL.getSetting("boot","restrictionlevel",0)<2 set isPc = $$getRecQid1( tblDes, recInst, lvpm(), , vsub(), nodes(), qid1code())
+	kill nodes(-1)
+
+	/* First insert load code for nodes that are needed for QID1.
+	   These nodes will be loaded as incremental loads of existing records
+	   without local var exists checks. For this reason, loading of the
+	   existsNode is skipped here. */
+	type Number base = 0
+	type String xnd = $$getRecPur^UCXDD( tblDes)
+	type String nod = ""
+	for  set nod = nodes( nod).order() quit:nod=""  do {
+		if nod'=xnd set base = base + 1, mcd( base) = $$getLodCode^UCXDD(tblDes, recInst, nod, 1, 0, lvpm())
+	}
+
+	/* Next insert load code for top node or existsNode.
+	   Generate code that will allow "record not found" checking.
+	   Note that MDB retrievals are always expected to be wrapped. */
+	if 'xnd.isNull() do {
+		type String code = $$getDataNode^UCXDD( tblDes, recInst, xnd, 1, lvpm())
+		for i=1:1:code.length(9.char()) set mcd(base + i) = code.piece(9.char(), i)
+	}
+
+	/* Insert code generated that checks QID1 condition(s) */
+	set base = mcd("").order(-1)
+	for i=1:1:qid1code.get() set mcd(base + i) = qid1code(i)
+
+	/* Finally insert the "record not found" check.
+	   This check is not needed for child tables, because the check is
+	   implied by QID1 (and inserted via qid1code().
+	   However if qid1code() did contain code other than parent/child code,
+	   then the "record not found" is an ADDITIONAL condition, that needs to
+	   be checked only if QID1 is met.
+	   */
+	type String code
+	if qid1code.data()>9,'isPc set code = " E "
+	else  set code = ""
+	if tblDes.parentTable.isNull() set base = mcd("").order(-1) + 1, mcd( base) = code_ tblDes.getExistsCode( recInst, lvpm())
+
+	quit
+	
+
+	// ---------------------------------------------------------------------
+getRecQid1( PSLTable tblDes,	// (PSL) table descriptor
+		String recInst,		// record instance variable or number
+		PSLIdentifier lvpm(),	// loc var pur map	/NOREQ/MECH=REFARR:R
+		String ptable,		// parent table		/NOREQ
+		String vsub(),		// qcn substitutes	/MECH=REAFARR:RW
+		String nodes(),		// pre-load nodes	/MECH=REAFARR:RW
+		String mcode())		// generated code	/MECH=REAFARR:RW
+	/* ---------------------------------------------------------------------
+	Build QID1 view logic for this table and descendant tables based on
+	DBTBL1D.QID1. This column serves two purposes:
+	1) For child tables, it defines the relationship with the parent table.
+		QID1 of the child table defines the condition that rows in the
+		parent table must satisfy to qualify as this class of child
+		record object.
+	2) For tables that share a common M global structure, QID1 defines the
+		condition that qualifies a node in the global as a distinct row
+		of that table. Because separate DQ tables never merge into a
+		single RDB table, this case does not apply to RDB tables.
+
+	ARGUMENTS:
+	(*3) lvpm() = record instance or variable number array
+		See Notes in getRecCode re need for lvpm related to QID1
+	(*4) ptable = name of parent table
+		If defined, then the call to this procedure is intended to
+		create the code that determins the record class to be assigned
+		based on QID1 of this child table.
+		Otherwise the call is supposed to produce the discriminating
+		condition for MDB shared globals.
+	(*5) vsub() = qualified column name subtitutions
+		All columnn references resuting from evaluating QID1 will end up
+		in vsub(), to ensure that these values map to node-and-positions
+		that are independent of the storage model, and are elegible for
+		purpose variable substitution.
+	(*6) nodes() = nodes used by columns in QID1, that need to be pre-loaded
+		nodes(-1) = currentLvn
+			If this node exists, and ptable exists, then the
+			runtime recordclass of the child table will be assigned
+			to the lvn specified in node(-1).
+		nodes(node) = ""			/MECH=REFARR:W
+			Will have been added for all nodes that must be loaded
+			in order to be able to verify the VIEW condition.
+			It is the callers responsibility to load these nodes.
+	(*7) mcode() = generated M code			/MECH=REFARR:RW
+		generated code is added to this array.
+		* mcode = max line number in use
+		* mcode(line) = M code
+		All added code will be conditional code.
+		If the function returns 0 (not parent/child code), then the
+		returned code will SET $TEST to indicate that QID1 is not met
+		(c.f. "not found").
+		If the function returns 1 (parent/chid code), then the value
+		of $TEST after executing the last line in mcode() is
+		unspecified.
+
+	INPUTS:
+	. vsub() = qualified column name substitution array
+		vsub(qcn) = rightexpr
+
+	OUTPUTS:
+	. $$ = isParent
+		1 - if the code added to mcode() deals with the parent/child
+			relationship (i.e. there were recursive calls to
+			$$getRecQid1)
+		0 - otherwise
+			Including: no code added
+	. vsub(qcn) = currentExpr(0)
+		The substitution array will have been created for all columns
+		that occur in DBTBL1.QID1 of either the table itself or its
+		descendant tables.
+
+	NOTES:
+	. This routine calls itself recursively for each child table of the
+		supplied parent table.
+	. The use of node(-1) is a sub-optimal mechanism to distinguish between
+		vobj(,) code and voXN (NO-OBJECT) code, but it prevents the use
+		of an additional parameter exclusively for that purpose.
+		Furthermore the mechanism is more or less consistent with the
+		lvmp() conventions.
+	*/
+	type String tbl = tblDes.table	// DQ table name
+	type String whr()		// result from VIEW^SQLM
+
+	/* the following variables are unused, but required or created by the
+	   calls to the SQL engine. */
+	type String join,cmp(),fsn(),rng(),tok,vdd
+	type String ER=0,RM=""		// good old error mechanism
+
+	/* get mcode() for child tables, provided we are interested in record
+	   class overrides (nodes(-1).exists()).
+	   Note that isParent must be set independent of nodes(-1).exists():
+	   Even if the caller is not interested in the record class override
+	   code from the recursive calls, the function return must be correct
+	   (i.e TRUE if parent) !
+	   */
+	type ResultSet rs = Db.select( "FID", "DBTBL1", "%LIBS='SYSDEV' AND PARFID=:tbl")
+	type Boolean isParent = 'rs.isEmpty()
+	if nodes(-1).exists() do {
+		while rs.next() do {
+			type String ctable = rs.getCol(1)
+			type PSLTable ctd = $$getPslTbl^UCXDD( ctable, 0)
+	
+			type Boolean dummy = $$getRecQid1( ctd, recInst, lvpm(), tbl, vsub(), nodes(), mcode())
+		}
+	}
+
+	/* If this is an RDB table, that is not a child table, we are done here
+	   */
+	if tblDes.isRdb,tblDes.parentTable.isNull() quit isParent
+
+	type Number vxp = -1		// unused, but required by VIEW^SQLM
+	do fsn^SQLDD( .fsn(), tbl)	// unused, but required by VIEW^SQLM
+	do VIEW^SQLM( tbl, .whr(), .fsn()) if ER.toNumber()'=0 do PSL.error( RM.get()) quit isParent
+
+	/* If there was no QID1, then whr() will not exist, and we are done */
+	if whr.data()<9 quit isParent
+
+	/* At this point whr() contains the additional conditions to be applied
+	   The relevant parts of whr(n) are:
+		* first TAB delimited piece: leftPartOfCompare
+		* second TAB delimited piece: rightPartOfCompare
+	   Each part may contain one or more column-references, enclosed in
+	   $C(1). The even pieces contain qualified column names, the odd pieces
+	   contain binary operators etc.
+	   Although the call to QUERY^SQLA() will generate the correct MDB code
+	   for non-numeric recInst values, vsub() will be pre-loaded with the
+	   value of $$getCurExpr(,recInst) to ensure proper use of purpose
+	   variable placeholders under all circumstances.
+	   Note that $$getCurExpr() does not accept an lvpm() array. So
+	   subtitution must be achieved by supplying a numeric recInst, and rely
+	   on $$lvpm^UCREC4OP() to suppy the variable representing the node.
+	   As a side-effect of specifying all vsub() entries, QUERY^SQLA() will
+	   not generate the fsn(table,node) entries for any node that occurs in
+	   vsub(), so these are initiated here as well.
+
+	   Further investigation may be needed to ensure that this always works,
+	   even for exotic cases such as computeds and masterfields. */
+	type String c			// qualified column name
+	type PSLColumn cd		// column descriptor
+	type Number i,j,n		// iterators
+	type String nod			// current node of qcn in whr()
+	type String z			// scratch, data
+
+	set n=""
+	for  set n = whr(n).order() quit:n=""  for i=1,2 do {
+		set z = whr(n).piece( 9.char(), i)
+		for j = 2:2:z.length( 1.char()) do {
+			set c = z.piece( 1.char(), j)
+			if vsub( c).exists() quit
+			set cd = $$getPslCln^UCXDD( c.piece("."), c.piece(".",2))
+
+			/* Build vsub() entry for this qcn. Relies on numeric
+			   RecInst for non-standard node variables.
+			   */
+			set vsub( c) = $$getCurExpr^UCXDD( cd, recInst, 0, lvpm())
+
+			/* build nodes( nod) for this qcn:
+			   - forget top node
+			   - forget key columns (shall be present in vsub())
+			   - calculate only once
+			   */
+			set nod = $$getCurNode^UCXDD(cd, 0)
+			if nod'="",nod'<0,'nodes( nod).exists() set nodes( nod) = ""
+		}
+	}
+
+	/* Translate whr() to M code. QUERY^SQLA() is called for that purpose.
+	   The mcode() returned by QUERY^SQLA() will contain code that accesses
+	   the nodes in nodes(nod).
+	   */
+	type Number ptr = mcode.get()		// skip current data in mcode()
+
+	do QUERY^SQLA("".justify(whr("").order(-1),-1,1),.whr,.mcode,.vsub,tbl,,0,0)
+	
+	/* QID1 for child tables must be a simple query based on one or more
+	   columns in the parent table that result in only a single mcode
+	   entry. */
+	if ptable.exists(), (mcode > (ptr + 1)) do PSL.error( "Child table query (DBTBL1.QID1) invalid") quit isParent
+
+	/* modify the mcode() added by the call to
+	   - remove the " S vsql=-1" that signals "end-of-search"
+	   - prepend a space (to conform to M_line syntax)
+	   - set vobj(vOid,-1) of descendant class
+	   */
+	for i=ptr+1:1:mcode.get() do {
+		if mcode( i)[" S vsql=-1" set mcode( i) = mcode( i).piece(" S vsql=-1")
+		set mcode( i) = " "_mcode( i)
+		if i>(ptr + 1),mcode( i).extract( 1,4)'=" E  " set mcode( i)=" E "_ mcode( i)
+		if 'ptable.exists() quit
+
+		/* The remaining lines are only needed for child tables, to
+		   override the parent record class by the record class of child
+		   (as determined by QID1).
+		   The unconditional use of nodes(-1) is acceptable because this
+		   (nested) call getRecQid1() will only be made if node(-1)
+		   exists().
+
+		   After removing the " S vsql=-1", each line in mcode() has the
+		   form
+			IF '(condition)
+		   Remove the "not", and add the assignment of the class.
+		   */
+		set mcode( i) = mcode( i).piece( "'")_ mcode( i).piece( "'",2,999)_ " S "_ nodes(-1)_ "=""Record"_ tbl_ """"
+	}
+
+	quit isParent
+
+
+	// ---------------------------------------------------------------------
+getSchCln	//void; method Db.getSchemaColumn(String,String)
 	/* ---------------------------------------------------------------------
 	INPUTS:
-	. actual(1) = name of table (dynamic value allowed)
+	. PSL.actual(1) = name of table (dynamic value allowed)
+	. PSL.actual(2) = name of column (dynamic value allowed)
+
+	OUTPUTS:
+	. return = code to retrieve value at runtime (getSchCln^UCXDD)
 	*/
-	set PSL.return = "$$getSchema^UCSCHEMA("_ PSL.actual(1)_ ")"
+	set PSL.return="$$getSchCln^UCXDD("_PSL.actual(1)_","_PSL.actual(2)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private hasQual( public PSLExpression expr,	// expression to be checked (*1)
-		local String val)		// qualifiers that shall occur (*2)
+getSchTbl	//void; method Db.getSchemaTable(String)
+	/* ---------------------------------------------------------------------
+	INPUTS:
+	. PSL.actual(1) = name of table (dynamic value allowed)
+
+	OUTPUTS:
+	. return = code to retrieve value at runtime (getSchTbl^UCXDD)
+	*/
+	set PSL.return="$$getSchTbl^UCXDD("_PSL.actual(1)_")"
+	quit
+
+
+	// ---------------------------------------------------------------------
+hasQual( ret PSLExpression expr,	// expression to be checked (*1)
+		noret String val)		// qualifiers that shall occur (*2)
 	/* ---------------------------------------------------------------------
 	Does expr contain all qualifiers in val?
 
@@ -1832,12 +2794,101 @@ private hasQual( public PSLExpression expr,	// expression to be checked (*1)
 	quit ret
 
 	// ---------------------------------------------------------------------
-private isDefined	// void; method Db.isDefined
+insert	//
+	/* ---------------------------------------------------------------------
+	This subroutine implements the deprecated method
+	Db.insert( tableName, columnNames, columnValues, filerQualifiers)
+
+	 INPUTS:
+	. actual(1) = table name (literal)
+	. actual(2) = column name list (literal)
+	. actual(3) = column value list (literal)
+	. actual(4) = filer qualifiers (dynamic allowed)
+
+	NOTES:
+	. This subroutine used to call $$fileQual("Db.update",) and inserted the
+		result in the generated call to Record.save().
+		Because save^UCRECORD will also call $$fileQual(), two different
+		set of values were added. This resulted in potential problems,
+		as UCUTILN will not deal with duplicate qualifiers (e.g. insert
+		/VALFK if the list already contains /VALFK). To prevent these
+		problems $$filequal() will not be called here any more.
+		This implies that the following qualifiers will no longer be
+		processed:
+		1) pslPrsr("SQLPARS") for Db.insert() (see $$fileQual)
+		2) parameters added due to prsr("DEBUG","FILEQUAL")="Db.update"
+	. The code that deals with the columnValues is weak.
+	*/
+	type public PSLTable pslTbl()
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do WARNDEP^UCGM(2.6, 0, "Db.insert() - use Db.getRecord(,,1) or Class.new() and Record.save()")
+	
+	type String table   = PSL.actual(1).stripQuotes()	// Table name
+	type String columns = PSL.actual(2).stripQuotes()	// Column names
+	type String values  = PSL.actual(3).stripQuotes()	// Column values
+	type String qual    = PSL.actual(4)			// filer qualifiers
+	type PSLTable td    = PSL.cachePSLTable( pslTbl(), table, 0)
+
+	if values[":" set values = $$mapPSLvar(values)
+
+	type PSLBuffer buf = PSL.openBuffer("()","INSERT INTO "_table_" "_columns_" VALUES "_values)
+
+	// Instantiate a new record
+	do buf.add( "type Record"_ table_" vIns = Class.new(""Record"_ table_ """)")
+
+	// turn change auditing on
+	do buf.add("do vIns.setAuditFlag(1)")
+
+	// set all columns into the new record as defined by columns and values
+	// parameters of the method
+	type String nextval = "", currval = "", prop, value
+	type Number I
+
+	for I=1:1:columns.length( ",") {
+		set prop = columns.piece( ",", I)
+		if prop [ "." set prop = prop.piece( ".", 2)
+
+		set value = values.piece( ",", I)
+		if value.upperCase() [ "NEXTVAL" set nextval = prop quit
+		if value.upperCase() [ "CURRVAL" set currval = prop quit
+		if td.primaryKeys.contains(prop) set nextval(prop) = value
+		if value.extract() = ":" set value = value.extract( 2, value.length())
+		if value.extract() = "'" set value = """"_ value.extract( 2, value.length()-1)_ """"
+		else  if value?.P set value=""""_value_""""
+		do buf.add("set vIns."_ prop.lowerCase()_" = "_ value)
+	}
+
+	if nextval'=""!(currval'="") {
+		type String where = "", i = ""
+		for  set i=nextval(i).order() quit:i=""  set where = where_ ","_ i_ "="_ nextval(i)
+		if nextval'="" do buf.add( "set vIns."_ nextval.lowerCase()_ " = Db.nextVal( """_ table_ """, """_ where.extract( 2, 100)_ """)") quit
+		do buf.add( "set vIns."_ currval.lowerCase()_ " = Db.currVal( """_table_""", """_ where.extract( 2, 100)_ """)")
+	}
+
+	/* save the data using the filer in order to use all triggers and journals.
+	   */
+	do buf.add("do vIns.save("_ qual _")")
+	do buf.add("quit")
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do autoERRM^UCGM()
+
+	/* get next label and insert into code
+	   */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set PSL.return = $$findSubr^UCGM( "DbIns", "")		// Get next tag name
+	do buf.insert( PSL.return, "void")
+	set PSL.return = PSL.return_ "()"
+	quit
+
+	// ---------------------------------------------------------------------
+isDefined	// void; method Db.isDefined
 	/* ---------------------------------------------------------------------
 	*/
-	type public Boolean  isDirctv
-	type public PSLTable pslTbl()
-	type public String   sysmap(,,)
+	type public Boolean   isDirctv
+	type public PSLTable  pslTbl()
+	type public PSLParser pslPrsr
 
 	type String expr
 	type String from  = PSL.actual(1)
@@ -1856,7 +2907,7 @@ private isDefined	// void; method Db.isDefined
 	type PSLTable td    = PSL.cachePSLTable( pslTbl(), table, 1)
 	type List     fkeys = td.primaryKeys
 
-	if isDirctv.get() set sysmap("#IF","Db.isDefined",table) = fkeys.elementAt( fkeys.count())
+	if isDirctv.get() do pslPrsr.addSysmap( "#IF", "Db.isDefined", table, fkeys.elementAt( fkeys.count()))
 
 	// CUVAR etc. on MBD
 	if fkeys.isNull(),'td.isRdb set PSL.return = "$D("_ td.global.piece("(")_ ")" quit
@@ -1865,6 +2916,8 @@ private isDefined	// void; method Db.isDefined
 
 	type String atom, saveatom, tkeys = ","_ fkeys_ ","
 	type Number found, ptr = 0
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	for  set atom = $$ATOM^%ZS( where, .ptr, "=") do { quit:ptr=0
 		if atom'="=" set saveatom = atom.stripQuotes()_ "," quit
 		set found = tkeys.find( saveatom)
@@ -1931,7 +2984,7 @@ private isDefined	// void; method Db.isDefined
 	   where N is the subscript in the exe() array).
 	   Iteration labels for Db.isDefined() start with vEx
 	    */
-	do label.setTagPrefix( "vEx"_ label.toString().piece("DbEx",2))
+	do label.setTagPrefix( "vEx"_ label.getName().piece("DbEx",2))
 
 	/* Reserve a line that can be used for the declarations, and remember
 	   its location. */
@@ -1940,6 +2993,7 @@ private isDefined	// void; method Db.isDefined
 
 	if count>1 set dline = 0 do label.addCode(" N vCnt S vCnt=0")
 
+	#ACCEPT DATE=06/18/2008; PGM=Dan Russell; CR=30801; Group=ACCESS
 	do SELECT^SQL(expr,"/NOCACHE",,,,,,-1) if ER quit
 
 	type Number codPtr = vsql("P").get()
@@ -1959,16 +3013,25 @@ private isDefined	// void; method Db.isDefined
 
 	for i=1:1:codPtr do {
 		set code = exe(i)
+
+		/* Lines below must be synced with code generated by SQL engine.
+		   Current version assumes the following:
+		   S vsql()=$$BYTECHAR^SQLUTL(254)
+		   S vsql()=$G(hostvarN) ...
+		   I '($D(...)) ...
+		   ...
+		   */ 
 		if code["'?.N",code["$$FDAT^%ZM" do label.addExe( ";") quit
+		// SQL code addition of audit logging
+		if code?1"N vauditseq".E do label.addExe( code) quit
 		if code?.E1"$G("1U.E do { quit		// Sub host var
 			type String lvn = code.piece("$G(",2).piece(" ")
 			type Number n   = code.piece("vsql(",2).piece(")")
 			do label.addExe( ";") 
 			do label.addLvn( n, lvn.extract( 1, lvn.length()-1))
 		}
-
-		// Line below must be synced with code generated by SQL engine
 		if dline="",(code["I '($D(^")!(code["I '$D(^") set dline = label.getLine()+1
+		else  if code["BYTECHAR^SQLUTL",(+dline=0) set dline=""
 		else  set dline=0
 
 		if code["S vd" set i = codPtr quit	// FSCW: questionable ??
@@ -1987,11 +3050,15 @@ private isDefined	// void; method Db.isDefined
 	if 'td.getArchiveTable().isNull() set dline = 0
 
 	/* Only relevant line is the line that contains the IF '$DATA(). Return
-	   as inline code. */
-	if dline>0,decl.isNull() do { quit
+	   as inline code.
+	   FSCW 2008-12-18: decl contains at least the NEW vsqlN for $$BYTECHAR
+	   */
+	//if dline>0,decl.isNull() do { quit
+	if dline>0,decl.count()<2 do { quit
 		set PSL.return = label.getCode(dline)
 		set PSL.return = PSL.return.piece("I '",2).piece(" Q 0")
-		do decrLabel^UCGM( label.toString())
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do decrLabel^UCGM( label.getName())
 	}
 
 	/* count specified, but no labels (= no iteration) ==> at most one row
@@ -1999,6 +3066,7 @@ private isDefined	// void; method Db.isDefined
 	type Number tag = label.getTagMax()
 	if count>1,tag=0 do { quit
 		set PSL.return = "0"
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		do INFO^UCGM("DEAD","Db.isDefined() always 0; MatchCount '"_count_"' exceeds possible matches ")
 	}
 
@@ -2016,14 +3084,14 @@ private isDefined	// void; method Db.isDefined
 
 	if count>1 do label.addCode(" G "_ label.getTag( $SELECT(vsql(0).get():vsql(0),1:codPtr)))
 
-	set PSL.return="$$"_ label.toString()_ "()"
+	set PSL.return="$$"_ label.getName()_ "()"
 
 	quit
 
 	// ---------------------------------------------------------------------
-isDefDyn( String from,
-	String where,
-	Number count)
+private isDefDyn( String from,
+		String where,
+		Number count)
 	/* ---------------------------------------------------------------------
 	method Db.isDefined - Dynamic from or where
 
@@ -2033,81 +3101,32 @@ isDefDyn( String from,
 	quit
 
 	// ---------------------------------------------------------------------
-private LitInst( PSLIdentifier var,	// target variable
-		String table,		// source table
-		List akeys,		// access keys, literal values only
-		String deflt,		// instantiate NEW flag
-		String level)		// current DO level
+isSchCln	//void; method Db.isSchemaColumn(String,String)
 	/* ---------------------------------------------------------------------
+	INPUTS:
+	. PSL.actual(1) = name of table (dynamic value allowed)
+	. PSL.actual(2) = name of column (dynamic value allowed)
+
 	OUTPUTS:
-	. PSL.class  = class name of instance.
-	. PSL.return = objectID of Record instance.
-	. type(level,var)
-		If level<0, then the instExpr piece of this node will have been
-		filled with the object ID of instantiated Record.
-	. vobj(return) or vobj(return,node)
-		The initial load node will have been created. In addition, the
-		special purpose nodes -1, and -2 will have been created.
-	NOTES:
-	. Also called by main^UCGM() to instantiate var CUVAR as a LITERAL
-		RecordCUVAR instance
+	. return = code to retrieve value at runtime (isColumn^UCXDD)
 	*/
-	type public PSLColumn pslCln()
-	type public PSLTable  pslTbl()
-	type public String    type(,)
-
-	type String keys, load(), tok, v
-	type Number i
-	type PSLTable td = PSL.cachePSLTable( pslTbl(), table)
-
-	set PSL.class = PSL.reClass_ table
-
-	set akeys = $$TOKEN^%ZS( akeys, .tok)
-
-	/* Use Dynamic Record Access interface to instantiate a new record.
-	   Do NOT try Class.new("Record", table), because PSL's object scoping
-	   will add a KILL of the Record instance prior to return from the
-	   subroutine */
-	set PSL.return = $$new^DBSDYNRA( table)
-
-	if '(akeys="") for i=1:1:akeys.count() do {
-		set v = $$UNTOK^%ZS( akeys.piece( ",", i), .tok)
-		if 'v.isLiteral() do PSL.error( "Literal parameter required: "_ v) quit
-		set vobj( PSL.return, -2-i) = v.stripQuotes()
-	}
-
-	do get^DBSDYNRA( PSL.return, deflt)
-
-	if level<0 do {					; Pre-code
-
-		do setScope^UCGM( var, "", "", "LITERAL", PSL.class)
-
-		set type(level,var).piece( PSL.tab, 4) = -1	// Runtime code line
-		set type(level,var).piece( PSL.tab,5) = PSL.return
-	}
-	quit
-
-	// ------------------------------------------------------------------
-LitOpen( String expr,		// complete SQL SELECT statement
-	String qual)		// qualifiers
-	/* ------------------------------------------------------------------
-	Target variable of ResultSet (PSL.var) has LITERAL scope.
-	Open the cursor now.
-        */
-        type String apar()		// OPEN^SQL expects array, not list
-	type String sqlsta,sqldta,sqlcnt,sqlind		// passed to OPEN^SQL
-
-	set expr = PSL.var_ " AS SELECT "_ expr
-
-	do PARSPAR^%ZS( qual, .apar())
-	do OPEN^SQL( expr, apar(), .sqlsta, .sqldta, .sqlcnt, .sqlind)
-
-	set PSL.return = sqlsta.get()
-
+	set PSL.return="$$isColumn^UCXDD("_PSL.actual(1)_","_PSL.actual(2)_")"
 	quit
 
 	// ---------------------------------------------------------------------
-private keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and prevVal
+isSchTbl	//void; method Db.isSchemaTable(String)
+	/* ---------------------------------------------------------------------
+	INPUTS:
+	. PSL.actual(1) = name of table (dynamic value allowed)
+
+	OUTPUTS:
+	. return = code to retrieve value at runtime (isTable^UCXDD)
+	*/
+	set PSL.return="$$isTable^UCXDD("_PSL.actual(1)_")"
+	quit
+
+	// ---------------------------------------------------------------------
+keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and prevVal
 	/* ---------------------------------------------------------------------
 	One subroutine for five methods. The inc parameter determines the
 	method that is requested.
@@ -2163,16 +3182,19 @@ private keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and p
 	type public PSLColumn pslCln()
 	type public PSLTable  pslTbl()
 
-	if (inc=0)'!(inc=1) do WARNDEP^UCGM("Db."_$piece("prevVal;nextKey;prevKey",";",$tr(inc,"-")))
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if (inc=0)'!(inc=1) do WARNDEP^UCGM(2.7, 0, "Db."_ ("prevVal;nextKey;prevKey").piece(";",inc.translate("-")))
 
 	if inc = -1 set inc = 3	// Force equivalence of Db.prevVal() and Db.prevKey()
 
 	type String table = PSL.actual(1).stripQuotes()
 	type PSLTable td  = PSL.cachePSLTable( pslTbl(), table, 1)
+	type List rights = td.checkAccessRights(false)
 	type PSLExpression map()
 	type String akeys = $$akey2apl( td, "", PSL.actual(2), -1, map())
 
 	type List fkeys = td.primaryKeys
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if fkeys.isNull() do ERROR^UCGM("Invalid method for table: "_table) quit
 
 	type Number acnt = -map("").order()-2		// ord of last keyvalue
@@ -2183,10 +3205,12 @@ private keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and p
 	   supplied for the last key (Goofy but OK according to Frank)
 	   */
 	if acnt<1 set acnt=0 if inc=2!(inc=3) throw Class.new("Error", "%PSL-E-INVALIDREF: missing accessKey for Db."_ PSL.method)
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if acnt=fkeys.count(), inc=0 set PSL.return = map( -acnt-2) do warnGroup^UCGM( "DEAD", "Db.currVal() with all keys - will assign "_ PSL.return) quit
 	if acnt=fkeys.count(), inc=1 do {
 		/* if Db.nextVal() supplies all keys, drop last key from map()
 		   and from akeys */
+	  	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		do warnGroup^UCGM( "DEAD", "Db.nextVal() with all keys - dropped "_ td.primaryKeys.elementAt( acnt)_ "="_ map( -acnt-2))
 		kill map( -acnt-2) set acnt = acnt - 1
 		if acnt = 0 set akeys ="" quit
@@ -2207,6 +3231,10 @@ private keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and p
 		// Not getting to archive key level
 		if (acnt '< archkey) set useRdb = true
 	}
+	
+	/* If there are SELECT access rights restrictions on the table
+	   need to use SELECT, like RDB does */
+	if (rights.contains("select") or rights.contains("selectRestrict")) set useRdb = true
 
 	if td.isRdb ! useRdb do { quit
 		/* RDB code for Db.currVal, Db.nextVal, Db.nextKey, Db.prevKey
@@ -2257,7 +3285,7 @@ private keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and p
 		   where clause into an RDB where clause
 		   */
 		type String fpl = ""		// formal parameter list for sr
-		type String hvmap()		// hostvar mapping
+		type String hvmap(,)		// hostvar mapping
 
 		for k = 1:1:acnt do {
 			if 'whr.isNull() set whr = whr_ " AND "
@@ -2265,13 +3293,14 @@ private keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and p
 			set fpl = fpl_",V"_k
 		}
 		if 'whr.isNull() do {
-			if td.isRdb set whr = " WHERE "_ $$where^UCDBR( td.table, whr, .hvmap())
+			if td.isRdb set whr = " WHERE "_ $$where^UCDBR( td.table, whr, hvmap(,))
 			else  set whr = " WHERE "_whr
 		}
 
 		/* Use a unique comment string to locate the subroutine:
 		   table + method + number of keys */
 		type String cmt = td.table _ "."_ PSL.method_"#"_ acnt
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		type String label = $$findSubr^UCGM( "vDb", cmt)
 
 		set PSL.return = "$$"_ label_ "("_ akeys_ ")"
@@ -2282,15 +3311,16 @@ private keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and p
 		type PSLSubrou sr = PSL.addSubrou( label, "("_ fpl.extract(2, fpl.length())_ ")", cmt, 0)
 
 		if td.isRdb do {
-			type String vListCd = $$RsMsXV^UCDBRT(hvmap(,),.whr))
+			type Integer delim = td.columnDelimiter
+			type String vListCd = $$RsMsXV^UCDBRT(hvmap(,),.whr, 0, delim))
 			do sr.addCode( " N vData,vEr,vRm")
-			do sr.addCode( " S vEr=$$SELECT^%DBAPI(0,""SELECT "_sel_" FROM "_ td.internalNames.elementAt(1)_whr_""",$C(9),"_vListCd_",.vData,.vRm)")
-			do sr.addCode( " I vEr<0 S $ZS=""-1,""_$ZPOS_"",%PSL-E-SQLFAIL,""_$TR($G(vRm),$C(10,44),$C(32,126)) X $ZT")
+			do sr.addCode( " S vEr=$$SELECT^%DBAPI(0,""SELECT "_sel_" FROM "_ td.internalNames.elementAt(1)_whr_""",$C("_ delim_ "),"_vListCd_",.vData,.vRm)")
+			do sr.addCode( " I vEr<0 S $ZE=""0,""_$ZPOS_"",%PSL-E-SQLFAIL,""_$TR($G(vRm),$C(10,44),$C(32,126)),$EC="",U1001,""")
 		}
 		else  do {
 			do sr.addCode( " N ER,RM,vData")
 			do sr.addCode( " D SELECT^SQL("""_sel_" FROM "_ td.internalNames.elementAt(1)_whr_""",,,.vData)")
-			do sr.addCode( " I $G(ER) S $ZS=""-1,""_$ZPOS_"",%PSL-E-SQLFAIL,""_$TR($G(RM),$C(10,44),$C(32,126)) X $ZT")
+			do sr.addCode( " I $G(ER) S $ZE=""0,""_$ZPOS_"",%PSL-E-SQLFAIL,""_$TR($G(RM),$C(10,44),$C(32,126)),$EC="",U1001,""")
 		}
 		if inc=1 do {
 			do sr.addCode( " Q vData+1")
@@ -2324,14 +3354,14 @@ private keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and p
 		type Number archkey = tdarch.getArchiveKey()
 		
 		// Not getting to archive key level
-		if (acnt < (archkey - 1)) quit
+		if acnt < (archkey - 1) quit
 		
 		// If archkey does not exist or is null, we will use primary
 		// archive directory, and don't need map(-99)
 		quit:'map( archkey_ "*").exists()
 		quit:map( archkey_ "*") = """"""
 		
-		set map(-99) = "$$ARCHFILE^"_ tdarch.filerPGM_ "("
+		set map(-99) = "$$getArchiveFile^Record"_ tdarch.table_ "("
 		set map(-99) = map(-99)_ """"_ td.table_ """,0,"
 			
 		for k = 1:1:archkey set map(-99) = map(-99)_map( k_ "*")_ ","
@@ -2340,13 +3370,12 @@ private keyVal(inc)	// void; Method Db.nextVal, currVal, nextKey, prevKey, and p
 
 	set PSL.return = $$getGbl^UCXDD( td, "", map())
 	set PSL.return = "$O(" _ PSL.return.extract( 1, PSL.return.length()-1)_ ordExt
-	
 	quit
 
 	// ---------------------------------------------------------------------
-keyValCurr( PSLTable td,
-	Number acnt,		// number of access keys supplied
-	PSLExpression map())	// key value exppresions
+private keyValCurr( PSLTable td,
+		Number acnt,		// number of access keys supplied
+		PSLExpression map())	// key value exppresions
 	/* ---------------------------------------------------------------------
 	Support function for Db.currVal when table has VIEW restriction.
 	This function mimics the "old" UCDB code that calls SELECT^SQL and
@@ -2361,6 +3390,7 @@ keyValCurr( PSLTable td,
 	type String sql = "DISTINCT "_td.primaryKeys.elementAt(acnt+1)_ " FROM "_td.table
 	if 'whr.isNull() set sql = sql_ " WHERE "_whr
 	set sql = sql_ " ORDER BY "_ td.primaryKeys.elementAt(acnt+1)_ " DESC"
+	#ACCEPT DATE=06/18/2008; PGM=Dan Russell; CR=30801; Group=ACCESS
 	do SELECT^SQL(sql,,,,,,,-2) if ER.get() do PSL.error( RM.get()) quit ""
 
 	/* Interpret the exe() array (ugh!)
@@ -2390,7 +3420,7 @@ keyValCurr( PSLTable td,
 
 		for ii=i+1:1:exe do {
 			if keyVar["$$ARCHFILE", exe(ii)[vsqlN set exe(ii) = exe(ii).replace(vsqlN, keyVar)
-			if exe(ii)[vsqlN  set exe(ii) = $$varSub^UCPATCH( exe(ii), vsqlN, keyVar)
+			if exe(ii)[vsqlN  set exe(ii) = $$VarSub^UCPATCH( exe(ii), vsqlN, keyVar)
 		}
 	}
 	set code = exe( vsql("P"))
@@ -2399,51 +3429,88 @@ keyValCurr( PSLTable td,
 	if code ["vsql(" do PSL.error( "Compiler cannot interpret SQL") quit ""
 
 	type String tok
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set code = $$TOKEN^%ZS( code, .tok)
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	quit "$O("_ $$UNTOK^%ZS( code.piece("$O(",2).piece( ") "), .tok)_ ")"
 
 	// ---------------------------------------------------------------------
-private procPar( public String fsn(),
-		local Boolean sparse)
+LitInst( PSLIdentifier var,	// target variable
+		String table,		// source table
+		String akeys,		// access keys, literal values only
+		String deflt,		// instantiate NEW flag
+		String level)		// current DO level
 	/* ---------------------------------------------------------------------
-	Process input parameters
-	
+	OUTPUTS:
+	. PSL.class  = class name of instance.
+	. PSL.return = objectID of Record instance.
+	. type(level,var)
+		If level<0, then the instExpr piece of this node will have been
+		filled with the object ID of instantiated Record.
+	. vobj(return) or vobj(return,node)
+		The initial load node will have been created. In addition, the
+		special purpose nodes -1, and -2 will have been created.
 	NOTES:
-	. Only called by msg^UCRUNTIM and xbad^UCRUNTIM !!
+	. Also called by main^UCGM() to instantiate var CUVAR as a LITERAL
+		RecordCUVAR instance
+	. A type LITERAL ResultSet uses type(level,objectName,0) to store the
+		row. This shall be modified when a multipass compiler is used.
 	*/
-	type public PSLTable pslTbl()
+	type static PSLClass
+	type public PSLColumn pslCln()
+	type public PSLTable  pslTbl()
 
-	type String table = PSL.actual(1).get()
-	type String akeys = PSL.actual(2).get()
+	type String keys, load(), tok, v
+	type Number i
+	type PSLTable td = PSL.cachePSLTable( pslTbl(), table)
 
-	if table.extract() = """" set table = table.stripQuotes( """")
-	if akeys.extract() = """" set akeys = akeys.stripQuotes( """")
+	set PSL.class = PSLClass.RECORDCLASS_ table
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set akeys = $$TOKEN^%ZS( akeys, .tok)
 
-	type PSLTable td = PSL.cachePSLTable( pslTbl(), table, 1)
+	/* Use Dynamic Record Access interface to instantiate a new record.
+	   Do NOT try Class.new("Record", table), because PSL's object scoping
+	   will add a KILL of the Record instance prior to return from the
+	   subroutine */
+	#ACCEPT CR=27800; DATE=2007-07-19; PGM=FSCW; GROUP=DEPRECATED
+	type Number oid = $$new^DBSDYNRA( table).getPointer()
 
-	set PSL.actual(1) = table
-	set PSL.actual(2) = $$akey2apl( td, PSL.var.get(), akeys, sparse)
+	if '(akeys="") for i=1:1:akeys.length(",") do {
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		set v = $$UNTOK^%ZS( akeys.piece( ",", i), .tok)
+		if 'v.isLiteral() do PSL.error( "Literal parameter required: "_ v) quit
+		set vobj( oid, -2-i) = v.stripQuotes()
+	}
 
-	if PSL.return'="" set PSL.return = PSL.return_"("_ PSL.actual(2)_")"
+	do get^DBSDYNRA( oid, deflt)
 
-	if 'fsn(table).exists() do fsn^SQLDD( fsn(), table)
+	if level<0 do {					; Pre-code
 
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do setScope^UCGM( var, "", "", "LITERAL", PSL.class)
+
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do typeFldSet^UCGM( var, 4, -1)		// Runtime code line
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		do typeFldSet^UCGM( var, 5, oid)	// "expression"
+	}
+	set PSL.return = oid
 	quit
 
 	// ---------------------------------------------------------------------
-private rdb( String table)  // deprecated Boolean
+private rdb( String table)  // **** DEPRECATED ****
 	/* ---------------------------------------------------------------------
-	Is table stored in relational database?
-	This function returns $$rtIsRdb^UCXDD(), because UCXDD contains all
-	DQ Dictionary related code.
-
 	If you "own" a code element that calls this function, please rewrite
-	them to call $$rtIsRdb^UCXDD.
+	them as follows:
+		$$rdb^UCDB(): replace by $$isRdb^vRuntime()
+		$$rdb^UCDB(table): replace by $$rtIsRdb^UCXDD(table).
 	*/
-        quit $$rtIsRdb^UCXDD(table.get())
+	if 'table.exists() quit $$isRdb^vRuntime()
+        quit $$rtIsRdb^UCXDD( table)
 
 	// ---------------------------------------------------------------------
-private select	// method Db.select; returns ResultSet
+select	// method Db.select; returns ResultSet
 	/* ---------------------------------------------------------------------
 
 	OUTPUTS:
@@ -2470,7 +3537,8 @@ private select	// method Db.select; returns ResultSet
 	   */
 	if $$hasQual( .parlist, "/PSLBOOT") do selBoot^UCDBR( select, from, where, orderby, groupby, parlist) quit
 
-	type Number varPtr = PSL.var.scopeLine
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number varPtr = $$getNew^UCGM( PSL.var, PSL.varLevel)
 
 	/* Determine if data select is dynamic select, exclude variables setup
 	   within the procedure. */
@@ -2499,7 +3567,10 @@ private select	// method Db.select; returns ResultSet
 	if 'orderby.isNull() set expr = expr_ " ORDER BY "_ orderby
 	if 'groupby.isNull() set expr = expr_ " GROUP BY "_ groupby
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	set expr = $$SQL^%ZS( expr, .tok)
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	type String untokExp = $$UNTOK^%ZS( expr, .tok)
 	if ER do PSL.error( "Invalid SQL Syntax ("_ untokExp_ "), "_ RM.get()) quit
 
@@ -2518,21 +3589,26 @@ private select	// method Db.select; returns ResultSet
 		type Number i
 		set select = expr.piece(" FROM ",1)
 		set from   = expr.piece(" FROM ",2).piece(" ",1)
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set from   = $$UNTOK^%ZS(from,.tok)
 		if from["""" set from = from.stripQuotes()
 
 		for i=1:1:select.length(",") do {
 			set ref = select.piece(",",i)
 			if ref[" " set ref = ref.piece(" ",1)
+			
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			set ref = $$UNTOK^%ZS(ref,.tok)
 			if ref["""" set ref = ref.stripQuotes()
 			if ref["."
 			else  set ref=from_"."_ref
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			do addXref^UCGM("P0",ref,"")
 		}
 	}
-
-	if PSL.var.scope = "LITERAL" do LitOpen( untokExp, parlist) quit
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if $$getScope^UCGM( PSL.var) = "LITERAL" do LitOpen^UCRESULT( PSL.var, select, from, where, orderby, groupby, parlist) quit
 
 	/* The FROM-clause may contain keywords like JOIN, AS etc.
 	   Call $$RsRdb^UCDBRT() because it takes that into account to determine
@@ -2552,11 +3628,11 @@ private select	// method Db.select; returns ResultSet
 	type String split()
 
 	if untokExp["""" set untokExp = untokExp.stripQuotes()
-	do splitCode^UCGMC( untokExp, 0, " ,", .split())
+	do splitCode^UCGMC( untokExp, 0, " ,", split())
 	type PSLSubrou openLbl = PSL.addSubrou( "Open","()", split(1), 1)
 	for i=2:1:split("").order(-1) do openLbl.addCode( " ; "_ split(i))
 
-	set PSL.return = "$$"_ openLbl.toString()_ "()"
+	set PSL.return = "$$"_ openLbl.getName()_ "()"
 
 	type Number seq      = PSL.return.extract( 8, PSL.return.length()).translate("()")
 	type String fetchLbl = "vFetch"_ seq
@@ -2571,6 +3647,7 @@ private select	// method Db.select; returns ResultSet
 		catch vSQLex {
 			set ER = 1, RM = vSQLex.toString()
 		}
+		#ACCEPT DATE=06/18/2008; PGM=Dan Russell; CR=30801; Group=ACCESS
 		do SELECT^SQL( expr, "/NOCACHE"_ parlist, , , , , .tok, -1) 
 	}
 	if ER do PSL.error( "Invalid SQL Expression ("_ untokExp_ "), "_ RM.get()) quit
@@ -2615,7 +3692,8 @@ private select	// method Db.select; returns ResultSet
 	/* [FRS] Added to support the Row class
 	   02/09/04 - Piece #7 added to fix fetch label problem */
 	set z.piece( TAB, 6) = vsql("D").get()
-	set z.piece( TAB, 7) = PSL.var.scope
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set z.piece( TAB, 7) = $$getScope^UCGM( PSL.var)
 
 	if struct("s", PSL.subRou, varPtr, PSL.var).exists() do {
 		set z.piece( TAB, 2) = ""
@@ -2645,7 +3723,7 @@ private select	// method Db.select; returns ResultSet
 	do openLbl.addCode( " S "_ PSL.oLvn_ "(vOid,-2)=""$$"_ fetchLbl_ "^""_$T(+0)")
 
 	kill split
-	do splitCode^UCGMC( select, 0, "", .split())
+	do splitCode^UCGMC( select, 0, "", split())
 	do openLbl.addCode( " S "_PSL.oLvn_"(vOid,-3)="_ split(1).addQuotes())
 	for i=2:2:split("").order(-1) do openLbl.addCode( " S "_ PSL.oLvn_ "(vOid,-3)="_ PSL.oLvn_ "(vOid,-3)_"_ split(i).addQuotes())
 
@@ -2686,8 +3764,18 @@ private select	// method Db.select; returns ResultSet
 		set x=exe(i)
 
 		if ftemp do {
-			if x["sqlcur" set x=$$varSub^UCPATCH(x,"sqlcur","vOid")
-			if x["^DBTMP(%TOKEN" set x=$$varSub^UCPATCH(x,"^DBTMP(%TOKEN","^DBTMP($J")
+			if x["sqlcur" set x=$$VarSub^UCPATCH(x,"sqlcur","vOid")
+			if x["^DBTMP(%TOKEN" set x=$$VarSub^UCPATCH(x,"^DBTMP(%TOKEN","^DBTMP($J")
+		}
+		
+		/* Handle access rights coding.
+		   For line testing if no access rights, replace set of ER with
+		   throw of err. */
+		if x["$$vselectAccess^Record" do {
+			
+			type String tbl = x.piece("^Record", 2).piece("(", 1)
+			
+			set x = x.piece(" S ER=1", 1)_ " S $ZE=""0,""_$ZPOS_"",%PSL-E-ACCESS,""_$TR($$^MSG(6754,"""_ tbl_"""),$C(10,44),$C(32,126)),$EC="",U1001,"""
 		}
 
 		// Strip the following host variable tests (assumes $G() is at the end !!!!)
@@ -2696,7 +3784,7 @@ private select	// method Db.select; returns ResultSet
 			if x [ "$G(" set x =x.piece("$G(",1)_ x.piece("$G(",2,999), x = x.extract( 1, x.length()-1)
 		}
 		else  if x["'?.N" set x=";"
-
+		
 		do openLbl.addExe( x)
 	}
 
@@ -2711,7 +3799,7 @@ private select	// method Db.select; returns ResultSet
 	   that contains the QUIT.
 
 	   Note that this implies that exe() code added as part of vFetchN() can
-	   only deal with scrartch variable replacement, and with calls to
+	   only deal with scratch variable replacement, and with calls to
 	   already generated labels. It cannot add new labels, neither by
 	   back-patching, not by prepending "forward" references.
 	   */
@@ -2734,18 +3822,30 @@ private select	// method Db.select; returns ResultSet
 		do openLbl.addCode( " I "_ PSL.oLvn_ "(vOid,0)=2 S "_ PSL.oLvn_ "(vOid,0)=1")
 	}
 	do openLbl.addCode( " ;")
-	do openLbl.addCode( " I "_ PSL.oLvn_ "(vOid,0)=0"_ $S(ftemp:" K ^DBTMP($J,vOid)",1:"")_ " Q 0")
+	do openLbl.addCode( " I "_ PSL.oLvn_ "(vOid,0)=0 S "_PSL.oLvn_"(vOid)="""""_ $select(ftemp:" K ^DBTMP($J,vOid)",1:"")_ " Q 0")
 	do openLbl.addCode( " ;")
 
 	for i=codPtr+1:1:exe do {
 		set x=exe(i)
 		if ftemp do {
-			if x["sqlcur" set x=$$varSub^UCPATCH( x, "sqlcur", "vOid")
-			if x["^DBTMP(%TOKEN" set x=$$varSub^UCPATCH( x, "^DBTMP(%TOKEN", "^DBTMP($J")
+			if x["sqlcur" set x=$$VarSub^UCPATCH( x, "sqlcur", "vOid")
+			if x["^DBTMP(%TOKEN" set x=$$VarSub^UCPATCH( x, "^DBTMP(%TOKEN", "^DBTMP($J")
 		}
-		if x["vd", 'protect set x = $$varSub^UCPATCH( x,"vd", PSL.oLvn_ "(vOid)")
+		if x["vd", 'protect set x = $$VarSub^UCPATCH( x,"vd", PSL.oLvn_ "(vOid)")
 		do openLbl.addExe( x)
 	}
+
+	/* If counting requested, insert it here.
+	   Note: Since code for SelectDbSet will also use this, and
+	   DbSet.getRecord() will go through the standard getRecord code,
+	   the rows will be counted twice. We may need to deal with that or
+	   we should recognize that we are indeed doing two accesses (one for
+	   search and one for the getRecord).
+	   Also note that we count by passsing PSL.actual(2), which contains the
+	   complete from-clause.
+	   */
+	if PSL.hasSetting("DEBUG", "DBIOCOUNT") do openLbl.addCode( " D "_ PSL.getSetting("DEBUG", "DBIOCOUNT")_ "("""_ PSL.actual(2)_ """,""READ"")")
+
 	if protect do openLbl.addCode( " S "_ PSL.oLvn_ "(vOid)=vd S "_ PSL.oLvn_ "(vOid,.1)=vi")
 
 	if vsql("O").get() do openLbl.addCode( " S "_ PSL.oLvn_ "(vOid,0)=0")
@@ -2753,9 +3853,10 @@ private select	// method Db.select; returns ResultSet
 	/* Insert declarations for temporary vsqlN variables used in the OPEN
 	   section ( keyPtr+1 .. hvO) */
 	if hvO>keyPtr,'isAgFunc do {
-		new i,z
+		type Number i
+		type String z
 		set z="vsql"_(keyPtr+1)
-		for i=keyPtr+2:1:hvO S z=z_",vsql"_i
+		for i=keyPtr+2:1:hvO set z=z_",vsql"_i
 
 		do openLbl.insCode( newPtrO, " N "_z)
 	}
@@ -2764,9 +3865,10 @@ private select	// method Db.select; returns ResultSet
 	   section ( keyPtr+1 .. hvF) */
 	type Number hvF = openLbl.getLvnMax()
 	if 'ftemp,hvF>keyPtr,'isAgFunc do {
-		new i,z
+		type Number i
+		type String z
 		set z="vsql"_(keyPtr+1)
-		for i=keyPtr+2:1:hvF S z=z_",vsql"_i
+		for i=keyPtr+2:1:hvF set z=z_",vsql"_i
 
 		do openLbl.insCode( newPtrF, " N "_z)
 	}
@@ -2776,7 +3878,13 @@ private select	// method Db.select; returns ResultSet
 	quit
 
 	// ---------------------------------------------------------------------
-selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL statement runtime
+private selectDyn( String select
+		, String from
+		, String where
+		, String orderby
+		, String groupby
+		, String parlist
+		)	// Dynamic SQL statement runtime
 	/* ---------------------------------------------------------------------
 	Notes on dynamic select in relation to RDB:
 
@@ -2788,17 +3896,17 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 	If the from-clause is dynamic, code for both cases must be included, and
 	the correct path is determined at runtime.
 
-	An additional complication is the dataitem protection (DP) logic. For
+	An additional complication is the data-item protection (DIP) logic. For
 	MDB queries (dynamic or not), the DP code is included in the exe()
 	array, and will be executed automatically. However for RDB queries, the
-	DP logic must be handled on the PSL side. This includes a call to
+	DIP logic must be handled on the PSL side. This includes a call to
 	getExe^SQLPROT to obtain the code to execute at runtime, and above all
 	it includes a FOR-loop to XECUTE these strings.
 	
 	Because the majority of the Db.select() occurrences will not include
-	DPn, this subroutine will not only separate MDB code from RDB code, but
-	will also try to separate RDB code that needs DP from RDB code that does
-	not need DP.
+	DIP, this subroutine will not only separate MDB code from RDB code, but
+	will also try to separate RDB code that needs DIP from RDB code that
+	does not need DIP.
 
 	This leads to the following subroutines:
 	vOpen0R/vFetch0R
@@ -2810,21 +3918,30 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 	vOpen0/vFetch0
 		For (MDB access in) MDB environment, or as general
 		dispatcher in case the code needs to defer until runtime
-	*/
 
-	type literal String COMMONFPL = "vSelect,vFrom,vWhere,vOrderby,vGroupby,vParlist)"
+	NOTES:
+	. See vResultSet for remarks about 'vOff' and the need to increment its
+		value when passed to nested calls.
+	*/
+	type literal String COMMONFPL = "vSelect,vFrom,vWhere,vOrderby,vGroupby,vParlist,vOff"
 	type literal Number SEQ = 0
 	type literal String FETCHLBL = "vFetch"_ SEQ
 	type literal String OPENLBL  = "vOpen"_ SEQ
 	type literal String TAB = 9.char()
 
-	type public String mcode, struct(,,,), type(,)
+	type public String mcode, struct(,,,)
 	type public Number msrc
 
-	/* Make sure scope of var is NEW */
-	if $$getScope^UCGM( PSL.var, PSL.varLevel)'="NEW" do PSL.error( "SCOPE: Identifier must be local scope for dynamic SQL:"_ PSL.var) quit
-	type Number varPtr = PSL.var.scopeLine
+	#ACCEPT CR=27800;Date=2007-10-09;PGM=Frans S.C. Witte;Group=DEPRECATED; use of type()
+	type public String type(,)
 
+	/* Make sure scope of var is NEW */
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	if $$getScope^UCGM( PSL.var, PSL.varLevel)'="NEW" do PSL.error( "SCOPE: Identifier must be local scope for dynamic SQL:"_ PSL.var) quit
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	type Number varPtr = $$getNew^UCGM( PSL.var, PSL.varLevel)
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	do warnGroup^UCGM( "DYNAMIC", "SQL SELECT statement")
 
 	if where="" set where=""""""
@@ -2834,10 +3951,10 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 
 	/* Try to derive as much knowledge as possible about the query.
 	   In particular:
-	   - If it is an MDB query, and RDB query, or unknown
+	   - If it is an MDB query, an RDB query, or unknown
 	   - If it uses dataprotection (RDB only)
 	   */
-	type Boolean isRdb  = $$rtIsRdb^UCXDD()
+	type Boolean isRdb  = Runtime.isRdb
 	type Boolean needM  = 1		// assume dynamic MDB code is needed
 	type Boolean needP  = isRdb	// is dynamic RDB code with DIP needed?
 	type Boolean needR  = isRdb	// is dynamic RDB code needed?
@@ -2877,7 +3994,10 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 		   in scope. If so, generate an error. Else add to type() */
 		for pce = 2:1:mlvns.length(",") do {
 			type PSLIdentifier lvn = mlvns.piece( ",", pce)
+			
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			if $$getInst^UCGM( lvn) set pce = mlvns.length( ",") do PSL.error("SCOPE: Dynamic SQL variable already used: "_lvn)
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			do typeCrea^UCGM( lvn, "String", varPtr, "NEW", msrc+1, "")
 		}
 		if varPtr=(msrc+1) do {			// var is instantiated here
@@ -2890,17 +4010,22 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 	type String z = (msrc+1)_ TAB_ SEQ_ suffix_ TAB
 	type String selExpr
 
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	if $$isLit^UCGM(select) do {
 		// select is literal (good!). Able to resolve columns
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		if select="""*""", $$isLit^UCGM(from) set select = $$RsSelAll^UCDBRT( from.stripQuotes()).addQuotes()
 		set selExpr = $$RsSelList^UCDBRT( select)
 		set z = z_ TAB_ selExpr
 
 		if selExpr.length() > PSL.maxLitLength do {
 
 			// Use local var if posible
-			new expr,lvn
+			type String expr,lvn
 			set lvn = "", expr= selExpr.addQuotes()
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			for  set lvn = type( PSL.level,lvn).order() quit:lvn=""  if expr=$$getExpr^UCGM( lvn, PSL.level) quit
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			if '(lvn=""),'($$getScope^UCGM( lvn)="LITERAL") set select = lvn
 		}
 	}
@@ -2913,17 +4038,18 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 	}
 	set struct("s", PSL.subRou, varPtr, PSL.var) = z
 
-	set PSL.return = "$$"_ OPENLBL_ suffix_ "("_ $SELECT("M"[suffix:".exe,.vsql,",1:"")_select_","_from_","_where_","_orderby_","_groupby_","_parlist_")"
+	#ACCEPT GROUP=ACCESS;CR=35741;DATE=2008-10-23;PGM=Frans S.C. Witte
+	set PSL.return = "$$"_ OPENLBL_ suffix_ "("_ $SELECT("M"[suffix:".exe,.vsql,",1:"")_select_","_from_","_where_","_orderby_","_groupby_","_parlist_","_($$getLevel^UCGM(PSL.var)-PSL.level+1)_")"
 
 	if isRdb, suffix = "" do {
 		// Generate general dispatcher
 		if PSL.subrouExists( OPENLBL) quit
 
-		type PSLSubrou sr = PSL.addSubrou( OPENLBL, "(exe,vsql,"_ COMMONFPL, "RDB dynamic OPEN CURSOR dispatcher", 0)
+		type PSLSubrou sr = PSL.addSubrou( OPENLBL, "(exe,vsql,"_ COMMONFPL_ ")", "RDB dynamic OPEN CURSOR dispatcher", 0)
 
-		do sr.addCode( " I '$$RsRdb^UCDBRT(vFrom) Q $$"_ OPENLBL_ "M(.exe,.vsql,"_ COMMONFPL)
-		do sr.addCode( " I ""/""_vParlist[""/PROT"" Q $$"_ OPENLBL_ "P("_ COMMONFPL)
-		do sr.addCode( " Q $$"_ OPENLBL_ "R("_ COMMONFPL)
+		do sr.addCode( " I '$$RsRdb^UCDBRT(vFrom) Q $$"_ OPENLBL_ "M(.exe,.vsql,"_ COMMONFPL_ "+1)")
+		do sr.addCode( " I ""/""_vParlist[""/PROT"" Q $$"_ OPENLBL_ "P("_ COMMONFPL_ "+1)")
+		do sr.addCode( " Q $$"_ OPENLBL_ "R("_ COMMONFPL_ "+1)")
 		do sr.addCode( " ;")
 		do sr.addCode( FETCHLBL_"(vOid) ; RDB dynamic FETCH dispatcher")
 		do sr.addCode( " I vobj(vOid,-5)=0 Q $$"_ FETCHLBL_ "M(vOid)")
@@ -2936,10 +4062,10 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 
 		if PSL.subrouExists( OPENLBL_ suffix) quit
 
-		type PSLSubrou sr = PSL.addSubrou( OPENLBL_ suffix, "(exe,vsql,"_ COMMONFPL, "Dynamic MDB ResultSet", 0)
+		type PSLSubrou sr = PSL.addSubrou( OPENLBL_ suffix, "(exe,vsql,"_ COMMONFPL_ ")", "Dynamic MDB ResultSet", 0)
 
 		do sr.addCode( " N vOid")
-		do sr.addCode( " N ER,vExpr,mode,RM,vTok S ER=0 ;=noOpti")
+		do sr.addCode( " N ER,vExpr,mode,RM,vOpen,vTok S ER=0 ;=noOpti")
 		do sr.addCode( " ;")
 		do sr.addCode( " S vExpr=""SELECT ""_vSelect_"" FROM ""_vFrom")
 		do sr.addCode( " I vWhere'="""" S vExpr=vExpr_"" WHERE ""_vWhere")
@@ -2951,16 +4077,16 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 		do sr.addCode( " ;")
 		do sr.addCode( " I $$FLT^SQLCACHE(vExpr,vTok,.vParlist)")
 
-		type String code = " E  S vsql=$$OPEN^SQLM(.exe,vFrom,vSelect,vWhere,vOrderby,vGroupby,"
+		type String code = " E  S vOpen=$$OPEN^SQLM(.exe,vFrom,vSelect,vWhere,vOrderby,vGroupby,"
 		set code = code_ "vParlist,"
 		set code = code_ ","		// tok
 		set code = code_ "1,"		// mode
 		set code = code_ ","		// vdd
 		set code = code_ "sqlcur)"	// cursor id
-		set code = code_ " I 'ER D SAV^SQLCACHE(vExpr,.vParlist)"
+		set code = code_ " I 'ER D SAV^SQLCACHE(vExpr,.vParlist) s vsql=vOpen"
 		do sr.addCode( code)
 
-		do sr.addCode(" I ER S $ZS=""-1,""_$ZPOS_"",%PSL-E-SQLFAIL,""_$TR($G(RM),$C(10,44),$C(32,126)) X $ZT")
+		do sr.addCode(" I ER S $ZE=""0,""_$ZPOS_"",%PSL-E-SQLFAIL,""_$TR($G(RM),$C(10,44),$C(32,126)),$EC="",U1001,""")
 		do sr.addCode( " ;")
 		do sr.addCode( " S vOid=sqlcur")
 		do sr.addCode( " S "_ PSL.oLvn_"(vOid,0)=vsql")
@@ -2978,7 +4104,7 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 		do sr.addCode( " ;")
 		do sr.addCode( " ; type public String exe(),sqlcur,vd,vi,vsql()")
 		do sr.addCode( " ;")
-		do sr.addCode( " I vsql=0 Q 0")
+		do sr.addCode( " I vsql=0 S "_PSL.oLvn_"(vOid)="""" Q 0")
 		do sr.addCode( " S vsql=$$^SQLF(.exe,.vd,.vi,.sqlcur)")
 		do sr.addCode( " S "_ PSL.oLvn_"(vOid)=vd")
 		do sr.addCode( " S "_ PSL.oLvn_"(vOid,0)=vsql")
@@ -2991,14 +4117,15 @@ selectDyn(select,from,where,orderby,groupby,parlist)	;local void; Dynamic SQL st
 	quit
 
 	// ---------------------------------------------------------------------
-selectPR( local String suffix)	// "P" for RS with dp, "R" for RS without DP
+private selectPR( String suffix	// "P" for RS with dp, "R" for RS without DP
+		)	// support subroutine to generate vOpen0P / vOpen0R
 	/* ---------------------------------------------------------------------
 	Support subroutine that generates the vOpen0P and vOpen0R subroutines
 	
 	This subroutine essentially uses the value "P" to include or exclude
 	code for data protection.
 	*/
-	type literal String COMMONFPL = "vSelect,vFrom,vWhere,vOrderby,vGroupby,vParlist)"
+	type literal String COMMONFPL = "vSelect,vFrom,vWhere,vOrderby,vGroupby,vParlist,vOff)"
 	type literal String FETCHLBL  = "vFetch0"
 	type literal String OPENLBL   = "vOpen0"
 
@@ -3023,7 +4150,7 @@ selectPR( local String suffix)	// "P" for RS with dp, "R" for RS without DP
 	quit
 
 	// ---------------------------------------------------------------------
-private selectRecords	// method Db.selectDbSet; returns DbSet
+selectRecords	// method Db.selectDbSet; returns DbSet
 	/* ---------------------------------------------------------------------
 	Transform into Db.select() and process it through select^UCDB
 	*/
@@ -3031,7 +4158,7 @@ private selectRecords	// method Db.selectDbSet; returns DbSet
 
 	if PSL.actual(1).isNull() do PSL.error("Table Parameter Required") quit
 
-	type PSLTable td = PSL.cachePSLTable(.pslTbl(), PSL.actual(1).stripQuotes(), 0)
+	type PSLTable td = PSL.cachePSLTable(pslTbl(), PSL.actual(1).stripQuotes(), 0)
 	type List   keys = td.primaryKeys
 
 	if keys.isNull() do PSL.error("Unsupported table in DbSet class: "_ td.table) quit
@@ -3043,7 +4170,7 @@ private selectRecords	// method Db.selectDbSet; returns DbSet
 	set PSL.actual(4) = PSL.actual(3)	// ORDER BY from 3 to 4
 	set PSL.actual(3) = PSL.actual(2)	// WHERE from 2 to 3
 	set PSL.actual(2) = PSL.actual(1)	// FROM form 1 to 2
-	set PSL.actual(1) = keys.addQuotes()	// SELECT from primaryKeys
+	set PSL.actual(1) = keys.toString().addQuotes()	// SELECT from primaryKeys
 
 	do select
 	set PSL.class = "DbSet"
@@ -3072,8 +4199,9 @@ private selectRecords	// method Db.selectDbSet; returns DbSet
 	*/
 
 	// ---------------------------------------------------------------------
-sql2akey( PSLTable td,		// table descriptor
-	String where)		// where clause
+private sql2akey( PSLTable td		// table descriptor
+		, String where		// where clause
+		)
 	/* ---------------------------------------------------------------------
 	Support function that translates the supplied where-clause into an
 	accesskey (or into "", when the where-clause does not match the primary
@@ -3098,11 +4226,7 @@ sql2akey( PSLTable td,		// table descriptor
 		- it calls $$sql2psl(SQLstrlits) to convert SQL strlits to PSL
 		- it returns the untokenized value (after SQL-to-PSL convert)
 	*/
-	//type String exe(),hostvar(),subkey(),vdd()	// exported by $$WHERE
-	//type String ER="",RM				// still uses ER/RM
-	//type public String tok
 	type String strlits
-
 	type String akey
 
 	if where.isNull() quit ""
@@ -3117,6 +4241,7 @@ sql2akey( PSLTable td,		// table descriptor
 		type Number prnr
 
 		set akey = ""
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 		set where = $$TOKEN^%ZS( where, .strlits, "'")
 
 		for prnr=1:1:where.length(" AND ") do {
@@ -3125,23 +4250,26 @@ sql2akey( PSLTable td,		// table descriptor
 			set pred = pred.extract( pred.find( "="), pred.length()).trim(0)
 
 			if 'pkl.contains( col) throw Class.new( "Error", "%PSL-E-INTERNAL,not a keycolumn")
+			#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 			if $$nextExpr^UCGM( pred, 0, "", 1) '= pred throw Class.new( "Error", "%PSL-E-INTERNAL,not a simple predicate")
 
 			set key(col) = ""
 			if 'akey.isNull() set akey = akey_ ","
 			set akey = akey_  col_ "="_ pred
 		}
-	
+
 		/* Note that condition below catches pkl.isNull() as well */
 		if prnr'=pkl.count() throw Class.new( "Error", "%PSL-E-INTERNAL,invalid number of predicates")
 		for prnr=1:1:pkl.count() if 'key( pkl.elementAt(prnr)).exists() throw Class.new( "Error", "%PSL-E-INTERNAL,missing keycolumn")
 
-		set akey = $$UNTOK^%ZS(akey, $$sql2psl( strlits))
+		#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+		set akey = $$UNTOK^%ZS(akey, $$sql2psl( strlits)).addQuotes()
 	}
 	quit akey
 
 	// ---------------------------------------------------------------------
-sql2psl( String lits)	// strlit tokens as produced by $$TOKEN^%ZS()
+private sql2psl( String lits	// strlit tokens as produced by $$TOKEN^%ZS()
+		)	// translate SQL strlits to PSL strlits
 	/* ---------------------------------------------------------------------
 	Support function that translates the single-quote delimited SQL strlits
 	in lits to double-quote delimited PSL strlits.
@@ -3159,37 +4287,203 @@ sql2psl( String lits)	// strlit tokens as produced by $$TOKEN^%ZS()
 	}
 	quit lits
 
+	// ---------------------------------------------------------------------
+update	// void; Db.update(Table_name,column_expr,where_clause,filer_qualifier)
+	/* ---------------------------------------------------------------------
+	INPUTS:
+	. actual(1) = table name (literal)
+	. actual(2) = column expression (literal)
+	. actual(3) = whereclause (literal)
+	. actual(4) = filer qualifiers (literal)
+
+	NOTES:
+	. This subroutine used to call $$fileQual("Db.update",) and inserted the
+		result in the generated call to Record.save().
+		Because save^UCRECORD will also call $$fileQual(), two different
+		set of values were added. This resulted in potential problems,
+		as UCUTILN will not deal with duplicate qualifiers (e.g. insert
+		/VALFK if the list already contains /VALFK). To prevent these
+		problems $$filequal() will not be called here any more.
+		This implies that the following qualifiers will no longer be
+		processed:
+		1) pslPrsr("SQLPARS") for Db.insert()
+		2) parameters added due to prsr("DEBUG","FILEQUAL")="Db.update"
+	. The treatment of the individual update expressions has a number of
+		weakspots:
+		- because the list is not tokenized, commas inside SQL strlits
+			will blow up the interpretation
+		- the conversion of SQL strlit to PSL strlit will fail the SQL
+			strlit contains the SQL single quote or the PSL double
+			quote.
+		- constructs like COL = COL + :HV will only work if the spelling
+			of COL is consistent across the entire expression. They
+			will not work when SQL strlits occur in the expression,
+			and they are vulnarable to operator precedence
+			misconceptions.
+	. The code generated for this method could be optimized even more:
+		- on RDB, if the filer can be bypassed, a single SQL statement
+			could be passed.
+	*/
+	type public PSLTable pslTbl()
+
+	type String table = PSL.actual(1).stripQuotes()	// Table name
+	type String updex = PSL.actual(2).stripQuotes()	// Column expression
+	type String where = PSL.actual(3).stripQuotes() // where clause
+	type String qual =  PSL.actual(4)		// Run-time qualifiers
+	type String sqlstat = "UPDATE "_table_" SET "_updex
+	
+	if 'where.isNull() set sqlstat = sqlstat_ " WHERE "_ where
+	
+	type String auditParam = "0"
+
+	type PSLTable td = PSL.cachePSLTable( pslTbl(), table, 0)
+	type PSLBuffer buf = PSL.openBuffer( "()", sqlstat)
+
+	type String akey = $$sql2akey( td, where), indent = ""
+	type Boolean oneRow = 'akey.isNull() ! td.primaryKeys.isNull()
+	
+	/* Add check for audit logging - do not make table specific to avoid
+	   mass recompiles. */
+	if $$usingAuditLog^SQLAUDIT do {
+		
+		type String hostVars = where
+		
+		// Add update columns expression to where clause to capture host variables
+		if 'updex.isNull() do {
+		
+			type String tok, upd
+			
+			#ACCEPT DATE=06/18/2008; PGM=Dan Russell; CR=30801; Group=ACCESS
+			set upd = $$TOKEN^%ZS(updex, .tok)
+			#ACCEPT DATE=06/18/2008; PGM=Dan Russell; CR=30801; Group=ACCESS
+			set upd = $$UNTOK^%ZS(upd.replace(",", " AND "), tok)
+			
+			if hostVars.isNull() set hostVars = upd
+			else  set hostVars = hostVars_ " AND ("_ upd_ ")"
+		}
+		
+		set auditParam = $$addAuditLogCode("UPDATE", buf, td, sqlstat, hostVars)
+	}
+
+	// Build database set resultset + Db.getDbSet or Db.getRecord()
+	if oneRow {
+		do buf.add( "type Record"_table_" vRec = Db.getRecord( """_table_""","_ akey_ ",1)")
+		do buf.add( "quit:vRec.getMode()=0")
+	}
+	else  {
+		set indent = "  "
+		do buf.add( "type DbSet vSet = Db.selectDbSet( """_table_""", """_where_""")")
+		do buf.add( "while vSet.next() {")
+		do buf.add( "  type Record"_table_" vRec = vSet.getRecord( """_table_""")")
+	}
+	do buf.add( indent_"do vRec.setAuditFlag(1)")
+
+	// Build code to deal with individual columns being updated
+	type Number I
+	type String expr,value
+	for I=1:1:updex.length(",") do {
+		set expr=updex.piece(",",I)
+		
+		/* lvn 'value' will contain the assignment expression.
+		   Because it will be treated as a PSL expression, all colons
+		   in front of HOSTVARs must be removed.
+		   */
+		set value = expr.piece("=",2).translate(":","")
+		
+		if value.extract(1)="'" set value=""""_ value.extract(2, value.length()-1)_""""
+		else  if value?.P set value=""""_value_""""
+
+		set expr=expr.piece("=",1)
+		//if $p(expr,"=",1)["." set expr=$p($p(expr,"=",1),".",2)_$p(expr,"=",2)
+		if expr["." set expr = expr.piece( ".", 2)
+
+		/* FSCW CR27800: Code below deals with constructs like:
+			[COL =] COL + :HV
+		   and translates them to
+		   	[COL =] vRec.COL + :HV
+		   Note that this translation only works if the spelling of COL
+		   on the right side matches the spelling of COL on the left
+		   side!
+		   */
+		if value?.E1P.E,value'["%",value'["""" do {
+			type Number ptr
+			type String temp
+			set temp=value
+			set ptr=temp.find(expr)
+			//set value=$s(ptr-$l(expr)=1:"",1:$e(temp,1,ptr-$l(expr)-1))_"vRec."_$e(temp,ptr-$l(expr),1000)
+			set value=temp.extract(1,ptr-expr.length()-1)_"vRec."_temp.extract(ptr-expr.length(),1000)
+		}
+
+		//set $p(expr,"=",1)=$$LOWER^%ZFUNC($P(expr,"=",1))
+		set expr = expr.lowerCase()
+
+		/* FSCW CR27800: Since expr does not contain "=" any more, the
+		   next line is a no-op:
+		if $e($p(expr,"=",2),1)="'" set $p(expr,"=",2)=""""_$e($p(expr,"=",2),2,$l($p(expr,"=",2))-1)_""""
+		*/
+
+		do buf.add( indent_"set vRec."_expr_"="_value)
+	}
+
+	// save the data and end the subroutine
+	if 'td.isRdb do {
+	
+		do addMSaveBypass(buf, table, "vRec", qual, auditParam)
+	}
+	else  do buf.add( indent_"do vRec.save("_ qual_ ")")
+
+	if 'oneRow do buf.add("}")
+	do buf.add("quit")
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	do autoERRM^UCGM()
+
+	// create label and insert code
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set PSL.return = $$findSubr^UCGM("vDbUpd","")	// Get next tag name
+	do buf.insert( PSL.return, "void")
+	set PSL.return = PSL.return_ "()"
+
+	quit
+
 	/* ****************************************************************** */
 	/* CODE BELOW HAS NOT YET BEEN CONVERTED TO PSL			      */
 	/* ****************************************************************** */
 
-        ;-----------------------------------------------------------------------
-akey2sql(akey,fkeys,knum)	;private void; access key to SQL whereclause
-        ;-----------------------------------------------------------------------
-	; ARGUMENTS:
-	; . akey = the access key
-	;	This function supports the following styles:
-	;	* COLUMNNAME=:HOSTVAR
-	;	* COLUMNNAME=:HOSTVAR simpleExprTail
-	;	* COLUMNNAME='literal'
-	;	* COLUMNNAME="literal" (discouraged)
-	;	* COLUMNNAME=HOSTVAR (deprecated)
-	;	* HOSTVAR (deprecated)
-	; . fkeys = ordered list of key columns
-	; . knum = optional variable that will receive the number of keys in
-	;	akey. The caller can use this variable to detect if all keys
-	;	were included.
-	;
-	; OUTPUTS:
-	; . $$ = the SQL whereclause that corresponds to the access key.
-	; . knum = number of keys in akey
-	;
-	new atom,expr,ptr,tok,val,where
-	;
+	// ---------------------------------------------------------------------
+akey2sql( String akey
+		, String fkeys
+		, Number knum
+		)	// void; access key to SQL whereclause
+	/* ---------------------------------------------------------------------
+	ARGUMENTS:
+	. akey = the access key
+		This function supports the following styles:
+		* COLUMNNAME=:HOSTVAR
+		* COLUMNNAME=:HOSTVAR simpleExprTail
+		* COLUMNNAME='literal'
+		* COLUMNNAME="literal" (discouraged)
+		* COLUMNNAME=HOSTVAR (deprecated)
+		* HOSTVAR (deprecated)
+	. fkeys = ordered list of key columns
+	. knum = optional variable that will receive the number of keys in
+		akey. The caller can use this variable to detect if all keys
+		were included.
+
+	OUTPUTS:
+	. $$ = the SQL whereclause that corresponds to the access key.
+	. knum = number of keys in akey
+	*/
+	type String atom,expr,tok,val,where
+	type Number ptr
+
+	set knum = 0, ptr = 0
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set expr = $$TOKEN^%ZS(akey,.tok).translate( " "), where = ""
+
 	#ACCEPT CR=18163; DATE=2005-11-24; PGM=FSCW; GROUP=BYPASS
 	#BYPASS
-	set knum=0,ptr=0
-	set expr=$tr($$TOKEN^%ZS(akey,.tok)," "),where=""
 	;
 	for  set atom=$$ATOM^%ZS(expr,.ptr,",",tok,1) do  if ptr=0 quit
 	.	;
@@ -3210,72 +4504,15 @@ akey2sql(akey,fkeys,knum)	;private void; access key to SQL whereclause
 	.	if $E(val)="""" set val=$$QADD^%ZS($$QSUB^%ZS(val,""""),"'")
 	.	set where=where_$P(atom,"=",1)_"="_val
 	#ENDBYPASS
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	quit $$UNTOK^%ZS(where,tok)
 
 	// ---------------------------------------------------------------------
-private get1Row // void; method Db.getOneRow ; returns single row
-        /* ---------------------------------------------------------------------
-	Syntax: Db.getOneRow(select_list,Table_name,Access_keys,delimiter)
-
-	. select_list	A list of column names
-	. table_name	DQ table name (support single table only)
-	. access_keys	Primary access keys
-	. delimiter	Field delimiter (not required, default to Tab)
-
-	Example:
-		S data=Db.getOneRow("TJD","CUVAR")
-		S data=Db.getOneRow("CID,BAL,LNM,BOO,IRN","DEP","XCID")
-		S data=Db.getOneRow("ACN,TAXID,AGE","CIF","XACN")
-		S data=Db.getOneRow("TAMT","HIST","xcid,tseq",124)
-	*/
-	new del,fkeys,fset,keys,i,list,objectName,objectLevel,table
-	#ACCEPT CR=18163; DATE=2005-11-24; PGM=FSCW; GROUP=BYPASS
-	#BYPASS
-	;
-        I '$D(actual(1))!'$D(actual(2)) D ERROR^UCGM("Expression expected") Q
-        do WARNDEP^UCGM("Db.getOneRow")
-	set list=$$QSUB^%ZS(actual(1))			; column list
-	set table=$$QSUB^%ZS(actual(2)) 		; table name
-	set keys=$$QSUB^%ZS(actual(3))			; access keys
-	set delim=$S($tr($G(actual(4))," ",""):actual(4),1:9)		; Delimiter
-	;
-	new seq
-	;;do addM2src^UCGM(" #ACCEPT DATE=6/23/03; PGM=Mark Spier; CR=Frank Sanchez")
-	;;do addM2src^UCGM(" quit")
-	set label=$$newLabel^UCGM("Row",.labels)	; Get next label
-	do addM2src^UCGM(" #OPTION ResultClass 0")
-	do addM2src^UCGM("v"_label_"()")
-	do addM2src^UCGM(" #WARN SCOPE 0")
-	set expr=" type Record"_table_" getRow=Db.getRecord("""_table_""","""_keys_""",1)"
-	do addM2src^UCGM(expr)
-	
-	do addM2src^UCGM(" type String data=""""")
-	;
-	; select DISTINCT columns
-	if $P(list," ",1)="DISTINCT" S list=$P(list,"DISTINCT ",2),distinct=1
-	set list=$$UPPER^%ZFUNC(list)			
-	;
-	for I=1:1:$L(list,",") do
-	.	set prop=$p(list,",",I)
-	.	if prop="" do addM2src^UCGM(" set data=data_$C("_delim_")") quit
-	.	if prop'["." set prop="getRow."_$$LOWER^%ZFUNC(prop)
-	.	set expr=" set data=data_$C("_delim_")_"_prop
-	.	do addM2src^UCGM(expr)
-	D addM2src^UCGM(" quit data.extract(2,data.length())")
-	; function call
-        S return="$$v"_label_"()"
-	;
-	do autoERRM^UCGM()
-	;
-	#ENDBYPASS
-	quit
-
-	// ---------------------------------------------------------------------
-private getGbl(gblref,keyvars)	// void; Return Global reference
+getGbl(gblref,keyvars)	// void; Return Global reference
 	/* ---------------------------------------------------------------------
 	ARGUMENTS:
 	. gblref = global reference as stored in DBTBL1
-		E.g. $PIECE(fsn(table),"|",2)
+		E.g. PSLTable.global
 	. keyvars = list of primary key variables
 		A comma separated list of key values to be used in the
 		construction of the reference. Literals shall be tokenized by the
@@ -3290,7 +4527,9 @@ private getGbl(gblref,keyvars)	// void; Return Global reference
 	NOTES:
 	. The only call to this subroutine comes from toString^UCRECORD.
 	*/
-	new gkey,gkeys,i,keyNum,ptr,ref,return,tok
+	type Number i,keyNum,ptr
+	type String gkey,gkeys,ref,return,tok
+
 	#ACCEPT CR=18163; DATE=2005-11-24; PGM=FSCW; GROUP=BYPASS
 	#BYPASS
 	;
@@ -3324,25 +4563,46 @@ private getGbl(gblref,keyvars)	// void; Return Global reference
 	quit return
 
 	// ---------------------------------------------------------------------
-append( String code,
-	String label)
+private mapPSLvar( String expr
+		)	// local String; Map PSL variables into SQL variables
 	/* ---------------------------------------------------------------------
-	*/
-	do append^UCGM(code,label)
-	quit
+	Map PSL variables into SQL variables.
+	
+	OUTPUTS:
+	. $$	This function returns an edited form of the supplied expression
+		in which every occurrence of :PSLExprAtom is mapped to a valid
+		SQL host variable name.
 
-	// ---------------------------------------------------------------------
-mapPSLvar(expr)	;local String; Map PSL variables into SQL variables
-	/* ---------------------------------------------------------------------
+	NOTES:
+	. This function first tokenizes SQL literals, then tokenizes PSL
+		literals. The need for the first is obvious. The need for the
+		second follows from the fact that the :PSLExprAtom may contain
+		a construct that contains PSL literals. Because the single quote
+		could be interpreted either as a SQL string literal delimiter or
+		as the PSL unary NOT operator, the order of applying the calls
+		to $$TOKEN^%ZS() is relevant. The current order assigns the SQL
+		role of the quote a higher precedence than the PSL role of the
+		quote. This effectively excludes the use of the PSL unary NOT
+		from :PSLExprAtom, which seems reasonable.
+	. As of CR14185, this function will treat all SQL binary operators as
+		valid delimiters of the token to replace. This reduces the
+		PSL Expression passed to $$valExpr^UCGM() to a SQL expression
+		atom. Note that (SQL) binary operators inside parenthesis will
+		be part of the atom passed to $$valExpr^UCGM() because the call
+		to $$ATOM^%ZS() does not include the parenthesis in the list of
+		delimiters.
 	*/
-	new atom,code,class,i,lvn,new,set,tok,y
+	type Number i, y
+	type String addnew, addset, atom, code, class, lvn, tok
+
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set expr = $$TOKEN^%ZS( expr, .tok, "'")
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
+	set expr = $$TOKEN^%ZS( expr, .tok, """")
+	set y = 0, addnew = "", addset = ""
+
 	#ACCEPT CR=18163; DATE=2005-11-24; PGM=FSCW; GROUP=BYPASS
 	#BYPASS
-	;
-	set expr=$$TOKEN^%ZS(expr,.tok,"'")
-	set expr=$$TOKEN^%ZS(expr,.tok,"""")
-	set y=0,new="",set=""
-	;
 	for  set y=$F(expr,":",y) quit:y=0  do
 	.	;
 	.	; FSCW CR14185: All SQL binary operators shall delimit token
@@ -3371,221 +4631,15 @@ mapPSLvar(expr)	;local String; Map PSL variables into SQL variables
 	.	set expr=$E(expr,1,y-1)_lvn_$E(expr,y+$L(atom),$L(expr))
 	.	set y=y-$L(atom)+$L(lvn)
 	.	;
-	.	if new="" set new=lvn,set=lvn_"="_code
-	.	else  set new=new_","_lvn,set=set_","_lvn_"="_code
+	.	if addnew="" set addnew=lvn,addset=lvn_"="_code
+	.	else  set addnew=addnew_","_lvn,addset=addset_","_lvn_"="_code
 	;
-	if '(new="") d
-	.	if $e(mcode,$L(mcode))="," S mcode=$e(mcode,1,$l(mcode)-1)_"   "
-	.	if $e(mcode,$L(mcode)-1)="."!(mcode=$C(9)) S mcode=mcode_"   "
-	.	set mcode=$E(mcode,1,$L(mcode)-2)_" N "_new_" S "_set_" "_$S(cmd="QUIT":"",1:$E(cmd)_" ")
-	;
+	if '(addnew="") d
+	.	if $e(mcode,$L(mcode))="," set mcode=$e(mcode,1,$l(mcode)-1)_"   "
+	.	if $e(mcode,$L(mcode)-1)="."!(mcode=$C(9)) set mcode=mcode_"   "
+	.	set mcode=$E(mcode,1,$L(mcode)-2)_" N "_addnew_" S "_addset_" "_$select(cmd="quit":"",1:$$UPCASE^UCGM($E(cmd))_" ")
+	#ENDBYPASS
+	
+	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte	
 	set expr=$$UNTOK^%ZS(expr,.tok)
-	#ENDBYPASS
 	quit expr
-
-	// ---------------------------------------------------------------------
-private insert	// void; Db.insert(Table_name,column_list,colum_value,filer_qualifier)
-	/* ---------------------------------------------------------------------
-	This subroutine implements a deprecated method.
-
-	 INPUTS:
-	. actual(1) = table name (literal)
-	. actual(2) = column name list (literal)
-	. actual(3) = column value list (literal)
-	. actual(4) = filer qualifiers (dynamic allowed)
-
-	NOTES:
-	. This subroutine calls $$fileQual("Db.update",) and inserts the result
-		in the generated call to Record.save(). Because save^UCRECORD
-		will also call $$fileQual(), two different set of values may be
-		added. This leads to the following processing order (i.e. low to
-		high in terms of precedence):
-		1) commands("SQLPARS") for Record.save()
-		2) commands("SQLPARS") for Db.insert()
-		3) parameters in source code
-		4) parameters added due to commands("DEBUG")="Db.update"
-		5) parameters added due to commands("DEBUG")="Record.save"
-		If commands("DEBUG")="*" 4) and 5) will set the same values, but
-		both will occur in the code.
-		If the PSL source code contains a non-literal, the generated M
-		code will contain 5 nested calls to $$setPar^UCUTILN(). Happy
-		readings!
-	*/
-	#ACCEPT CR=18163; DATE=2005-11-24; PGM=FSCW; GROUP=BYPASS
-	#BYPASS
-	new columns,expr,I,label,par,table,value,values,z,zpar
-	;;if '$d(actual(1))!('$d(actual(2)))!('$D(actual(3))) D error^UCDB Q
-	do WARNDEP^UCGM("Db.insert() - use Db.getRecord(,,1) or Class.new() and Record.save()")
-	;
-	; Filer run-time qualifier
-	set par=$$fileQual("Db.update",actual(4))
-	;
-	set table=$$QSUB^%ZS(actual(1))				; Table name
-	set columns=$$QSUB^%ZS(actual(2))			; Column list
-	set values=$$QSUB^%ZS(actual(3))			; Column values
-	;
-	if values[":" set values=$$mapPSLvar^UCDB(values)
-	;
-	; get next label and insert into code
-	set label=$$newLabel^UCGM("Ins",.labels)		; Get next tag name
-	set label="vvIns"_$E(label,5,8)
-	set return=label
-	do addM2src^UCGM(" #OPTION ResultClass 0")
-	do addM2src^UCGM(label_"  //INSERT")
-	do addM2src^UCGM(" #WARN SCOPE 0")
-	;;do addM2src^UCGM(" new X")	;FSCW CR12564: removed again (see CR7240)
-	;
-	; Instantiate a new record
-	set expr=" type Record"_table_" insRow=Class.new(""Record"_table_""")"
-	do addM2src^UCGM(expr)
-	;
-	; set all columns into the new record as defined by columns and values
-	; parameters of the method
-	new nextval,currval
-	set (currval,nextval)=""
-	if '$D(fsn(table)) do fsn^SQLDD(.fsn,table)
-	for I=1:1:$L(columns,",") do
-	.	set prop=$p(columns,",",I)
-	.	if prop["." set prop=$p(prop,".",2)
-	.	;values needs to be tokenized
-	.	set value=$p(values,",",I)
-	.	if $$UPPER^%ZFUNC(value)["NEXTVAL" set nextval=prop quit
-	.	if $$UPPER^%ZFUNC(value)["CURRVAL" set currval=prop quit
-	.	if $p(fsn(table),"|",3)[prop set nextval(prop)=value
-	.	if $E(value)=":" set value=$e(value,2,100)
-	.	if $E(value)="'" set value=""""_$e(value,2,$l(value)-1)_""""
-	.	else  if value?.P set value=""""_value_""""
-	.	new expr
-	.	set expr=prop
-	.	if '$$ISSFD(table,.expr,value,"insRow") set expr=" set insRow."_$$LOWER^%ZFUNC(prop)_"="_value
-	.	do addM2src^UCGM(expr)
-	; 
-	if nextval'=""!(currval'="") do
-	.	new where,i
-	.	set (where,i)=""
-	.	for  set i=$O(nextval(i)) quit:i=""  set where=where_","_i_"="_nextval(i)
-	.	if nextval'="" do addM2src^UCGM(" set insRow."_$$LOWER^%ZFUNC(nextval)_"=Db.nextVal("""_table_""","""_$e(where,2,100)_""")") quit
-	.	do addM2src^UCGM(" set insRow."_$$LOWER^%ZFUNC(currval)_"=Db.currVal("""_table_""","""_$e(where,2,100)_""")")
-	; save the data using the filer if one exists in order to use all
-	; triggers and journals
-	do addM2src^UCGM(" do insRow.save("_par_")")
-	do addM2src^UCGM(" quit ")
-	;
-	do autoERRM^UCGM()
-	;
-	#ENDBYPASS
-	quit
-
-	// ---------------------------------------------------------------------
-private update	// void; Db.update(Table_name,column_expr,where_clause,filer_qualifier)
-	/* ---------------------------------------------------------------------
-	INPUTS:
-	. actual(1) = table name (literal)
-	. actual(2) = column expression (literal)
-	. actual(3) = whereclause (literal)
-	. actual(4) = filer qualifiers (literal)
-
-	NOTES:
-	. This subroutine calls $$fileQual("Db.update",) and inserts the result
-		in the generated call to Record.save(). Because save^UCRECORD
-		will also call $$fileQual(), two different set of values may be
-		added. This leads to the following processing order (i.e. low to
-		high in terms of precedence):
-		1) commands("SQLPARS") for Record.save()
-		2) commands("SQLPARS") for Db.insert()
-		3) parameters in source code
-		4) parameters added due to commands("DEBUG")="Db.update"
-		5) parameters added due to commands("DEBUG")="Record.save"
-		If commands("DEBUG")="*" 4) and 5) will set the same values, but
-		both with occur in the code.
-		If the PSL source code contains a non-literal, the generated M
-		code will contain 5 nested calls to $$setPar^UCUTILN(). Happy
-		readings!
-	*/
-	#ACCEPT CR=18163; DATE=2005-11-24; PGM=FSCW; GROUP=BYPASS
-	#BYPASS
-	new expr,I,label,par,setexpr,sql,src,table,where
-	;
-	set par=$$fileQual("Db.update",actual(4))	; Run-time qualifier
-	;
-	set table=$$QSUB^%ZS(actual(1))			; Table name
-	set setexpr=$$QSUB^%ZS(actual(2))		; Column expression
-	set where=$$QSUB^%ZS(actual(3))			; where clause
-	;
-	new fsn
-	do fsn^SQLDD(.fsn,table) if ER do ERROR^UCGM($G(RM)) quit
-	;
-	; create label
-	set label=$$newLabel^UCGM("Sql",.labels)	; Get next tag name
-	set label="vUpd"_$E(label,5,8)
-	set return=label
-	do addM2src^UCGM(" #OPTION ResultClass 0")
-	do addM2src^UCGM(label)
-	do addM2src^UCGM(" #WARN SCOPE 0")
-	;;do addM2src^UCGM(" new X")	;FSCW CR12564: removed again (see CR7240)
-	;
-	; Build database set resultset
-	set expr=" type DbSet updset=Db.selectDbSet("""_table_""","""_where_""")"
-	do addM2src^UCGM(expr)
-	;
-	do addM2src^UCGM(" while updset.next() do {")
-	set expr=" type Record"_table_"  updRow=updset.getRecord("""_table_""")"
-	do addM2src^UCGM(expr)
-	do addM2src^UCGM(" do updRow.setAuditFlag(1)")
-	;
-	; Build code to deal with individual columns being updated
-	new expr,value
-	for I=1:1:$L(setexpr,",") do
-	.	set expr=$p(setexpr,",",I)
-	.	set value=$TR($p(expr,"=",2),":","")
-	.	if $E(value)="'" set value=""""_$e(value,2,$l(value)-1)_""""
-	.	else  if value?.P set value=""""_value_""""
-	.	set expr=$p(expr,"=",1)
-	.	if $p(expr,"=",1)["." set expr=$p($p(expr,"=",1),".",2)_$p(expr,"=",2)
-        .       if value?.E1P.E,value'["%",value'["""" do
-        ..              new ptr,temp
-        ..              set temp=value
-	..              set ptr=$f(temp,expr)
-        ..              set value=$s(ptr-$l(expr)=1:"",1:$e(temp,1,ptr-$l(expr)-1))_"updRow."_$e(temp,ptr-$l(expr),1000)
-	.	set $p(expr,"=",1)=$$LOWER^%ZFUNC($P(expr,"=",1))
-	.	if $e($p(expr,"=",2),1)="'" set $p(expr,"=",2)=""""_$e($p(expr,"=",2),2,$l($p(expr,"=",2))-1)_""""
-	.	if '$$ISSFD(table,.expr,value,"updRow") set expr=" set updRow."_expr_"="_value
-	.	do addM2src^UCGM(expr)
-	;
-	; save the data and end the subroutine 
-	do addM2src^UCGM(" do updRow.save("_par_")")
-	do addM2src^UCGM(" }")
-	do addM2src^UCGM(" quit ")
-	;
-	do autoERRM^UCGM()
-	#ENDBYPASS
-	quit
-
-	// ---------------------------------------------------------------------
-ISSFD(table,expr,value,mode)	;local Boolean;
-	/* ---------------------------------------------------------------------
-	*/
-	#ACCEPT CR=18163; DATE=2005-11-24; PGM=FSCW; GROUP=BYPASS
-	#BYPASS
-	new ddpexpr,frm,fsn,sfd,vdd,x
-	set ddexpr=$$UPPER^%ZFUNC(table_"."_expr)
-	set table=$$UPPER^%ZFUNC(table)
-	set X=$$DI^SQLDD(ddexpr,.frm,.vdd,.fsn)
-	if ER quit 0
-	set sfd=$$SFD^SQLDD("",.X)
-	if sfd="" quit 0
-	new di,node,pos,quit
-	set node=$$NOD^SQLDD(ddexpr,.X)
-	set pos=$$POS^SQLDD(ddexpr,.X)
-	set di=""
-	set quit=0
-        F  S di=$O(^DBINDX("SYSDEV","STR",table,node,pos,di)) Q:di=""  D  Q:quit
-        .	if $P(^DBTBL("SYSDEV",1,table,9,di),"|",18)'="" Q
-	.	set quit=1
-	if di="" quit 0
-	set di=$$LOWER^%ZFUNC(di)
-	set expr=" set X="_mode_"."_di
-	set expr=expr_",$P(X,"""_$C($P(sfd,"~",2))_""","_$p(sfd,"~",4)_")"_"="_value
-	set expr=expr_","_mode_"."_di_"=X"
-	#ENDBYPASS
-	quit 1

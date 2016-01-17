@@ -1,0 +1,48 @@
+NOD=DI
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Serial Value
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=23
+RHD=Serial@Value
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+An indicator which specifies whether (Y) or not (N) this column is in the same
+collating order as the bottom access key. If this flag is set, the SQL
+optimizer will insert logic to stop collating when the value in this column is
+beyond the query range and the collation direction supports that condition.
+This optimization supplements any other optimization heuristics and is applied
+independently (Boolean logic permitting).  This will allow some range based
+queries to complete substantially faster than they previously did.  For
+example, the following query will stop retrieving records from the underlying
+database upon the first incident of a value lower than the selected value of
+the query (for tjd).  This option is only valid for columns defined as Date
+data type.
+ 
+Sample SQL statement to access history records in reverse order:
+
+select tseq,etc,tamt,tjd,efd from hist
+where cid = 1234 and tjd > '01/31/2000'
+order by tseq desc

@@ -1,0 +1,35 @@
+NOD=ARCHSEQ
+LEN=15
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Detail Records Archived
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=6
+RHD=Detail Records@Archived
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The number of journal records that have been archived for this process.
+
+This count is updated approximately every 10,000 detail records during the
+archiving process.

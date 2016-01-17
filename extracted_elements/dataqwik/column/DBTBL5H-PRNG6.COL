@@ -1,0 +1,39 @@
+NOD=6
+LEN=2
+DFT=*
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Minimum Print Region #6
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=MPR@#6
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+         MINIMUM PRINT LINES                           Default=*
+
+             Enter the minimum number of lines to be printed at the
+             bottom of a page before the report breaks to a new
+             page.
+
+             For the default of "*", the Minimum Print Lines value
+             is the number of lines in the detail section of the report.

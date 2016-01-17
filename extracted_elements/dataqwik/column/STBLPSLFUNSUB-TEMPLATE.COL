@@ -1,0 +1,37 @@
+NOD=2*
+LEN=255
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Function template
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=20
+DEL=
+POS=
+RHD=Function template
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+
+ The data entered into the template field represents a utility within
+ the Profile code base. During PSL code generation, the compiler will
+ review all code for the existence of the utility being called by the 
+ program. When found, it will convert that call to the method named in 
+ the record that corresponds to the utility that was matched.

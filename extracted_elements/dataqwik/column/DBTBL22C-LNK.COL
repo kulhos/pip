@@ -1,0 +1,35 @@
+NOD=COL
+LEN=4
+DFT=
+DOM=
+TBL=[DBTBL22C]COL,DES/LE=30,WHR1/LE=30:QU "AGID=<<AGID>>"
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Link Query to Column
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=6
+RHD=Link Query@to Column
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The name of another column in the aggregate definition which has a query to
+be used for this column.  If a query is desired for a column it may be entered
+in the WHR1-WHR5 fields, or may be indicated here as existing on another
+aggregate column definition.

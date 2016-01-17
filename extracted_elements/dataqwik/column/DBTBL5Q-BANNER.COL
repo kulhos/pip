@@ -1,0 +1,56 @@
+NOD=0
+LEN=1
+DFT=1
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Banner Page
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=12
+RHD=Banner@Page
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         BANNER PAGE (Y/N)
+
+             With this option set to YES, a summary of the report
+             definition will print at the beginning of the report.
+
+         _____________________________________________________________________
+         Sample Banner Page
+
+           +--------------------------------------------------------------
+           |     File(s): DEP,CIF
+           |                                             Print Detail: Y
+           |
+           |     Item(s): CID,BAL,LNM,TAXID
+           |
+           |       Query: [DEP]BAL>1000
+           |              [DEP]IRN>10
+           |
+           | Field Name   Column Heading      Spaces Size Format  Math  Lines
+           |                                  Skip                      Skip
+           |
+           | CID          Account@Number         0    12   N
+           | BAL          Account@Balance        2    12   E       SUM
+           | LNM          LAST NAME              2    20   T       CNT
+           | TAXID        TAX@ID NUMBER          2    11   T
+           |
