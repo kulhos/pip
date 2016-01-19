@@ -1,0 +1,994 @@
+public UTLERR	//
+	#OPTION ResultClass ON
+	// SCA error log and display utility
+
+	/*
+	   Utility to handle all error trapping, logging, and displaying tasks
+	   for both M and application errors.
+
+	   Breaks are disabled during error logging only, and if disabled are
+	   re-enabled based on previous value of break.
+	   
+	***********************************************************************
+	* NOTES:  Do not add calls to $$^MSG.  If it is necessary to use the  *
+	*  	  message utility, use the call to $$GetMSG in this procedure.*
+	*                                                                     *
+	*         The contents of the PSL cache carried in %CACHE are not     *
+	*         logged because of the overhead involved in the event of a   *
+	*         large cache.  To enable logging of %CACHE, see the comment  *
+	*         in the LogError section.                                    *
+	***********************************************************************
+	 
+	***********************************************************************
+	FUTURE DEVELOPMENT NOTES:
+	
+	The following should be done (or seriously considered) for a later
+	round of changes to this procedure:
+	
+	1)  private access modifiers are in anticipation of CDM support, and
+	    currently have that meaning, i.e., the access is from this
+	    procedure only.  Remove this comment once CDM support is released.
+	
+	2)  The function GetError is a temporary solution to returning a
+	    standard Error object.  Eventually this should be implemented in
+	    UCGMR.  Once that is done, remove it from here.
+	
+	3)  Once ^SQL is modified (or converted to PSL) and no longer calls
+	    ETLOC^UTLERR, remove ETLOC.
+	
+	4)  If we continue to support terminals (for a while), modify the
+	    bottom of page handling (see DSPBP) to use the actual bottom of
+	    the page, not just line 24.  Will likely be best to encapsulate
+	    finding page bottom in an M utility (%TRMVT?).  Can use ZSH "D"
+	    to get screen size.
+	    
+	5)  Eventually, as we untangle the application elements from framework
+	    elements, UTLERR's use of table STBLER and procedure MSG, which
+	    are application elements, needs to be examined.
+	    
+	6)  Consider a re-design to log all errors to system files, versus the
+	    database.  This would improve error logging performance and ensure
+	    consistent logging regardless of database state.  If we make this
+	    change, consider using the current keys to ERROR in the log file
+	    name in some form to simplify management and reporting on those
+	    files.  Attaining a sequence number will also need to change, but
+	    should be simpler.  The procedure SCAER and report SCAER will need
+	    to be  modified.
+	    
+	***********************************************************************
+	
+	 
+	   INPUT:
+
+	       . ET  	Error Type
+	       		Valid to to STBLER.  Passed by the application to
+	       		the various entry points - UTLERR, NODSP, DSP, DSP22,
+	       		and DSPBP.
+
+	       Optional:
+
+	       . %ZTHALT  Halt after error
+	       . %ZTHANG  If set, the message "<RETURN> To Continue"
+			will be displayed with the error message and
+			a hang will be executed for the value of %ZTHANG
+	       . %ZTDY  The line number at which the error message will
+			be displayed.  (For ZE and LOGERR labels only)
+
+	   OUTPUT:
+	       . RM  Error Message
+	     	     RM(1) and RM(2) (optionally)
+	     	     
+	       . %ZTSEQ  Error Number.
+
+	       . %ZTPRIO  Registered priority level for error condition
+			  (Range: 1-5 in order of severity)
+
+	       . %ZTLOGD  Binary value (0 or 1) indicating whether this
+			  error has been placed into an external log file
+			  other than normal application database file.
+
+	       . %NET  Network on-line flag - will be set to zero
+		       if network error and on front-end processor
+
+		 No variables beginning with %ZT will be returned out of
+		 this routine, even if defined on entry, with the exception
+		 of %ZTLOGD, %ZTPRIO, %ZTSEQ and %ZTX.  This implies that
+		 any %ZT flags which are to be defined upon entry into this
+		 error trap must be set each time prior to entry if the
+		 %ZTHALT option is not used.
+
+	   LIBRARY:  DSP  	Displays on next line.
+		     DSPBP 	Displays on bottom of page.
+		     DSP22 	Displays on line 22.
+		     LOGERR  	Standard Error Logger conform to the new catch/throw spec. 
+		     TOP  	No display, returns RM only.
+		     ZE  	M error trapping
+		     LOGERR	M error log as catch block logger
+		     
+	---- Revision History -------------------------------------------------
+
+	2009-04-06 - RussellDS - CRs 35741/39284
+		* Modified Log2File to issue a zmessage to the calling program
+		  so that program can detect that an error occurred when UTLERR
+		  is unable to log the error normally.	(From FW27 CR39302)
+	
+	10/28/2008 - RussellDS - CRs 35741/35918
+		Added routine name label back in to reduce warnings when
+		referenced by other elements.
+	
+	09/11/2008 - RussellDS - CR30801
+		* Truncated columns for ERROR table to avoid errors on filing.
+		* Modified DSPMAIN to more clearly handle DBFILER errors.
+	
+	11/28/2007 - RussellDS - CR31014
+		Changed approach to saving of variables to use ZWR format
+		(ZSH "V").  This avoids problems with UTF-8 environments
+		that contain non-valid characters in data, resulting in
+		errors when trying to log that data.
+		
+		Now log all variables all the time (ignore STBL.VAR).
+		
+		Ignore STBL.GO, BRK, and QAFTER - none set in STBLER.  No
+		longer useful to support as part of error logging.
+		
+		Major restructuring to eliminate unnecessary sub-routines
+		and to simply code.
+		
+		Removed a bunch of public scope variables that aren't used
+		anywhere, so need need to continue to support.  Screen
+		support is being minimized, so this cleans up this code.
+		Do more once screens are really gone.  (Eliminated
+		%ZTBELL, %ZTDSPET, %ZTBRK, %ZTZQ, %ZTGO, %ZTMAIL, %ZTCOM).
+		
+		Eliminated STORE section - no longer used.
+		
+		Eliminated use of ^%ET as error trap for UTLERR.  Now
+		included here as Log2File.
+		
+		Cleaned up much public scoping.
+		
+		Removed old revision history.
+	
+	09/18/07 - KWANL - CR29465
+		   Added a LOGERR subrotuine to conform to the new catch/throw spec.
+		   Added a ETLOC function to construct error location and error
+		   message using an error object.
+		   Modified ZE to construct error from $Z* before setting up another 
+		   catch block and eliminate the use of $$ETLOC^%ZT.
+	
+	06/04/07 - RussellDS - CR27249
+		   Modified to not log %CACHE().  Changes to PSL and the
+		   application now allow %CACHE to get very large and logging
+		   will consume excess resources.
+	
+	01/17/07 - RussellDS - CR24902 / 24974
+		   Modified STKSAVE section to truncate system variable info
+		   if too long, just as do with regular variables.
+		   
+		   Removed old revision history.
+	
+	----------------------------------------------------------------------
+	*/
+	
+	// Error not displayed
+
+	type public String ET
+
+	do DSPMAIN(ET.get(), -1)
+	
+	quit
+	
+
+public void DSP		// Error displayed on next line
+
+	type public String ET
+	
+	do DSPMAIN(ET.get(), 0)
+	
+	quit
+	
+
+public void DSP22	// Error displayed on line 22
+
+	type public String ET
+	
+	do DSPMAIN(ET.get(), 22)
+	
+	quit
+	
+
+public void DSPBP		// Error displayed at bottom of page
+
+	type public String ET
+	
+	do DSPMAIN(ET.get(), 23)
+	
+	quit
+	
+	
+private void DSPMAIN(String ET,		// Error
+		     Number %ZTDY)	// Display line
+
+	// Manage logging and display for other direct calls, versus ZE/LOGERR calls
+	
+	type public Boolean %ZTHALT
+	type public Number %ZTHANG, %ZTSEQ
+	type public String RM()
+
+	type String %ZTINFO(,)
+	
+	do GetInfo(.%ZTINFO(,))		// Gather all process info first
+	
+	catch vERROR {
+
+		do Log2File(false)
+	}
+		
+	// Move ET into an empty Error object.  Set description to indicate this
+	type Error %ZTError = Class.new("Error")
+	
+	if ET.beginsWith("%PSL-E-DBFILER") do {
+		
+		set %ZTError.type = "%PSL-E-DBFILER"
+		set %ZTError.description = ET.piece("%PSL-E-DBFILER", 2)
+	}
+	else do {	
+		if ET.isNull() set ET = "ETUNDEF"
+	
+		if ET.isLike("%.%") set ET = ET.piece(".", ET.length("."))
+
+		if ET.beginsWith("<") set ET = ET.extract(2,99)
+	
+		set %ZTError.ident = ET
+		set %ZTError.description = "ET only"
+	}
+	
+	// Process and log (if appropriate) the error
+	set %ZTSEQ = $$Process(.%ZTError, .%ZTINFO(,), %ZTDY, .RM())
+	
+	// Clean up %ZT variables - we don't return them
+	kill %ZTHALT, %ZTHANG
+
+	quit
+	
+
+public void ZE	// Old logger for thrown errors
+
+	/* It is recommended to use LOGERR to perform error logging. This
+	   subroutine does not conform to the error logger as specified in
+	   the new catch/throw spec.  Please refer to the PSL help for the
+	   proper use of error logging. */
+	
+	type Error %ZTError = Class.new("Error")
+	
+	do LOGERR(%ZTError)
+	
+	quit
+	
+	
+public void LOGERR(Error %ZTError)	// Error logger for thrown errors
+
+	/* Process the error as part of catch block logging - including from ZE.
+	   
+	   Valid input includes %ZTDY, %ZTHALT and %ZTHANG.  See top of procedure
+	   for details.  Returned public variables are %ZTSEQ (error log number),
+	   ER (error indicator), and vVER and vVRM for filer related errors]
+	   (see comments below related to %PSL-E-DBFILER).
+	
+	   It is recommended to use this subroutine to log the excpetion
+	   intead of ZE^UTLERR. It uses an error object as an input and process
+	   it accordingly. This subroutine acts as an error logger under the new 
+	   PSL catch definition */
+	
+	type public Boolean %ZTHALT, ER, vVER
+	type public Number %ZTDY, %ZTHANG, %ZTSEQ
+	type public String RM(), vVRM
+	
+	type String %ZTINFO(,)
+	
+	quit:%ZTError.logged
+	
+	do GetInfo(.%ZTINFO(,))				// Gather all process info first
+	
+	set %ZTSEQ = ""					// Default value if early quit
+	set %ZTError = $$GetError(%ZTError)
+	
+	catch vERROR {
+
+		do Log2File(false)
+	}
+
+	/* Always perform a rollback when we have caught an error (versus calls
+	   to UTLERR at top or DSP* labels.  This is expected by the application.
+	   If we eventaully change, need to evaluate impact on application. */
+	do Runtime.rollback()
+	
+	set ER = 1
+	set %ZTError.logged = true
+	
+	quit:%ZTError.type.isNull()
+	
+	/* Handle filer application errors as a result of save methods.
+	   vVER and vVRM are reserved variable names and are used to
+	   ensure that the data gets back to the drivers, where ER and
+	   RM may not if they have been protected in the stack.  This is
+	   an interim approach pending a complete revision of error
+	   handling.
+	   
+	   Since this does not log DBFILER errors, if it is desired to
+	   do so, e.g., in batch processing, UTLERR should be called
+	   from the top by the appropriate error handler.
+	   
+	   Once we revamp error handling, we'll probably want to remove this
+	   or modify it and review any code that is specifically looking at
+	   DBFILER errors.
+	*/
+	if (%ZTError.type = "%PSL-E-DBFILER") do { quit
+		
+		set vVER = 1
+		set RM = %ZTError.description
+		if RM.isNull() set RM = $$GetMSG(3322, "DBFILER", "")	// ~p1 error
+		set vVRM = RM
+	}
+
+	if (%ZTError.ident = "INTERRUPT") write !!, %ZTError.toString() quit
+
+	// If replication is enabled and the error is generated on the secondary
+	// machine, log the error to a system file to avoid database updates.
+	if $$ROLE^PBSUTL = "SECONDARY" do Log2File(true) quit
+	
+	// Process and log (if appropriate) the error
+	set %ZTSEQ = $$Process(%ZTError, .%ZTINFO(,), %ZTDY.get(), .RM())
+	
+	// Clean up %ZT variables - we don't return them
+	kill %ZTDY, %ZTHALT, %ZTHANG
+	
+	quit
+	
+	
+private Number Process(Error %ZTError,		// Error
+		       String %ZTINFO(,),	// Process info
+		       Number %ZTDY,		// Display line
+		       String RM())		// Return message(s)
+
+	/* Process the error, whether from application (ET type input) or from
+	   catch block (ZE or LOGERR calls).
+	   
+	   This section performs initilization (set up of stbler info related
+	   to the error; calls logging, if the error is to be logged, then
+	   calls post-processes for additional tasks (mail, external error
+	   logging call, display). 
+	   
+	   RETURNS:
+	   	$$	%ZTSEQ - error log number
+	*/
+	   
+	type public Boolean %ZTHALT
+	type public Number %ZTHANG
+	
+	type Boolean breakEnabled = false
+	type Number %ZTSEQ = 0					// Default value
+	type String errType = %ZTError.ident
+	   
+	/* stbler is used for data loaded from STBLER, if it exists for the error, 
+	  otherwise, it populates it with default values.*/
+	type RecordSTBLER stbler
+	   
+	// Start empty
+	kill RM
+
+	// Don't allow interrupt during error logging - save status to reset
+	if $$^%ZBREAK.piece("|", 1) do {
+		
+		set breakEnabled = true
+		do DISABLE^%ZBREAK
+	}
+	
+	set stbler = Db.getRecord("STBLER", "KEY=:errType", 1)
+	
+	if (stbler.getMode() <> 0) do {
+		
+		set RM(1) = $$VarSub(stbler.rm)
+		set RM(2) = $$VarSub(stbler.rm2)
+	}
+	//No STBLER entry defined, set defaults
+	else  do {
+		
+		if '%ZTError.description.isNull() set RM(1) = %ZTError.description
+		else  set RM(1) = $$GetMSG(5364, "", "")		// Error not Defined
+		set RM(2) = ""
+		
+		set stbler.log = true
+		set stbler.dspet = true
+		set stbler.mail = false
+	}
+	
+	if %ZTHALT.exists() set stbler.halt = %ZTHALT
+	if %ZTHANG.exists() set stbler.hang = %ZTHANG
+	
+	#IF 'CUVAR.ERRMDFT
+	set stbler.mail = false
+	#ENDIF
+
+	if stbler.log set %ZTSEQ = $$LogIt(%ZTError, .%ZTINFO(,))
+
+	do PostProc(%ZTError, %ZTSEQ, %ZTDY, stbler, .RM())
+	
+	if breakEnabled do ENABLE^%ZBREAK
+
+	quit %ZTSEQ
+	
+
+public Number LogIt(Error %ZTError,		// Error
+		    String %ZTINFO(,))		// Process and symbol table info
+
+	/* Log the error if required
+	   Always log all M errors and save all variables
+	   
+	   Can be used by framework or application to log error directly, without
+	   need of other aspects of UTLERR.
+	   
+	   RETURNS:
+	   	$$	%ZTSEQ - error log number
+	*/
+
+	type Date SaveDate = %CurrentDate
+	type Number %ZTSEQ
+	type String errType, istr, var
+	
+	do Runtime.start("CS")
+
+	set errType = %ZTError.ident
+	if errType.isNull() set errType = "Unknown"
+
+	// Set up top levels of error log
+
+	type Number CNT, I, SEQ
+	type String X
+
+	// Get process unique sequence.  Allow up to 99 per second.  If
+	// we're logging more than that per process, hang one second.
+	set CNT = 1
+	for  do { quit:'SEQ.isNull()
+		
+		set SEQ = 1000000 + %CurrentTime
+		set SEQ = SEQ_ ({String}(1000000 + (%ProcessID # 1000000))).extract(2, 7)
+		set SEQ = SEQ_ ({String}(100 + CNT)).extract(2, 3)
+			
+		type ResultSet rs = Db.select("SEQ", "ERROR", "DATE=:SaveDate AND SEQ=:SEQ")
+			
+		if 'rs.isEmpty() do {
+			
+			set SEQ = ""
+			set CNT = CNT + 1
+			if (CNT > 99) do {
+					
+				set CNT = 1
+				hang 1
+			}
+		}
+	}
+		
+	set %ZTSEQ = SEQ
+		
+	type RecordERROR error = Class.new("RecordERROR", "DATE=:SaveDate,ET=:errType,SEQ=:%ZTSEQ")
+
+	set error.uid = %UserID.get()
+	set error.time = %CurrentTime
+	set error.term = %UserStation.get()
+	set error.job = %ProcessID
+	set error.dir = $$SCAU^%TRNLNM("DIR").extract(1,25)
+				
+	// Save routine info
+	if '%ZTError.thrownAt.isNull() do {
+
+		type String ELOC, errline, OFF, RTN, SETYP, TAG, XLT
+	
+		set ELOC = %ZTError.thrownAt
+		set RTN = ELOC.piece("^", 2)
+		
+		quit:RTN.isNull()
+		
+		set X = ELOC.piece("^", 1)
+		set TAG = X.piece("+", 1)
+		set OFF = +X.piece("+", 2)
+
+		do ^%ZRTNLOD(RTN, "X", 1, .XLT())
+	
+		if 'TAG.isNull(), XLT(TAG).exists() set errline = X(XLT(TAG) + OFF).get()
+		else  set errline = ""
+	
+		// Do not include logged flag
+		set error.mumpsze = %ZTError.toString().byteLimitSubstring(3, 130)
+		set error.errline = errline.replace(9.char(),"_$C(9)_").extract(1, 150)
+	}
+
+	do error.save()
+		
+	/* Save device, intrinsic, lock, stack, and variable information.
+	   Split long values into segments no greater than 400 bytes, that,
+	   for variables, can be reconstituted if the symbol table is reloaded.
+	   
+	   Split values will be decimal sequence numbers. */
+
+	for istr = "D", "I", "L", "S", "V" if %ZTINFO(istr).data() do {
+		
+		type Boolean isCache = false
+		type Number I, SCALE, SEQ
+		type String DSC
+		
+		if (istr = "D") set DSC = "#DEVICE"
+		else  if (istr = "I") set DSC = "#INTRINSIC"
+		else  if (istr = "L") set DSC = "#LOCK"
+		else  if (istr = "S") set DSC = "#STACK"
+		else  set DSC = "#VAR"
+		
+		// Use Scale to pad zeros to keep elements in order
+		if (istr = "V") set SCALE = 10000000
+		else  set SCALE = 1000
+
+		set SEQ = 0
+		for I = 1:1 quit:'%ZTINFO(istr, I).exists()  do {
+		
+			type Boolean wasDone = false
+			type String DESC, suffix, value
+			
+			set value = %ZTINFO(istr, I)
+			
+			/* The following lines suppresses the logging of %CACHE().
+	   		   If a problem is suspected related to data in the cache,
+	   		   comment out these lines, and regenerate the error to
+	   		   capture the contents of %CACHE. */
+	   		   
+	   		// ***** Begin cache suppression section **************
+	   		
+	   		if (istr = "V") do { quit:isCache
+	   			
+		   		if value.beginsWith(" "), isCache quit	// %CACHE extended record
+		   		if value.beginsWith("%CACHE") set isCache = true quit
+	   			set isCache = false
+	   		}
+	   		   
+	   		// ***** End %CACHE suppression section ***************
+			
+			/* Break up elements longer than 400 bytes, logging under same integer
+			   SEQ value, but incrementing 2nd-nth piece by .0001.  For variables,
+			   the value may already be broken from the ZSH.  In that case, the
+			   value will start with 10 spaces.  Treat these as continuations
+			   in the same manner (increment SEQ by .0001) */
+
+			if 'value.beginsWith("          ") set SEQ = (SEQ \ 1) + 1
+			else  set value = value.extract(11, value.length())
+			
+			// Make sure we only save in 400 byte increments
+			while 'value.isNull() do {
+			
+				type Number dec
+				type String saveVal = value.byteLimitSubstring(1, 400)
+				
+				set value = value.extract(saveVal.length() + 1, value.length())
+				
+				if ((SEQ # 1) <> 0) set dec = 4
+				else  set dec = 0 
+				set suffix = (SCALE + SEQ).toString(dec)
+				set DESC = DSC_ suffix.extract(2, suffix.length())
+		
+				type RecordERROR9 error9 = Class.new("RecordERROR9", "DATE=:SaveDate,ET=:errType,SEQ=:%ZTSEQ,VAR=:DESC")
+		
+				set error9.value = saveVal
+			
+				do error9.save()
+				
+				set SEQ = SEQ + .0001
+			}
+		}
+	}
+	
+	do Runtime.commit()
+		
+	quit %ZTSEQ
+	
+	
+private void PostProc(Error %ZTError,		// Error
+		      Number %ZTSEQ,		// Error log sequence
+		      Number %ZTDY,		// Location for display (negative = don't)
+		      RecordSTBLER stbler,	// STBLER values, as modified in LogErr
+		      String RM())		// Return message(s)			/MECH=REFARR:RW
+
+	// Post-logging process
+	
+	type public Boolean %ZTLOGD
+	type public Number %ZTPRIO
+	type public String %IPMODE
+	
+	type String category, desc
+	
+	/* Call External routine to return priority level.  If system is linked
+	   to a central error facility, this call will also post an entry to
+	   that log.
+	   Based on level of severity, the error will set off an alarm.  This
+	   will be determined in the API and the call will always be made from
+	   the application. */
+	
+	if (%ZTError.component = "%GTM") set category = "MERROR"
+	else  set category = "STBLER"					// Default
+
+	set desc = RM(1)
+
+	// Error log sequence number ~p1
+	if (%ZTSEQ > 0) set desc = desc_ " - "_ $$GetMSG(3389, %ZTSEQ, "")
+
+	// Return error priority level and post event
+	set %ZTPRIO = $$ERRLOS^%ZFUNC(%ZTError.ident, category, "", 0, 0, .desc)
+
+	//If error not found, it won't be logged
+	if %ZTPRIO set %ZTLOGD = true
+	else  set %ZTLOGD = false
+	
+	if stbler.dspet set RM(1) = "<"_ %ZTError.ident_ "> "_ RM(1)
+	if stbler.log set RM(1) = "#"_ %ZTSEQ_ " "_ RM(1) 
+
+	// Write out error message(s)
+	if $$INTRACT^%ZFUNC, (%ZTDY '< 0), '%IPMODE.get().isLike("%NOINT%")  do {
+
+		type Number I
+		type String MSG, X
+
+		//   <RETURN> to continue:
+		if (stbler.hang > 0) set MSG = $$GetMSG(5362, "", "")
+		else  set MSG = ""
+
+		use 0
+		if stbler.bell write *7
+
+		if %ZTDY set %ZTDY = %ZTDY - ('RM(1).isNull()) - ('RM(2).isNull()) + (MSG.isNull())
+
+		for I = 1,2 if 'RM(I).isNull() do WriteMSG(.%ZTDY, RM(I))
+	
+		if 'MSG.isNull() do {
+		
+			type String hangTime = stbler.hang
+
+			do WriteMSG(.%ZTDY, MSG)
+
+			do TERM^%ZUSE(0, "FLUSH")
+
+			#ACCEPT Date=09/13/06; Pgm=RussellDS; CR=23019; Group=BYPASS
+			#BYPASS
+			new X
+			read X:hangTime
+			#ENDBYPASS
+		}
+	}
+
+	if stbler.mail do SendMail(stbler.log, %ZTSEQ, %ZTError.ident, .RM())
+	if stbler.halt halt
+	
+	if RM(2).isNull() do {
+		
+		type String X = RM(1)
+
+		kill RM
+		set RM = X
+	}
+
+	quit
+		
+	
+private void GetInfo(String %ZTINFO(,))	// Save ZSHow info to %ZTINFO array
+
+	/* This is called on entry to each entry point of UTLERR, prior to
+	   rollbacks for transaction starts, in order to capture info like
+	   $TLevel, $TRestart, that would be affected by these actions.
+	   
+	   Put "V" first to avoid getting %ZTINFO for the other entries in
+	   the variables list.
+	   
+	   Because use of $ETrap causes a GOTO from the point of error to
+	   the trap handling, ZSHow will not include the point of error
+	   in the stack.  Use $STACK instead.
+	*/
+	
+	#ACCEPT Date=12/07/2007;Pgm=RussellDS;CR=31014;Group=Bypass
+	#BYPASS	
+	zshow "VDIL":%ZTINFO
+	new I,seg
+	set seq=1
+	for I=$STACK(-1):-1:1 set %ZTINFO("S",seq)=$STACK(I,"PLACE"),seq=seq+1
+	#ENDBYPASS
+	
+	quit
+	
+
+private void WriteMSG(Number %ZTDY,	// Line
+		      String MSG)	// Message
+     
+     	// Write RM(1), RM(2), and continue messages
+
+	if '%ZTDY write !
+	else  do {
+		
+		write 27.char()_ "["_ (%ZTDY+1)_ ";0H"_ 27.char()_ "[K"
+		set $X = 0
+		set $Y = %ZTDY
+		set %ZTDY = %ZTDY + 1
+	}
+
+	write 27.char()_ "[7m"
+	write " "_ MSG_ " "_ 27.char()_ "[0m"
+
+	quit
+
+
+private String VarSub(String RM)	// Substitute variables into error message
+
+	type Number X
+	type String V
+
+	set X = 0
+	for  set X = RM.find("<<", X) quit:(X = 0)  do {
+		
+		catch error {
+			
+			// Ignore error and just return incoming RM
+		}
+			
+		quit:'RM.extract(X + 1, 99).piece("<<", 1).isLike("%>>%")
+
+		set V = RM.extract(X,99).piece(">>",1)
+				
+		if (V.isNull() ! V.isNumber()) set V = "<<"_ V_ ">>"
+				
+		#ACCEPT DATE=12/30/03;PGM=John Carroll;CR=unknown
+		else  if V.beginsWith("$"), V.isLike("%(%"), V.isLike("%)%") xecute "set V="_ V
+				
+		else  if @V.exists() set V = @V
+		else  set V = ""
+
+		set RM = RM.extract(1, X - 3)_ V_ RM.extract(X, 99).piece(">>", 2, 99)
+	}	
+
+	quit RM
+
+
+private void SendMail(Boolean logError,		// Log the error flag
+		      Number %ZTSEQ,		// Error sequence number
+		      String ET,		// Error type
+		      String RM())		// Error message array
+
+	// Send mail to users
+
+	#IF 'CUVAR.ERRMAIL.isNull()
+	
+	type List USERS
+	type Number I
+	type String device, dir, SUBJ, USER, X
+	
+	type IO io = Class.new("IO")
+
+	set USERS = {List}(CUVAR.ERRMAIL)
+
+	set io.fileName = "MAIL"_ %ProcessID_ ".TMP"
+
+	//Directory specific spooler
+	#IF 'CUVAR.SPLDIR.isNull()
+	set dir = CUVAR.SPLDIR
+	#ELSE
+
+	//Logical reference to spooler
+	set dir = $$SCAU^%TRNLNM("SPOOL")
+
+	//System-wide spooler
+	if dir.isNull() set dir = $$SCA^%TRNLNM("SPOOL")
+
+	//User's home directory
+	if dir.isNull() set dir = $$HOME^%TRNLNM
+	
+	#ENDIF
+	
+	set io.directory = dir
+	set io.openParams = "WRITE/NEWV"
+	
+	catch error {
+		
+		quit:error.type.contains("%PSL-E-IOOPEN")	// Just quit if we can't open the file
+		do io.close()					// All other cases: ensure the file is closed
+	}
+	
+	do io.open()
+
+	do io.write("")
+	// Error in job ~p1 .  User ID: ~p2
+	do io.write($$GetMSG(5363, %ProcessID, $select(%UserID.exists():%UserID, 1:"???")))
+	do io.write("")
+
+	if logError do {
+		
+		do io.write("")
+		// Error type:  ~p1   log sequence ~p2
+		do io.write($$GetMSG(5366, ET, %ZTSEQ))
+	}
+	else  do {
+		
+		do io.write("")
+		// Error type:  ~p1   not loged
+		do io.write($$GetMSG(5913, ET, ""))
+		do io.write("")
+	}
+
+	if RM.exists() do {
+		
+		do io.write("")
+		do io.write(RM)
+	}
+	else  do {
+		
+		do io.write("")
+		do io.write(RM(1))
+		do io.write("")
+		do io.write(RM(2))
+		do io.write("")
+	}
+	
+	set device = io.device
+	do io.close()
+
+	// Error in job ~p1.  User ID: ~p2
+	set SUBJ = $$GetMSG(5365, "", "")
+	for I = 1:1:USERS.count() set USER = USERS.elementAt(I) do {
+		
+		if 'USER.isNull() set X = $$MAIL^%OSSCRPT("", USER, SUBJ, device)
+	}
+
+	set X = $$DELETE^%OSSCRPT(device)
+	
+	#ENDIF
+
+	quit
+
+
+private String GetMSG(Number msgno,	// Message ID from STBLMSG
+		      String p1,	// Parameter 1
+		      String p2)	// Parameter 2
+    
+    	// Error message handler
+
+	/* To ensure UTLERR does not get into loop if message table is missing,
+	   verify existence before calling $$^MSG, otherwise, handle with
+	   hard-coded message. */
+
+	type String msg = ""
+	
+	if Db.isDefined("STBLMSG", "MSGID=:msgno") set msg = $$^MSG(msgno, p1, p2)
+	else  do {
+		// I18N=OFF
+		if msgno = 3322 set msg  =  p1_ " error"
+		else  if msgno = 3389 set msg  =  "Error log sequence number "_ p1
+		else  if msgno = 5362 set msg = "  Press return to continue:  "
+		else  if msgno = 5363 set msg = "Error in job "_ p1_ ".  User ID: "_ p2
+		else  if msgno = 5364 set msg = "Error not defined"
+		else  if msgno = 5365 set msg = "Error processor message"
+		else  if msgno = 5366 set msg = "Error type:  "_ p1_ "  "_ p2
+		else  if msgno = 5425 set msg = "No routine"
+		else  if msgno = 5913 set msg = "Error type "_ p1_ " Not logged"
+		else  set msg = "Unknown UTLERR message"
+		// I18N=ON
+	}
+	
+	quit msg
+	
+	
+private void Log2File(Boolean isSecondary)	// Call because of secondary
+
+	// Log error to a system file
+	
+	/* This label is used as the error trap for the main error trap (ProcError)
+	   section as the trap of last resort.  It is also used if an error is
+	   logged on a secondary system. 
+	   
+	   If we are calling this because of secondary, just keep going, but
+	   otherwise, consider fatal error and halt.
+	   */
+
+	type IO io = Class.new("IO")
+	type String device
+	type String fileName = "PROFILE_ERROR.LOG_"_%CurrentDate.toString("YEARMMDD")_"_"_%CurrentTime
+	
+	catch error {
+		
+		/* If we get an error here, including can't open the file
+		   continue unless doHalt is set, in which case give up
+		   and halt.  In either case, write a message.*/
+		   
+		if 'error.type.contains("%PSL-E-IOOPEN") do io.close()
+		   
+		write !!, "Fatal error while trapping error", !
+		write error.description, !
+		write "Trapped in file ", fileName, !
+		
+		// Return a "1" to the calling program to indicate that
+		// an error has occurred.
+		#ACCEPT Date=2009-04-06; Pgm=RussellDS; CR=39284; Group=BYPASS
+		#BYPASS
+		S $ZT=""
+		ZMESSAGE 1
+		#ENDBYPASS
+		
+		if 'isSecondary halt
+	}
+	
+	set io.directory = $$SCAU^%TRNLNM("DIR")
+	set io.fileName = fileName
+	
+	set io.openParams = "WRITE/NEWV"
+	
+	do io.open()
+
+	do io.write("")
+	do io.write("===================================================")
+	do io.write("")
+	do io.write(%CurrentDate.toString()_" "_ %CurrentTime.toString())
+	do io.write("")
+	do io.write("===================================================")
+	do io.write("")
+	
+	set device = io.device
+	
+	#ACCEPT Date=12/05/2007;Pgm=RussellDS;CR=31014;Group=Bypass
+	#BYPASS
+	use device
+	zshow "*"
+	#ENDBYPASS
+	
+	do io.close()
+	
+	write !!, "Fatal error in UTLERR while executing error trap - "
+	write !, "Trapped in file ", device, !
+
+	// Return a "1" to the calling program to indicate that
+	// an error has occurred.
+	#ACCEPT Date=2009-04-06; Pgm=RussellDS; CR=39284; Group=BYPASS
+	#BYPASS
+	S $ZT=""
+	ZMESSAGE 1
+	#ENDBYPASS
+	
+	if 'isSecondary halt
+
+	quit
+	
+	
+private Error GetError(Error inError)	 // Standardize Error object based on last error
+
+	/* This function will return a standardized error object, based on either
+	   $ZE or $ZS.  Eventually, a similar function should be implemented
+	   in UCGMR and this function removed.  (This is not being done at the
+	   present time due to wanting to avoid that linkage for the release of
+	   UTLERR.)
+	*/
+	
+	
+	if inError.type.isNull() do {
+
+		#ACCEPT CR=29295; Date=12/13/2007; PGM=RussellDS; Group=BYPASS
+		#BYPASS
+		if (($ZE="")!($ZE="Unprocessed $ZERROR, see $ZSTATUS")) set $ZE="0,"_$P($ZS,",",2,999)
+		set inError=$ZE
+		#ENDBYPASS
+	}
+	
+	if ({List}"CTRAP,CTRLY,CTRLC").contains(inError.ident) set inError.ident = "INTERRUPT"
+	
+	quit inError	
+	
+	
+private String ETLOC(Error inError)	// Return an error object as a standardized string
+
+	/* This function is currently used only by ^SQL.  Eventually, eliminate
+	   that usage and this function. */
+	   
+	if ({List}"CTRAP,CTRLY,CTRLC").contains(inError.ident) set inError.ident = "INTERRUPT"
+	
+	quit inError.type_ ","_ inError.thrownAt_ ","_ inError.component_ ","_ inError.description_ ","_ inError.ident 
+ #OPTION ResultClass ON
+public String vSIG()	quit "61457^66611^Dan Russell^27300"	// Signature - LTD^TIME^USER^SIZE

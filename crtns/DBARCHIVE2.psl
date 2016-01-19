@@ -1,0 +1,11 @@
+private DBARCHIVE2(String ARCHDIR, Number ARCHNUM, Date THRUDATE, String ARCHTBL, String KEYVALS())	// Call RecordTABLE.archive() to archive data
+	// Last compiled:  02/24/2010 06:21 PM - pip
+
+	// THIS IS A COMPILED ROUTINE.  Compiled by procedure DBARCHIVE1
+
+	// See DBARCHIVE1 for argument definitions
+
+	type Number retVal = 0
+
+
+	quit retVal

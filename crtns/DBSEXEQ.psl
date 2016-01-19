@@ -1,0 +1,793 @@
+DBSEXEQ	  
+	 /* DBS - U - V5.0 - QWIK REPORT
+	    Copyright(c)2003 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/13/03 16:04:18 - RUSSELL
+	      ORIG:  TELIV - 10/26/2005
+	      DESC:  QWIK REPORT WRITER
+	 
+	---------- Revision History -------------------------------------------
+	2009-04-02 - RussellDS - CRs 35741/39038
+		* Combine FW30 and FW versions
+		* Add third parameter to getRecord for DBTBL0 to avoid problems
+		  if row not yet set up
+	
+	2009-03-20 - RussellDS - CR35741
+		* Fixed error if entering trailing space on column list
+	
+	10/06/2-008 - RussellDS - CR27817
+		Fixed call to DBSITEM.
+	
+	06/06/2008 - RussellDS - CR30801
+		Pulled code from LIST^DBSEXEQ4 into LIST section and added
+		section FIXFMT, which was old code from top of DBSEXEQ4.
+		DBSEXEQ4 has been obsoleted.
+		   
+		Modified call to ^DBSITEM to eliminate old parameters.
+		
+		Modified UPDTBL to setMode on records to 0 to avoid no record
+		found errors.
+	
+	04/28/2008 - RussellDS - CR33611
+		Modified UPDTBL to handle changes to fields to display.
+		
+		Moved code from DEL^DBSUTLQR into DELETE section and fixed problems.
+		
+		Cleaned up warnings.
+		
+		Removed old revision history.
+	
+	03/14/08 - GIRIDHARANB - CR32918
+		   Modified section UPDTBL to correct issues with incorrect information
+		   written to the query lines.
+		   
+	02/06/08 - GIRIDHARANB - CR32181
+		   Modified section UPDTBL to correct problem with default values
+		   reappearing after a change.
+	
+	05/24/07 - GIRIDHARANB - CR27157
+		   Modified section INSERT to pass %processMode to the 
+		   DRV^USID call since CREATE is also called to modify a 
+		   qwik report definition.
+	*/
+	
+	// I18N=OFF
+	
+	quit			// No entry from top
+	
+
+CREATE(Number %ProcessMode)	//
+
+	/*
+		This Section used for Both Create as well as Modify
+		The ProcessMode should be 0 for Create
+		The ProcessMode should be 1 for Modify
+		
+		The ProcessMode is forced to 0 for DBTBL6S and DBTBL6SQ screens
+	
+	*/
+
+	type Boolean QFLAG, ZQRUN
+	type Number %PAGE, %PG, DBOPT, I, SEQ
+	type String BAN, DLIB, DQFUN, ID, PGM, OLDPGM, OLDSID, QRID, SID, VFMQ, VPG()
+
+	type RecordDBTBL5Q d5q
+
+	set ZQRUN = ""
+	set QFLAG = 0
+
+	if %ProcessMode=0 set QRID = $$FIND^DBSGETID("DBTBL5Q",1) 
+	else  if %ProcessMode=1 set QRID = $$FIND^DBSGETID("DBTBL5Q",0)
+
+	quit:QRID.isNull()
+
+	set VPG(99) = ""				// Disable <PREV> option
+	
+	set d5q = Db.getRecord("DBTBL5Q","LIBS='SYSDEV',QRID=:QRID",1)
+
+	if (d5q.getMode() = 0) do {
+
+		set d5q.uid = %UserID
+		set d5q.ltd = %CurrentDate
+		set d5q.dtl = 1
+		set d5q.rsize = 80
+		set d5q.banner = 1
+		set d5q.cscmp = 1
+	}
+	
+	#ACCEPT Date=04/28/2008; Pgm=RussellDS; CR=33611; Group=MISMATCH
+	do DRV^USID(%ProcessMode,"DBTBL5Q",.d5q)
+
+	if VFMQ = "Q" quit
+	
+	set DLIB = "SYSDEV" 
+
+	if d5q.pfid.isNull() quit
+
+	set %PG = 2
+	set %PAGE = 2					// Two-page definiiton
+
+	if d5q.stat > 0 set %PAGE = 3			// Add one for STAT definition
+	
+	set BAN = d5q.banner
+	if '(BAN.extract(1) = "@") do {
+		do UPDTBL(d5q,QRID)
+	
+		if VFMQ = "Q" set QFLAG = 1
+	}
+	
+	if 'QFLAG, 'd5q.pfid.isNull() do {
+	
+		if d5q.stat > 0 do UPDSTAT(d5q,QRID)	// Define STAT definition
+	
+		if VFMQ '= "Q" do BUILD(QRID)		// Compile and run report
+	}
+
+	quit
+	
+	
+CHANGE	// Status of screen changes
+
+	type public String UX()
+
+	// If any changes, signals need to recompile
+	if 'UX("DBTBL6F").exists() quit 1		// Layout changed
+	if 'UX("DBTBL5SQ").exists() quit 1		// Stat def changed
+	if UX("DBTBL5Q","").exists() quit 0		// Nothing changed
+	
+	quit 1
+	
+
+LIST	//
+
+	type Number CNT
+	type String %BLK, IO, RID, RN
+	
+	set CNT = $$LIST^DBSGETID("DBTBL5Q", "List", .IO) quit:(CNT '> 0)
+	
+	// QUICK REPORT DEFINITIONS
+	set RN = $$^MSG(7980)
+	set RID = "DBSQRPLST"
+	set %BLK = "/,"_IO
+	
+	do DRV^URID
+
+	quit
+	
+	
+DELETE	// QWIK REPORT DEFINITION
+
+	type Number DBOPT
+	type String %NOPRMT, DQTABLE, QRID
+	
+	set DQTABLE = "DBTBL5Q", DBOPT=6
+	set QRID=$$FIND^DBSGETID(DQTABLE,0) quit:QRID.isNull()
+	
+	set %NOPRMT="Q"
+	
+	type RecordDBTBL5Q d5q = Db.getRecord("DBTBL5Q","LIBS='SYSDEV',QRID=:QRID")
+	
+	#ACCEPT Date=04/30/2008; Pgm=RussellDS; CR=33322; Group=MISMATCH
+	do DRV^USID(3, "DBTBL5Q", .d5q)
+	
+	// PROMPT - ARE YOU SURE
+	if $$^DBSMBAR(163) '= 2 quit	
+		
+	// DELETE FORMAT INFORMATION
+	do Db.delete("DBTBL6F", "QRID=:QRID")
+	
+	// DELETE STATISTICS PAGE DATA
+	do Db.delete("DBTBL6SQ", "QID=:QRID")
+
+	do Db.delete("DBTBL5Q", "LIBS='SYSDEV' AND QRID=:QRID")
+	
+	// DELETE RUN TIME CODE
+	if 'd5q.pgm.isNull() do DEL^%ZRTNDEL(d5q.pgm)
+	
+	// Write done
+	write !,"QWIK REPORT "_QRID_" DELETED"
+	
+	// hang for a sec
+	hang 1
+	
+	quit
+
+
+COPY	//
+	
+	type String DQSCR, QRSCREEN, RN, SID	
+	
+	do INIT(.QRSCREEN)
+	
+	set RN = $$^MSG(7978)
+	set DQSCR = "^"_QRSCREEN	
+	
+	do COPY^DBSUTLQR(DQSCR)
+	quit
+
+
+RUN	// Run QWIK Report (Function DBSQRR)
+
+	type Boolean ZQRUN
+	type Number %PAGE, %PG
+	type String LIB, PGM, QRID
+	
+	set LIB="SYSDEV"
+	
+	set QRID = $$FIND^DBSGETID("DBTBL5Q",0) 
+	quit:QRID.isNull()
+	
+	type RecordDBTBL5Q d5q = Db.getRecord("DBTBL5Q","LIBS='SYSDEV',QRID=:QRID")
+
+	set %PAGE = 2
+	set %PG = 1
+	
+	// Protect ACCESS FILES and DATA ITEMS prompts
+	set %ProcessMode = 2
+	set ZQRUN = 1 
+	
+	#ACCEPT Date=04/28/2008; Pgm=RussellDS; CR=33611; Group=MISMATCH
+	do DRV^USID(2,"DBTBL5Q",.d5q)	
+	
+	if '$$YN^DBSMBAR("",$$^MSG(2445),1) quit 		// Run report YES/NO ?
+
+	set PGM = d5q.pgm					// Get run-time name
+
+	if 'PGM.isNull() do ^@PGM quit				// Already compiled
+
+	do BUILD(QRID)
+
+	quit
+	
+
+BUILD( String QRID)	//
+	
+	type String X
+	
+	set X="" 
+
+	do COMPILE(QRID)
+	
+	if $$YN^DBSMBAR("",$$^MSG(2445),1) = 0 quit
+
+	do SYSVAR^SCADRV0()
+	do QRPT^URID						// Run report
+
+	quit
+
+
+COMPILE(QRID)	// Compile QWIK report
+
+	type Number ER, seq, lseq
+	type String pgm, zrid
+
+	set zrid = "QWIK_"_QRID					// Temp report name
+	do EXT^DBSRWQR(QRID,.zrid)				// Convert to RW format
+		
+	type RecordDBTBL5Q dbtbl5q = Db.getRecord("DBTBL5Q","LIBS='SYSDEV',QRID=:QRID")	
+	set pgm = dbtbl5q.pgm					// Run-time routine name
+	
+	if pgm.isNull() do {					// Get next sequence number
+		
+		type String DBTBL(,,)
+		
+		set DBTBL("SYSDEV",0,"Q")=""
+		lock +DBTBL("SYSDEV",0,"Q"):10
+
+		type RecordDBTBL0 dbtbl0 = Db.getRecord("DBTBL0","%LIBT='SYSDEV',TYP='Q'",1)
+		set seq = dbtbl0.desc + 1
+		set dbtbl0.desc = seq
+		set seq = seq + 10000
+
+		do dbtbl0.save()
+		
+		lock -DBTBL("SYSDEV",0,"Q")			// R01Qnnnn format
+		
+		set dbtbl0 = Db.getRecord("DBTBL0","%LIBT='SYSDEV',TYP='L'",1)
+		set lseq = dbtbl0.desc + 100
+		set pgm = "R"_lseq.toString().extract(2,3)_"Q"_seq.toString().extract(2,5)
+	}
+
+	type RecordDBTBL5H dbtbl5h = Db.getRecord("DBTBL5H","LIBS='SYSDEV',RID=:zrid",1)
+	set dbtbl5h.pgm = pgm
+	do dbtbl5h.save()
+
+	do ^DBSRW(zrid,0)					// Compile report
+	if ER.get()>0 quit					// Query error flag
+
+	set dbtbl5h = Db.getRecord("DBTBL5H","LIBS='SYSDEV',RID=:zrid")
+	
+	set dbtbl5q = Db.getRecord("DBTBL5Q","LIBS='SYSDEV',QRID=:QRID")	
+
+	set dbtbl5q.pgm = dbtbl5h.pgm				// Save into QWIK report definition
+	do dbtbl5q.save()
+	
+	do Db.delete("DBTBL5H","LIBS='SYSDEV' AND RID=:zrid")	// Delete report definition
+	
+	quit
+
+
+CMPALL	// Mass recompile QWIK report (function DBSQRB)
+
+	type Number CNT
+	type String QRID
+
+	do Db.delete("TMPDQ","PID=:%ProcessID")
+	
+	set CNT = $$LIST^DBSGETID("DBTBL5Q") 
+	quit:'CNT
+	
+	type DbSet ds = Db.selectDbSet("TMPDQ","PID=:%ProcessID","ELEMENT ASC")
+
+	while ds.next() do {
+		type RecordTMPDQ tmpdq = ds.getRecord("TMPDQ")
+		do COMPILE(tmpdq.element)
+	}
+	
+	do Db.delete("TMPDQ","PID=:%ProcessID")
+	
+	quit	
+
+
+PREDI	// PRE-PP FOR DI CHECK
+
+	type public String I()
+		
+	set I(3)="@SELDI^DBSFUN(FILES,.X)"
+	quit
+
+
+PPDI(	String X,
+	String FID,
+	String FILES,
+	String I(),
+	String RM,
+	Number ER)	// PP FOR DI CHECK
+
+	type String X1, X2
+	
+	set X = X.trim()
+
+	set I(3)=""
+	if X'?1"@WPS("1E.E1")" do PPDI2(.X,.RM,FID,FILES,.ER) quit
+
+	set X1 = X.piece("(",2)
+	set X1 = X1.piece(")",1)
+	set X1 = X1.piece(",",1)
+
+	// Invalid document name - ~p1
+	close X1 
+	set X2=$$FILE^%ZOPEN(X1,"READ",2) 
+	if 'X2.isNull() do { quit
+		set RM=$$^MSG(1317)_" "_X1
+		set ER=1 
+	}
+
+	close X1
+	
+	set RM = $$^MSG(8217)_" "_X1	//  Export completed
+	
+	quit
+
+
+PPDI2(	String X,
+	String RM,
+	String FID,
+	String FILES,
+	Number ER)
+
+	type Number INCR
+	type String DFID, NEWX, PFID, SAVX
+		
+	set SAVX = X
+	set NEWX = ""
+
+	set PFID = FILES.piece(",",1)
+	set DFID = PFID
+
+	for INCR=1:1 set X=SAVX.piece(",",INCR) quit:SAVX.piece(",",INCR,99)=""  do DFID(.X,.RM,FID,.NEWX,FILES,.ER) quit:ER
+
+	// Invalid data item name or syntax error - ~p1
+	if ER do { quit
+		set X = SAVX 
+		if RM.get().isNull() set RM=$$^MSG(1301,SAVX.piece(",",INCR))
+	}  
+	
+	set X=NEWX.extract(1,NEWX.length()-1)
+
+	quit
+
+
+DFID(	String X,
+	String RM,
+	String FID,
+	String NEWX,
+	String FILES,
+	Number ER)
+	
+	type Boolean ZFLG
+
+	if X.beginsWith(""""),X.endsWith("""") set NEWX = NEWX_X_"," quit  		// "Text"
+
+	// Modified the call to DBFID1.
+	if '((X?1A.AN)!(X?1"%".AN)!(X["?")) do DFID1(.X, FILES,.NEWX,.ER,.RM) quit
+	
+	set X=$$^FORMDIPP(X,FILES,.ZFLG)
+
+	quit:ER
+
+	if X.isNull() set ER=1 quit
+	
+	if 'ZFLG set X = X.piece("]",2) 			// Remove [FID] reference
+	
+	do DFID1(.X,FID,.NEWX,.ER,.RM)
+	
+	quit
+
+
+DFID1(String STR, 	// Input string 
+      String FILES,     // List of valid tables 
+      String NEWX,      // New value of X       	/MECH=REF:RW 
+      Boolean ER, 	// Error flag                	/MECH=REF:W 
+      String RM)  	// Error message, if ER = 1  	/MECH=REF:W 
+
+      type Number ptr 
+      type String OPRS, TEST 
+
+      set ER = 0
+      set NEWX = NEWX_STR_"," 
+
+      quit:STR.isLiteral()    // Quoted string or number is OK
+
+      // Find and validate all column references.  Build test to validate formulas 
+
+      set TEST = "" 
+      set OPRS = "()+-/*#\=_,!&@" 
+      set ptr = 0
+
+	for  do { quit:(ER ! (ptr = 0)) 
+
+		type String X
+
+		set X = $$ATOM^%ZS(STR,.ptr, OPRS)
+
+		// Column reference 
+		if '(((X.length() = 1) & (OPRS [ X)) ! X.isLiteral()) do { 
+
+			type String COL, TABLE
+
+			// Reference includes table name ([FID]DI) 
+			if X.extract(1) = "[" do { 
+				set TABLE = X.piece("[", 2).piece("]" , 1)
+				set COL = X.piece("]", 2)
+
+				if '{List}FILES.contains(TABLE) do {
+					set ER = 1 
+
+					// Invalid table name - ~p1 
+					set RM = $$^MSG(1484) 
+				} 
+				else   if 'Db.isDefined("DBTBL1D", "%LIBS='SYSDEV' AND FID=:TABLE AND DI=:COL") do {
+
+					set ER = 1 
+
+					// Invalid data item ~p1 
+					set RM = $$^MSG(1298, X) 
+				} 
+			} 
+
+			// Otherwise, find which table 
+			else  do {
+				type Number I 
+
+				set TABLE = "" 
+				for I = 1:1:FILES.length(",") do { quit:'TABLE.isNull() 
+					type String T = FILES.piece("," , I)
+
+					if Db.isDefined("DBTBL1D","%LIBS='SYSDEV' AND FID=:T AND DI=:X") do { 
+						set TABLE = T 
+						set COL = X 
+					} 
+				} 
+
+				if TABLE.isNull() do {
+					set ER = 1 
+
+					// Invalid data item ~p1 
+					set RM = $$^MSG(1298, X) 
+				} 
+			} 
+
+			if 'ER do { 
+				set X = "["_TABLE_ "]"_COL 
+
+				// Replace column references with literal 1 for test 
+				set TEST = TEST_1 
+			} 
+			else  set TEST = TEST_X         // Add operator
+		} 
+	}
+
+	// Execute TEST string to see if any errors in formula 
+	if 'ER do { 
+		type String Z
+		catch error {
+
+			set ER = 1
+
+			// Invalid format ~p1 
+			set RM = $$^MSG(1350, STR) 
+		} 
+
+		#ACCEPT Date=11/20/05; Pgm= Vinayak Teli; CR=17903 
+		xecute "set Z="_TEST 
+	} 
+
+	quit 
+
+
+ERR	//
+
+	type public Number ER
+	
+	type Number ET
+	
+	do ET^%ZT(.ET)
+
+	if ET = "UNDEFINED" set ER = 0 quit
+	set ER=1 
+	
+	quit
+
+	
+UPDTBL(RecordDBTBL5Q d5q , String QRID)
+	
+	/*
+	While saving DBTBL6F array of records, be sure to add 100 to its sequence
+	While retriving from DBTBL6F , create the array with Seq-100
+
+	This section is used load the DBTBL6F for existing screens 
+	or create a new DBTBL6F.  If existing screen, merge the old fields to
+	the new, if they match.
+	
+	Later save the DBTBL6F
+	*/
+	
+	type public Number %PAGE, %REPEAT, UX
+	type public String VFMQ
+	
+	type Number I, SEQ
+	type String D6F(), FILES, ITEMS, msg
+	
+	type RecordDBTBL6F DBTBL6F()
+	type RecordDBTBL6F D6FOLD()
+	
+	// Get any existing field first
+	type DbSet ds = Db.selectDbSet("DBTBL6F","LIBS='SYSDEV' AND QRID=:QRID","SEQ ASC")
+
+	set I = 0
+	while ds.next() do {
+
+		set I=I+1
+		set D6FOLD(I) = ds.getRecord()
+	}
+
+	// Get all new fields and merge old if they match
+
+	set FILES = d5q.pfid
+
+	if 'd5q.fld1.isNull() set msg = $$^DBSITEM(FILES,d5q.fld1,.D6F())
+	if 'd5q.fld2.isNull() set msg = $$^DBSITEM(FILES,d5q.fld2,.D6F())
+	if 'd5q.fld3.isNull() set msg = $$^DBSITEM(FILES,d5q.fld3,.D6F())
+	if 'd5q.fld4.isNull() set msg = $$^DBSITEM(FILES,d5q.fld4,.D6F())
+	if 'd5q.fld5.isNull() set msg = $$^DBSITEM(FILES,d5q.fld5,.D6F())
+	if 'd5q.fld6.isNull() set msg = $$^DBSITEM(FILES,d5q.fld6,.D6F())
+
+	set I = 0
+	set SEQ = ""
+	for  set SEQ = D6F(SEQ).order() quit:SEQ.isNull()  do {
+		
+		set I = I+1
+		set DBTBL6F(I) = Class.new("RecordDBTBL6F","LIBS='SYSDEV',QRID=:QRID")
+		
+		// Merge old
+		#ACCEPT Date=04/28/2008; Pgm=RussellDS; CR=33611; Group=SCOPE
+		if D6FOLD(I).exists(), D6FOLD(I).formdi = D6F(I).piece("|",1) set DBTBL6F(I) = D6FOLD(I).copy()
+		// New
+		else  do {
+	
+			set DBTBL6F(I).formdi = D6F(I).piece("|",1)
+			set DBTBL6F(I).formdesc = D6F(I).piece("|",2)
+			set DBTBL6F(I).formidn = D6F(I).piece("|",3)
+			set DBTBL6F(I).formsize = D6F(I).piece("|",4)
+			set DBTBL6F(I).formfmt = D6F(I).piece("|",5)
+			set DBTBL6F(I).formfun = D6F(I).piece("|",6)
+			set DBTBL6F(I).formlf = D6F(I).piece("|",7)
+		}
+		
+		set DBTBL6F(I).seq = 100 + I
+		// All are new records since will delete old ones
+		do DBTBL6F(I).setMode(0)
+	}
+
+	if I<20 do { 
+		set %REPEAT = I
+		#ACCEPT Date=04/28/2008; Pgm=RussellDS; CR=33611; Group=MISMATCH
+		do DRV^USID(0,"DBTBL6F",.DBTBL6F())	
+	}
+	else  do {
+		
+		set UX=1
+		set %PAGE=%PAGE+1
+		set %REPEAT=19 
+
+		#ACCEPT Date=04/28/2008; Pgm=RussellDS; CR=33611; Group=MISMATCH
+		do DRV^USID(0,"DBTBL6F",.DBTBL6F())
+	}
+	
+	if VFMQ = "Q" quit
+	
+	// Save Main Screen data
+	do d5q.save()
+
+	// Save Second Screen data - delete old record first
+	do Db.delete("DBTBL6F", "LIBS='SYSDEV' AND QRID=:QRID")
+	set I = ""
+	for  set I = DBTBL6F(I).order() quit:I.isNull()  do DBTBL6F(I).save()
+	
+	quit
+	
+	
+UPDSTAT(RecordDBTBL5Q d5q , String QRID)
+	/*
+	This section is used to build the DBTBL6SQ for the statictics screen
+	*/
+
+	type public Number %PAGE, %PG, %REPEAT
+	type public String VFMQ
+	
+	type Number I
+	
+	type RecordDBTBL6SQ D6S()
+
+	for I=21:1:40 set D6S(I-20) = Db.getRecord("DBTBL6SQ", "LIBS='SYSDEV',QID=:QRID,SEQ=:I", 1)
+
+	set %PG=%PAGE
+	set %REPEAT = 20
+	
+	#ACCEPT Date=04/30/2008; Pgm=RussellDS; CR=33611; Group=MISMATCH
+	do DRV^USID(0, "DBTBL6S", .D6S())		
+	
+	if VFMQ = "Q" quit
+	
+	// Delete existing entries
+	do Db.delete("DBTBL6SQ", "LIBS='SYSDEV' AND QID=:QRID")
+	
+	// Avoid scope warning on D6S() may not have been instantiated
+	#ACCEPT Date=04/30/2008; Pgm=RussellDS; CR=33611; Group=SCOPE
+	for I=1:1:20 if 'D6S(I).qdi.isNull() do {
+	
+		do D6S(I).setMode(0)
+		do D6S(I).save()
+	}
+	
+	quit
+	
+	
+PPQ(	RecordDBTBL5Q fDBTBL5Q,
+	String FILES,
+	String PFID,
+	String X,
+	String RM,
+	Number ER)	// Post Processor for Query Lines in Screen DBTBL5Q
+
+	type String ZX
+	
+	if fDBTBL5Q.msql do { quit     // MSQL query syntax
+ 
+        	// Check SQL syntax
+        	if 'fDBTBL5Q.qid2.isNull() do ^SQLQ(fDBTBL5Q.qid2,fDBTBL5Q.pfid)
+        	if ER,RM.isNull() set RM="Invalid MSQL query syntax"
+ 	}
+  
+ 	// DATA-QWIK query syntax
+ 
+ 	if X="" quit
+ 
+	set FILES = fDBTBL5Q.pfid
+ 	set PFID = FILES.piece(",",1)
+ 
+	set ZX = X
+ 
+	do ^DBSQRY
+ 
+	set X = ZX
+ 
+	quit
+	
+
+INIT(QRSCREEN)	//initialize the screen objects - call Usid
+
+	type String PGM, SID
+	
+	set SID="DBTBL5Q"
+	do ^USID
+	set QRSCREEN=PGM_"(%O,.d5q)"
+	quit
+	
+	
+public FIXFMT(String INPUT,	// Input string
+	      List TABLES,	// Tables to check
+	      Number NLEN,	// Field length		/NOREQ/MECH=REFNAM:W
+	      Number NDEC,	// Decimal		/NOREQ/MECH=REFNAM:W
+	      String NFMT)	// Format		/NOREQ/MECH=REFNAM:W
+	      
+	/*
+	Converts string with variables into DQ syntax [TABLE]COLUMN.
+	
+	For example, INPUT = BAL*IRN/36500
+		     TABLES = DEP
+		     return value = [DEP]BAL*[DEP]IRN/36500
+		     
+	RETURNS:
+		. $$	INPUT string modified to include [TABLE] references
+			If return is null, indicates an error
+	*/
+	
+	type Number ptr
+	type String atom, in, return, tok
+	
+	set return = ""
+	
+	set (NLEN, NDEC) = 0
+	set NFMT = ""
+	
+	set in = $$TOKEN^%ZS(INPUT, .tok, """")
+	
+	set ptr = 0
+	for  set atom = $$ATOM^%ZS(in, .ptr, "=_<>()+-*#\/", tok, 1) do { quit:(ptr = 0)
+	
+		if ({List}"=,_,<,>,(,),+,-,*,#,\,/").contains(atom) set return = return_atom
+		else  if atom.isNumber() set return=return_atom
+		// Tokenized string
+		else  if atom.beginsWith(0.char()) set return=return_atom
+		// Already in right form
+		else  if (atom ? 1"["1AP.AN1"]"1AP.AN) set return = return_atom
+		// Intrinsic or extrinsic function call
+		else  if atom.beginsWith("$") set return = return_atom
+		// See if in one of the tables and replace
+		else  do {
+			
+			type Boolean isFOUND = 0
+			type Number i
+			type String table
+			
+			for i = 1:1:TABLES.count() do {
+				
+				set table = TABLES.elementAt(i)
+				
+				type ResultSet rs = Db.select("LEN,TYP,DEC", "DBTBL1D", "%LIBS='SYSDEV' AND FID=:table AND DI=:atom")
+				
+				if rs.next() do {
+					
+					set isFOUND = 1
+					set return = return_"["_table_"]"_atom
+					
+					if NFMT.isNull() set NFMT = rs.getCol("TYP")
+					if (rs.getCol("LEN") > NLEN) set NLEN = rs.getCol("LEN")
+					if (rs.getCol("DEC") > NDEC) set NDEC = rs.getCol("DEC")
+					if (rs.getCol("TYP") = "$") set NFMT = "$"
+				}
+			}
+			
+			if 'isFOUND do {
+			
+				set return = ""
+				set ptr = 0
+			}
+		}
+	}
+	
+	if 'return.isNull() set return = $$UNTOK^%ZS(return, tok)
+
+	quit return
+ #OPTION ResultClass ON
+public String vSIG()	quit "61453^45871^Dan Russell^16715"	// Signature - LTD^TIME^USER^SIZE

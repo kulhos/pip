@@ -1,0 +1,92 @@
+DBSUTLQR
+	/*
+	 ORIG: Badrinath Giridharan
+	 DESC: DBSUTL utility for qwik reports
+
+	---- Revision History ------------------------------------------------
+	04/30/2008 - RussellDS - CR33611
+		Removed DEL section.  Moved code into DBSEXEQ, only user.
+	
+	10/10/2007 - RussellDS - CR29695
+		Eliminate use of setMode(3).  Being obsoleted in PSL.
+		
+		Cleaned up PSL warnings.
+	
+	10/18/06 - giridharanb - CR22588
+	Converted the qwik report portion of DBSUTL into PSL. This procedure
+	supports the copying/deletion of qwik report definitions.
+	See associated changes to DBSEXEQ procedure.
+
+	*/
+	
+	quit	// DO NOT CALL AT TOP.
+	
+COPY(DQSCR)	// COPY DQ DEFINITION
+
+	type Number DBOPT, isDone, isExist, OLNTB
+	type String %NOPRMT, %READ, AGID, CQRID, DLIB, DQTABLE, DQREF, FID
+	type String FIND, IDEXCH, NAME, NQRID, OID, PID, QID, QRID, RID, SID
+	type String TLIB, TABLE, VFMQ
+	
+	set DQTABLE = "DBTBL5Q", DBOPT=6
+	set QRID=$$FIND^DBSGETID(DQTABLE,0) if QRID="" quit
+	
+	type RecordDBTBL1 dbtbl1 = Db.getRecord("DBTBL1","%LIBS='SYSDEV',FID=:DQTABLE")
+	set NAME = dbtbl1.acckeys
+	set NAME=NAME.piece(",",NAME.length(","))
+	
+	type RecordDBTBL5Q d5q = Db.getRecord("DBTBL5Q","LIBS='SYSDEV',QRID=:QRID")
+	if DQSCR'="" set %ProcessMode=2,%NOPRMT="Q" D @DQSCR
+	
+	set TLIB="SYSDEV",OLNTB=22020,DQREF=DQTABLE
+	set DQREF="["_DQREF_"]"_NAME
+	set CQRID=QRID
+	
+	set (FID,SID,QID,QRID,RID,PID,AGID,IDEXCH)=""
+	set %READ=DQREF_"/TBL="_$P(DQREF,"]",1)_"]/XPP=D PP^DBSUTL"
+	
+	type RecordDBCTL dbctl = Db.getRecord("DBCTL", "NAME='DBOPT',CODE=:DBOPT", 1)
+	
+	set %READ=%READ_"/TYP=U/DES=To "_ dbctl.desc_ " Definition Name"
+	set %NOPRMT="F" D ^UTLREAD I VFMQ'="F" quit
+	
+	set DQREF=DQREF.piece("]",2)
+	set NQRID=@DQREF
+	
+	do Runtime.start("CS")
+	
+	type RecordDBTBL5Q d5qn = d5q.copy()
+	set d5qn.QRID=NQRID
+	set d5qn.PGM=""
+	set d5qn.LTD=%SystemDate
+	set d5qn.UID=%UserName
+	
+	do d5qn.bypassSave()
+	
+	type DbSet ds = Db.selectDbSet("DBTBL6F","LIBS='SYSDEV' AND QRID=:CQRID","SEQ ASC")
+	while ds.next() do {
+		
+		type RecordDBTBL6F dbtbl6f = ds.getRecord()
+		type RecordDBTBL6F dbtbl6fn = dbtbl6f.copy()
+		
+		set dbtbl6fn.qrid = NQRID
+		do dbtbl6fn.bypassSave()
+		
+		}
+		
+	type DbSet ds2 = Db.selectDbSet("DBTBL6SQ","LIBS='SYSDEV' AND QID=:CQRID","SEQ ASC")
+	while ds2.next() do {
+		
+		type RecordDBTBL6SQ dbtblsq = ds2.getRecord()
+		type RecordDBTBL6SQ dbtblsqn = dbtblsq.copy()
+		
+		set dbtblsqn.qid = NQRID
+		do dbtblsqn.bypassSave()
+		
+		}
+			
+	do Runtime.commit()
+		
+	quit
+ #OPTION ResultClass ON
+public String vSIG()	quit "61116^42997^Dan Russell^2356"	// Signature - LTD^TIME^USER^SIZE
