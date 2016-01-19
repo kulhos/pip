@@ -9,3 +9,4 @@ exit
 EOF
 
 $gtm_dist/mupip create
+$gtm_dist/mupip load -for=zwr /pip/gbls/pip02.zwr
