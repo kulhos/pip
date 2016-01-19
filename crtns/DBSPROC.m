@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSPROC ****
  ; 
- ; 02/24/2010 18:21 - pip
+ ; 01/19/2016 12:23 - root
  ; 
 DBSPROC ; Procedure definition
  ; I18N=QUIT

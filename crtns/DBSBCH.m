@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSBCH ****
  ; 
- ; 02/24/2010 18:21 - pip
+ ; 01/19/2016 12:23 - root
  ; 
  ;
 VERSION() ; Batch compiler Version ID
@@ -706,17 +706,17 @@ vL3a1 S vos2=$$BYTECHAR^SQLUTL(254)
 vL3a4 S vos4=$O(^MPROF(vos3,vos4),1) I vos4="" G vL3a0
  S vos5=""
 vL3a6 S vos5=$O(^MPROF(vos3,vos4,vos5),1) I vos5="" G vL3a4
- I '(vos5'="ALL") G vL3a6
  S vos6=""
-vL3a9 S vos6=$O(^MPROF(vos3,vos4,vos5,vos6),1) I vos6="" G vL3a6
+vL3a8 S vos6=$O(^MPROF(vos3,vos4,vos5,vos6),1) I vos6="" G vL3a6
  S vos7=""
-vL3a11 S vos7=$O(^MPROF(vos3,vos4,vos5,vos6,vos7),1) I vos7="" G vL3a9
+vL3a10 S vos7=$O(^MPROF(vos3,vos4,vos5,vos6,vos7),1) I vos7="" G vL3a8
+ I '(vos5'="ALL") G vL3a10
  Q
  ;
 vFetch3() ;
  ;
  ;
- I vos1=1 D vL3a11
+ I vos1=1 D vL3a10
  I vos1=2 S vos1=1
  ;
  I vos1=0 S rs="" Q 0

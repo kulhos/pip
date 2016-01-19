@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PSLRecordBuilder ****
  ; 
- ; 02/24/2010 18:22 - pip
+ ; 01/19/2016 12:23 - root
  ; 
  ;  #PACKAGE framework.psl
  ;  #CLASSDEF extends=Primitive delimiter=9 public
@@ -4293,15 +4293,15 @@ vL10a1 S vos2=$$BYTECHAR^SQLUTL(254)
 vL10a4 S vos4=$O(^DBINDX(vos4),1) I vos4="" G vL10a0
  S vos5=""
 vL10a6 S vos5=$O(^DBINDX(vos4,"FKPTR",vos5),1) I vos5="" G vL10a4
- I '(vos5'=$ZCH(254)) G vL10a6
  S vos6=""
-vL10a9 S vos6=$O(^DBINDX(vos4,"FKPTR",vos5,vos3,vos6),1) I vos6="" G vL10a6
+vL10a8 S vos6=$O(^DBINDX(vos4,"FKPTR",vos5,vos3,vos6),1) I vos6="" G vL10a6
+ I '(vos5'="") G vL10a8
  Q
  ;
 vFetch10() ;
  ;
  ;
- I vos1=1 D vL10a9
+ I vos1=1 D vL10a8
  I vos1=2 S vos1=1
  ;
  I vos1=0 S rs="" Q 0
@@ -4557,15 +4557,15 @@ vL19a1 S vos7=$$BYTECHAR^SQLUTL(254)
 vL19a4 S vos9=$O(^DBINDX(vos9),1) I vos9="" G vL19a0
  S vos10=""
 vL19a6 S vos10=$O(^DBINDX(vos9,"FKPTR",vos10),1) I vos10="" G vL19a4
- I '(vos10'=$ZCH(254)) G vL19a6
  S vos11=""
-vL19a9 S vos11=$O(^DBINDX(vos9,"FKPTR",vos10,vos8,vos11),1) I vos11="" G vL19a6
+vL19a8 S vos11=$O(^DBINDX(vos9,"FKPTR",vos10,vos8,vos11),1) I vos11="" G vL19a6
+ I '(vos10'="") G vL19a8
  Q
  ;
 vFetch19() ;
  ;
  ;
- I vos6=1 D vL19a9
+ I vos6=1 D vL19a8
  I vos6=2 S vos6=1
  ;
  I vos6=0 S rsfk="" Q 0

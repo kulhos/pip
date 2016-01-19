@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSTBL ****
  ; 
- ; 02/24/2010 18:21 - pip
+ ; 01/19/2016 12:23 - root
  ; 
 DBSTBL(vREF,vSTR,vFMT,vMIN,vMAX,vPT,vPB,vHLP,vHDG,vUFK) ; 
  ;

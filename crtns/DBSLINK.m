@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSLINK ****
  ; 
- ; 02/24/2010 18:21 - pip
+ ; 01/19/2016 12:23 - root
  ; 
 DBSLINK(dbtbl2) ; ;DBS - U - v7.0 - PSL Linked Screen Compiler
  N vTp

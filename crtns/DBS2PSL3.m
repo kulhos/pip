@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBS2PSL3 ****
  ; 
- ; 02/24/2010 18:21 - pip
+ ; 01/19/2016 12:23 - root
  ; 
 DBS2PSL3(dbtbl2) ; DBS - U - V7.0 - PSL Screen compiler
  N I N SAVC N SAVD N X

@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSPROT5 ****
  ; 
- ; 02/24/2010 18:21 - pip
+ ; 01/19/2016 12:23 - root
  ; 
 DBSPROT5 ; 
  N vTp
@@ -197,9 +197,9 @@ vL2a0 S vos5=0 Q
 vL2a1 S vos6=$$BYTECHAR^SQLUTL(254)
  S vos7=""
 vL2a3 S vos7=$O(^DBTBL("SYSDEV",5,vos7),1) I vos7="" G vL2a0
- I '(vos7'?1"QWIK"1E1"".E) G vL2a3
  S vos8=$G(^DBTBL("SYSDEV",5,vos7,0))
  I '($P(vos8,"|",7)>0) G vL2a3
+ I '(vos7'?1"QWIK"1E1"".E) G vL2a3
  Q
  ;
 vFetch2() ;

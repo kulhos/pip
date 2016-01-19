@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDRV ****
  ; 
- ; 02/24/2010 18:21 - pip
+ ; 01/19/2016 12:23 - root
  ; 
  ;  #PACKAGE framework
  ;  #OPTION ResultClass ON
@@ -177,7 +177,7 @@ build(isRPC,args) ;
  ;
  N iofile S iofile=$$vClVobj($ST,"IO")
  ;
- S $P(vobj(iofile,1),"|",1)="/home/pip/pip_V02/spool/DBSDRVDSP.tmp"
+ S $P(vobj(iofile,1),"|",1)="/pip/spool/DBSDRVDSP.tmp"
  S $P(vobj(iofile,1),"|",3)="NEWV"
  ;
  D
@@ -238,14 +238,14 @@ build(isRPC,args) ;
  .	Q 
  ;
  ; Build compiled routine
- S status=$$storePsl^PSLC("/home/pip/pip_V02/spool/DBSDRVDSP.tmp","DBSDRVDSP")
+ S status=$$storePsl^PSLC("/pip/spool/DBSDRVDSP.tmp","DBSDRVDSP")
  S status=$$run^PSLC("DBSDRVDSP")
  ;
  I (status>0) S retVal="Compile error - new version of DBSDRVDSP not rebuilt"
  E  S retVal=""
  ;
  ;  #ACCEPT Date=02/22/2009; Pgm=RussellDS; CR=35741; Group=ACCESS
- S status=$$DELETE^%OSSCRPT("/home/pip/pip_V02/spool/DBSDRVDSP.tmp")
+ S status=$$DELETE^%OSSCRPT("/pip/spool/DBSDRVDSP.tmp")
  ;
  K vobj(+$G(iofile)) Q retVal
  ;

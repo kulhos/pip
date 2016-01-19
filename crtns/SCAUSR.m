@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAUSR ****
  ; 
- ; 02/24/2010 18:22 - pip
+ ; 01/19/2016 12:23 - root
  ; 
 SCAUSR ; Set up new Employee/User
  ;

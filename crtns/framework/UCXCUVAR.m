@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCXCUVAR ****
  ; 
- ; 02/24/2010 18:23 - pip
+ ; 01/19/2016 12:24 - root
  ; 
  ;  #PACKAGE framework.psl.upgrade
  ;  #OPTION  ResultClass ON
@@ -161,8 +161,8 @@ vL2a0 S vos1=0 Q
 vL2a1 S vos2=$$BYTECHAR^SQLUTL(254)
  S vos3=""
 vL2a3 S vos3=$O(^DBTBL("SYSDEV",1,"CUVAR",9,vos3),1) I vos3="" G vL2a0
- I '(vos3'="""*""") G vL2a3
  S vos4=$G(^DBTBL("SYSDEV",1,"CUVAR",9,vos3))
+ I '(vos3'="""*""") G vL2a3
  I '($P(vos4,"|",16)="") G vL2a3
  Q
  ;

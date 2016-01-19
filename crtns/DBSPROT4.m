@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSPROT4 ****
  ; 
- ; 02/24/2010 18:21 - pip
+ ; 01/19/2016 12:23 - root
  ; 
 DBSPROT4(FILES,DINAM,%MCODE,TYPE,VTABNO,vobjlst) ; 
  ;

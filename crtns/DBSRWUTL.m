@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRWUTL ****
  ; 
- ; 02/24/2010 18:21 - pip
+ ; 01/19/2016 12:23 - root
  ; 
 DBSRWUTL ; 
  ;
@@ -1075,8 +1075,8 @@ vDbEx1() ; min(1): DISTINCT LIBS,RID,GRP,ITMSEQ FROM DBTBL5D WHERE LIBS='SYSDEV'
  N vsql1
  S vsql1=$$BYTECHAR^SQLUTL(254)
  ;
- I '(101>100) Q 0
  I '($D(^DBTBL("SYSDEV",5,V1,"@PH",101))#2) Q 0
+ I '(101>100) Q 0
  Q 1
  ;
 vOpen1() ; KEYWORD FROM STBLSYSKEYWD
@@ -1232,15 +1232,15 @@ vL6a1 S vos2=$$BYTECHAR^SQLUTL(254)
  S vos6=+vos6
  S vos7=$G(END)
  S vos7=+vos7
- I '(vos5>100) G vL6a0
  S vos8=vos6
-vL6a11 S vos8=$O(^DBTBL("SYSDEV",5,vos3,vos4,vos5,vos8),1) I vos8=""!(vos8'<vos7) G vL6a0
+vL6a10 S vos8=$O(^DBTBL("SYSDEV",5,vos3,vos4,vos5,vos8),1) I vos8=""!(vos8'<vos7) G vL6a0
+ I '(vos5>100) G vL6a10
  Q
  ;
 vFetch6() ;
  ;
  ;
- I vos1=1 D vL6a11
+ I vos1=1 D vL6a10
  I vos1=2 S vos1=1
  ;
  I vos1=0 S rs="" Q 0

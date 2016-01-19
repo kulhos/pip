@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSTLOAD ****
  ; 
- ; 02/24/2010 18:22 - pip
+ ; 01/19/2016 12:23 - root
  ; 
  ;  #PACKAGE framework
  ;Private;To load the data from a table to a RMS file for transfer to a client
@@ -538,19 +538,19 @@ vL1a1 S vos2=$$BYTECHAR^SQLUTL(254)
  S vos3=$G(FID) I vos3="" G vL1a0
  S vos4=""
 vL1a4 S vos4=$O(^DBINDX("SYSDEV","STR",vos3,vos4),1) I vos4="" G vL1a0
- I '(vos4'=$ZCH(254)) G vL1a4
  S vos5=""
-vL1a7 S vos5=$O(^DBINDX("SYSDEV","STR",vos3,vos4,vos5),1) I vos5="" G vL1a4
+vL1a6 S vos5=$O(^DBINDX("SYSDEV","STR",vos3,vos4,vos5),1) I vos5="" G vL1a4
  S vos6=""
-vL1a9 S vos6=$O(^DBINDX("SYSDEV","STR",vos3,vos4,vos5,vos6),1) I vos6="" G vL1a7
+vL1a8 S vos6=$O(^DBINDX("SYSDEV","STR",vos3,vos4,vos5,vos6),1) I vos6="" G vL1a6
  S vos7=$G(^DBTBL("SYSDEV",1,vos3,9,vos6))
- I '($P(vos7,"|",16)="") G vL1a9
+ I '(vos4'="") G vL1a8
+ I '($P(vos7,"|",16)="") G vL1a8
  Q
  ;
 vFetch1() ;
  ;
  ;
- I vos1=1 D vL1a9
+ I vos1=1 D vL1a8
  I vos1=2 S vos1=1
  ;
  I vos1=0 S collist="" Q 0

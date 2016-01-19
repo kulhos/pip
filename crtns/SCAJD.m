@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAJD ****
  ; 
- ; 02/24/2010 18:22 - pip
+ ; 01/19/2016 12:23 - root
  ; 
 SCAJD(STRING,MASK) ; SCA Julian Date Conversion
  ;

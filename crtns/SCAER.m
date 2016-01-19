@@ -1,7 +1,7 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAER ****
  ; 
- ; 02/24/2010 18:22 - pip
+ ; 01/19/2016 12:23 - root
  ; 
  ; Leave this line until new DBSPROC doesn't replace it (see CR27800)
  ;  #OPTION ResultClass ON
