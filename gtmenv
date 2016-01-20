@@ -26,7 +26,10 @@
 
 #Change to the PIP directory
 # Directory to define GT.M and PROFILE/Anyware environment variables.
-DIR=/pip
+#DIR=/pip
+#DIR=$(cd $(dirname ${0}) && pwd)
+#use readlink
+DIR=/bip
 
 PROFILE_DIR=${DIR}
 DIR_REF=`basename ${DIR}|tr "[a-z]" "[A-Z]"`
