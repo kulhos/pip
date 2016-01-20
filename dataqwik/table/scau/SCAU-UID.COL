@@ -1,0 +1,34 @@
+NOD=2*
+LEN=20
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=User ID
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=User@ID
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+Unique identification number used to 1) access PROFILE (in combination with a
+password) and to 2) identify a user (online and batch process) for reporting
+purposes.

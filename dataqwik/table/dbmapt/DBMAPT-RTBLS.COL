@@ -1,0 +1,34 @@
+NOD=TBL
+LEN=100
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Relational Database Table(s)
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Relational Database Table(s)
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The name or names of the table as it appears in the relational database schema.
+If the table is renamed in the RDB, this column has the renamed valued.  If the
+table is split in the RDB, this column contains a list of the split tables.

@@ -1,0 +1,34 @@
+NOD=JRNID
+LEN=250
+DFT=
+DOM=
+TBL=[DBTBL1D]DI,DES:LIST:QU "[DBTBL1D]FID=<<PRITABLE>>"
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Exclude Columns
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=6
+RHD=Exclude Columns
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+  One or more columns that can be excluded based on the column being modified. 
+  For example, DEP.FMLD can be excluded from creating a history entry if
+  DEP.INP is modified.

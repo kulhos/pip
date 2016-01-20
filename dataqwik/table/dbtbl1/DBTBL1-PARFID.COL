@@ -1,0 +1,38 @@
+NOD=10
+LEN=25
+DFT=
+DOM=
+TBL=[DBTBL1]
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Inheritance File Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=Inheritance@File Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+A supertype file that contains data items, indexes, and journals that are
+common to a group of files.  The system propogates any change that is made to
+an element in a supertype file to the files that reference it (i.e., to the
+subtype files).  Therefore, when a supertype/subtype file relationship exists,
+users can only modify or delete elements that exist in a supertype file.
+
+For example, the Deposit Account Master file [DEP] and Loan Account Master file

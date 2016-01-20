@@ -1,0 +1,71 @@
+NOD=
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Report Header
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Report Header
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The report heading the system uses for QWIK reports created using data items
+in file definitions referencing this master data dictionary data item.  The
+report heading is usually shorter (more cryptic) than the description
+([DBSMDD]DES) associated with the data item itself.  If blank, DATA-QWIK uses
+the full description as the default value for the QWIK report heading.
+
+The value in the [DBSMDD]RHD data item defaults as the Report Header data
+item in file definitions referencing this master data dictionary data item
+([DBTBL1D]RHD).  The user can modify the defaulted value if the Protect Report
+Header data item ([DBSMDD]PRRHD) contains N (No).
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) links to the [MDDPBS]MINRATE master data dictionary data item,
+and the [MDDPBS]MINRATE data item specifies a report header of Minimum Rate,
+the system defaults Minimum Rate into the Report Header attribute
+([DBTBL1D]RHD) associated with the [CRCD]MINRATE data item.
+
+The correct syntax to create a report header that splits and prints on two
+lines is:  the heading to appear on the first line, followed by the @ symbol,
+followed by the heading to appear on the second line.
+
+Example:
+
+        Account@Balance produces the following heading on the QWIK report:
+
+                Account
+                Balance
+
+Headings automatically appear right-justified within the field length of the
+data item ([DBSDOM]LEN) for the following data types:  D (date), $ (currency
+amount), and N (numeric).
+
+Headings appear left-justified for the following data types:  T (text) and C
+(time).
+
+For multiple-line headings, such as the previous example, the system centers
+the shorter of the lines in relation to the longer of the lines.
+
+The user can alter the default report header when the system creates the
+report.

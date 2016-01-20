@@ -1,0 +1,34 @@
+NOD=3*
+LEN=3
+DFT=
+DOM=
+TBL=[SCASYS]
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=System Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=System@Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+A code that identifies the system for which this user-defined data type is
+valid.  Examples of systems include an accounts payable system, DATA-QWIK,
+a general ledger system, PROFILE systems, and utilities systems.

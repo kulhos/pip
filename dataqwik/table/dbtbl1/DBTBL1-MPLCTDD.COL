@@ -1,0 +1,52 @@
+NOD=10
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Implicit Data Dictionary Reference
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=5
+RHD=Implicit
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ This field references a file definition that exists under a different file
+ name or a different library, or both.  Any reference to this current file
+ definition will automatically imply a reference to the file and library names
+ contained in this field.
+
+ The correct syntax for this data item is [LIBRARY,FILE].
+
+ The default library is the current library, and the default file name is the
+ current file name.
+
+ /DBTBL1.MPLCTGB references a global that resides in a directory that
+ is not the current directory and is not defined as an implicit reference.
+ DATA-QWIK prefixes global references with the contents of this field to
+ create an extended global reference syntax.
+
+ The correct syntax is SYSTEM$DEVICE:[DIRECTORY].
+
+ The default system is the current system, the default device is the current
+ device, and the default directory is the current directory.
+
+ /DBTBL1.NETLOC identifies the location of the MUMPS database.

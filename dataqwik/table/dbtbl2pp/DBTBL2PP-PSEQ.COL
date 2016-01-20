@@ -1,0 +1,33 @@
+NOD=5*
+LEN=10
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Pre/Post Processor Sequence Number
+ITP=S
+MIN=
+MAX=
+DEC=3
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Pre/Post Processor Sequence Number
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+A sequence number corresponding to each line of code in a screen pre- or
+post-processor.

@@ -1,0 +1,125 @@
+NOD=1
+LEN=2
+DFT=*
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Minimum Print Region #1
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=MPR@#1
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+         MINIMUM PRINT LINES                           Default=*
+
+             Enter the minimum number of lines to be printed at the
+             bottom of a page before the report breaks to a new
+             page.
+
+             For the default of "*", the Minimum Print Lines value
+             is the number of lines in the detail section of the report.
+
+         _____________________________________________________________________
+         Example - Minimum Print Lines = *
+
+            - Report Definition ----------------------------------------------
+           |
+           | Account Number
+           | Comments
+           | =================================================================
+           |
+           | -- ACCOUNT NUMBER (REPORT DETAIL) -------------------------------
+           | 9999999999
+           | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+           | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+           | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+           | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+           | -- REPORT SUMMARY -----------------------------------------------
+           |
+
+            - Report Run (bottom of page 1) ----------------------------------
+           |
+           | 3003224
+           | Comment line 1
+           | Comment line 2
+           | Comment line 3
+           | Comment line 4
+           |
+           |
+            - (bottom of page 1) ---------------------------------------------
+
+            - (top of page 2) ------------------------------------------------
+           | Test Version XXX                              Date: 99/99/99
+           | Sample Report (SCAXXX)                        Page:  2
+           |
+           | Account Number
+           | Comments
+           | =================================================================
+           | 3003230
+           | Comment line 1
+           | Comment line 2
+           | Comment line 3
+           | Comment line 4
+
+           Note:  Full detail record prints at the top of the next page.
+
+         _____________________________________________________________________
+         Example - Minimum Print Lines = 1
+
+            - Report Definition ----------------------------------------------
+           |
+           | Account Number
+           | Comments
+           | =================================================================
+           |
+           | -- ACCOUNT NUMBER (REPORT DETAIL) -------------------------------
+           | 9999999999
+           | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+           | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+           | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+           | XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+           | -- REPORT SUMMARY -----------------------------------------------
+           |
+
+            - Report Run (bottom of page 1) ----------------------------------
+           |
+           | 3003224
+           | Comment line 1
+           | Comment line 2
+           | Comment line 3
+           | Comment line 4
+           | 3003230
+           | Comment line 1
+            - (bottom of page 1) ---------------------------------------------
+
+            - (top of page 2) ------------------------------------------------
+           | Test Version XXX                              Date: 99/99/99
+           | Sample Report (SCAXXX)                        Page:  2
+           |
+           | Account Number
+           | Comments
+           | =================================================================
+           | Comment line 2
+           | Comment line 3
+           | Comment line 4
+
+           Note:  Page break falls in the middle of a detail record.

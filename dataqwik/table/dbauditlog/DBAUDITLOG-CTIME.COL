@@ -1,0 +1,33 @@
+NOD=SEQ
+LEN=10
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=C
+DES=Clock Time
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=Clock Time
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The time at which the operation took place, as recorded by the server updating
+the audit log.

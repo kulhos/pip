@@ -1,0 +1,48 @@
+NOD=
+LEN=1
+DFT=Y
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Protect MUMPS Pattern Match
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Prot MUMPS@Pattern Match
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+An indicator which specifies whether (Y) or not (N) the system allows users to
+change the value in the MUMPS Pattern Match data item in file definitions
+([DBTBL1D]PTN) referencing this master data dictionary data item.  The value in
+the MUMPS Pattern Match data item in the master data dictionary definition
+([DBSMDD]PTN) defaults as the [DBTBL1D]PTN value for data items referencing the
+master data dictionary data item.
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) definition links to the [MDDPBS]MINRATE master data dictionary
+data item of [MDDPBS]MINRATE, and the [MDDPBS]MINRATE data item specifies a
+pattern match of 4N, the system defaults 4N into the MUMPS Pattern Match
+attribute ([DBTBL1D]PTN) associated with the [CRCD]MINRATE data item.
+
+If Y (Yes), the user can modify the [DBTBL1D]PTN value for the data item
+referencing this master data dictionary data item (e.g., the user can modify
+the value in the MUMPS Pattern Match attribute associated with the
+[CRCD]MINRATE data item).

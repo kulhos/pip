@@ -1,0 +1,37 @@
+NOD=SEQ
+LEN=55
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Column Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Form Control@- DI
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         FIELD NAME
+
+             The data item names specified in the list of DATA ITEMS on
+             the first page of the report definition.
+
+             The field name is limited to 12 characters.

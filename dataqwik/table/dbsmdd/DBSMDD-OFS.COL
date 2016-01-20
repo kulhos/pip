@@ -1,0 +1,45 @@
+NOD=
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Starting Position
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Byte@Ofset
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The position within a data item where a specified sub-field begins.  The system
+calculates the location of the sub-field relative to the beginning of another
+fixed length field.  For example, to map the data item [HIST]ITC2 (the second
+character of the ITC field), enter a 2 for this field and 1 for the Internal
+Length of Field Size data item ([DBSMDD]ILN).
+
+                                 <-- ITC -->
+
+              ^HIST(CID,TSEQ)=...|011011100|...
+                                   ^
+                                   |____ ITC2
+
+The institution achieves the same results if the data item is defined as a
+computed data item (i.e., $E([HIST]ITC,2)).

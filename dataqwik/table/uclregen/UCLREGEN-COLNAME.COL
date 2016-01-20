@@ -1,0 +1,36 @@
+NOD=SEQ
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Column Name
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=2
+RHD=Column Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The name of the column that was changed.
+
+If this entry is the result of either an INSERT or DELETE, an asterisk (*)
+will be used for COLNAME, indicating that all procedures with literals
+associated with this table must be regenerated.

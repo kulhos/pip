@@ -1,0 +1,34 @@
+NOD=5*
+LEN=31
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Method
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Method
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+ This field will be a valid entry from the Class Methods database 
+ table (OBJECTMET). Within the SYSMAPM table, its purpose is to indicate that
+ the method has been used within a label within the element.

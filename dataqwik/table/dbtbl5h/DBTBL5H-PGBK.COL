@@ -1,0 +1,91 @@
+NOD=1
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=New Page At Key Breaks #1
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=2
+RHD=NPAKB@#1
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         NEW PAGE AT KEY BREAKS (Y/N)
+
+             Y - Starts group section on a new page.
+
+             N - Prints each group section without breaking
+                 to a new page.
+
+         _____________________________________________________________________
+         Example - New Page at Key Breaks = Y (for BOO)
+
+            --------------------------------------------------------------
+           |                                                       Page 1
+           |  Branch of       Account       Account    Report
+           |  Ownership        Number       Balance  Short Name
+           |  ---------  ------------  ------------  ----------
+           |          1             7         45.00  SMITH,JOE
+           |                        4        200.00  SMITH,MARY
+           |                        5      1,000.00  LEE,KAREN
+           |                           ------------  ----------
+           |  Branch 1 Subtotals           1,245.00           3
+           |
+
+
+
+            --------------------------------------------------------------
+           |                                                       Page 2
+           |  Branch of       Account       Account    Report
+           |  Ownership        Number       Balance  Short Name
+           |  ---------  ------------  ------------  ----------
+           |          2             6         13.45  CORBIN,JOE
+           |                        1        120.00  DOE,JOHN
+           |                           ------------  ----------
+           |  Branch 2 Subtotals             133.45           2
+           |
+           |                           ============  ==========
+           |  REPORT TOTALS                1,378.45           5
+           |
+
+
+         _____________________________________________________________________
+         Example - New Page at Key Breaks = N (for BOO)
+
+            -----------------------------------------------------------
+           |                                                    Page 1
+           |  Branch of       Account       Account    Report
+           |  Ownership        Number       Balance  Short Name
+           |  ---------  ------------  ------------  ----------
+           |          1             7         45.00  SMITH,JOE
+           |                        4        200.00  SMITH,MARY
+           |                        5      1,000.00  LEE,KAREN
+           |                           ------------  ----------
+           |  Branch 1 Subtotals           1,245.00           3
+           |
+           |          2             6         13.45  CORBIN,JOE
+           |                        1        120.00  DOE,JOHN
+           |                           ------------  ----------
+           |  Branch 2 Subtotals             133.45           2
+           |
+           |                           ============  ==========
+           |  REPORT TOTALS                1,378.45           5

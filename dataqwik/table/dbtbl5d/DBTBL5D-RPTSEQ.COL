@@ -1,0 +1,39 @@
+NOD=
+LEN=2
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Report List Sequence
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=$$RPTSEQ^DBSRWUTL(RID,GRP)
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Report List@Sequence
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Report Listing Sequence
+
+This computed value is used by the DATA-QWIK report listing, report ID
+DBSRPTLST, to sort the report groups in the same order as the report's
+order by details.
+
+The page header group (@PH) sorts first, followed by each element of the
+report sequence, with the report summary (@RS) being last.

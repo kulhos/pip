@@ -1,0 +1,231 @@
+NOD=0
+LEN=1
+DFT=0
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Statistics Option
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=8
+RHD=Statistics@Option
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         STATISTICS (Y/N)
+
+             With this option set to YES, summary statistics will
+             be calculated on specified data items and printed
+             at the end of the report.
+
+             If you enter a "Y" in this field, you will get an
+             additional screen (represented in the box below) after
+             you complete the second page of the QWIK Report
+             definition.  On this statistics screen, you specify
+             data items, statistical increments, and the field on
+             which the statistics will be based.
+
+             Several examples are provided below.
+
+   +-------------------------------------------------------------------------+
+   |      Data Item               Based On            Statistics Increments  |
+   |                                                                         |
+   |                                                                         |
+   |    __________________   __________________     _______________________  |
+   |    __________________   __________________     _______________________  |
+   |    __________________   __________________     _______________________  |
+   |                                                                         |
+   +-------------------------------------------------------------------------+
+
+
+         DATA ITEM
+
+             Any valid data item name (in the format DI or [FID]DI)
+             from one of the access files.
+
+
+         BASED ON
+
+             Any valid data item name from one of the access files.
+             The system automatically enters the same data item for
+             BASED ON as the one you enter for the DATA ITEM.
+
+             If the BASED ON value is the same as the DATA ITEM value,
+             statistics are calculated according to the STATISTICS
+             INCREMENTS you supply.
+
+             If the BASED ON value is different from the DATA ITEM
+             value, statistics are calculated in groups based on the
+             value of the BASED ON data item.
+
+
+         STATISTICS INCREMENTS
+
+             Input is allowed only if the same data item name is used
+             for both DATA ITEM and BASED ON fields and the format type
+             of the data item is N, $, D, or C.
+
+             Enter one number to specify a fixed increment.
+             For example, enter "100" to calculate statistics in
+             increments of 100 (that is, 0 to 99.99, 100 to 199.99,
+             200 to 299.99, and so on).
+
+             Enter a series of numbers separated by commas to specify
+             the upper limits of a series of groups.  For example,
+             enter "100,300,900" to calculate statistics for the
+             groups 0 to 99.99, 100 to 299.99, 300 to 899.99 and
+             900 and over.
+
+         _____________________________________________________________________
+         Example
+
+           Report Definition ---------------------------------------------
+           |
+           |   Data Item              Based On     Statistics Increments
+           | -----------------  -----------------  ---------------------
+           |
+           | [SYSDEV,DEP]BAL    [SYSDEV,DEP]BAL    100,300,900
+           | [SYSDEV,DEP]BAL    [SYSDEV,DEP]BAL    100
+           | [SYSDEV,DEP]BAL    [SYSDEV,DEP]BAL
+           | [SYSDEV,DEP]BAL    [SYSDEV,DEP]IRN
+           | [SYSDEV,DEP]BAL    [SYSDEV,DEP]GRP
+           | [SYSDEV,DEP]TLD    [SYSDEV,DEP]TLD    10     <--- every 10 days
+           | [SYSDEV,DEP]STP    [SYSDEV,DEP]STP
+           | [SYSDEV,DEP]RTIME  [SYSDEV,DEP]RTIME  300    <--- every 5 minutes
+           | [SYSDEV,DEP]BAL    [SYSDEV,CIF]AGE
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           | ACCOUNT  ACCOUNT    ACCOUNT  INTEREST  LAST TRN  STOP   AGE AS
+           |  NUMBER    CLASS    BALANCE    RATE              FLAG  OF TODAY
+           | -------  -------  ---------  --------  --------  ----  --------
+           |       1  D           100.00   6.00000  11/01/91   N          28
+           |       2  D         1,200.00   5.00000  11/01/91   Y          87
+           |       3  D           500.00   7.00000  09/01/90   Y          58
+           |       4  D         3,000.00   7.00000  07/01/91   N          76
+           |       5  L           100.00  10.00000  05/01/90   N          64
+           |       6  D           500.00   6.50000  03/01/90   N          87
+           |       7  D           900.00   5.55000  04/01/91   Y          87
+           | ===============================================================
+           |                    6,300.00
+
+           |                        STATISTICS  REPORT
+           |                       ====================
+           |
+           |    RANGE                    COUNT      %          TOTAL       %
+           |
+           | << ACCOUNT BALANCE >>
+           |
+           |   100.00 -    299.99            2   28.57          200.00    3.1
+           |   300.00 -    899.99            2   28.57        1,000.00   15.8
+           |   900.00 -  3,000.00            3   42.86        5,100.00   80.9
+           |
+           |  ** LOW **       ** HIGH **   ==================================
+           |
+           |   100.00 -       3,000.00       7                6,300.00
+           |
+           | << ACCOUNT BALANCE >>
+           |
+           |    100.00 -    199.99           2   28.57          200.00    3.1
+           |    500.00 -    599.99           2   28.57        1,000.00   15.8
+           |    900.00 -    999.99           1   14.29          900.00   14.2
+           |  1,200.00 -  1,299.99           1   14.29        1,200.00   19.0
+           |  3,000.00 -  3,099.99           1   14.29        3,000.00   47.6
+           |
+           |  ** LOW **       ** HIGH **   ==================================
+           |
+           |   100.00 -       3,000.00       7                6,300.00
+           |
+           | << ACCOUNT BALANCE >>
+           |
+           |    100.00                       2   28.57          200.00    3.1
+           |    500.00                       2   28.57        1,000.00   15.8
+           |    900.00                       1   14.29          900.00   14.2
+           |  1,200.00                       1   14.29        1,200.00   19.0
+           |  3,000.00                       1   14.29        3,000.00   47.6
+           |
+           |  ** LOW **       ** HIGH **   ==================================
+           |
+           |   100.00 -       3,000.00       7                6,300.00
+           |
+           | << INTEREST RATE (NOMINAL) >>              << ACCOUNT BALANCE >>
+           |
+           |           5.00                  1   14.29        1,200.00   19.0
+           |           5.55                  1   14.29          900.00   14.2
+           |           6.00                  1   14.29          100.00    1.5
+           |           6.50                  1   14.29          500.00    7.9
+           |           7.00                  2   28.57        3,500.00   55.5
+           |          10.00                  1   14.29          100.00    1.5
+           |
+           |  ** LOW **       ** HIGH **   ==================================
+           |
+           |  5.00 -          10.00          7                6,300.00
+
+           | << ACCOUNT GROUP >>                         << ACCOUNT BALANCE >>
+           |
+           |                 DDA              4   57.14       3,700.00   58.7
+           |                 SAV              3   42.86       2,600.00   41.2
+           |
+           |  ** LOW **       ** HIGH **   ===================================
+           |
+           |                                  7               6,300.00
+           |
+           |  SUMMARY REPORT
+           |  ==============
+           |
+           |   RANGE                     COUNT      %           TOTAL       %
+           | << TRANSACTION - LAST DATE >>
+           |
+           |  03/01/90 -       03/10/90              1   14.29
+           |  08/28/90 -       09/06/90              1   14.29
+           |  03/26/91 -       04/04/91              1   14.29
+           |  04/25/91 -       05/04/91              1   14.29
+           |  06/24/91 -       07/03/91              1   14.29
+           |  11/01/91 -       11/10/91              2   28.57
+           |
+           |  ** LOW **       ** HIGH **   ==================================
+           |
+           |  03/01/90 -       11/01/91              7
+           |
+           | << STOP PAYMENT INDICATOR >>
+           |
+           |  N                               4   57.14
+           |  Y                               3   42.86
+           |
+           |  ** LOW **       ** HIGH **   ==================================
+           |
+           |   N -              Y              7
+           |
+           | << AGE AS OF TODAY >>                      << ACCOUNT BALANCE >>
+           |
+           |                  28              1   14.29           100.00    1.5
+           |                  58              1   14.29           500.00    7.9
+           |                  64              1   14.29           100.00    1.5
+           |                  76              1   14.29         3,000.00   47.6
+           |                  87              3   42.86         2,600.00   41.2
+           |
+           |  ** LOW **       ** HIGH **   ==================================
+           |
+           |  28 -             87              7                 6,300.00
+       ** LOW **       ** HIGH **   =========================================
+
+           28 -             87              7                 6,300.00

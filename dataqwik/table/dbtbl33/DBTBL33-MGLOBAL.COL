@@ -1,0 +1,36 @@
+NOD=BCHID
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Allow M Global References
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=23
+RHD=Allow M Global@References
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+A flag which indicates whether or not M Global references are allowed with in a
+particular batch definition.  If this flag is set to a 1, then M Global
+references will be allowed.  If this flag is set to a 0 (zero), then M Global
+references are not allowed and an error will be returned by the batch compiler
+if M Global references are found.

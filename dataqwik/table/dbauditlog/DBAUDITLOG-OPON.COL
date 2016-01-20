@@ -1,0 +1,38 @@
+NOD=SEQ
+LEN=30
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Table or Procedure Operated On
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=5
+RHD=Table or Procedure Operated On
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The identification of the table or procedure that the operation acted on.  For
+operations INSERT, UPDATE, and DELETE, this will be the name of the table
+involved.
+
+For SELECT, it will be the name of the table or tables involved in the SELECT.
+
+For EXECUTE, it will be the name of the procedure that was executed.

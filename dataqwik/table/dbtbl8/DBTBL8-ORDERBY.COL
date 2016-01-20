@@ -1,0 +1,35 @@
+NOD=INDEXNM
+LEN=120
+DFT=
+DOM=
+TBL=@SELDI^DBSFUN(FID,.X):LIST:NOVAL
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Order By
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=60
+DEL=
+POS=3
+RHD=Order By
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+  The primary sort field name followed by one or more secondary sort fields
+  separated by a comma.  Each sort field must be a valid data item name for
+  this file or a literal constant.  Up to ten (10) sort fields can be
+  specified for each index. name.  Computed data items are not be supported.

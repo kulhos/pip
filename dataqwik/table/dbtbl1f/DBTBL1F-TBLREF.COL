@@ -1,0 +1,33 @@
+NOD=FKEYS
+LEN=25
+DFT=
+DOM=
+TBL=[DBTBL1]
+PTN=X?1A.AN!(X?1"%".AN)!(X?.A."_".E)
+XPO=
+XPR=
+TYP=U
+DES=Foreign Filename
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=12
+DEL=
+POS=5
+RHD=Foreign@Filename
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The name of the parent file and its primary keys that make up the referenced
+key.

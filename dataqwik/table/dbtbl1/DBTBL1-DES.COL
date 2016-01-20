@@ -1,0 +1,34 @@
+NOD=FID
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Description
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Description
+SRL=
+CNV=
+LTD=
+USER=
+MDD=DES
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ The description will appear along with the file ID when listing file
+ definitions via on-line help.  Enter an expanded description which will
+ provide sufficient detail to distinguish the subject matter of the file.

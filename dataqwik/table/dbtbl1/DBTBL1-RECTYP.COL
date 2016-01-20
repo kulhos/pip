@@ -1,0 +1,55 @@
+NOD=100
+LEN=2
+DFT=1
+DOM=
+TBL=,0#None,1#Unsegmented,10#Node [Segmented],11#Mixed type 1&10
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Record Type
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=2
+RHD=Record@Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ This value identifies the type of physical MUMPS global construction that will
+ be used to support records in a file.  The two common styles are to define the
+ record completely on the bottom key (Unsegmented) or to define nodes after the
+ bottom key which contain groups of data (Segmented).  A global can use both
+ styles (mixed).
+
+ The possible codes are:
+
+  0   None                                10  Node [Segmented]
+  1   Unsegmented                         11  Mixed type 1&10
+
+ DATA-QWIK uses this code to edit the node and position assignment on the data
+ item physical definition page.  It is also used by the filers to optimize the
+ filing process.
+
+ Example:
+
+   Type 1                  ^global(key1,key2)=data|data|...
+
+   Type 10                 ^global(key,node1)=data|data|...
+                                       node2)=data|data|...
+
+   Type 11                 ^global(key1,key2)=data|data|...
+                                  (key1,key2,node)=data|data|...

@@ -1,0 +1,50 @@
+NOD=0
+LEN=1
+DFT=1
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Client/Server Compiler
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=18
+RHD=Client/Server@Compiler
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+          CLIENT/SERVER COMPILER (Y/N)                 Default=Y
+
+              Y - To use the compiler that minimizes client/server
+                  traffic by performing database access on the
+                  server.
+
+                  This option should not be used for reports that
+                  contain global references.
+
+              N - To use the compiler that does not optimize
+                  client/server traffic.
+
+                  This option should be used for reports that
+                  contain global references.
+
+
+        Note:  This field is obsolete with V7.0 and should be removed
+               at some point.  There are no longer two versions of the
+               report writer compiler.

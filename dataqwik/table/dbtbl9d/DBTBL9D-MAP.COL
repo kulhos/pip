@@ -1,0 +1,48 @@
+NOD=COLNAM
+LEN=200
+DFT=
+DOM=
+TBL=[STBLJRNFUNC]:NOVAL
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Mapping Definition
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Mapping Definition
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+ The column value definition of the journal file.  The following are valid
+ syntax supported by the system:
+
+   table.column               Any valid primary table column name
+   table.NEXTVAL              Next key value
+   OLD.COLUMN                 The old value of column COLUMN
+   NEW.COLUMN                 The new value of column COLUMN
+   nnn or nnn.nnn             Any valid numeric constant
+   "string"                   Any valid string constant
+   $$tag^pgm                  Any MUMPS function
+
+   EffectiveDate              Effective date
+   SystemDate                 System date
+   CurrentDate                Current date (Calendar)
+   CurrentTime                Current time
+   TellerLocC                 Teller location
+   UserId                     User ID

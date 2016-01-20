@@ -1,0 +1,42 @@
+NOD=ARCHSEQ
+LEN=12
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Primary Record Count
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=5
+RHD=Primary@Records
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The number of primary records for which archive detail records have been
+requested.  A primary record is made up of the top keys of the table, i.e.,
+all the keys except the bottom key.  For example, if archiving HIST, the top
+key is CID, so this would be a count of unique CID's.
+
+This count reflects primary records selected.  Not all selected records will
+have data archived.  If the journal file being archived does not contain
+records earlier than the archive date, there will be no detail records archived.
+
+This count is updated approximately every 10,000 detail records during the
+archiving process, providing a means to monitor the process.

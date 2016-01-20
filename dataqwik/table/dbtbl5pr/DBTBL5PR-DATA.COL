@@ -1,0 +1,44 @@
+NOD=SEQ
+LEN=400
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Data
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Data
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Data related to the specific section of report processor.  Each processing
+section is stored within a range of sequence numbers, as follows:
+
+          31-50 = Query defintions
+          51-70 = Pre-processor (after query)
+          71-90 = Post-processor
+         91-110 = Documentation
+        111-130 = Pre-processor (before query)
+        201-220 = OPEN pre-processor
+        221-240 = OPEN post-processor
+        241-260 = FETCH pre-processor
+        261-280 = FETCH post-processor
+        281-300 = PRINT pre-processor

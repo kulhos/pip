@@ -1,0 +1,34 @@
+NOD=10
+LEN=20
+DFT=
+DOM=
+TBL=,GTM#GT.M Database,ORACLE#Oracle Database
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Database
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=15
+RHD=Database
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Specifies which database to which this table is mapped.  Current options 
+are GT.M and Oracle.  If this field is empty, GT.M will be assumed to be 
+the database.

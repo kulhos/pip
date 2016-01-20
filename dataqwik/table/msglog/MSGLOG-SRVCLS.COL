@@ -1,0 +1,40 @@
+NOD=MSGID
+LEN=12
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Service Class of Message
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=Service Class of Message
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The service class identifying the type of message being processed by the
+server.  The possible values for this field are as follows:
+
+	0 = NMSP (Network Management Services & Procedures)
+        1 = TSSP (Transaction Services - Stored Procedures)
+        2 = FSSP (Function Services - Stored Procedures)
+        3 = MRPC (M Remote Procedure Calls)
+        4 = CSIS (Client/Server Interactive Session)
+        5 = MSQL (SQL Open Database Connectivity)

@@ -1,0 +1,33 @@
+NOD=CLASS
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Constructor Compiler LabelRef
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=20
+DEL=
+POS=3
+RHD=Constructor Compiler LabelRef
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+ This column provides the ability to provide a compiler call to
+ a label/routine to construct compiled code for the class.

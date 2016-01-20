@@ -1,0 +1,66 @@
+NOD=DI
+LEN=2
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Field Position
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=21
+RHD=Position
+SRL=
+CNV=
+LTD=
+USER=
+MDD=POS
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The column position of a data item in a record within a Sub Record ID
+(MUMPS node).
+
+The value marks the relative position within the record separated by
+the field delimiter attribute of the file.
+
+If multiple fields are contained within one field delimiter they are
+defined through the subfield definition parameters SFD1,SFD2,SFP,SFT.
+
+Example:
+
+ - The field delimiter defined on the file control page is 128 (|)
+ - The file LN maps to the MUMPS global ^ACN(CID,
+ - ""<<BAL>> and LN.TLD are mapped to Sub Record ID: 51.
+
+The physical structure of the global is ^ACN(account,51)=BAL|TLD|...
+      
+      +------------------------------------------------------------------+
+      |       File Name: LN                                              |
+      |       Data Item: BAL           Principal Balance                 |
+      |                                                                  |
+      |   Sub Record ID: 51                             Column: 1        |
+      |     Window Size: 12              Compression Reference:          |
+      |                                                                  |
+      +------------------------------------------------------------------+
+ 
+
+      +------------------------------------------------------------------+
+      |       File Name: LN                                              |
+      |       Data Item: TLD           Transaction - Last Date           |
+      |                                                                  |
+      |   Sub Record ID: 51                             Column: 2        |
+      |     Window Size:  8              Compression Reference:          |
+      |                                                                  |
+      +------------------------------------------------------------------+

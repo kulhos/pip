@@ -1,0 +1,49 @@
+NOD=3*
+LEN=25
+DFT=
+DOM=
+TBL=[DBTBL1]
+PTN=X?1A.AN!(X?1"%".AN)!(X?.A."_".E)
+XPO=
+XPR=
+TYP=U
+DES=File Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=12
+DEL=
+POS=
+RHD=File Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=FID
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ The File ID is a mnemonic assigned by the user to identify the file.  While no
+ formatting restrictions are imposed, it is best to develop your own scheme
+ when naming files.  It is best to keep the ID short - at various points within
+ DATA-QWIK reference is made to data items via the syntax: [FID]DI - where FID
+ is the file ID and DI is the data item name.  It can become burdensome to have
+ to correctly type out an overly-long file ID each time a data item is to be
+ referenced.  It is also good practice to identify a few initial characters as
+ being associated with a functional segment of your system.  This makes it much
+ easier to remember file names and also groups associated files when using the
+ on-line help to identify the file with which you choose to work.
+
+    Example:
+
+    You may want to define a file to store customer demographic information and
+    another to store a history of each customer's activity.  Good naming
+    choices might be CUS for the basic customer file and CUSH for the customer
+    history file.  Each are short names that are easy to remember and type and
+    they will show up in sequential order when listing file IDs alphabetically.

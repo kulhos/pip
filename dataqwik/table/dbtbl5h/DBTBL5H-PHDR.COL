@@ -1,0 +1,117 @@
+NOD=1
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Print Header After Page Breaks #1
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=PHAPB@# 1
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         PRINT HEADER AFTER PAGE BREAK (Y/N)
+
+             Y - Print group headings at the top of every page.
+
+             N - Print group headings only when the group changes.
+
+         _____________________________________________________________________
+         Example - Print Header after Page Break = Y
+
+            --------------------------------------------------------------
+           |                                                       Page 1
+           |        Account       Account    Report
+           |         Number       Balance  Short Name
+           |   ------------  ------------  ----------
+           |
+           |   Branch 220
+           |
+           |              7         45.00  SMITH,JOE
+           |              4        200.00  SMITH,MARY
+           |              5      1,000.00  LEE,KAREN
+
+
+
+            --------------------------------------------------------------
+           |                                                       Page 2
+           |        Account       Account    Report
+           |         Number       Balance  Short Name
+           |   ------------  ------------  ----------
+           |
+           |   Branch 220
+           |
+           |              6         13.45  CORBIN,JOE
+           |              1        120.00  DOE,JOHN
+           |                 ------------  ----------
+           |  Branch 220 Subtotals
+           |
+           |                     1,378.45           2
+           |                 ============  ==========
+           |  REPORT TOTALS      2,465.82         213
+           |
+
+         _____________________________________________________________________
+         Example - Print Header after Page Break = N
+
+            --------------------------------------------------------------
+           |                                                       Page 1
+           |        Account       Account    Report
+           |         Number       Balance  Short Name
+           |   ------------  ------------  ----------
+           |
+           |   Branch 220
+           |
+           |              7         45.00  SMITH,JOE
+           |              4        200.00  SMITH,MARY
+           |              5      1,000.00  LEE,KAREN
+
+
+
+            --------------------------------------------------------------
+           |                                                       Page 2
+           |        Account       Account    Report
+           |         Number       Balance  Short Name
+           |   ------------  ------------  ----------
+           |              6         13.45  CORBIN,JOE
+           |              1        120.00  DOE,JOHN
+           |                 ------------  ----------
+           |  Branch 220 Subtotals
+           |
+           |                     1,378.45           2
+           |                 ============  ==========
+           |  REPORT TOTALS      2,465.82         213
+           |
+
+
+            This option applies to the group header above the level
+            at which it is set as in the example below.
+
+         _____________________________________________________________________
+         Example - Order-by Page
+
+              Sequence By      Print Header
+                             after Page Break
+
+            [PRD,XCLS]GRP___      Y  --> Applies to CLASS header
+            [PRD,XCLS]TYPE__      Y  --> Applies to GROUP header
+            [PRD,XCLS]CID___      Y  --> Applies to TYPE header

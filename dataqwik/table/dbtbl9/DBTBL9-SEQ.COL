@@ -1,0 +1,34 @@
+NOD=JRNID
+LEN=2
+DFT=1
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Priority (processing order)
+ITP=S
+MIN=1
+MAX=99
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=8
+RHD=Priority
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+Order in which transactions will be processed if multiple entries are created.
+Ex. When changing the type, cost center and gl set code for an account, the
+order the transactions are processed is determined by the priority.

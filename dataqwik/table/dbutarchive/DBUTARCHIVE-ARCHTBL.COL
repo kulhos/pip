@@ -1,0 +1,41 @@
+NOD=2*
+LEN=25
+DFT=
+DOM=
+TBL=[DBTBL1]
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Archive Enabled Table
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=0
+SFD=
+SIZ=15
+DEL=
+POS=
+RHD=Archived Enabled Table
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=S RM=$$ARCHTBLCHK^DBARCHIVE(X) S:RM'="" ER=1 S ARCHTBL=X
+NULLIND=0
+The name of a journal table, from DBTBL1, that will be archive enabled.
+Journal tables are tables that have a date key, or have a serial
+column (DBTBL1D.SRL = true), are valid.  Archiving is date controlled,
+therefore, one of these conditions must exist.  A serial column is a date
+column that matches the collating order of the bottom key, for
+example, HIST.TSEQ is the bottom key of the HIST table, and HIST.TJD is a
+serial column.  Archiving is done based on either the date key, if a date
+key exists, or the bottom key, if no date key exists, but a serial
+column exists.  The key on which archiving is done is called the
+archive key for the table.

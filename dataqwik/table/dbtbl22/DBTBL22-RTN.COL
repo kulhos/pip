@@ -1,0 +1,34 @@
+NOD=AGID
+LEN=8
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Routine Name
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=Routine@Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+A name automatically assigned by the system when the aggregate procedure is
+compiled.  The routine name is AG01nnnn, where nnnn is the sequence assigned
+to this aggregate definition.

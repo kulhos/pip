@@ -1,0 +1,75 @@
+NOD=DI
+LEN=255
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Computed Expression
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=16
+RHD=Computed Expression
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+This field is used to define a data item that doesn't physically exist
+in the database.  Instead, the computed operation invokes the system
+to execute a process to define it's value.  The process can be a
+mathematical expression or relationship, a MUMPS command, or or any
+combination thereof.
+
+Once the value for the computed operation is determined, DATA-QWIK
+provides the same functionality for this data item as it would for a
+data item that is physical data on disc.  Specifically, this data item
+can be used for reporting, sorting, inquiries, transfer, etc.
+Although computed data items can be included on inquiry and data entry
+screens their value cannot be directly modified.
+
+Examples of uses of computed data items:
+
+1. MATHEMATICAL RELATIONSHIPS
+
+  ""<<BAL>>*LN.IRN/36500
+
+      Where BAL and IRN are data items in the loan file.
+
+  INV.QTY*INV.COST
+
+      Where QTY and COST are data items in the INV file.
+
+  ""<<CID>>#100
+
+      Value returned is the last two digits of the account number
+
+2. MUMPS COMMANDS
+
+  $P(LN.LNM," ",1)
+
+      Value returned is the 1st piece of the data item
+      LNM with the delimiter being the space character.
+
+  $S(LN.LTD+60<$H:"",1:"NOT")_" DELINQUENT"
+
+      Value returned is DELINQUENT if the value for LTD is more than
+      60 days older than today, otherwise the value is NOT DELINQUENT.
+
+3. EXTRINSIC FUNCTIONS
+
+  $$SUB^ROUTINE

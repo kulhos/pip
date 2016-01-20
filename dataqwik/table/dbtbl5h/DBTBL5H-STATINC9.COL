@@ -1,0 +1,38 @@
+NOD=19
+LEN=26
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Statistic Increment #9
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=5
+RHD=Statistic Increment #9
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+         STATISTICS INCREMENT
+
+             For statistics that are based on a single column (i.e.,
+             the target and source are the same column), the statistics
+             increment indicates the ranges to use for totalling and
+             display.  For example, an increment of 100 will accumulate
+             from 0-99.99, 100-199.99, etc.

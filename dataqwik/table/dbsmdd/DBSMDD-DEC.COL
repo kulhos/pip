@@ -1,0 +1,43 @@
+NOD=
+LEN=2
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Decimal Precision
+ITP=
+MIN=0
+MAX=16
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Dec@Prec
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The decimal precision with which the system stores values entered for data
+items in file definitions referencing this master data dictionary data item.
+The value in the [DBSMDD]DEC data item defaults as the Decimal Precision data
+item in file definitions referencing this master data dictionary data item
+([DBTBL1D]DEC).  The user can modify the defaulted value if the Protect Decimal
+Precision data item ([DBSMDD]PRDEC) contains N (No).
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) links to the [MDDPBS]MINRATE master data dictionary data item,
+and the [MDDPBS]MINRATE data item specifies 5 digits to the right of the
+decimal, the system defaults 5 into the Decimal Precision attribute
+([DBTBL1D]DEC) associated with the [CRCD]MINRATE data item.

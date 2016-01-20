@@ -1,0 +1,47 @@
+NOD=0
+LEN=30
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Distribution Column Name
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=20
+RHD=Distribution Column Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+This data item allows a report to be distributed around this data item.  This
+data item must be defined in the report.
+
+Input accepts a variety of data dictionary syntaxes and will convert them into
+the required Table.Column format.  The following input syntaxes are valid:
+FID.DI, [FID]DI, FNUM.DI and DI.  FNUM is the relative file position in the
+Access File list.  If DI is found in multiple files, the first occurrence will
+be used.
+
+Examples:
+
+Access Files: EXC1,EXC,LN,SCAU
+
+Input Syntax    Example         Result
+------------    -------         ------
+FID.DI          LN.BOO          LN.BOO

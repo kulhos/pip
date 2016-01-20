@@ -1,0 +1,447 @@
+NOD=12
+LEN=78
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Data Items Line 1
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Data Items
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+         DATA ITEM(S)
+
+             Enter the specific data items to be used in the report.
+             Separate each data item with a comma.
+
+             A report column will be made for each data item.
+
+         _____________________________________________________________________
+         Example
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP,CIF
+           |       Data Item(s): CID,BAL,LNM,TAXID
+           |
+
+
+           Report Run - Columns Created ----------------------------------
+           |
+           |       Account       Account    Report               Tax
+           |        Number       Balance  Short Name            Number
+           |  ------------  ------------  --------------------  -----------
+           |
+
+
+         Duplicate Data Items
+
+             If a data item can be found in more than one of the access
+             files, you must enter the file ID in square brackets in
+             front of the data item name to identify one specific data item.
+
+         _____________________________________________________________________
+         Example
+
+           Report Definition ---------------------------------------------
+           |
+           |  Access File(s): DEP,LADDR,MADDR
+           |    Data Item(s): CID,BAL,[LADDR]AD1,[MADDR]AD1
+           |                             ^          ^
+                                         |          |
+                                         |        Address line 1 from
+                                         |        mailing address file
+                                         |
+                                    Address line 1 from
+                                    legal address file
+
+
+         ADDITIONAL DATA ITEM(S) TOPICS
+
+             The following topics are included in this section.
+             Use the FIND key to go directly to a topic.
+
+             * PRINTING CHARACTERS IN COLUMNS
+
+             * COMPUTED OPERATIONS WITH DATA ITEMS
+
+             * CREATING FORMS AND MAIL-MERGE REPORTS (@WPS)
+
+
+         PRINTING CHARACTERS IN COLUMNS
+
+             To include a column of characters in the report, enter
+             the characters in quotes in the data item list.
+
+         _____________________________________________________________________
+         Example - Printing a Column of Dollar Signs and Asterisks
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP
+           |       Data Item(s): CID,"$",BAL,"**",LNM
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           |    Account          Account        Report
+           |     Number          Balance      Short Name
+           |  ---------  -  ------------  --  --------------------
+           |        100  $         10.00  **  JOHN DOE
+           |        215  $      1,250.00  **  JOE SMITH
+
+
+         COMPUTED OPERATIONS WITH DATA ITEMS
+
+             To perform an arithmetic operation with data items, enter the
+             expression in the list of data items.
+
+             Use these symbols:
+
+                    +         Add
+                    -         Subtract
+                    *         Multiply
+                    /         Divide
+                    \         Integer Divide
+                    #         Modulo Divide
+                    $H        Run Date
+
+         _____________________________________________________________________
+         Example - Calculate One Day's Interest
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): LN
+           |       Data Item(s): CID,BAL,BAL*IRN/36500  <-- One day's interest
+           |                             =============
+
+
+           Report Run ----------------------------------------------------
+           |
+           |          Account       Account     One Day's
+           |           Number       Balance      Interest
+           |     ------------  ------------  ------------
+           |                1         10.00          0.01
+           |                5      2,239.64          0.43
+
+         _____________________________________________________________________
+         Example - Calculate Number of Days Delinquent
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): LN
+           |       Data Item(s): CID,BAL,DIST1ND,$H-DIST1ND  <-- Days delinquent
+           |                                     ==========
+
+
+           Report Run ----------------------------------------------------
+           |
+           |           Account       Account  Next Due      Days
+           |            Number       Balance    Date      Delinq
+           |      ------------  ------------  --------  --------
+           |                 1         10.00  05/23/92       163
+           |                 6    100,000.00  05/24/92       162
+           |                    ============
+           |                      100,010.00
+
+
+             If you enter a math operation longer than 12 characters,
+             when the operation is listed on the second page of the
+             report definition, the listing will be truncated to 12
+             characters.  The operation will be performed using the
+             untruncated form.
+
+          _____________________________________________________________________
+          Example - Using a Math Operation Longer than 12 Characters
+
+           Report Definition - First Page --------------------------------
+           |
+           |  Data Item(s):  BAL,IRN*BAL/36500
+           |
+
+
+           Report Definition - Second Page -------------------------------
+           |
+           |  Field
+           |   Name
+           |  ------------
+           |  BAL
+           |  IRN*BAL/3650
+           |             ^
+                         |
+                  Truncated to 12 characters
+
+
+         CREATING FORMS AND MAIL-MERGE REPORTS (@WPS)
+
+             Instead of the normal columnar-type report, you can create
+             free form reports with the layout defined in a separate
+             file.
+
+             You can use this free form layout to design forms such as
+             mailing labels or notices or to print mail-merge letters.
+
+         _____________________________________________________________________
+         Sample Report - Notice Format
+
+           +--------------------------------------------------------------
+           |    INTEREST INCOME EARNINGS - 1992
+           |    DATE: 1/1/93
+           |
+           |                       Customer:  Janet Wilson
+           |                  Branch Office:  Central Office
+           |                 Account Number:  12543
+           |             Interest Paid 1992:  1,234.60
+           |---------------------------------------------------------------
+           |
+           |    INTEREST INCOME EARNINGS - 1992
+           |    DATE: 1/1/93
+           |
+           |
+           |                       Customer:  Frank Wilting
+           |                  Branch Office:  West Village
+           |                 Account Number:  76522
+           |             Interest Paid 1992:  723.20
+           |--------------------------------------------------------------
+
+         _____________________________________________________________________
+         Sample Report - Mail-Merge Letters
+
+           +--------------------------------------------------------------
+           |  Ms. Janet Wilson
+           |  3836 Sunset Blvd.
+           |  Dallas, TX   75270
+           |
+           |
+           |  Dear Ms. Wilson,
+           |
+           |  We would like to tell you about our new Investment
+           |  Management Fund.
+           |
+           |  Please read the enclosed brochure describing this new
+           |  service.  If you would like to open an account, or if
+           |  you have any questions, call Marge Klineman, your
+           |  Personal Investment Representative at 215-555-9898.
+           |
+
+
+         Procedure for Creating Free-Form Reports
+
+             1.  Create a text file using the operating system editor.
+                 DATA-QWIK will use this file as a template for producing
+                 the report.  Data items and the report layout are
+                 specified in this text file.
+
+             2.  Define the QWIK Report.  List the access files to be used.
+                 Instead of listing data items, enter the name of the text
+                 file in parentheses preceded with @WPS.  This text file
+                 is the one created in step one.
+
+                 For example, to use a file named LETTER.DOC, enter the
+                 following:
+
+                 Data Item(s):  @WPS(LETTER.DOC)
+
+             3.  Run the report.  Specify an output device for printing
+                 the report, or enter a file name to print the report
+                 to a file.
+
+
+         Creating the Text File
+
+             Enter the text to be printed as you want it to be formatted.
+
+             Enter data item names in uppercase, embedded in double
+             angle brackets.   Use the full data item specification
+             (that is, enter the file name in square brackets before
+             the data item name).
+
+             For example, to print the ledger balance from the deposit
+             file, enter <<[DEP]BAL>>.
+
+         _____________________________________________________________________
+         Example - Text File for Notice Format
+
+           +--------------------------------------------------------------
+           |                       Customer:  <<[CIF]NAM>>
+           |                  Branch Office:  <<[DEP]BOO>>
+           |                 Account Number:  <<[DEP]CID>>
+           |             Interest Paid 1992:  <<[DEP]IPY>>
+           |
+
+         _____________________________________________________________________
+         Example - Text File for Mail-Merge Letters
+
+           +--------------------------------------------------------------
+           |  <<[CIF]PREF>> <<[CIF]NAM>>
+           |  <<[MADDR]AD1>>
+           |  <<[MADDR]CSZ>>
+           |
+           |
+           |  Dear <<[CIF]PREF>> <<[DEP]LNM>>,
+           |
+           |  We would like to tell you about our new Investment
+           |
+
+
+         @WPS OPTIONS - FORM FEED/NO FORM FEED
+
+             If you do not enter an option in parentheses after the file
+             name, or if you enter a comma and a "0", a form feed will
+             be entered after each document.
+
+             To not enter a form feed after each document, enter a
+             comma, and a "1" after the file name.
+
+         _____________________________________________________________________
+         Example - Print a Form Feed after Each Page
+
+             Using a text file named LETTER.DOC
+
+             @WPS(LETTER.DOC,0)   or  @WPS(LETTER.DOC)
+
+         _____________________________________________________________________
+         Example - No Form Feed after Each Page
+
+             Using a text file named NOTICE.DOC
+
+             @WPS(NOTICE.DOC,1)
+
+
+         @WPS OPTIONS - DATA ITEM FORMATTING
+
+             Data item values print in the format and width defined
+             in the file definition.  Blank spaces are not printed.
+
+             To convert the format or size, use the following syntax:
+
+             <<[FID]DI,format,size>>
+
+             Where [FID]DI is the file ID and data item, size is the
+             width of the field, and format is the display format from
+             the following choices:
+
+                 $   Currency with 2 decimal places
+                 E   Edited currency with decimal and thousands separator
+                 D   Date format MM/DD/YY
+                 C   Clock format HH:MM
+                 T   Text
+
+         _____________________________________________________________________
+         Example - Mail Merge Data Item Format Options
+
+         Report with Default Data Item Formats
+
+           Report Definition ---------------------------------------------
+           |
+           |  ACCOUNT NUMBER:  <<[DEP]CID>>
+           |  ACCOUNT BALANCE: <<[DEP]BAL>>
+           |  INTEREST RATE:   <<[DEP]IRN>>
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           |  ACCOUNT NUMBER:  92681
+           |  ACCOUNT BALANCE: 1235.50
+           |  INTEREST RATE:   11
+           |
+
+         Report with Data Item Format Conversions
+
+           Report Definition ---------------------------------------------
+           |
+           |  ACCOUNT NUMBER:  <<[DEP]CID,N,10>>
+           |  ACCOUNT BALANCE: <<[DEP]BAL,E,10>>
+           |  INTEREST RATE:   <<[DEP]IRN,$,10>>
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           |  ACCOUNT NUMBER:       92681
+           |  ACCOUNT BALANCE:   1,125.50
+           |  INTEREST RATE:        11.00
+           |
+
+
+         @WPS OPTIONS - DATE AND TIME
+
+             Current date:  <<$$^%ZD>>
+             Current time:  <<$$TIME^%ZD>>
+
+         _____________________________________________________________________
+         Example
+
+           Text File -----------------------------------------------------
+           |
+           |  Today is: <<$$^ZD>>
+           |  Report printed at: <<$$TIME^%ZD>>
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           |  Today is: 11/20/92
+           |  Report printed at: 1:34 PM
+           |
+
+         Date Format Options
+
+              FORMAT IN TEXT FILE            DISPLAY FORMAT   EXAMPLE
+
+              <<$$^%ZD(+$H,"MM-DD-YY")>>     MM-DD-YY         11-24-92
+              <<$$^%ZD(+$H,"MM/DD/YY")>>     MM/DD/YY         11/24/92
+              <<$$^%ZD(+$H,"DD/MM/YY")>>     DD/MM/YY         24/11/92
+              <<$$^%ZD(+$H,"DD/MON/YEAR")>>  DD/MON/YEAR      24/NOV/1992
+              <<$$^%ZD(+$H,"MON")>>          MON              NOV
+
+
+         _____________________________________________________________________
+         Example - @WPS
+
+           Text File "DEMO.DOC" ------------------------------------------
+           |
+           |  DATE: <<$$^%ZD>> TIME: <<$$TIME^%ZD>>
+           |  ACCOUNT NUMBER:  <<[DEP]CID>>
+           |  ACCOUNT BALANCE: <<[DEP]BAL>>
+           |  INTEREST RATE:   <<[DEP]IRN>>
+           |
+
+
+           Report Definition ---------------------------------------------
+           |
+           |     Access File(s): DEP
+           |       Data Item(s): @WPS(DEMO.DOC)
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           |
+           |  DATE: 11/25/92 TIME: 1:35 PM
+           |  ACCOUNT NUMBER:  1200
+           |  ACCOUNT BALANCE: 20.28
+           |  INTEREST RATE:   12.5
+           |

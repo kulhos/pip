@@ -1,0 +1,38 @@
+NOD=10
+LEN=1
+DFT=A
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Sort Order (A/D) #10
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=5
+RHD=SO#10
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         ORDER (A/D)                                   Default=A
+
+             Applies to the corresponding Sequence-By key.
+
+             A - Sort in ascending order
+
+             D - Sort in descending order

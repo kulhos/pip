@@ -1,0 +1,46 @@
+NOD=DI
+LEN=255
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Look-Up Table Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=255
+DEL=
+POS=5
+RHD=Look-Up Table
+SRL=
+CNV=
+LTD=
+USER=
+MDD=TBL
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+This data item verifies data that is entered into the system
+against a table of valid responses.  If a corresponding table
+value cannot be found for the data that is entered, DATA-QWIK
+will [optionally] reject the response.
+
+Any data item that is related to a table of valid responses
+will provide the user with a list of valid entries in response
+to a '?'.  DATA-QWIK also confirms table entries by printing
+the table description in response to a valid table entry.
+The user can optionally print table descriptions on reports
+as well.
+
+The valid systax for linking a data item to a table are:
+
+   [FID] or [FID]DI,DI,...

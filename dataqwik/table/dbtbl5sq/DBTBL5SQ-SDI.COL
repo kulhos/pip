@@ -1,0 +1,164 @@
+NOD=1
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=SOURCE STAT
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=SOURCE@STAT
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         BASED ON
+
+             Enter the data item for which statistics are to be
+             based.
+
+             Enter either the same data item as in the DATA ITEM
+             column, then enter a range for a REPORT BASED ON
+             AN INCREMENTAL RANGE (see below), or enter
+             a data item for a category on which the statistics
+             will be based for a REPORT BASED ON A CATEGORY
+             (see below).
+
+             Enter the data item in the format [FID]DI where FID
+             is the file ID and DI is the data item.
+
+             Example:  [LN]BAL
+
+         REPORT BASED ON AN INCREMENTAL RANGE
+
+             To report statistics by incremental range, enter the
+             same data item in the DATA ITEM column as in the
+             BASED ON column, then enter the range in the
+             STATISTICS INCREMENTS column.
+
+         _____________________________________________________________________
+         Example - To report on deposit balances in increments of 100,000
+
+           Statistics Page ----------------------------------------------
+           |
+           |   Data Item           Based On         Statistics Increments
+           |      [DEP]BAL           [DEP]BAL           100000
+           |
+
+
+---------- Report Run ----------------------------------------------------
+
+SUMMARY REPORT
+==============
+
+               RANGE                     COUNT      %            TOTAL       %
+-------------------------------------------------------------------------------
+
+<< Account Balance >>
+
+          0.00 -      99,999.99            216   78.26     2,873,022.83   13.75
+    100,000.00 -     199,999.99             44   15.94     5,255,311.77   25.15
+    200,000.00 -     299,999.99              9    3.26     2,100,200.00   10.05
+    400,000.00 -     499,999.99              1    0.36       495,000.00    2.37
+    600,000.00 -     699,999.99              1    0.36       600,000.00    2.87
+    700,000.00 -     799,999.99              1    0.36       748,498.74    3.58
+  1,000,000.00 -   1,099,999.99              2    0.72     2,000,000.00    9.57
+  2,000,000.00 -   2,099,999.99              1    0.36     2,000,000.00    9.57
+  4,800,000.00 -   4,899,999.99              1    0.36     4,824,718.00   23.09
+
+       ** LOW **        ** HIGH **   ==========================================
+
+     -2,528.13 -   4,824,718.00            276            20,896,751.34
+
+-------------------------------------------------------------------------------
+
+
+         _____________________________________________________________________
+         Other examples
+
+           Statistics Page ----------------------------------------------
+           |
+           |   Data Item           Based On         Statistics Increments
+           |      [LN]BAL            [LN]BAL        100,300,900
+           |      [LN]TLD            [LN]TLD        10     (every 10 days)
+
+           Resulting report will analyze:
+
+                [LN]BAL - Loan balances for these ranges:
+                lowest value to 99.99
+                100 to 299.99
+                300 to 899.99
+                900 and above
+
+                [LN]TLD - Transaction Last Date
+                For every 10 days
+
+
+          REPORT BASED ON A CATEGORY
+
+             To report statistics by a category such as Branch
+             of Ownership or Account Type, enter the data item
+             for that category in the BASED ON column.  For this
+             type of report, an increment is not applicable.
+
+         _____________________________________________________________________
+         Example - To report on deposit balances by branch of ownership
+
+           Statistics Page ----------------------------------------------
+           |
+           |   Data Item           Based On         Statistics Increments
+           |      [DEP]BAL           [DEP]BOO
+           |
+
+
+---------- Report Run ----------------------------------------------------
+
+SUMMARY REPORT
+==============
+
+               RANGE                     COUNT      %            TOTAL       %
+-------------------------------------------------------------------------------
+
+<< Branch of Ownership >>                                 << Account Balance >>
+
+                            100             20    7.22       896,098.89    4.27
+                            200             35   12.64     7,189,543.75   34.22
+                            300             48   17.33     3,903,176.08   18.58
+                            400             29   10.47     3,495,197.47   16.64
+                            500            125   45.13     4,891,521.14   23.29
+
+       ** LOW **        ** HIGH **   ==========================================
+
+           100 -            500            257            20,375,537.33
+______________________________________________________________________________
+
+         _____________________________________________________________________
+         Other examples
+
+           Statistics Page ----------------------------------------------
+           |
+           |   Data Item           Based On         Statistics Increments
+           |      [LN]BAL            [LN]INT
+           |      [LN]BAL            [LN]GRP
+
+           Resulting report will analyze:
+
+                Loan balances for each interest rate, and
+                Loan balances for each product group.

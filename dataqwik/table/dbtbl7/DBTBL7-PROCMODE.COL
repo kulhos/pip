@@ -1,0 +1,42 @@
+NOD=TRGID
+LEN=10
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Processing Mode
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=13
+RHD=Processing Mode
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Indicates whether trigger applies to financial, on-line, or batch processes.
+
+     F - Apply to financial processes
+     O - Apply to on-line processes
+     B - Apply to Batch processes
+
+     NULL - Apply to all
+     
+If any value appears in this column, the trigger will only apply to those
+options listed.  For example, if the column contains "F,O", then the trigger
+will apply to financial and on-line processes, but not batch.

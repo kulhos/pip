@@ -1,0 +1,149 @@
+NOD=SEQ
+LEN=3
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Column Indent
+ITP=
+MIN=0
+MAX=508
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=Column@Indent
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         SPACES SKIP
+
+             The number of blank spaces to skip before this
+             column.  The default is 0 for the first column
+             and 2 for all other columns.
+
+         _____________________________________________________________________
+         Example - Default Spaces to Skip
+
+           Report Definition ---------------------------------------------
+           |
+           |   Field        Column Heading          Spaces
+           |   Name         ----+---10----+---20--   Skip
+           |
+           |   CID          Account@Number             0
+           |   BAL          Account@Balance            2
+           |   BOO          Branch                     2
+           |   LNM          Report@Short Name          2
+           |
+
+
+           Report Run ----------------------------------------------------
+           |
+           |
+           |     Account       Account     Branch    Report
+           |      Number       Balance             Short Name
+           |------------  ------------  ---------  --------------------
+           |           1         10.00          2  DOE,JOHN
+           |           4      1,000.00          1  SMITH,JOE
+           |           5        200.00          1  SMITH,MARY
+           |           6        123.45          2  CORBIN,JOE
+           |           7         45.00          1  LEE,KATHY
+           |              ============             ====================
+           |                  1,378.45                                5
+           |           |..|          |..|       |..|
+           |             ^             ^          ^
+           |             |             |          |
+           |             ----------------------------  Two blank spaces
+
+
+         Changing the Number of Spaces to Skip
+
+             You can increase or decrease the number of spaces to skip
+             between columns.
+
+         _____________________________________________________________________
+         Example - Increasing Number of Spaces to Skip
+
+           Report Definition ---------------------------------------------
+           |
+           |   Field        Column Heading          Spaces
+           |   Name         ----+---10----+---20--   Skip
+           |
+           |   CID          Account@Number             0
+           |   BAL          Account@Balance            2
+           |   BOO          Branch                     2
+           |   LNM          Report@Short Name          4   <---- Increased
+
+
+           Report Run ----------------------------------------------------
+           |
+           |      Account       Account     Branch      Report
+           |       Number       Balance               Short Name
+           | ------------  ------------  ---------    --------------------
+           |            1         10.00          2    DOE,JOHN
+           |            4      1,000.00          1    SMITH,JOE
+           |            5        200.00          1    SMITH,MARY
+           |            6        123.45          2    CORBIN,JOE
+           |            7         45.00          1    LEE,KATHY
+           |               ============               ====================
+           |                   1,378.45                                  5
+           |
+                                                 |....|
+                                                    ^
+                                                    |___ four blank spaces
+
+
+
+         Aligning Columns with Multiple Detail Lines
+
+             You can use Spaces Skip along with Lines Skip to align
+             detail lines in a report with multiple detail lines per
+             record.
+
+         _____________________________________________________________________
+         Example - Aligning Columns with Multiple Detail Lines
+
+           Report Definition ---------------------------------------------
+           |
+           | Field    Column Heading  Report Width       Spaces   Size  Lines
+           | Name     ----+---10----+---20----+---30----+ Skip          Skip
+           |
+           | CID      Account@Number                      0         12
+           | LNM      Report@Short Name                   2         20    1*
+           | AD1      Address                            14*        40    1*
+           | AD2                                         14*        40    1*
+           | MCSZ                                        14*        42    1*
+           |
+                                                         * Changed from defaults
+
+           Report Run ----------------------------------------------------
+           |
+           |          Account    Report
+           |           Number  Short Name
+           |                   Address
+           |     ------------  --------------------
+           |                1  DOE,JOHN                      <---
+           |                   Sanchez Computer Assoc., Inc. <---  Lines
+           |                   40 Valley Stream Parkway      <---  Skipped
+           |                   Malvern, PA  19355            <---
+           |
+           |                4  SMITH,JOE
+           |                   1234 Main St.
+           |
+           |                   New York, NY 12345
+           |
+           |                   ^
+                               |___________ Column 14

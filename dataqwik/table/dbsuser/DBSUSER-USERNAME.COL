@@ -1,0 +1,34 @@
+NOD=UID
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=User Name
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=User Name
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The user's name.  Note that this data is entered as part of this table, and
+may or may not correspond to any similar information maintained at the
+operating system level.

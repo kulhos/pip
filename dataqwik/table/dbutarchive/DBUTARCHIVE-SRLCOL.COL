@@ -1,0 +1,38 @@
+NOD=ARCHTBL
+LEN=20
+DFT=
+DOM=
+TBL=[DBTBL1D]:QU "[DBTBL1D]FID=<<ARCHTBL>> & [DBTBL1D]SRL=1"
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Archive on Serial Column
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=2
+RHD=Archive On@Serial Column
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+If the table to be archived is archived on a serial column (DBTBL1D.SRL) and
+it has more than one serial column, specify the column to use.  If there is
+more than one serial column and no value is specified, the first serial
+column will be used.
+
+A table that has a date key will be archived on that key, and will not make
+use of this column.

@@ -1,0 +1,38 @@
+NOD=USERCLASS
+LEN=1
+DFT=
+DOM=
+TBL=[STBLDBAUDLOG]
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=DELETE Logging Option
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=DELETE@Logging Option
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+An option that indicates what type of logging should take place for the
+userclass for DELETE operations.  Valid options are:
+
+     0 = no logging
+     1 = log statement only
+     2 = log statement and keys of individual records
+     3 = log statement and keys plus before image data of individual records

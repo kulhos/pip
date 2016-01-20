@@ -1,0 +1,35 @@
+NOD=1*
+LEN=10
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=TOKEN
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=TOKEN
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+ The token assigned to a process communicating to the host through the
+ server.  The token allows each process to have a seperate identity
+ for its SQL commands so that they can re-use cursors between calls
+ from a client.

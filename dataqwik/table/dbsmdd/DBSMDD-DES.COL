@@ -1,0 +1,48 @@
+NOD=
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Description
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Description
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+Text that describes data items in file definitions referencing this master data
+dictionary data item.  The value in the [DBSMDD]DES data item defaults as the
+Description data item in file definitions referencing this master data
+dictionary data item ([DBTBL1D]DES).  The user can modify the defaulted value
+if the Protect Description data item ([DBSMDD]PRDES) contains N (No).
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) links to the [MDDPBS]MINRATE master data dictionary data item,
+and the [MDDPBS]MINRATE data item specifies a description of Miminimum Rate,
+the system defaults Minimum Rate into the Description attribute ([DBTBL1D]DES)
+associated with the [CRCD]MINRATE data item.
+
+This text appears when this data item appears in reports or help screens.  The
+description is also the default prompt on data entry and inquiry screens.  If
+the report header field is not defined, the description is also the default
+header on reports.  When the description appears as the default value in report
+or screen design, the user may accept this value or enter a different value.

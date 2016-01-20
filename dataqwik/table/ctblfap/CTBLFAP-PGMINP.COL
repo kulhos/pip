@@ -1,0 +1,31 @@
+NOD=FAP
+LEN=20
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=I X'="" S ER=$$DQ^%ZRTNS(X)
+XPR=
+TYP=T
+DES=Input Message Reformatter Program
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=124
+POS=2
+RHD=Input@Message Reformatter Program
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=I $L(X) S ER=$$DQ^%ZRTNS(X)
+NULLIND=

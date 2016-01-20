@@ -1,0 +1,39 @@
+NOD=20
+LEN=25
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Statistic Source #10
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Statistic Source #10
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+        STATISTICS SOURCE
+
+             Accumulate the totals for the target column based on this
+             source column.  If the source column is the same as the
+             target column, specifying an increment will total within
+             ranges based on the increment.  Otherwise, totals for the
+             target column will be accumulated for each of the values
+             in the source column.

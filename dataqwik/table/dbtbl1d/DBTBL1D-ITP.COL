@@ -1,0 +1,88 @@
+NOD=DI
+LEN=1
+DFT=S
+DOM=
+TBL=,S#String,N#Number,B1#Bit #1,B2#Bit #2,B3#Bit #3,B4#Bit #4
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Internal Data Type
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=11
+RHD=Intrnl@Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=ITP
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+This option is used to define the internal data field type. There are
+two data types supported by the system, string and binary.  For
+example, the statement print flag is defined as follows:
+
+                           <-- ITC -->
+
+        ^HIST(CID,TSEQ)=...|011011100|...
+                                    ^
+                                    |____ ITC9
+
+      +------------------------------------------------------------------+
+      |                                                                  |
+      |                RECORD  STRUCTURE  DEFINITION                     |
+      |                                                                  |
+      |      File Name: HIST             Data Item: ITC9                 |
+      |                                                                  |
+      |       Field ID: [HIST]ITC                                        |
+      |                                                                  |
+      |                     Computed Operation                           |
+      |                                                                  |
+      |     __________________________________________________________   |
+      |                                                                  |
+      |           Delimiter: _                Position: __               |
+      |                                                                  |
+      |   Starting Position:    9               Length:    1             |
+      |                                                                  |
+      |           Data Type: S                                           |
+      +------------------------------------------------------------------+
+
+             The byte is made up of a bit pattern as follows:
+
+             Bit 1 - print the location field
+                 2 - print the source field
+                 3 - print the comment field
+                 4 - print the spray number field
+                 5 - not used
+                 6 - not used
+                 7 - always 1 if one of the bits is on (1 thru 4)
+                 8 - not used
+
+             For example, to define a data item to reflect the status
+             of the third bit ("print the comment field"):
+
+      +------------------------------------------------------------------+
+      |                RECORD  STRUCTURE  DEFINITION                     |
+      |                                                                  |
+      |      File Name: HIST             Data Item: PRINTCOM             |
+      |                                                                  |
+      |       Field ID: [HIST]ITC9                                       |
+      |                                                                  |
+      |           Delimiter: _                Position: __               |
+      |                                                                  |
+      |   Starting Position: 1                  Length:    1             |
+      |                                                                  |
+      |           Data Type: B3                                          |
+      |                                                                  |
+      +------------------------------------------------------------------+

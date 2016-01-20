@@ -1,0 +1,37 @@
+NOD=DI
+LEN=3
+DFT=
+DOM=
+TBL=[DBCTLDELIM]
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Sub-Field Delimiter (Tag Prefix)
+ITP=S
+MIN=1
+MAX=255
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=~126~~2
+SIZ=3
+DEL=
+POS=18
+RHD=Tag@Pre
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The ASCII value of the character used as the prefix character
+for a subfield tag.  This character is used in conjunction
+with the subfield tag and the subfield suffix delimiter to
+uniquely identify the subfield tag within a field.  A field
+containing subfield delimiters cannot contain the delimiter
+characters in its data content.

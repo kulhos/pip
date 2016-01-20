@@ -1,0 +1,268 @@
+NOD=11
+LEN=12
+DFT=
+DOM=
+TBL=[STBLTFMT]
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Data Export Option
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Export@Option
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         DATA EXPORT OPTION
+
+             Use this option to copy the report data to an ASCII file to
+             be used in a host application or to be downloaded to a
+             Personal Computer.
+
+         _____________________________________________________________________
+         Example - Data Export Option (ASCII)
+
+           Report Definition ---------------------------------------------
+           |
+           |      Access File(s): DEP
+           |        Data Item(s): BOO,CID,LNM,BAL
+           |  Data Export Option: ASCII (with header record option)
+
+
+           Report Run (Export File Created) ------------------------------
+           |
+           |      V----------------------------- Short Column Header Option
+           | BOO,CID,LNM,BAL<cr><lf> <--------------- Record Separator
+           | 4,12000,"LEE, KAREN",124.39<cr><lf>
+           | 4,34000,"SIMMONS, JACK",100067.23<cr><lf>
+           | 4,72000,"COLLIN, RHODA",570.58<cr><lf>
+           | 6,10001,"HENDRICKS, HARRY",61.32<cr><lf>
+           | 6,10403,"BARKER, JAMES",0<cr><lf>
+           | 9,22204,"RONKY,PATTY",3123<cr><lf>
+           | 9,50512,"CARUSO, JON",442.97<cr><lf>
+           | 9,59933,"SCHULTZ, PAT",19.48<cr><lf>
+           | <ctrl-z>              ^------------------ Field Separator
+           |    ^----------- End of File Indicator
+           |
+  |            Time Format (C): __                                         |
+  |         Logical Format (L): __                                         |
+  +------------------------------------------------------------------------+
+         TYPE:
+
+            The name of the software package which will be using the
+            data file.
+
+
+         DESCRIPTION:
+
+            Short description to further identify the software package
+            or its specific modules.
+
+
+              Example:
+
+                     TYPE           DESCRIPTION
+
+                     LOTUS          LOTUS 1-2-3
+                     EXCEL          MICROSOFT SPREADSHEET (MAC)
+                     DBASE          dBASE III
+                     WORD-MAIL      MICROSOFT MAIL/MERGE FILE
+
+         FIELD SEPARATOR:
+
+            Specify the delimiter to be used to mark the end of each data
+            field in a single record.  The information is entered in the
+            format of ASCII equivalent value of the character itself.
+            For example, enter 44 if a COMMA (,) will be the delimiter or 9
+            if the TAB character will be the delimiter.
+
+               Example:
+
+                                Field
+              Data Items      Separator     Output
+              =============   =========    ==========================
+              CID,BAL,BOO       44          12345,200.35,1
+                                            12355,100.59,2
+
+                                9           12345<TAB>200.35<TAB>1
+                                            12355<TAB>100.59<TAB>2
+
+
+         RECORD SEPARATOR:
+
+            Specify the delimiter to be used to mark the end of each
+            record in the data file.  The delimiter (a single or a group
+            of characters) will be inserted automatically after the last
+            data item of each record.
+
+               Example:
+
+                              Field Record
+              Data Items        Separator          Output
+              =============   ===== =======      ==========================
+              CID,BAL,BOO       44    13,10      12345,200.35,1<cr><lf>
+                                                 12355,100.59,2<cr><lf>
+
+                                9     13,10      12345<TAB>200.35<TAB>1<cr><lf>
+                                                 12355<TAB>100.59<TAB>2<cr><lf>
+
+         END OF FILE INDICATOR:
+
+            Specify a character or a group of characters to be inserted
+            right after the last record of the data file.  Skip over this
+            field if the end of the file marker is not required.
+
+
+               Example:
+                              End of File
+              Data Items       Indicator          Output
+              =============   =============      ==========================
+              CID,BAL,BOO        26              12345,200.35,1<cr><lf>
+                                                 12355,100.59,2<cr><lf>
+                                                        .
+                                                        .
+                                                 13999,50.25,3<cr><lf>
+                                                 <ctrl/z>              <=== EOF
+
+
+                                not used         12345,200.35,1<cr><lf>
+                                                 12355,100.59,2<cr><lf>
+                                                        .
+                                                        .
+                                                 13999,50.25,3<cr><lf>
+
+
+         LITERAL STRING INDICATOR:
+
+            Any delimiter can be specified to mark the end of each field.
+            However, in order to correctly identify each data field, a
+            special character must be used to enclose the TEXT data.
+            Typically either the single or double quotation marks will
+            be used.
+
+
+               Example:
+
+                              TEXT field
+              Data Items       indicator          Output
+              =============   =============      ==========================
+              CID,BAL,LNM       34               12345,200.35,"DOE,JOHN"
+                                                 12355,100.59,"SMITH,R"
+
+
+              CID,BAL,LNM       39               12345,200.35,'DOE,JOHN'
+                                                 12355,100.59,'SMITH,R'
+
+         INCLUDE HEADER RECORD:
+
+            Some software packages required a header record to be
+            included at the beginning of the file to identify each
+            field name of the data records.  If this option is
+            selected, the name of the data items separated by the
+            field delimiter will be included as the first record
+            of the data file.
+
+            Example:
+
+                                Field
+              Data Items       Separator         Output
+              =============   ============    ==========================
+              CID,BAL,BOO         44          CID,BAL,BOO        <=== header
+                                              12345,200.35,1     <=== detail
+                                              12355,100.59,2          detail
+
+
+                                   9          CID<tab>BAL<tab>BOO    <== header
+                                              12345<tab>200.35<tab>1<tab>
+                                              12355<tab>100.59<tab>2<tab>
+
+
+
+         SPECIAL DISPLAY FORMAT:
+
+            By default, the unformatted raw data will be used to
+            generate the output records without any format conversion.
+            With the exception of DATE, TIME and LOGICAL data types,
+            a format option can be specified to convert them to the
+            appropriate output format.
+
+
+                               OPTION 1         OPTION 2
+                               =========        ========
+
+         DATE FORMAT:          MM/DD/YY         DD-MMM-YY
+
+                               10/11/89         10-NOV-89
+                               01/20/88         01-JAN-88
+
+         TIME FORMAT:          HH:MM AM/PM      HH:MM:SS AM/PM
+
+                               10:20 AM         10:20:25 AM
+                                9:15 PM          9:15:22 PM
+
+
+         LOGICAL FORMAT:          Y                 1
+                                  N                 0
+
+
+                          SAMPLE DEFINITIONS
+                          ==================
+
+
+-------------------------------------------------------------------------------
+
+                       Data EXPORT Interface Layout
+
+
+  Type: ASCII             Description: Standard ASCII Interface
+
+       Enter the ASCII decimal values below,    Example:
+
+            Field Separator: 44                 44    for ,
+           Record Separator: 13,10              13,10 for Cr-Lf
+      End of File Indicator: 26                 26    for <CTRL>Z
+   Literal String Indicator: 34                 34    for "
+      Include Header Record: N
+
+      Reformat Data Type Default Display Option:
+
+            Date Format (D): 1
+            Time Format (C): 1
+         Logical Format (L): 1
+
+-------------------------------------------------------------------------------
+
+                       Data EXPORT Interface Layout
+
+
+  Type: EXCEL            Description: MICROSOFT-SPREADSHEET
+
+       Enter the ASCII decimal values below,    Example:
+
+            Field Separator: 9                  9     for <TAB>
+           Record Separator: 13,10              13,10 for Cr-Lf
+      End of File Indicator: 26                 26    for <CTRL>Z
+   Literal String Indicator: 34                 34    for "
+      Include Header Record: N
+
+      Reformat Data Type Default Display Option:
+
+            Date Format (D): 1
+            Time Format (C): 1
+         Logical Format (L): 1

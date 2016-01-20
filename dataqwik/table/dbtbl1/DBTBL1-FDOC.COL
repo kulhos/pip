@@ -1,0 +1,39 @@
+NOD=13
+LEN=30
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Documentation File Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=12
+DEL=
+POS=1
+RHD=Documentation@File Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ When the help key is pressed in a DATA-QWIK screen, the system will look to
+ the file identified here to find help documentation.  Again, the system will
+ default to the file ID for this definition.  If several file IDs share common
+ data items which have similar documentation characteristics, each of those
+ file IDs can point to a common documentation file.  Documentation for each of
+ the data items would then only have to be entered once, but would be available
+ for data items from each of the file IDs which point to the one documentation
+ file.

@@ -1,0 +1,35 @@
+NOD=10
+LEN=78
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Default Heading
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=8
+RHD=Default@Heading
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ Responses in this field are related to look-up table syntax [FID].  When
+ look-up table is generated for data item utilizing the [FID] syntax, these
+ headings will appear at the top of each column corresponding to the data
+ items listed in [DFTDES].

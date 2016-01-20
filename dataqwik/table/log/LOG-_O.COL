@@ -1,0 +1,35 @@
+NOD=SEQ
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Update Option
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=4
+RHD=Update@Option
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+Variable indicating the nature of the update.  If set to
+a value of 0 (zero), the system includes the message
+"Table entry created" in the Teller Comment field on
+the Table Update Log Report (SCA311).

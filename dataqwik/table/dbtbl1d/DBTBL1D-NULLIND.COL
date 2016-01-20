@@ -1,0 +1,40 @@
+NOD=DI
+LEN=1
+DFT=0
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Null Vs. Zero Indicator
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=31
+RHD=Null Vs.@Zero Indicator
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The SQL standard specifies that null fields in the database contain values that
+are unknown.  In the PROFILE application, there are instances where a null
+value in numeric and currency fields actually means zero (e.g., [DEP]BAL).  In
+other cases, a null value means "does not apply" (e.g., [DTYPE]MINBAL).
+  
+This field will specify for numeric and currency data types, whether a null
+value should be treated by the application as a 0 or as a null.  The default
+value will be to treat numeric and currency fields as null if they are null.
+To treat null values as zero, this flag should be turned on.

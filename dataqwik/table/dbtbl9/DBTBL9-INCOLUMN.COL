@@ -1,0 +1,35 @@
+NOD=JRNID
+LEN=250
+DFT=
+DOM=
+TBL=[DBTBL1D]DI,DES:LIST:QU "[DBTBL1D]FID=<<PRITABLE>>"
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Include Columns
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=7
+RHD=Include Columns
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+  One or more user-defined queries that can be used to conditionally set up
+  this journal entry.  For example, to set up an entry in DAYENDXFR if the cost
+  center is changed, the column CC can be entered in the "Only If Columns
+  Changed" field.

@@ -1,0 +1,34 @@
+NOD=
+LEN=1
+DFT=
+DOM=
+TBL=[DBCTLDVFM]
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Data Type
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+A code that identifies the format of the data stored in this master data
+dictionary data item.  Options include D (date), $ (currency amount), N
+(numeric), T (text), and C (time).

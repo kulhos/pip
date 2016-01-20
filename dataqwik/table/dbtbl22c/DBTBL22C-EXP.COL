@@ -1,0 +1,33 @@
+NOD=COL
+LEN=255
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Column Expression
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=20
+DEL=
+POS=4
+RHD=Column@Expression
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The name of a column from one of the tables in the table list, or a valid
+expression involving multiple columns, for example BALAVL-BAL.

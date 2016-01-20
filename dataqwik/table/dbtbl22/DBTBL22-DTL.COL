@@ -1,0 +1,38 @@
+NOD=AGID
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Extract Detail
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=5
+RHD=Extract@Detail
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+An indicator (Y/N) of whether or not to include the detail in the extract.  If
+"Y" is selected, the table MATRIXD'AGID', where AGID is the aggregate ID,
+will be created.  This table will have the same key structure as the primary
+aggregate table, MATRIX'AGID', but will include the remaining keys from the
+primary table (first table in the FRM list).  If all the keys from the primary
+table are already included in the group by (GRP) list, then the detail is in
+the primary extract, and no MATRIXD'AGID' table will be generated.

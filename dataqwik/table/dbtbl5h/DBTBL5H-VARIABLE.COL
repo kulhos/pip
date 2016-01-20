@@ -1,0 +1,40 @@
+NOD=0
+LEN=80
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=User-Defined Record Variables
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=19
+RHD=User-Defined@Record Variables
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+         REPORT VARIABLES                              Optional
+
+             Applies to reports using Client/Server compiler.
+
+             Enter a list of report run-time variables to be
+             declared for this report.
+
+             The values will be transferred to the server with
+             the initial CURSOR open command.

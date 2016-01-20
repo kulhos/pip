@@ -1,0 +1,33 @@
+NOD=RECSEQ
+LEN=80
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Record Keys
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Record Keys
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The keys to the record in the form of name-value pairs, e.g.,
+key1=value1,key2=value2,..., with non-numeric values quoted.

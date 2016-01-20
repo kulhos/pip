@@ -1,0 +1,113 @@
+NOD=1
+LEN=26
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=INCREMENTS
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=5
+RHD=INCREMENTS
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+         STATISTICS INCREMENTS
+
+             Enter the increments for which statistics are to be
+             calculated.
+
+             Enter either an increment (such as 1000 for every
+             thousand) or a list of values separated by commas
+             for specific ranges (such as 50000,100000 for these
+             ranges:  lowest value to 49,999; 50,000 to 99,999;
+             and 100,000 to highest value).
+
+             You may only supply a value in this field if the
+             same data item is listed in the BASED ON column
+             and the DATA ITEM column.
+
+         _____________________________________________________________________
+         Example - To report on deposit balances in increments of 100,000
+
+           Statistics Page ----------------------------------------------
+           |
+           |   Data Item           Based On         Statistics Increments
+           |      [DEP]BAL           [DEP]BAL           100000
+           |
+
+
+---------- Report Run ----------------------------------------------------
+
+SUMMARY REPORT
+==============
+
+               RANGE                     COUNT      %            TOTAL       %
+-------------------------------------------------------------------------------
+
+<< Account Balance >>
+
+          0.00 -      99,999.99            216   78.26     2,873,022.83   13.75
+    100,000.00 -     199,999.99             44   15.94     5,255,311.77   25.15
+    200,000.00 -     299,999.99              9    3.26     2,100,200.00   10.05
+    400,000.00 -     499,999.99              1    0.36       495,000.00    2.37
+    600,000.00 -     699,999.99              1    0.36       600,000.00    2.87
+    700,000.00 -     799,999.99              1    0.36       748,498.74    3.58
+  1,000,000.00 -   1,099,999.99              2    0.72     2,000,000.00    9.57
+  2,000,000.00 -   2,099,999.99              1    0.36     2,000,000.00    9.57
+  4,800,000.00 -   4,899,999.99              1    0.36     4,824,718.00   23.09
+
+       ** LOW **        ** HIGH **   ==========================================
+
+     -2,528.13 -   4,824,718.00            276            20,896,751.34
+
+-------------------------------------------------------------------------------
+
+         _____________________________________________________________________
+         Description of Report Components
+
+
+         << Account Balance>> - the BASED ON data item for this report.
+                        This is the data item on which the statistical
+                        analysis is based.
+
+         RANGE Column - the range as specified in STATISTICS INCREMENTS.
+
+         COUNT    % Column
+
+              COUNT   - the number of balances in this range.
+                        Total count for the report prints at the
+                        bottom of this column.
+
+              %       - percentage of balances in this range.
+
+         TOTAL    % Column
+
+         TOTAL        - Total of balances in this range.  Total balance
+                        for the report prints at the bottom of this
+                        column.
+
+         %            - Percentage of balances in this range.
+
+         SUMMARIES AT END OF REPORT
+
+         ** LOW **    - the lowest value for this data item.
+
+         ** HIGH **   - the highest value for this data item.

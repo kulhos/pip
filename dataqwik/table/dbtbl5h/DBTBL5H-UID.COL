@@ -1,0 +1,35 @@
+NOD=0
+LEN=20
+DFT=<<$$USERNAM^%ZFUNC>>
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=User ID
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=15
+RHD=USER ID
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+          USER               Supplied by System
+
+              The VMS Username of the user who created or updated
+              the report.

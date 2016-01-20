@@ -1,0 +1,34 @@
+NOD=TOKEN
+LEN=8
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Server Channel ID
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=13
+RHD=Server@Channel ID
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+The Server Channel Identification.  This field contains the channel ID for the
+message received by a PROFILE server.  This ID is stored during the host signon
+process and is used for subsequent messages sent by this user.

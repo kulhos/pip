@@ -1,0 +1,36 @@
+NOD=JRNID
+LEN=100
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Query Condition
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=76
+DEL=
+POS=11
+RHD=Query Condition
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+  One or more user-defined queries that can be used to conditionally set up or
+  exclude a history entry.  For example, if LN.IRN is changed, the query 
+  $G(EFD)'<SystemDate maybe included to prevent a history entry from being
+  created if the effective date is less than today. The history entry may be
+  created by another process.

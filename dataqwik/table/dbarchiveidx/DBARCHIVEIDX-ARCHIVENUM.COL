@@ -1,0 +1,33 @@
+NOD=ARCHKEYVAL
+LEN=10
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Archive Number
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Archive@Number
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The number associated with the archive file, e.g., if archiving was done to
+SCAU_ARCHIVE_19, 19 will be stored.

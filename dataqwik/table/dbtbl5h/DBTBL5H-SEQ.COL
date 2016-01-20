@@ -1,0 +1,82 @@
+NOD=1
+LEN=33
+DFT=
+DOM=
+TBL=[DBTBL1D]:QU "[DBTBL1D]FID=<<XFID>>"
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=Sequence by #1
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Sequence@by #1
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         SEQUENCE BY                                   Default=Keys from
+                                                       Primary Access File
+
+             The report is sorted by the data items listed.
+
+             The access keys from the Primary Access File are
+             listed by default.
+
+             To change the sort order, add the data item to
+             be used as a sort key to this list.  The access
+             keys from the Primary Access File must remain
+             on this list; additional data items must be
+             inserted or appended to the default keys.
+
+         _____________________________________________________________________
+         Example - Adding one additional sort key
+
+           Access File:  DEP
+
+           Sequence By
+           [DEP]CID          <--- Access key from Primary Access File
+
+           To sort by Branch of Ownership, then Account Number,
+           enter the following:
+
+           Sequence By
+           [DEP]BOO
+           [DEP]CID
+
+         _____________________________________________________________________
+         Example - Adding sort keys to a list of default keys
+
+           Access File:  XCLS,LN
+
+           Sequence By
+           [XCLS]CLS          <--- Access keys from Primary Access File
+           [XCLS]GRP          <---
+           [XCLS]TYPE         <---
+           [XCLS]CID          <---
+
+           To sort by Branch of Ownership, then Officer,
+           then Class, Group, Type, then Account Number,
+           enter the following:
+
+           Sequence By
+           [LN]BOO
+           [LN]OFF
+           [XCLS]CLS
+           [XCLS]GRP
+           [XCLS]TYPE
+           [XCLS]CID

@@ -1,0 +1,57 @@
+NOD=4*
+LEN=20
+DFT=
+DOM=
+TBL=[DBSDOM]
+PTN=
+XPO=
+XPR=
+TYP=U
+DES=User-Defined Data Type
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Data Type
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+An alphanumeric code established by the institution that identifies a set of
+allowable values for a type of data item.  The user-defined data type describes
+the type of data and whether or not a user can modify each attribute at the
+data item level.  User-defined data types allow the institution to define a
+data type other than those provided by the system.
+
+For example, the institution may define a data type called RATE that has the
+following attributes:  numeric values; five digits to the right of the decimal;
+and a mximum value of 10.00000.  Data items referencing the RATE user-defined
+data type automatically possess these attributes.
+
+Changes made to a user-defined data type automatically propogate to the data
+items which reference it.
+
+
+Example:
+                                User-Defined
+                                 Data Type
+                                    RATE
+                                      |
+                  -----------------------------------------
+                  |                                       |
+              Data Item                               Data Item
+            [CRCD]MIDRATE                             [TTX]RATE
+
+        Data Type Name = RATE                   Data Type Name = RATE

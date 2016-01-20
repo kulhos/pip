@@ -1,0 +1,33 @@
+NOD=4*
+LEN=16
+DFT=
+DOM=
+TBL=
+PTN=X?1A.AN
+XPO=
+XPR=
+TYP=U
+DES=Index Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Index Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+  A unique name that is used to identify this index file entry.  Typically,
+  the name of the data item is used.

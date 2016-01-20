@@ -1,0 +1,37 @@
+NOD=AGID
+LEN=1
+DFT=
+DOM=
+TBL=,0#No Date,1#Calendar Date,2#System Date (CUVAR.TJD)
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Date Key Option
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=6
+RHD=Date Key@Option
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+Option to include a date key in the aggregate extract table.  Valid options
+are:
+
+  0 - no date key included
+  1 - include date key, value is calendar date
+  2 - include date key, value is processing date

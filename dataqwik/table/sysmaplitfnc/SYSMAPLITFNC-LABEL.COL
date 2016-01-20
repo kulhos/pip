@@ -1,0 +1,35 @@
+NOD=3*
+LEN=31
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Function Name
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Function@Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The function tag.  For example, function $$ABC^XYZ will be filed as
+RTNNAME=XYZ and LABEL=ABC; $$^XYZ will be filed at RTNNAME=XYZ and
+LABEL=XYZ.  Function name will map to the corresponding LABEL in the
+SYSMAPPROPDATA table.

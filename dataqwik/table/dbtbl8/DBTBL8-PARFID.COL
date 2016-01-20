@@ -1,0 +1,44 @@
+NOD=INDEXNM
+LEN=8
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Supertype File Name
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=15
+RHD=Supertype@File Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+A supertype file that contains data items, indexes, and journals that are
+common to a group of files.  The system propogates any change that is made to
+an element in a supertype file to the files that reference it (i.e., to the
+subtype files).  Therefore, when a supertype/subtype file relationship exists,
+users can only modify or delete elements that exist in a supertype file.
+ 
+For example, the Deposit Account Master file [DEP] and Loan Account Master file
+[LN] both represent customer accounts.  The files share many physical and
+logical characteristics, including approximately 150 data items, 5 index files,
+and journal files.  The supertype Account Master file [ACN] consolidates the
+common elements of the DEP and LN files.  The institution changes element
+attributes in the ACN supertype file; the system propogates these changes to
+the DEP and LN files.

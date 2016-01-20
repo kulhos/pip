@@ -1,0 +1,39 @@
+NOD=0
+LEN=1
+DFT=1
+DOM=
+TBL=,0#Clear to end of page,1#Clear entire page
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Clear Screen Enabled
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=8
+RHD=Clear@screen enabled
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+The clear screen mode determines the region of the terminal screen
+that is cleared prior to displaying the current screen.  There are
+three options:
+
+    0 - Clear the entire screen (line 1 to line 24)
+    1 - Clear from the first line position of this screen to the EOP.
+    2 - Clear the region from the first line position of the this
+        screen to the last line position of the current screen

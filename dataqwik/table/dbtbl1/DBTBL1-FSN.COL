@@ -1,0 +1,40 @@
+NOD=12
+LEN=12
+DFT=
+DOM=
+TBL=
+PTN=X?1A.AN.E!(X?1"%".AN.E)
+XPO=
+XPR=
+TYP=T
+DES=File Short Name
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=File Short@Name
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+ When updating information on a screen, DATA-QWIK retrieves information from
+ the database.  This information is then stored in the computer's local memory.
+ The internal storage of the information is based on the local array name.  As
+ changes are noted via screen input, DATA-QWIK manages the new input within the
+ named local array.  When a screen is filed, DATA-QWIK filers rely on this local
+ array to provide the information which will be filed back out to the database.
+
+ This field will initially default to the file ID and would typically only be
+ modified under special processing conditions.

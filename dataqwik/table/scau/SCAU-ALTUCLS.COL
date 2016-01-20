@@ -1,0 +1,37 @@
+NOD=UID
+LEN=100
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Alternate Userclasses
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=13
+RHD=Alternate Userclasses
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+A comma separated list of other valid userclasses for this user.
+
+If a userclass is not specified at sign-on, the user will use the primary
+userclass, SCAU.%UCLS.  At sign-on, any of the userclasses listed in ALTUCSL
+may be used, or the primary userclass.  If the client software allows the
+option, the user may switch between allowed userclasses.

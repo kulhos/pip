@@ -1,0 +1,380 @@
+NOD=0
+LEN=60
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Key Break On Item
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=11
+RHD=Key Break On Item
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+         BREAK ON
+
+             Specify a data item for which group summaries or subtotals
+             will be calculated.
+
+             You must break on either the primary file access key or
+             the data item on which the report is ordered.  When the
+             value of the data item in the Break On field changes,
+             subtotals will be printed for that group.  You can break
+             on only one data item.
+
+         _____________________________________________________________________
+         Example - Break on Branch of Ownership (BOO)
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): DEP
+           |     Data Item(s): BOO,CID,BAL,LNM
+           |  Report Order By: BOO,BAL
+           |         Break On: BOO
+
+
+           Report Run ----------------------------------------------------
+           |
+           |  Branch Of       Account       Account    Report
+           |  Ownership        Number       Balance  Short Name
+           |  ---------  ------------  ------------  ----------
+           |          1             7         45.00  SMITH,JOE
+           |                        4        200.00  SMITH,MARY
+           |                        5      1,000.00  LEE,KAREN
+           |                           ------------  ----------
+           |                               1,245.00           3
+           |
+           |          2             6         13.45  CORBIN,JOE
+           |                        1        120.00  DOE,JOHN
+           |                           ------------  ----------
+           |                                 133.45           2
+           |
+           |                           ============  ==========
+           |                               1,378.45           5
+
+
+         BREAK ON - OPTIONS
+
+             The following options can be specified with the data
+             item name (see examples below):
+
+              /DUP       Repeats the value of the Break On column on
+                         each line.
+
+              /PAGE      Skip to a new page after printing the group summary.
+
+              /SKIP=n    Skip n blank lines after printing the summary.
+                         For example, /SKIP=2 skips two lines after the
+                         summary line, /SKIP=0 skips no lines (suppresses
+                         the summary line).
+
+              /TEXT=xxx  Prints text to describe the summary line.
+                         You can include the value of the variable in the
+                         text by entering the variable name in angle
+                         brackets.  For example, use <<BOO>> to print
+                         the number of the Branch of Ownership.
+
+         _____________________________________________________________________
+         Example - Break on BOO Using /TEXT Option
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): DEP
+           |     Data Item(s): BOO,CID,BAL,LNM
+           |  Report Order By: BOO,BAL
+           |         Break On: BOO/TEXT=BRANCH <<BOO>> TOTAL
+
+
+           Report Run ----------------------------------------------------
+           |
+           |  Branch Of       Account       Account    Report
+           |  Ownership        Number       Balance  Short Name
+           |  ---------  ------------  ------------  ----------
+           |          1             7         45.00  SMITH,JOE
+           |                        4        200.00  SMITH,MARY
+           |                        5      1,000.00  LEE,KAREN
+           |                           ------------  ----------
+           |  BRANCH 1 TOTAL               1,245.00           3
+           |
+           |          2             6         13.45  CORBIN,JOE
+           |                        1        120.00  DOE,JOHN
+           |                           ------------  ----------
+           |  BRANCH 2 TOTAL                 133.45           2
+           |
+           |                           ============  ==========
+           |                               1,378.45           5
+
+
+         _____________________________________________________________________
+         Example - Break on BOO Using /DUP Option
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): DEP
+           |     Data Item(s): BOO,CID,BAL,LNM
+           |  Report Order By: BOO,BAL
+           |         Break On: BOO/TEXT=BRANCH TOTAL/DUP
+
+
+           Report Run ----------------------------------------------------
+           |
+           |  Branch Of       Account       Account    Report
+           |  Ownership        Number       Balance  Short Name
+           |  ---------  ------------  ------------  ----------
+           |          1             7         45.00  SMITH,JOE
+           |          1             4        200.00  SMITH,MARY
+           |          1             5      1,000.00  LEE,KAREN
+           |                           ------------  ----------
+           |  BRANCH TOTAL                 1,245.00           3
+           |
+           |          2             6         13.45  CORBIN,JOE
+           |          2             1        120.00  DOE,JOHN
+           |                           ------------  ----------
+           |  BRANCH TOTAL                   133.45           2
+           |
+           |                           ============  ==========
+           |                               1,378.45           5
+
+
+         _____________________________________________________________________
+         Example - Break on BOO Using /SKIP Option
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): DEP
+           |     Data Item(s): BOO,CID,BAL,LNM
+           |  Report Order By: BOO,BAL
+           |         Break On: BOO/TEXT=BRANCH TOTALS/SKIP=3
+
+
+           Report Run ----------------------------------------------------
+           |
+           |  Branch Of       Account       Account    Report
+           |  Ownership        Number       Balance  Short Name
+           |  ---------  ------------  ------------  ----------
+           |          1             7         45.00  SMITH,JOE
+           |                        4        200.00  SMITH,MARY
+           |                        5      1,000.00  LEE,KAREN
+           |                           ------------  ----------
+           |  BRANCH 1 TOTALS              1,245.00           3
+           |                                                     <--- Three
+           |                                                     <--- blank
+           |                                                     <--- lines
+           |
+           |          2             6         13.45  CORBIN,JOE
+           |                        1        120.00  DOE,JOHN
+           |                           ------------  ----------
+           |  BRANCH 2 TOTALS                133.45           2
+           |
+           |                           ============  ==========
+           |                               1,378.45           5
+
+         _____________________________________________________________________
+         Example - Break on BOO Using /PAGE Option
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): DEP
+           |     Data Item(s): BOO,CID,BAL,LNM
+           |  Report Order By: BOO,BAL
+           |         Break On: BOO/PAGE
+
+
+           Report Run ----------------------------------------------------
+           |                                                     PAGE 1
+           |  Branch Of       Account       Account    Report
+           |  Ownership        Number       Balance  Short Name
+           |  ---------  ------------  ------------  ----------
+           |          1             7         45.00  SMITH,JOE
+           |                        4        200.00  SMITH,MARY
+           |                        5      1,000.00  LEE,KAREN
+           |                           ------------  ----------
+           |                               1,245.00           3
+           |------------------------------------------------------------
+           |                                                     PAGE 2
+           |                                                       ^
+           |          2             6         13.45  CORBIN,JOE    |
+           |                        1        120.00  DOE,JOHN      |
+           |                           ------------  ----------  New Page
+           |                                 133.45           2
+           |
+           |                           ============  ==========
+           |                               1,378.45           5
+
+
+             If the primary access file has multiple access keys
+             you can Break On an access key without specifying the key
+             in the Order By field.
+
+         _____________________________________________________________________
+         Example - Break on Access Key CID
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): HIST
+           |     Data Item(s): CID,TSEQ,TJD,ETC,TAMT
+           |  Report Order By:
+           |         Break On: CID
+
+
+           Report Run ----------------------------------------------------
+           |
+           |      Account  Sequence  Date      Transaction   Transaction
+           |       Number                                       Amount
+           |     --------  --------  --------  -----------  ------------
+           |            3         2  08/08/88  CBD             10,000.00
+           |                      3  08/08/88  CBPPO            1,000.00
+           |                                   -----------
+           |                                             2
+           |
+           |            4        50  06/29/88  CD                  67.95
+           |                                   -----------
+           |                                             1
+           |
+           |            5         5  06/29/88  CD                   2.07
+           |                      6  06/29/88  CD                   2.89
+           |                      7  06/29/88  CD                  11.17
+           |                                   -----------
+           |                                             3
+           |
+           |                                   ===========
+           |                                             6
+           |
+
+         _____________________________________________________________________
+         Example - Break on Access Key CLS
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): XCLS,DEP
+           |     Data Item(s): CLS,GRP,TYPE,CID,LNM,BAL
+           |  Report Order By:
+           |         Break On: CLS
+
+
+           Report Run ----------------------------------------------------
+           |
+           | Class  Group Type  Account    Report         Account
+           |                     Number  Short Name       Balance
+           | -----  -----  ----  ------  ----------  ------------
+           | D      CD      350       4  SMITH,JOE       1,000.00
+           |        CD      350       5  SMITH,MARY        100.00
+           |        CD      355      25  CARR, J         2,000.00
+           |        DDA     400      19  SMITH,JOE       3,000.00
+           |        DDA     403      23  JONES, J          100.00
+           |        DDA     403      24  SMITH, J        2,500.00
+           |                             ----------  ------------
+           |                                      6      8,700.00
+           |
+           | L      COM     800      50  TAYLOR, R     100,000.00
+           |        MTG      55       1  DOE,JOHN        5,000.00
+           |                             ----------  ------------
+           |                                      2    105,000.00
+           |
+           |                             ==========  ============
+           |                                      8    113,700.00
+           |
+
+         _____________________________________________________________________
+         Example - Break on Secondary Access Key GRP
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): XCLS,DEP
+           |     Data Item(s): CLS,GRP,TYPE,CID,LNM,BAL
+           |  Report Order By:
+           |         Break On: GRP
+
+
+           Report Run ----------------------------------------------------
+           |
+           | Class  Group  Type Account    Report         Account
+           |                     Number  Short Name       Balance
+           | -----  -----  ----  ------  ----------  ------------
+           | D      CD      350       4  SMITH,JOE       1,000.00
+           |                350       5  SMITH,MARY        100.00
+           |                355      25  CARR, J         2,000.00
+           |                             ----------  ------------
+           |                                      3      3,100.00
+           |
+           |        DDA     400      19  SMITH,JOE       3,000.00
+           |                403      23  JONES, J          100.00
+           |                403      24  SMITH, J        2,500.00
+           |                             ----------  ------------
+           |                                      3      6,600.00
+           |
+           | L      COM     800      50  TAYLOR, R     100,000.00
+           |                             ----------  ------------
+           |                                      1    100,000.00
+           |
+           |        MTG      55       1  DOE,JOHN        5,000.00
+           |                             ----------  ------------
+           |                                      1      5,000.00
+           |
+           |                             ==========  ============
+           |                                      8    113,700.00
+           |
+
+         _____________________________________________________________________
+         Example - Break on Secondary Access Key TYPE
+
+           Report Definition ---------------------------------------------
+           |
+           |   Access File(s): XCLS,DEP
+           |     Data Item(s): CLS,GRP,TYPE,CID,LNM,BAL
+           |  Report Order By:
+           |         Break On: TYPE
+
+
+           Report Run ----------------------------------------------------
+           |
+           | Class  Group  Type Account    Report         Account
+           |                     Number  Short Name       Balance
+           | -----  -----  ----  ------  ----------  ------------
+           | D      CD      350       4  SMITH,JOE       1,000.00
+           |                          5  SMITH,MARY        100.00
+           |                             ----------  ------------
+           |                                      2      1,100.00
+           |
+           |                355      25  CARR, J         2,000.00
+           |                             ----------  ------------
+           |                                      1      2,000.00
+           |
+           |        DDA     400      19  SMITH,JOE       3,000.00
+           |                             ----------  ------------
+           |                                      1      3,000.00
+           |
+           |                403      23  JONES, J          100.00
+           |                         24  SMITH, J        2,500.00
+           |                             ----------  ------------
+           |                                      2      2,600.00
+           |
+           | L      COM     800      50  TAYLOR, R     100,000.00
+           |                             ----------  ------------
+           |                                      1    100,000.00
+           |
+           |        MTG      55       1  DOE,JOHN        5,000.00
+           |                             ----------  ------------
+           |                                      1      5,000.00
+           |
+           |                             ==========  ============
+           |                                      8    113,700.00
+           |

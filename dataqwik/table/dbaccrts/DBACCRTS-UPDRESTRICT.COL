@@ -1,0 +1,44 @@
+NOD=2
+LEN=500
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=UPDATE Restrict Clause
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=UPDATE Restrict Clause
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+A SQL WHERE clause, valid for this tablename, that can be used to limit the
+grant of UPDATE rights for this userclass.
+
+If UPDATE rights are granted and there is a RESTRICT clause in this column, it
+will be applied when a record is filed to determine if the userclass is
+allowed to perform the update, based on the criteria specified in the
+RESTRICT clause.
+
+This column is ignored if UPDATE rights are not granted.
+
+If other tables are referenced in the RESTRICT clause, they must be tables that
+can be joined to the table specified by tablename, and the join condition
+must be included. 

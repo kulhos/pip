@@ -1,0 +1,33 @@
+NOD=BCHID
+LEN=100
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=SQL Where Clause
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=50
+DEL=
+POS=9
+RHD=Where
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=
+A WHERE clause to return records under a specific condition from the primary
+access file.

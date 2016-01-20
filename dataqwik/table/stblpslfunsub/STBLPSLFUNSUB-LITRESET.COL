@@ -1,0 +1,36 @@
+NOD=TEMPLATE
+LEN=20
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Literal Reset
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=Literal@Reset
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+
+ When an entry in the STBLPSLSUBFUNC table is converted to a method, 
+ variables declared with a literal value that have not been changed prior
+ to the function call may be evaluated at compile time. This field is used
+ to define those variables that should not be evaluated by the compiler.

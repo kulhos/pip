@@ -1,0 +1,40 @@
+NOD=10
+LEN=3
+DFT=124
+DOM=
+TBL=[DBCTLDELIM]
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=ASCII Delimiter
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=1
+RHD=Delimiter
+SRL=
+CNV=
+LTD=
+USER=
+MDD=DEL
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+ The character used as a delimiter to separate fields in a record.  The
+ delimiter can be any valid ASCII character.  The delimiter character must be
+ selected carefully so that it does not conflict with a character that could
+ be contained within the data.
+
+ The standard Sanchez delimiter is ASCII (124) which is the character '|'.
+
+ Other common delimiters are ASCII (9) <TAB>, and ASCII (44) ','
+ although the latter can often conflict with stored data.

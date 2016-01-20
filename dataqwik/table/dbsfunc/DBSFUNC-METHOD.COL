@@ -1,0 +1,43 @@
+NOD=FUNC
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Method Invoked by This Function
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=2
+RHD=Method Invoked
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The method or function to be invoked by this function, when executed.
+
+For Class Definition Modules, the method class and name, as class.method, must
+be entered, without parameters or parenthesis.  Methods must be static and
+return a status string.
+
+For Subroutine Collection Modules, the function call, $$label^module, must be
+entered, without parameters or parenthesis.  Functions must return a status
+string.
+
+A status string with a null value indicates success and any other value a
+failure.  A failure string should indicate information about the failure.

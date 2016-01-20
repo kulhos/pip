@@ -1,0 +1,34 @@
+NOD=1*
+LEN=12
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Userclass
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=1
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Userclass
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+Access to features within the Framework are controlled by userclass.  Every
+user is associated with a userclass, which provides the access level for
+that user.

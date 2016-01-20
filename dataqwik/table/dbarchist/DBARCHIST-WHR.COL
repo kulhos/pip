@@ -1,0 +1,39 @@
+NOD=ARCHSEQ
+LEN=80
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Where Clause
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=11
+RHD=Where Clause
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The WHERE clause passed in conjunction with SELECT and FROM  to the archiving 
+process to determine which primary records will have journal records archived.
+
+This column may not contain an actual WHERE clause in cases where a complex
+query is used externally to ARCHIVE^DBARCHIVE to select records.  In that case,
+WHR may contain information sufficient to define the query conditions, usually
+the user input.  (This is the case, for example, for archiving of account
+history by procedure UARCHIST.)

@@ -1,0 +1,53 @@
+NOD=
+LEN=1
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=L
+DES=Protect Report Header
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=1
+DEL=
+POS=
+RHD=Protect@Report Header
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+An indicator which specifies whether (Y) or not (N) the system allows users to
+change the value in the Report Header data item in file definitions
+([DBTBL1D]RHD) referencing this master data dictionary data item.  The value in
+the Report Header data item in the master data dictionary definition
+([DBSMDD]RHD) defaults as the [DBTBL1D]RHD value for data items referencing the
+master data dictionary data item.
+
+For example, if the Minimum Rate Allowed data item in the Currency Codes file
+([CRCD]MINRATE) definition links to the [MDDPBS]MINRATE master data dictionary
+data item, and the [MDDPBS]MINRATE data item specifies a report header of
+Minimum Rate, the system defaults Minimum Rate into the Report Header attribute
+([DBTBL1D]RHD) associated with the [CRCD]MINRATE data item.
+
+If Y (Yes), the user can modify the [DBTBL1D]RHD value for the data item
+referencing this master data dictionary data item (e.g., the user can modify
+the value in the Report Header attribute associated with the [CRCD]MINRATE data
+item).
+
+If N (No), the user cannot modify the [DBTBL1D]RHD value for the data item
+referencing this master data dictionary data item (e.g., the user cannot modify
+the defaulted value of Minimum Rate for the report heading associated with the
+[CRCD]MINRATE data item).

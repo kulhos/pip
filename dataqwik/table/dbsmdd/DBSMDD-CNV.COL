@@ -1,0 +1,39 @@
+NOD=
+LEN=2
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=N
+DES=Obsoleted in V7.0
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=Obsolete column
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+A code that indicates under what conditions during system conversion the
+institution requires data in the data item defined by this file definition.
+For example, the institution may always require a value or only require it for
+reporting purposes.  Alternatively, the system may not require information in
+this data item at all.
+
+The value in the [DBSMDD]CNV data item is for information purposes only during
+system conversion.

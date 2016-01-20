@@ -1,0 +1,44 @@
+NOD=
+LEN=40
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=File Maint Table and Column for Desc
+ITP=S
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=DES
+ISMASTER=0
+SFD=
+SIZ=
+DEL=
+POS=
+RHD=File Maint Table and Column for Desc
+SRL=0
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=0
+DEPREP=
+DEPOSTP=
+NULLIND=0
+The identifier of the column used to update the old and new value description
+in the Transaction History table.
+
+For example, if [UTBLIACML]DESC is specified in the File Maintenance
+Table and Column for Description column (UTBLIACML.FMDESC) and LN.IACM is
+changed from 10 to 11, the following detailed descriptions appear in the
+Transaction History table.
+
+Old:  Actual/Standard (31/360)
+New: Actual/Actual (31/365,6)
+
+New tables will use the data item name FMDESC as the Description and will
+not need a computed value.

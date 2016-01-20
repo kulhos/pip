@@ -1,0 +1,48 @@
+NOD=GROUP
+LEN=75
+DFT=
+DOM=
+TBL=
+PTN=
+XPO=
+XPR=
+TYP=T
+DES=Restricted Userclass
+ITP=
+MIN=
+MAX=
+DEC=
+REQ=0
+CMP=
+ISMASTER=
+SFD=
+SIZ=
+DEL=
+POS=3
+RHD=RESTRICTED USERCLASS
+SRL=
+CNV=
+LTD=
+USER=
+MDD=
+VAL4EXT=
+DEPREP=
+DEPOSTP=
+NULLIND=
+List of restricted userclasses.
+
+             *       All
+            AB*      One group
+            A-C      Range
+            'ABC     All except userclass ABC
+
+     Example :
+                  All userclasses                         *
+
+                  All userclasses except TEL1 & TEL2      'TEL1,'TEL2
+       
+                  All managers                            MGR*
+
+                  Only SCA userclass                      SCA
+        
+                  All SCA userclasses except SCA1         SCA*,'SCA1
