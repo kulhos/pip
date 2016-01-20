@@ -64,6 +64,7 @@ export SCAU_LOG_DIR SCAU_REPL_DIR
 eval SCAU_${DIR_REF}_UBG=${DIR}/gbls/mumps.dat
 export SCAU_${DIR_REF}_UBG
 
+export SCAU_DQDIR=${DIR}/dataqwik
 export PIP_DB=${DIR}/gbls/mumps.dat
 
 # Setup Replication if being used. - Needed for IBS servers
