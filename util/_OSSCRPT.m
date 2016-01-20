@@ -57,6 +57,9 @@
 	;
 	;
 	;-----Revision History-------------------------------------------------
+	; 20-JAN-2016	JK
+	;		EDTOPT - added vim, check EDITOR variable
+	;
 	; 06/06/05 - RussellDS - CR21619
 	;	     Added missing FAILOVER section.
 	;
@@ -795,9 +798,11 @@ EDTOPT(EDTOPT,RMS,SCR,array)	; Public; Execute the specified editor
 	; 
 	N edtcmd,X 
 	; 
-	S edtcmd="pico "
 	I EDTOPT="emc" S edtcmd="emacs " 
 	I EDTOPT="vi" S edtcmd="vi " 
+	I EDTOPT="vim" S edtcmd="vim "
+	if EDTOPT="" set edtcmd=$zTRNLNM("EDITOR")
+	if $g(edtcmd)="" set edtcmd="pico "
 	;  
 	; LYH 03/15/99 - use a shell script to edit file so that it could
 	; return a value indicating whether the file was changed or not.

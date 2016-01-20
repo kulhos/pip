@@ -9,7 +9,7 @@
 	;
 	; KEYWORDS:	Routine handling
 	;
-	N %ZE S %ZE=".M" D START Q
+	N %ZE S %ZE=".m" D START Q
 	;----------------------------------------------------------------------
 OBJ	;M Utility;Routine directory based on .OBJ files
 	;----------------------------------------------------------------------

@@ -63,6 +63,7 @@ public EXT(Number %ProcessMode)	//
 	
 	type Number SEQ, vER
 	type String DBTBL(,,), filstr(), KEYS(), PROCID, TAB, VFMQ
+	type String DQFILE
 	
 	do ^DBSDEUTL(%ProcessMode,"DBTBL25")
 	
@@ -82,10 +83,16 @@ public EXT(Number %ProcessMode)	//
 	if %ProcessMode=3 do { quit	// Delete old definition
 		do Db.delete("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCID")
 		do Db.delete("DBTBL25","%LIBS='SYSDEV' AND PROCID=:PROCID")
+		
+		// TODO remove the PSL file as well
+		// remove compiled code
+		// check SYSMAP references, schedule for recompile
 
 		lock -DBTBL("SYSDEV",25,PROCID)
 	}
 
+	set DQFILE = $$SUBDIR^%TRNLNM("procedure",PROCID_".PROC")
+	set DQFILE = $$SCAU^%TRNLNM("DQDIR",DQFILE)		
 	type DbSet ds=Db.selectDbSet("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCID","SEQ ASC")
 
 	if ds.isEmpty() do {	// New procedure
@@ -106,12 +113,14 @@ public EXT(Number %ProcessMode)	//
 		set filstr(11) = TAB
 		set filstr(12) = TAB_"*/"
 	}
+	/*
 	else  while ds.next() do {
 		type RecordDBTBL25D dbtbl25d = ds.getRecord("DBTBL25D")
 		set filstr(dbtbl25d.seq) = dbtbl25d.code	
 	}
+	*/
 	
-	do ^DBSWRITE("filstr")		// Access editor
+	do ^ZDBSWRT(DQFILE,"filstr")		// Access editor
 
 	if VFMQ="Q" do { quit		// <F11> exit
 		lock -DBTBL("SYSDEV",25,PROCID) 		
@@ -262,7 +271,33 @@ public COMPILE(String PROCID,	// Procedure ID
 	}	
 
 	set PGM = dbtbl25.pgm				// Routine name
+
+	// read from file
+	type String file = $$SUBDIR^%TRNLNM("procedure",PROCID_".PROC")
+	set file = $$SCAU^%TRNLNM("DQDIR",file)		
+	type IO io = Class.new("IO")
+	set io.directory = $$SCAU^%TRNLNM("DQDIR","procedure")
+	set io.fileName = PROCID_".PROC"
+	set io.openParams = "READ"
+
+	do {
+		catch iox {
+			if 'io.device.isNull() do io.close()
+			if iox["IOEOF" quit
+			throw iox
+		}
 		
+		do io.open()
+
+		for  set REC=io.read()  do {
+			set FCOUNT = FCOUNT + 1
+			set m2src(FCOUNT) = REC
+			set SIZE = SIZE + REC.length()	
+		}
+	}
+
+	
+	/*
 	type DbSet ds=Db.selectDbSet("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCID","SEQ")
 	
 	// Gather signature data
@@ -277,6 +312,7 @@ public COMPILE(String PROCID,	// Procedure ID
 		set m2src(FCOUNT) = d25d.code
 		set SIZE = SIZE + d25d.code.length()	
 	}
+	*/
 
 	/* If the is an extension of RecordTABLE code, compile as a filer, and we don't need
 	   the signature */
