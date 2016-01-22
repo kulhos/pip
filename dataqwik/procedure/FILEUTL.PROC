@@ -1,0 +1,70 @@
+//DO NOT MODIFY  Filesystem utilities|FILEUTL||||rpcvar|rpcvar1
+	/*
+	 ORIG: 1 - 01/20/2016
+	 DESC: 
+	
+	 ---- Comments --------------------------------------------------------
+	
+	 ---- Revision History ------------------------------------------------
+	
+	 ****** Consider using setAuditFlag for all objects in this procedure
+	   example :do dep.setAuditFlag(1)
+	
+	*/
+
+public SIZE(String file)
+
+        if file.get().isNull() quit 0
+        if '$$EXISTS(file) quit 0
+
+        type String LSCMD
+        type String output
+        type Boolean error = false
+
+    #ACCEPT Date=10/15/2013; PGM=JK; CR=4
+        #BYPASS
+        if $zv["Linux" set LSCMD="stat -c %s "_file
+        else  if $zv["AIX" set LSCMD="du -k "_file
+        else  set LSCMD="wc -c "_file
+        open "size":(shell="/bin/sh":command=LSCMD:READONLY)::"pipe"
+        use "size" read output:30 if '$T set error=1
+        close "size"
+        #ENDBYPASS
+
+        if error throw Class.new("Error","DEX-E-SIZERR, Error reading file size for "_file)
+        type Number size = output.trim().piece(" ",1).toNumber()
+
+    #ACCEPT Date=10/15/2013; PGM=JK; CR=4
+        #BYPASS
+        if $zv["AIX" set size=1024*size
+    #ENDBYPASS
+
+        quit size
+
+public EXISTS(String file)
+
+        if file.get().isNull() quit false
+
+        type IO readcheck = Class.new("IO")
+        type Boolean isthere
+
+        do {
+                catch error {
+                        if readcheck.exists() do readcheck.close()
+    	    #ACCEPT Date=10/15/2013; PGM=JK; CR=4
+                        close file      // just for sure
+                        set isthere = false
+                }
+
+    	#ACCEPT Date=10/15/2013; PGM=JK; CR=4
+                set readcheck.directory = $$PARSE^%ZFUNC(file,"DIRECTORY")
+    	#ACCEPT Date=10/15/2013; PGM=JK; CR=4
+                set readcheck.fileName = $$PARSE^%ZFUNC(file, "NAME")_$$PARSE^%ZFUNC(file, "TYPE")
+                set readcheck.openParams = "READ"
+                set readcheck.timeout = 5
+                do readcheck.open()
+                do readcheck.close()    // file exists
+                set isthere = true
+        }
+
+        quit isthere
