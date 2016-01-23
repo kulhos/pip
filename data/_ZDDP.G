@@ -1,0 +1,7 @@
+^%ZDDP=""
+^%ZDDP("%NET")="1"
+^%ZDDP("%NOUPD")="1"
+^%ZDDP("DDP")="HOST"
+^%ZDDP("DDP","P04DEVLX","P04D")="LITTLEWING|||||||||||||||||1"
+^%ZDDP("DDP","P04DEVLX","P04DVGTM")="P04DEVGUI|||||||||||||||||1"
+^%ZDDP("NET")="1"
