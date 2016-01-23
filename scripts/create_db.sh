@@ -89,3 +89,14 @@ for file in ${DIR}/data/*.DAT
 done
 echo "\n$cnt data files loaded."
 
+cnt=0
+for file in ${DIR}/dataqwik/procedure/*.PROC
+ do
+       echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXPROC(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt procedures loaded."
+

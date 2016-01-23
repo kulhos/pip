@@ -73,7 +73,7 @@ public SRCDIR(String typ, String topdir) //
 
 	type String types()
         #ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	do TYPEINIT^TBXEXTR(.types)
+	do TYPEINIT^TBXINST(.types)
 
 	type String det = types(typ).get()
 	if det.isNull() quit ""
@@ -88,7 +88,7 @@ public SRCFILE(String typ, String elem) // get PSL source file location
 
 	type String types()
         #ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	do TYPEINIT^TBXEXTR(.types)
+	do TYPEINIT^TBXINST(.types)
 
 	type String det = types(typ).get()
 	if det.isNull() quit ""

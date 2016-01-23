@@ -785,7 +785,6 @@
 ^DBCTL("SYS","EDITOR","emc")="emacs editor"
 ^DBCTL("SYS","EDITOR","pic")="pico editor"
 ^DBCTL("SYS","EDITOR","vi")="vi editor"
-^DBCTL("SYS","EDITOR","vim")="vim editor"
 ^DBCTL("SYS","ERRFLG",1)="Log error and continue"
 ^DBCTL("SYS","ERRFLG",2)="Log error and exit"
 ^DBCTL("SYS","FILETYP",1)="Entity File"
