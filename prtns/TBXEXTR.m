@@ -24,6 +24,9 @@ TBXEXTR	;Private;Extract program
 	;	and dataqwik elements into a flat file.
 	;
 	;-----------------------------------------------------------------------
+	; 23-JAN-2016	Jiri Kulhan
+	;		Disabled filename upcasing in OUT section
+	;
 	; Revision History:
 	; 01/20/2004	Lik kwan
 	;		Changed to use absolute path when extracting m routines.
@@ -386,7 +389,7 @@ OUT(CODE,FILE)	;
 	N IO,SEQ,TYPE,FOLDER,X,CMD 
 	;
 	I '$D(CODE) W !,"-ERROR- FAILED TO EXTRACT "_FILE,! Q
-	S FILE=$$UPPER^%ZFUNC(FILE)
+	; S FILE=$$UPPER^%ZFUNC(FILE)
 	W !,"    extracting "_FILE,!
 	S FILE=$$TRIM^%ZS(FILE)
 	I FILE[" " S FILE=$TR(FILE," ","_")

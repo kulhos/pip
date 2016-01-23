@@ -94,6 +94,6 @@ public SRCFILE(String typ, String elem) // get PSL source file location
 	if det.isNull() quit ""
 
         #ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	quit $$SCAU^%TRNLNM("DQDIR",$$SUBDIR^%TRNLNM(det.piece("|",1),elem_"."_typ))
+	quit $$SCAU^%TRNLNM("DQDIR",$$SUBDIR^%TRNLNM(det.piece("|",1),elem.translate("%","_")_"."_typ))
 
 

@@ -101,8 +101,9 @@ public EXT(Number %ProcessMode)	//
 
 		type IO io = Class.new("IO")
 		#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-		set io.directory = $$SCAU^%TRNLNM("DQDIR","procedure")
-		set io.fileName = PROCID_".PROC"
+		set io.directory = $$PARSE^%ZFUNC(DQFILE,"DIRECTORY")
+		#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
+		set io.fileName = $$PARSE^%ZFUNC(DQFILE, "NAME")_$$PARSE^%ZFUNC(DQFILE, "TYPE")
 		set io.openParams = "WRITE/NEWV"
 
 		catch ioerr {
@@ -348,10 +349,13 @@ public COMPILE(String PROCID,	// Procedure ID
 
 	set PGM = dbtbl25.pgm				// Routine name
 
+	type String procfile = $$SRCFILE^FILEUTL("PROC",PROCID)
+
 	type IO io = Class.new("IO")
 	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	set io.directory = $$SCAU^%TRNLNM("DQDIR","procedure")
-	set io.fileName = PROCID_".PROC"
+	set io.directory = $$PARSE^%ZFUNC(procfile,"DIRECTORY")
+	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
+	set io.fileName = $$PARSE^%ZFUNC(procfile, "NAME")_$$PARSE^%ZFUNC(procfile, "TYPE")
 	set io.openParams = "READ"
 
 	do {
