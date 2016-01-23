@@ -1,0 +1,394 @@
+//DO NOT MODIFY  Map wide tables into smaller for Oracle|DBSDDMAP|||||||1
+	/*
+	
+	   ORIG: CHIANG - 11/05/96
+	   DESC: Utility to generate Mapping definitions for wide tables
+	
+	   KEYWORDS:
+	
+	
+	   LIBRARY:
+	         . REPORT   - DIsplay Mapping information
+		  . MAP      - Return MApping definition
+		  . DEF      - Create wide table definition file to be used
+	                      by GUI client
+	
+	
+	
+	  ---------- Revision History ------------------------------------------
+	  01/10/2008 - RussellDS - CR27800
+		Eliminated numerous PSL warnings and did some code clean-up.
+		
+	  08/28/06 - RussellDS - CR22159
+	  	     Added comments in MAP section that it should not longer
+	  	     be used for RDB mapping.  DBMAPDFT now carries the RDB
+	  	     map info.
+	  	     
+	  	     Removed old revision history.
+	*/
+
+	quit 
+
+	//I18N=QUIT
+
+REPORT(Boolean OPT)	// Summary only (true) or full report (false)	
+
+	/* Public; Report wide to split table mapping
+
+	   This line tag is called from the GTM prompt by DBA's to determine the 
+	   correct node in which to add new columns
+
+	Returns:  Displays to screen
+ 
+	Example:
+ 
+	D REPORT^DBSDDMAP(0)
+ 
+	*/
+	
+	type Number CNT
+	type String DI, FID, IO, IOTYP, LINE, LOW, MAPSTART, NODE, SEG, TBL
+
+	set OPT = OPT.get()
+	set LINE = ""
+	set LINE.piece("-", 79) = ""
+	
+	do ^SCAIO
+			
+	quit:IO.get().isNull()
+	
+	type IO file = Class.new("IO")
+		
+	set file.fileName = "" 
+			
+	if (IOTYP.get() = "RMS") do {
+			
+		set file.directory = $$PARSE^%ZFUNC(IO, "DIRECTORY")
+		set file.fileName = $$PARSE^%ZFUNC(IO, "NAME")_$$PARSE^%ZFUNC(IO, "TYPE")
+		set file.openParams = "WRITE/NEWV"
+		set file.timeout = 5
+	
+		catch error {
+		
+			do file.close()
+		
+			if 'error.type.isLike("%IOEOF%") throw error
+		}
+	
+		do file.open()
+	}
+			
+	do INIT
+	for FID="CUVAR", "DEP", "LN", "PRODCTL", "PRODDFTL", "PRODDFTD" do PRINT(file)
+	
+	do writeIt(file, "")
+	do writeIt(file, LINE)
+	do writeIt(file, "")
+
+	do file.close()
+	
+	quit 
+
+
+PRINT(IO file)		// Output device
+
+	// Print information about the split tables
+
+	type public Boolean OPT
+	type public String FID, LINE, MAPSTART(,), TBL(,)
+
+	type Number CNT, LOW
+	type String DI, NODE, SEG
+	
+	do writeIt(file, "")
+	do writeIt(file, LINE)
+	do writeIt(file, "")
+	do writeIt(file, "Table Name: "_ FID)
+	
+	if 'OPT do {
+	
+		do writeIt(file, "")
+		do writeIt(file, "")
+		do writeIt(file, "Column Name         New Table Name      Node Number")
+		do writeIt(file, "")
+		do writeIt(file, "")
+	}
+	
+	do MAP(FID, .TBL(,))
+
+	set DI="" 
+	for  set DI = TBL(FID,DI).order() quit:DI.isNull()  do {
+		set SEG=TBL(FID,DI)
+		if 'OPT do {
+		
+			type RecordDBTBL1D col = Db.getRecord("DBTBL1D","%LIBS='SYSDEV',FID=:FID,DI=:DI")
+		
+			do writeIt(file, "")
+			do writeIt(file, DI.justify(20, -1)_ SEG.justify(20, -1)_ col.nod)
+		}
+
+		set CNT(SEG) = CNT(SEG).get() + 1
+	}
+	
+	do writeIt(file, "")
+	do writeIt(file, "")
+	set LOW=1
+	
+	set NODE="" 
+	for  set NODE = MAPSTART(FID, NODE).order() quit:NODE.isNull()  do {
+		
+		do writeIt(file, "")
+		do writeIt(file, "NODE "_ LOW_ "-"_ NODE_ " = Table "_ MAPSTART(FID,NODE))
+		set LOW=NODE+1
+	}
+	set SEG=""
+	
+	do writeIt(file, "")
+	do writeIt(file, "")
+	 
+	for  set SEG = CNT(SEG).order() quit:SEG.isNull()  do {
+		
+		do writeIt(file, "")
+		do writeIt(file, "Table "_ SEG_ " = "_ CNT(SEG))
+	}
+	
+	do writeIt(file, "")
+	
+	quit 
+
+	
+public MAP(String FID,		// Table name
+	   String MAP(,))	// Mapping definition
+	   
+	/* Produce a map of the columns and the split file in which they are mapped
+ 
+	   This line tag is called from the host sync utility, along with the report label above.
+	   The MAP array is returned to the calling program with the details of how the table has
+	   been split.
+		
+	   NOTE:  This section was also previously used for mapping info for
+		  split tables on RDBs.  It is no longer used for that purpose.
+		  The RDB mapping info is now carried in DBMAPDFT.PROC.
+
+	   Example:
+
+	   D MAP^DBSDDMAP("DEP",.ARRAY)
+
+	*/
+	
+	type String DI, MAPSTART, NODE, V
+
+	do INIT
+	if 'MAPSTART(FID).data() quit 
+	kill MAP(FID)
+
+	/*
+
+		MAPSTART array contains a node map.  The following result set retrieves the columns
+		and nodes from the schema definition and based on the node and MAPSTART it determines
+		which split table that column belongs in.  Based on that, it builds the array MAP to 
+		define the spliut table schema.
+	*/
+	type ResultSet ditem=Db.select("DI,NOD","DBTBL1D","%LIBS='SYSDEV' and FID=:FID")
+	if ditem.isEmpty() quit
+	while ditem.next() do {
+		set DI=ditem.getCol(1)
+		set NODE=ditem.getCol(2)
+
+		// Dummy key
+		if (DI.extract(1) ? 1n) quit                     
+		if DI.beginsWith("""") quit 
+
+		// Access key
+		if NODE["*" set MAP(FID,DI)=1 quit    
+		if (NODE.extract(1) ? 1A) set NODE = NODE.ascii(1)
+
+		// Computed item
+		if NODE.isNull() do { quit         
+			if FID'="LN" set MAP(FID,DI)="C1" quit 
+
+			// From A-J
+			if DI.extract(1)']]"K" set MAP(FID,DI)="C1" quit    
+
+			// From K-Z
+			set MAP(FID,DI)="C2" quit            
+			}
+
+		// Store ACN in table 1
+		if FID="DEP"!(FID="LN") if NODE=99 set MAP(FID,DI)=1 quit 
+
+		// Get sequence
+		set V = MAPSTART(FID,NODE-1).order()             
+		set MAP(FID,DI)=MAPSTART(FID,V)
+		}
+
+	quit 
+	
+INIT	// By tables to split, define the nodes at which a split occurs by building the array MAPSTART
+
+	/*
+	   MAP(FID,LOW_NODE)=sequence
+	   MAPSTART(FID,"*")=computed
+
+	*/
+	
+	type public String MAPSTART(,)
+
+	set MAPSTART("DEP",55)=1 
+	set MAPSTART("DEP",103)=2
+	set MAPSTART("DEP",425)=3 
+	set MAPSTART("DEP",441)=4
+	set MAPSTART("DEP",600)=5 
+	set MAPSTART("DEP",700)=6
+	set MAPSTART("DEP",800)=7 
+	set MAPSTART("DEP",899)=8
+	set MAPSTART("DEP",999)=9 
+	set MAPSTART("DEP",2000)=97
+	set MAPSTART("DEP",5000)=98 
+	set MAPSTART("DEP",99999)=99
+	
+	set MAPSTART("PRODDFTD",100)=1 
+	set MAPSTART("PRODDFTD",425)=2 
+	set MAPSTART("PRODDFTD",441)=3
+	set MAPSTART("PRODDFTD",600)=5 
+	set MAPSTART("PRODDFTD",700)=6
+	set MAPSTART("PRODDFTD",800)=7 
+	set MAPSTART("PRODDFTD",899)=8
+	set MAPSTART("PRODDFTD",999)=9 
+	set MAPSTART("PRODDFTD",2000)=97
+	set MAPSTART("PRODDFTD",5000)=98 
+	set MAPSTART("PRODDFTD",99999)=99
+	
+	set MAPSTART("LN",55)=1 
+	set MAPSTART("LN",62)=2
+	set MAPSTART("LN",100)=3 
+	set MAPSTART("LN",441)=4
+	set MAPSTART("LN",600)=5 
+	set MAPSTART("LN",700)=6
+	set MAPSTART("LN",800)=7 
+	set MAPSTART("LN",900)=8
+	set MAPSTART("LN",999)=9 
+	set MAPSTART("LN",2000)=97
+	set MAPSTART("LN",5000)=98 
+	set MAPSTART("LN",99999)=99
+	
+	set MAPSTART("PRODDFTL",100)=2 
+	set MAPSTART("PRODDFTL",441)=3
+	set MAPSTART("PRODDFTL",600)=5 
+	set MAPSTART("PRODDFTL",700)=6
+	set MAPSTART("PRODDFTL",800)=7 
+	set MAPSTART("PRODDFTL",900)=8
+	set MAPSTART("PRODDFTL",999)=9 
+	set MAPSTART("PRODDFTL",2000)=97
+	set MAPSTART("PRODDFTL",5000)=98 
+	set MAPSTART("PRODDFTL",99999)=99
+	
+	set MAPSTART("PRODCTL",30)=1 
+	set MAPSTART("PRODCTL",99999)=2
+	
+	set MAPSTART("CUVAR",69)=1 
+	set MAPSTART("CUVAR",10000)=2
+	
+	quit 
+
+
+public XFR(String FILENAME)	// Table name
+
+	/* Build a entry for transfer to PFW client of the table WTBLMAP
+
+	   The table WTBLMAP is local to the PFW client. It is a map that PFW
+	   uses to put the split tables back into a wide table format when PFW
+	   sends any communication back to the host.  This label is used to build
+	   the transfer file of this mapping table.
+	   
+	   NOTE (DSR):
+		It is unclear where the information here gets written.  This
+		function is only called by HSYNCFBD, and at some point in the
+		future probably be moved there, or HSYNCFBD modified to 
+		pass the IO object to which to write to.
+	          
+		For now, the write statements may produce informational messages
+		based on the contents of UCOPTS.
+	*/
+	
+	type String DI, INDEX, MAP(,), QUOTE, STNAME, SORTFID
+
+	if FILENAME.isNull() quit 
+
+	do MAP(FILENAME,.MAP(,))
+	if 'MAP(FILENAME).data() quit 
+	do RESORT
+	set QUOTE = 34.char()
+
+	// Build header for the map table
+	write "T,",%CurrentDate,",",%CurrentTime,",",QUOTE,"WTBLMAP",QUOTE,",1,N,G"
+	write !,"F,WTNAME"
+	write !,"S,T"
+	write !,"D,D,",QUOTE,FILENAME,QUOTE,!
+
+	// Build information about the individual Columns
+	set INDEX=""
+	for  set INDEX = SORTFID(INDEX).order() quit:INDEX.isNull()  do {
+		set STNAME="W_"_FILENAME_"_"_INDEX
+		write "T,",%CurrentDate,",",%CurrentTime,",",QUOTE,"WTBLMAP",QUOTE,",2,N,G",!
+		write "F,WTNAME,COLNAME,STNAME",!
+		write "S,T,T,T",!
+		set DI=""
+		for  set DI = SORTFID(INDEX,DI).order() quit:DI.isNull()  do {
+
+			// Duplicate keys
+			if INDEX'=1,(DI="CID"!(DI="TYPE")) quit      
+			write "D,I,",QUOTE,FILENAME,QUOTE,",",QUOTE,DI,QUOTE,",",QUOTE,STNAME,QUOTE,!
+			}
+		}
+	quit 
+	
+	
+RESORT	// Sort the array MAP into an array better suited to further processing
+
+	/*
+	Based on the MAP array produced in label MAP , the array for a particular TABLE is resorted
+	by the number associated with the split table in order to easily process all columns associated 
+	with the split table. The output from this function is an array named SORTFID
+
+	Inputs:
+ 
+		. FILENAME		Table Name		/TYP=T/REQ
+	*/
+	
+	type public String FILENAME, MAP(,), SORTFID()
+	
+	type Number JI
+	type String FID, X, Y
+
+	kill SORTFID
+	set (X,Y)=""
+
+	type RecordDBTBL1 table=Db.getRecord("DBTBL1","%LIBS='SYSDEV',FID=:FILENAME")
+	for  set X = MAP(X).order() quit:X.isNull()  do {
+		
+		for  set Y = MAP(X,Y).order() quit:Y.isNull()  do {
+			set FID=MAP(X,Y)
+			if FID'="" set SORTFID(FID,Y)=""
+		}
+	}
+
+	for  set X = SORTFID(X).order() quit:X.isNull()  do {
+		set SORTFID(X)=FILENAME
+		for JI = 1:1 quit:table.acckeys.piece(",", JI).isNull()  set SORTFID(X, table.acckeys.piece(",", JI)) = ""
+	}
+	
+	quit
+	
+	
+private writeIt(IO file,		// Output device
+		 String data)		// Data to write
+		
+	// Write either to file or to screen
+		
+	if file.fileName.isNull() write data, !
+	else  do file.write(data)
+	
+	quit
+ #OPTION ResultClass ON
+public String vSIG()	quit "^^^9315"	// Signature - LTD^TIME^USER^SIZE

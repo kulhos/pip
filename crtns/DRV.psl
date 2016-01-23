@@ -1,0 +1,18 @@
+//DO NOT MODIFY  SCA short named driver|DRV|||||||1
+  /*
+	ORIG: alagarss - 08/11/2005
+	DESC: SCA short named driver
+
+---- Comments --------------------------------------------------------
+
+---- Revision History ------------------------------------------------
+	   08/11/2005 - ALAGARSS - CR16677
+	                Converted to PSL.
+	                Also removed the revision history prior to 2004.
+	
+----------------------------------------------------------------------
+
+ */
+	do ^SCADRV quit 
+ #OPTION ResultClass ON
+public String vSIG()	quit "^^^477"	// Signature - LTD^TIME^USER^SIZE

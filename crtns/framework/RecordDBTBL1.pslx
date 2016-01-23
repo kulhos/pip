@@ -25,7 +25,6 @@
 ,	{ "class" : "RecordDBTBL1",	"method" : "vRCbeforeDelTrigs",	"resultClass" : "void",	"formalList" : "noret List vRCparams",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL1",	"method" : "vRCbeforeInsTrigs",	"resultClass" : "void",	"formalList" : "noret List vRCparams",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL1",	"method" : "vRCbeforeUpdTrigs",	"resultClass" : "void",	"formalList" : "noret List vRCparams;noret String vRCaudit()",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
-,	{ "class" : "RecordDBTBL1",	"method" : "vRCcascadeDelete",	"resultClass" : "void",	"formalList" : "noret List vRCparams",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL1",	"method" : "vRCchkReqForInsert",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL1",	"method" : "vRCchkReqForUpdate",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL1",	"method" : "vRCdelete",	"resultClass" : "void",	"formalList" : "noret List vRCparams;noret String vRCaudit();noret Boolean isKeyChange",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }

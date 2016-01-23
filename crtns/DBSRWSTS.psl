@@ -1,0 +1,273 @@
+//DO NOT MODIFY  DATA-QWIK Report Statistics Print|DBSRWSTS|||||||1
+public DBSRWSTS(String VSTATS())	/* Part DBSRW*
+	ORIG: CHIANG - 1/1/85
+	PROCEDURE ID: DBSRWBNR
+	DESC: DATA-QWIK Report Statistics Print
+	
+	---- Comments --------------------------------------------------------
+	ARGUMENTS:
+		. VSTATS	Accumulated statistics	/REQ/MECH=REFARR:R
+				data
+
+	------ Revision History ------------------------------------------------
+	10/15/2008 - RussellDs - CR35918
+		Corrected PSL warnings.
+		
+		Removed old revision history.
+
+	------------------------------------------------------------------------
+
+	I18N=QUIT Excluded from I18N standards
+	*/
+
+	type public Number IOSL,PN,VFMQ,vlc,VLC
+	type public String IO
+
+	type Number LOW,HIGH,TOTAMT,TOTCNT,vcrt
+	type String BTYP,SEQ,TYP,VL
+
+	quit:'VSTATS.data()
+
+	set VL=""
+
+	set vcrt=0
+	use 0 if $I=IO set vcrt=1,vlc=$$LASTLINE^DBSRWBR
+
+	use IO do HDR quit:VFMQ
+
+	if vcrt do VLOCK
+
+	/* Format of VSTATS(N):
+		Count|Total|Low|High|Source|Format|Target|Increments
+	*/
+
+	set SEQ=""
+	for  set SEQ=VSTATS(SEQ).order() quit:SEQ.isNull()  do { quit:VFMQ
+		type Number MULTINCS,QUIT,TOPAMT,TOPCNT
+		type String COLUMN,INCS,INFO,N,SOURCE,TABLE,TARGET,TC
+
+		if VLC+5>IOSL do HDR quit:VFMQ
+		set INFO=VSTATS(SEQ)
+		set SOURCE=INFO.piece("|",5),TARGET=INFO.piece("|",7)
+		quit:'$$validtcr^DBSRWUTL(SOURCE,.TC)
+		set TABLE=TC.piece(".",1),COLUMN=TC.piece(".",2)
+
+		type RecordDBTBL1D src=Db.getRecord("DBTBL1D","%LIBS=""SYSDEV"",FID=:TABLE,DI=:COLUMN")
+		
+		do VOM
+
+		set VL="<< "_src.des_" >>"
+		set QUIT=0
+		if SOURCE=TARGET set BTYP=INFO.piece("|",6)
+		else  do { quit:QUIT
+			if '$$validtcr^DBSRWUTL(TARGET,.TC) set QUIT=1 quit
+			set TABLE=TC.piece(".",1),COLUMN=TC.piece(".",2)
+			type RecordDBTBL1D trc=Db.getRecord("DBTBL1D","%LIBS=""SYSDEV"",FID=:TABLE,DI=:COLUMN")
+			set BTYP=trc.typ
+			set VL=VL_"".justify(73-VL.length()-trc.des.curVal.length())_"<< "_trc.des_" >>"
+			}
+
+		do VOM
+
+		set (TOTAMT,TOTCNT)=0
+		set TOPCNT=INFO.piece("|",1),TOPAMT=INFO.piece("|",2)
+		set LOW=INFO.piece("|",3),HIGH=INFO.piece("|",4)
+
+		set INCS=INFO.piece("|",8,99)
+		if INCS.piece("|",2) set MULTINCS=1
+		else  set MULTINCS=0
+		
+		set TYP=INFO.piece("|",6)
+		if "$"[TYP set TYP="E"
+		else  if TYP="*" set TYP="T"
+
+		set N=""
+		for  set N=VSTATS(SEQ,N).order() do { quit:VFMQ!(N.isNull())
+			type Number AMT,CNT
+
+			// End of this section, print summary
+			if N.isNull() do { quit
+				do VOM
+				do SUMMARY(.TOTCNT,.TOTAMT,LOW,HIGH,TYP,BTYP)
+				}
+
+			if VLC+2>IOSL do HDR quit:VFMQ
+			set CNT=VSTATS(SEQ,N).piece("|",1)
+			set AMT=VSTATS(SEQ,N).piece("|",2)
+			do VOM
+			if SOURCE'=TARGET set VL=$$CONV(TYP,N).justify(31)
+			else  if "TUFL"[TYP!(INCS.isNull()) set VL=$$CONV(TYP,N).justify(14)_"".justify(17)
+			else  do {
+				type Number OV
+
+				set OV=N*INCS
+				if MULTINCS set OV=INCS.piece("|",N-1) if N=1 set OV=LOW
+				set VL=$$CONV(TYP,OV).justify(14)
+
+				set OV=((N+1)*INCS)-.01
+				if MULTINCS set OV=INCS.piece("|",N)-.01 if OV<0 set OV=HIGH
+				set VL=VL_" - "_$$CONV(TYP,OV).justify(14)
+				}
+			do ACCUM(CNT,AMT,TYP,BTYP)
+			}
+		}
+
+	do SUMMARY(TOTCNT,TOTAMT,LOW,HIGH,TYP,BTYP)
+
+	if 'VFMQ do {
+		do VOM,VOM
+		kill VSTATS
+		}
+
+	quit
+
+
+ACCUM(	Number CNT,	// Private - Accumulate results
+	Number AMT,
+	String TYP,
+	String BTYP)
+
+	type public Number TOPAMT,TOPCNT,TOTAMT,TOTCNT
+	type public String VL
+
+	// COUNT and % COUNT
+	set VL=VL_CNT.toString().justify(15)
+	set TOTCNT=TOTCNT+CNT
+	set TOTAMT=TOTAMT+AMT
+
+	set VL=VL_$$CONV("N",((CNT*100)/TOPCNT).toString().justify(0,2)).justify(8)
+
+
+	// TOTAL & % TOTALS
+	if 'BTYP.isNull() set TYP=BTYP
+	quit:'TOPAMT
+	quit:"DCLT"[TYP
+
+	set VL=VL_$$CONV(TYP,AMT).justify(17)
+	set VL=VL_$$CONV(TYP,((AMT*100)/TOPAMT).toString().justify(0,2)).justify(8)
+
+	quit
+
+
+SUMMARY(Number TOTCNT,	// Private - Summary at end of section
+	Number TOTAMT,
+	Number LOW,
+	Number HIGH,
+	String TYP,
+	String BTYP)
+
+	type public Number IOSL,VFMQ,VLC
+	type public String VL
+
+	type String LINES=""
+
+	quit:'TOTCNT
+
+	set LINES.piece("=",43)=""
+
+	if VLC+4>IOSL do HDR quit:VFMQ
+	do VOM,VOM
+	set VL="       ** LOW **        ** HIGH **   "_LINES
+	do VOM
+	if VLC+3>IOSL do HDR quit:VFMQ
+	do VOM
+	if "UTF"'[TYP do {
+		set VL=$$CONV(TYP,LOW).justify(14)
+		set VL=VL_" - "_$$CONV(TYP,HIGH).justify(14)
+		}
+	set VL=VL_"".justify(31-VL.length())_TOTCNT.toString().justify(15)
+	if "N$"[BTYP set VL=VL_$$CONV(BTYP,TOTAMT).justify(25)
+	set (TOTCNT,TOTAMT)=0
+	do VOM
+
+	quit
+
+
+CONV(	String TYP,	// Private - convert input to external format
+	String INPUT)
+
+	type String NEWVAL=""
+
+	if TYP="T"!(TYP["*")!(TYP="F")!(TYP="U") set NEWVAL=INPUT
+	else  if TYP="D",INPUT>0,INPUT<99999 set NEWVAL=({Date}INPUT).toString() 
+	else  if TYP="N" set NEWVAL=INPUT
+	else  if TYP="C" set NEWVAL=$$TIM^%ZM(INPUT)
+	else  if TYP="E"!(TYP="$") set NEWVAL=INPUT.toNumber().toString(2,".,")
+	else  if TYP="L" set NEWVAL=$select(INPUT:"Y",1:"N")
+	else  if TYP="K" set NEWVAL=$$EXT^%ZM((INPUT+500)\1000,"$",0)
+	else  if TYP="X" set NEWVAL=$$EXT^%ZM((INPUT+.5)\1,"$",0)
+	quit NEWVAL
+
+
+HDR	// Private - Print header
+
+	type public Number vcrt,VL,VLC
+	type public String IO
+
+	if 'vcrt do {					// Flush print buffer
+		use IO
+		if 'VL.isNull() write VL,#
+		do VLOCK
+		}
+	else  do {
+		do ^DBSRWBR(2)
+		set VLC=5
+		}
+	quit
+
+
+VLOCK	// Private - Lock CRT header
+
+	type public Number PN,VLC,vcrt
+
+	type String VL
+
+	set PN=PN.get()+1,VLC=0
+	if vcrt write $$CLRXY^%TRMVT
+
+	// Summary Report
+	set VL=$$^MSG(7985)
+	do VOM
+	set VL="=============="
+	do VOM,VOM
+	set VL="".justify(15)_"RANGE "_"".justify(20)_"COUNT      %"_"".justify(12)_"TOTAL       %"
+	do VOM
+	set VL=""
+	set VL.piece("-",80)=""
+	do VOM
+	if vcrt do ^DBSRWBR(2,1,1) set VLC=5
+
+	quit
+
+
+VOM     // Private - Output print line
+
+        type public Number AUXPTR,vcrt,VL,vlc,VLC,VRG
+        type public String IO
+ 
+        // Advance to a new page
+        use IO if 'VLC,'vcrt do {                       // Non-CRT device (form feed)
+                if 'AUXPTR.get() write 12.char(),!
+                else  write $$PRNTFF^%TRMVT,!
+                set $Y=1
+                }
+ 
+        if vcrt<2 write VL,!                            // Output line buffer
+        if vcrt set vlc=vlc+1 do VBRSAVE(vlc,VL)        // Save in BROWSER buffer
+        set VLC=VLC+1,VL=""                             // Reset line buffer
+        quit
+ 
+
+VBRSAVE(Number LINE,String DATA)        // Private - Save for report browser
+
+        type RecordTMPRPTBR tmprptbr=Class.new("RecordTMPRPTBR")
+
+        set tmprptbr.jobno=%ProcessID
+        set tmprptbr.lineno=LINE
+        set tmprptbr.pageno=0
+        set tmprptbr.seq=0
+        set tmprptbr.data=DATA
+        do tmprptbr.bypassSave()
+        quit
+ #OPTION ResultClass ON
+public String vSIG()	quit "^^^6358"	// Signature - LTD^TIME^USER^SIZE

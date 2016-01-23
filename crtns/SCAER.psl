@@ -1,0 +1,352 @@
+//DO NOT MODIFY  Error log report|SCAER|||||||1
+	// Leave this line until new DBSPROC doesn't replace it (see CR27800)
+	#OPTION ResultClass ON
+	// Error log report
+	/*
+	ORIG:  Dan S. Russell (2417) - 12/23/86
+
+	Error log inquiry on single error, or at tag RPT report
+
+	---- Revision History ------------------------------------------------
+	12/10/2007 - RussellDS - CR31014
+		Modified to handle new ZWR format for logging variables.
+		
+		Removed old revision history.	
+	*/
+	
+	// These two variables will not survive loading symbol table	
+	type String %ZTX
+	type String %ZTLoad()
+	
+	/*
+	 NOTE:  Do not instantiate PSL objects in the top section.  All objects
+	 	used for processing should be instantiated in the PROC section 
+	 	or lower subsections).  This is to aviod vobj variables being
+	        overlaid when loading variables from the error log.
+	*/
+	
+	do PROC(.%ZTLoad())
+	
+	/*
+		%ZTload will exist if the user selects to load variables from 
+		a specific error in the PROC section.
+	*/
+	
+	if %ZTLoad.data() do {
+
+		// Remove all variables and reset symbol table from %ZTLoad array
+		
+		#ACCEPT Date=10/06/05; Pgm=RussellDS; CR=17397; Group=Bypass
+		#BYPASS
+		kill (%ZTLoad)
+		#ENDBYPASS
+		
+		set %ZTX = ""
+		for  set %ZTX = %ZTLoad(%ZTX).order() quit:%ZTX.isNull()  if '%ZTLoad(%ZTX).beginsWith("%ZTX") do {
+		
+			if (%ZTLoad(%ZTX).length() > 2048) do {
+				
+				/* If too long for maximum execute size, try to load as two pieces using
+				   the alternative below.  If data is more complex, i.e., contains multiple
+				   equals signs, just give up and display. */
+				
+				if (%ZTLoad(%ZTX).length("=") = 2) set @%ZTLoad(%ZTX).piece("=", 1) = %ZTLoad(%ZTX).piece("=", 2).stripQuotes()
+				
+				else  write !!, %ZTLoad(%ZTX), !!, "Variable above is too long to load", !
+			}
+			else  do {
+		
+				#ACCEPT Date=12/19/2007; Pgm=RussellDS; CR=31014; Group=Bypass
+				#BYPASS
+				set @%ZTLoad(%ZTX)
+				#ENDBYPASS
+			}
+		}
+	}
+		
+	quit
+	
+		
+private void PROC(String %ZTLoad())	// Main processing
+
+	type public Boolean ER
+
+	type Date DATE
+	type Boolean exit
+	type String ET, %NOBANNER, %NOPRMT, %READ
+	type String %TAB, TMP(), VFMQ, X
+	type Number ERSEQ, OLNTB, SEQ
+
+	set DATE = %CurrentDate
+
+	set %TAB("DATE") = ".TJD4/HLP=[ERROR]DATE/TBL=[ERROR]DATE:DISTINCT/XPP=D DATEPP^SCAER"
+	set %TAB("SEQ") = ".SEQ2/TBL=""TMP(/RH=Seq     Error ID         Description""/XPR=D SEQPRE^SCAER"
+
+	set %READ = "@@%FN,,DATE/REQ,SEQ/REQ"
+	set %NOPRMT = "F"
+
+	do ^UTLREAD
+		
+	// Reset terminal attributes
+	do CLOSE^SCADRV
+
+	quit:(VFMQ = "Q")
+
+	set ERSEQ = TMP(SEQ).piece(" ", 1)
+	set ET = TMP(SEQ).piece("|", 2)
+	
+	type RecordERROR errrec = Db.getRecord("ERROR", "DATE=:DATE,ET=:ET,SEQ=:ERSEQ")
+	
+	write !!, "Error information -", !!
+	write ?5, "Date:  ", errrec.date.toString(), " at ", errrec.time.toString("24:60:SS"), !
+	write ?5, "Sequence:  ", errrec.seq, !
+	write ?5, "Directory:  ", errrec.dir, !
+	write ?5, "User:  ", errrec.uid, !
+	write ?5, "Job:  ", errrec.job, !
+	write ?5, "Device:  ", errrec.term, !
+	write ?5, "Error:  ", errrec.mumpsze, !! 
+
+	set exit = false
+	
+	// Prompt for and handle options
+	while 'exit do {
+	
+		type IO file = Class.new("IO")
+		
+		set file.fileName = "" 
+	
+		write !, "Variable to display, '?' for other options, RETURN to quit:  "
+		#ACCEPT Date=12/20/2007; Pgm=RussellDS; CR=31014; Group=Read
+		read X
+		write !!
+		
+		if X.isNull() set exit = true quit
+		
+		// For single variable display, will only display first 400 bytes for long values
+		if (X '= "?") do { quit
+		
+			type String where = "DATE=:DATE AND ET=:ET AND SEQ=:ERSEQ AND VAR LIKE '#VAR%' AND "
+			
+			if 'X.endsWith("(") set where = where_ "VALUE LIKE '"_ X_ "=%'"
+			else  set where = where_ "VALUE LIKE '"_X_"%'"
+		
+			#ACCEPT Date=12/20/2007; Pgm=RussellDS; CR=31014; Group=Dynamic
+			type ResultSet rs = Db.select("VALUE", "ERROR9", where)
+			
+			while rs.next() write rs.getCol("VALUE"), !
+		}
+		
+		write !!, "(L)oad, (O)utput, show (A)ll, (V)ariables, or (N)on-variable info:  "
+		#ACCEPT Date=12/20/2007; Pgm=RussellDS; CR=31014; Group=Read
+		read X
+		
+		quit:X.isNull()
+		
+		set X = X.upperCase()
+		
+		if (X = "L") do {
+			
+			type Number seqno
+			
+			type DbSet ds = Db.selectDbSet("ERROR9", "DATE=:DATE AND ET=:ET AND SEQ=:ERSEQ AND VAR LIKE '#VAR%'")
+			
+			while ds.next() do {
+				
+				type RecordERROR9 error9 = ds.getRecord("ERROR9")
+				
+				set seqno = error9.var.extract(5, error9.var.length()).toNumber()
+				
+				if ((seqno # 1) = 0) set %ZTLoad(seqno) = error9.value
+				else  set %ZTLoad(seqno \ 1) = %ZTLoad(seqno \ 1)_ error9.value
+			}
+			
+			set exit = true
+		}
+
+		else  if ({List}"A,V,N").contains(X) do {
+			
+			type String where = "DATE=:DATE AND ET=:ET AND SEQ=:ERSEQ"
+			
+			if (X = "V") set where = where_ " AND VAR LIKE '#VAR%'"
+			else  if (X = "N") set where = where_ " AND VAR NOT LIKE '#VAR%'"
+			
+			#ACCEPT Date=12/20/2007; Pgm=RussellDS; CR=31014 ; Group=Dynamic
+			type DbSet ds = Db.selectDbSet("ERROR9", where, "SEQ ASC")
+			
+			while ds.next() do {
+				
+				type RecordERROR9 error9 = ds.getRecord("ERROR9")
+				
+				do writeInfo(file, error9.var, error9.value)
+			}
+			
+			set exit = true
+		}
+		
+		else  if (X = "O") do {
+			
+			type String IO, IOTYP
+			
+			do ^SCAIO
+			
+			quit:IO.get().isNull()
+			
+			if (IOTYP.get() = "RMS") do {
+			
+				set file.directory = $$PARSE^%ZFUNC(IO, "DIRECTORY")
+				set file.fileName = $$PARSE^%ZFUNC(IO, "NAME")_$$PARSE^%ZFUNC(IO, "TYPE")
+				set file.openParams = "WRITE/NEWV"
+				set file.timeout = 5
+	
+				catch error {
+		
+					do file.close()
+		
+					if 'error.type.isLike("%IOEOF%") throw error
+				}
+	
+				do file.open()
+			}
+			
+			do writeIt(file, CUVAR.CONAM)
+			do writeIt(file, "Profile Error on "_ errrec.date.toString()_ " at "_ errrec.time.toString("24:60:SS")_ " Sequence "_ errrec.seq)
+			do writeIt(file, errrec.mumpsze)
+			do writeIt(file, "Directory: "_ errrec.dir_ "  User: "_ errrec.uid_ "  Job: "_ errrec.job_ "  Device: "_ errrec.term)
+			
+			type DbSet ds = Db.selectDbSet("ERROR9", "DATE=:DATE AND ET=:ET AND SEQ=:ERSEQ", "SEQ ASC")
+			
+			while ds.next() do {
+				
+				type RecordERROR9 error9 = ds.getRecord("ERROR9")
+				
+				do writeInfo(file, error9.var, error9.value)
+			}
+			
+			if 'file.fileName.isNull() do file.close()
+			set exit = true
+		}
+	}
+
+	quit
+	
+	
+private void writeInfo(IO file,			// Output device (null fileName = terminal)
+		       String VAR,		// ERROR9.VAR value
+		       String VALUE)		// ERROR9.VALUE value
+		     
+	if VAR.endsWith("001"), 'VAR.isLike("%.%") do {
+	
+		type String desc = ""
+	
+		do writeIt(file, "")
+		do writeIt(file, "")
+		if VAR.beginsWith("#DEVICE") set desc = "Device info:"
+		else  if VAR.beginsWith("#INTRINSIC") set desc = "Intrinsic info:"
+		else  if VAR.beginsWith("#STACK") set desc = "Stack info:"
+		else  if VAR.beginsWith("#VAR") set desc = "Variable info:"
+		
+		do writeIt(file, "--------------------------------------------------------------------------------")
+		do writeIt(file, desc)
+		do writeIt(file, "")
+	}
+	
+	do writeIt(file, VALUE)
+	
+	quit
+	
+	
+private void writeIt(IO file,		// Output device
+		     String data)	// Data to write
+		
+	// Write either to file or to screen
+		
+	if file.fileName.isNull() write data, !
+	else  do file.write(data)
+	
+	quit
+
+
+public void RPT	// Call full report
+
+	type String RID
+	
+	set RID = "SCAER"
+
+	do DRV^URID
+
+	quit
+
+
+private void DATEPP	// Date post processor
+
+	type public Number ER
+	type public String %MSKD, RM, X
+
+	type Number ERCNT
+	type Date DATE1
+
+	quit:X.isNull()
+	  
+	set DATE1 = $$^SCAJD(X)
+	
+	type ResultSet rs = Db.select("COUNT(SEQ)", "ERROR", "DATE=:DATE1")
+	
+	if rs.next() set ERCNT = rs.getCol(1)
+	else  set ERCNT = 0
+	
+	// No errors logged on ~p1	
+	if (ERCNT = 0) do {
+		
+		set ER = 1
+		set RM = $$^MSG(1931, DATE1.toString())
+	}
+
+	// ~p1 errors logged
+	else  set RM = $$^MSG(3036,ERCNT)
+	
+	quit
+
+
+private void SEQPRE	// Sequence pre-processor
+
+	type public Date DATE
+	type public Number ER
+	type public String RM, TMP()
+	
+	type Number CNT
+	type String ZE
+
+	catch error {
+		
+		set ER = 1
+		
+		// System error
+		set RM = error.toString()_ " ... "_ $$^MSG(7061)
+	}
+
+	type ResultSet rs = Db.select("ET,SEQ,MUMPSZE","ERROR","DATE=:DATE","SEQ ASC")
+	
+	set CNT = 1
+
+	while rs.next()  do {
+		
+		type String SEQ
+		
+		set ZE = rs.getCol("MUMPSZE")
+		if ZE.isNull() set ZE = rs.getCol("ET")
+		else  set ZE = ZE.piece(",", 1, 2)_ ","_ ZE.piece(",", 4)
+		
+		// Remove control characters that affect screen display
+		set ZE = ZE.translate(10.char()_ 11.char()_ 12.char()_ 13.char(), "    ")
+		
+		set SEQ = rs.getCol("SEQ")
+		set SEQ = SEQ.justify(15, -1)
+		
+		set TMP(CNT) = SEQ_ "  "_ ZE.extract(1, 55)_ "|"_ rs.getCol("ET")
+
+		set CNT = CNT + 1	
+	}
+		
+	quit
+ #OPTION ResultClass ON
+public String vSIG()	quit "^^^8302"	// Signature - LTD^TIME^USER^SIZE

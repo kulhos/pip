@@ -5,7 +5,7 @@
 ,	{ "class" : "DBSEXEQ",	"method" : "CMPALL",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "Mass recompile QWIK report (function DBSQRB)" }
 ,	{ "class" : "DBSEXEQ",	"method" : "COMPILE",	"resultClass" : "",	"formalList" : "ret String QRID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "Compile QWIK report" }
 ,	{ "class" : "DBSEXEQ",	"method" : "COPY",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "" }
-,	{ "class" : "DBSEXEQ",	"method" : "CREATE",	"resultClass" : "",	"formalList" : "ret Integer %O",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
+,	{ "class" : "DBSEXEQ",	"method" : "CREATE",	"resultClass" : "",	"formalList" : "ret Number %ProcessMode",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "DBSEXEQ",	"method" : "DBSEXEQ",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "" }
 ,	{ "class" : "DBSEXEQ",	"method" : "DELETE",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "QWIK REPORT DEFINITION" }
 ,	{ "class" : "DBSEXEQ",	"method" : "DFID",	"resultClass" : "",	"formalList" : "ret String X;ret String RM;ret String FID;ret String NEWX;ret String FILES;ret Number ER",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }

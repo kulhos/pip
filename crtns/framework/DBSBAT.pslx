@@ -7,7 +7,7 @@
 ,	{ "class" : "DBSBAT",	"method" : "CREATE",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "" }
 ,	{ "class" : "DBSBAT",	"method" : "DELETE",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "" }
 ,	{ "class" : "DBSBAT",	"method" : "MODIFY",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "" }
-,	{ "class" : "DBSBAT",	"method" : "exec",	"resultClass" : "",	"formalList" : "noret Integer %O",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 1,	"methodType" : 2,	"comment" : "" }
+,	{ "class" : "DBSBAT",	"method" : "exec",	"resultClass" : "",	"formalList" : "noret Number %ProcessMode",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 1,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "DBSBAT",	"method" : "pp",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 1,	"methodType" : 3,	"comment" : "UTLREAD post processor to check duplicate name" }
 ,	{ "class" : "DBSBAT",	"method" : "vSIG",	"resultClass" : "String",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
   ]

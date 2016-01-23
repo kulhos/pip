@@ -5,7 +5,7 @@
 ,	{ "class" : "SCADRV4",	"method" : "END",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 4,	"comment" : "" }
 ,	{ "class" : "SCADRV4",	"method" : "ERR",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "" }
 ,	{ "class" : "SCADRV4",	"method" : "FILE",	"resultClass" : "",	"formalList" : "ret RecordSCATBL fSCATBL",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
-,	{ "class" : "SCADRV4",	"method" : "INIT",	"resultClass" : "",	"formalList" : "ret Integer %O",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
+,	{ "class" : "SCADRV4",	"method" : "INIT",	"resultClass" : "",	"formalList" : "ret String %ProcessMode",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "SCADRV4",	"method" : "INQ",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "" }
 ,	{ "class" : "SCADRV4",	"method" : "NEW",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 4,	"comment" : "" }
 ,	{ "class" : "SCADRV4",	"method" : "PPFUN",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "UID post processor" }

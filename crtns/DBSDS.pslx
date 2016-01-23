@@ -19,7 +19,7 @@
 ,	{ "class" : "DBSDS",	"method" : "MODREQ",	"resultClass" : "",	"formalList" : "ret String SID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "Screen ID" }
 ,	{ "class" : "DBSDS",	"method" : "PRINT",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "" }
 ,	{ "class" : "DBSDS",	"method" : "PRINTSID",	"resultClass" : "",	"formalList" : "ret String SID;ret Boolean printDoc",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
-,	{ "class" : "DBSDS",	"method" : "PROCDUR",	"resultClass" : "",	"formalList" : "ret Integer %O;ret String SID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
+,	{ "class" : "DBSDS",	"method" : "PROCDUR",	"resultClass" : "",	"formalList" : "ret Number %ProcessMode;ret String SID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "DBSDS",	"method" : "SCRPRE",	"resultClass" : "",	"formalList" : "ret String SID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "Screen ID" }
 ,	{ "class" : "DBSDS",	"method" : "SCRVLOD",	"resultClass" : "",	"formalList" : "ret String SID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "Screen ID" }
 ,	{ "class" : "DBSDS",	"method" : "bldRead",	"resultClass" : "",	"formalList" : "ret String %READ;ret String %ASTR;ret Number PSEQ",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "DBTBL2PP PSEQ level" }

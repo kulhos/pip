@@ -6,7 +6,7 @@
 ,	{ "class" : "DBSPROC",	"method" : "COPY",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "Copy definition (Called by function DBSPROCCO)" }
 ,	{ "class" : "DBSPROC",	"method" : "DBSPROC",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "Procedure definition" }
 ,	{ "class" : "DBSPROC",	"method" : "ERR",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "" }
-,	{ "class" : "DBSPROC",	"method" : "EXT",	"resultClass" : "",	"formalList" : "ret Integer %O",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
+,	{ "class" : "DBSPROC",	"method" : "EXT",	"resultClass" : "",	"formalList" : "ret Number %ProcessMode",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "DBSPROC",	"method" : "PP",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "Post processor to check duplicate name" }
 ,	{ "class" : "DBSPROC",	"method" : "vSIG",	"resultClass" : "String",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
   ]

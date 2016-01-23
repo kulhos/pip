@@ -1,0 +1,9 @@
+{ "class" : "FILEUTL",	"accessLevel" : 2,	"adjustor" : "",	"classType" : -1,	"constructor" : "",	"delimiter" : -1,	"destructor" : "",	"extends" : "",	"flags" : "",	"isAbstract" : false,	"isNoInstance" : true,	"package" : "",	"propProc" : ""
+, "methods" : [ 
+{ "class" : "FILEUTL",	"method" : "EXISTS",	"resultClass" : "",	"formalList" : "ret String file",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
+,	{ "class" : "FILEUTL",	"method" : "SIZE",	"resultClass" : "",	"formalList" : "ret String file",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
+,	{ "class" : "FILEUTL",	"method" : "SRCDIR",	"resultClass" : "",	"formalList" : "ret String typ;ret String topdir",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
+,	{ "class" : "FILEUTL",	"method" : "SRCFILE",	"resultClass" : "",	"formalList" : "ret String typ;ret String elem",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "get PSL source file location" }
+,	{ "class" : "FILEUTL",	"method" : "vSIG",	"resultClass" : "String",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
+  ]
+}

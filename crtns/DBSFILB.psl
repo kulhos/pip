@@ -1,0 +1,106 @@
+//DO NOT MODIFY  RecordTABLE code generator|DBSFILB|||||||1
+DBSFILB	/* Utility to generate PSL RecordTABLE code
+
+	---- Comments --------------------------------------------------------
+
+	This routine provides the UI related features to generate and compile
+	RecordTABLE class code.
+
+	---- Revision History ------------------------------------------------
+	
+	10/01/2008 - RussellDS - CR35918
+		Modified error handling to use new logging syntax.
+		
+	01/21/2008 - RussellDS - CR30801
+		Removed reference to DBTBL1.UDFILE
+		
+		Removed all old procedure generator code, leaving only the
+		UI related portions.
+		
+		Removed old revision history.
+	*/
+	
+	quit
+
+	
+BUILDALL	 // Build RecordTABLE code for all tables
+  
+	type ResultSet rs = Db.select("FID","DBTBL1")
+	while rs.next() do COMPILE(rs.getCol("FID"))
+	quit
+
+
+BUILD	 // Build select RecordTABLE code
+
+	type Number COUNT
+	type String fid, RM
+	
+	set COUNT = $$LIST^DBSGETID("DBTBL1")			// Interactive select
+	quit:(COUNT '> 0)
+	
+	type ResultSet tmpdqrs = Db.select("ELEMENT","TMPDQ","PID=:%ProcessID")
+	
+	while tmpdqrs.next() do COMPILE(tmpdqrs.getCol("ELEMENT"))
+	
+	do Db.delete("TMPDQ", "PID=:%ProcessID")
+
+	quit
+
+
+public COMPILE(String tableName, 	// Table name
+	       Boolean NLU1,		// No longer used [*]
+	       String NLU2,		// No longer used [*]
+	       String PGM)		// Generated program name	/NOREQ/MECH=REFNAM:W
+	       
+	/*
+	Compile code
+	
+	ARGUMENT NOTES:
+	
+		. NLU*		Parameters retained for backward compatibility
+	*/
+	
+	type Number errors
+	
+	catch ERROR@"LOGERR^UTLERR" {
+		
+		type Number ER=0
+		
+		write !!, ?10, " *** Compile error - see error log entry", !
+	}
+	
+	set PGM = "Record"_ tableName
+	
+	/* If there is RecordTABLE code extending the base class, use DBSPROC to
+	   include it. */
+	if 'Db.isDefined("DBTBL25", "%LIBS='SYSDEV',PROCID=:PGM") do {
+	
+		write !, PGM, !
+	
+		set errors = $$run^PSLC("--element="_ PGM_ "~Filer "_ PGM)
+	}
+	else  do COMPILE^DBSPROC(PGM)
+	
+	quit
+
+
+public SYSMAPLB(String tag,		// Line tag
+		String comment)		// Comment on the line
+		
+	/*
+	Used by UCSYSMAP to return the appropriate label reference for
+	triggers from filer code being generated.  This information is
+	used for storage in the SYSMAP* tables.
+	*/
+	
+	type String RETURN = tag
+	
+	if tag.beginsWith("vRCT"), comment.isLike("%Trigger%") do {
+			
+		set RETURN = comment.piece("Trigger", 2).piece("-", 1)
+		set RETURN = tag_" (Trigger - "_RETURN.trim(0)_")"
+	}
+	
+	quit RETURN
+ #OPTION ResultClass ON
+public String vSIG()	quit "^^^2326"	// Signature - LTD^TIME^USER^SIZE

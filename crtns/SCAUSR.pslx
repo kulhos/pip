@@ -3,7 +3,7 @@
 { "class" : "SCAUSR",	"method" : "DEL",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "User Deletion" }
 ,	{ "class" : "SCAUSR",	"method" : "END",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "End of processing" }
 ,	{ "class" : "SCAUSR",	"method" : "FILE",	"resultClass" : "",	"formalList" : "ret RecordSCAU scau",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "File data" }
-,	{ "class" : "SCAUSR",	"method" : "INIT",	"resultClass" : "",	"formalList" : "ret Integer %O",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
+,	{ "class" : "SCAUSR",	"method" : "INIT",	"resultClass" : "",	"formalList" : "ret Number %ProcessMode",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "SCAUSR",	"method" : "INQ",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "User Inquiry" }
 ,	{ "class" : "SCAUSR",	"method" : "LOADRA",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "Load related account customer #'s and names" }
 ,	{ "class" : "SCAUSR",	"method" : "NEW",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "User Creation" }
