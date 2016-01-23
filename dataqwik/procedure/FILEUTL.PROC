@@ -1,4 +1,4 @@
-//DO NOT MODIFY  Filesystem utilities|FILEUTL||||rpcvar|rpcvar1
+//DO NOT MODIFY  Filesystem utilities|FILEUTL||||rpcvar|rpcvar1||1
 	/*
 	 ORIG: 1 - 01/20/2016
 	 DESC: 
@@ -73,7 +73,7 @@ public SRCDIR(String typ, String topdir) //
 
 	type String types()
         #ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	do TYPEINIT^TBXEXTR(.types)
+	do TYPEINIT^TBXINST(.types)
 
 	type String det = types(typ).get()
 	if det.isNull() quit ""
@@ -95,5 +95,4 @@ public SRCFILE(String typ, String elem) // get PSL source file location
 
         #ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
 	quit $$SCAU^%TRNLNM("DQDIR",$$SUBDIR^%TRNLNM(det.piece("|",1),elem.translate("%","_")_"."_typ))
-
 

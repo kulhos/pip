@@ -271,7 +271,13 @@ public COPY	// Copy definition (Called by function DBSPROCCO)
 		type RecordDBTBL25D dfrom = ds.getRecord("DBTBL25D")
 		set SEQ = dfrom.seq
 
-		if 'dfrom.code.contains("//DO NOT MODIFY") quit	
+		if SEQ=1 do {
+			if dfrom.code.contains("//DO NOT MODIFY") do { quit
+				// TODO set new header and quit
+			}
+			// TODO set new header and add dfrom first line
+		}
+
 		type RecordDBTBL25D dto = Class.new("RecordDBTBL25D","%LIBS='SYSDEV',PROCID=:PROCIDT,SEQ=:SEQ")
 		set dto.code = dfrom.code
 		
@@ -397,7 +403,7 @@ public COMPILE(String PROCID,	// Procedure ID
 	
 		type Number SEQ = 0
 		for  set SEQ=m2src(SEQ).order() quit:(SEQ>FCOUNT)!(SEQ.isNull())  do { 
-			if m2src(SEQ).contains("//DO NOT MODIFY") quit	
+			if SEQ=1,m2src(SEQ).contains("//DO NOT MODIFY") quit	
 
 			type RecordDBTBL25D dbtbl25d = Class.new("RecordDBTBL25D","%LIBS='SYSDEV',PROCID=:PROCID,:SEQ")
 			set dbtbl25d.code = m2src(SEQ)
