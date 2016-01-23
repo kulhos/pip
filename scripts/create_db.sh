@@ -13,9 +13,79 @@ EOF
 $gtm_dist/mupip create
 $gtm_dist/mumps -r %XCMD 'set ^CUVAR(2)=+$h,$p(^SCAU(1,1),"|",7)=$h+1000'
 
+cnt=0
 for file in ${DIR}/data/*.G
  do
-       echo "Loading file ${file}"
-       $gtm_dist/mumps -r %XCMD "do READFILE^TBXINST(.code,\"${file}\") for i=1:1 quit:'\$d(code(i))  set @code(i)"
+       #echo "Loading file ${file}"
+       $gtm_dist/mumps -r %XCMD "do READFILE^TBXINST(.code,\"${file}\") w \".\" for i=1:1 quit:'\$d(code(i))  set @code(i)"
+	cnt=$(($cnt+1))
 done
+
+echo "\n$cnt Globals loaded."
+
+cnt=0
+for file in ${DIR}/dataqwik/table/*/*.TBL
+ do
+       #echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXTBL(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt tables loaded."
+
+cnt=0
+for file in ${DIR}/dataqwik/table/*/*.COL
+ do
+       #echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXCOL(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt columns loaded."
+
+cnt=0
+for file in ${DIR}/dataqwik/trigger/*.TRIG
+ do
+       #echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXTRIG(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt triggers loaded."
+
+cnt=0
+for file in ${DIR}/dataqwik/index/*.IDX
+ do
+       #echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXIDX(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt indexes loaded."
+
+cnt=0
+for file in ${DIR}/dataqwik/foreign_key/*.FKY
+ do
+       #echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXFKEY(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt foreign keys loaded."
+
+cnt=0
+for file in ${DIR}/data/*.DAT
+ do
+       echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXDATA(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt data files loaded."
 
