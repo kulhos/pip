@@ -82,15 +82,16 @@ public EXT(Number %ProcessMode)	//
 	if %ProcessMode=3 do { quit	// Delete old definition
 		do Db.delete("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCID")
 		do Db.delete("DBTBL25","%LIBS='SYSDEV' AND PROCID=:PROCID")
+		#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
+		type Number x = $$DELETE^%OSSCRPT($$SRCFILE^FILEUTL("PROC",PROCID))
 		
-		// TODO remove the PSL file as well
 		// remove compiled code
 		// check SYSMAP references, schedule for recompile
 
 		lock -DBTBL("SYSDEV",25,PROCID)
 	}
 
-	type String DQFILE = $$SRCFILE(PROCID)
+	type String DQFILE = $$SRCFILE^FILEUTL("PROC",PROCID)
 	type DbSet ds=Db.selectDbSet("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCID","SEQ ASC")
 
 	if ds.isEmpty() do {	// New procedure
@@ -260,7 +261,7 @@ public COPY	// Copy definition (Called by function DBSPROCCO)
 	// TODO check existence of PROCIDF
 
 	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	type String tmp = $$COPYFIL^%OSSCRPT($$SRCFILE(PROCIDF), $$SRCFILE(PROCIDT))
+	type String tmp = $$COPYFIL^%OSSCRPT($$SRCFILE^FILEUTL("PROC",PROCIDF), $$SRCFILE^FILEUTL("PROC",PROCIDT))
 	
 	type DbSet ds=Db.selectDbSet("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCIDF","SEQ ASC")
 
@@ -268,7 +269,8 @@ public COPY	// Copy definition (Called by function DBSPROCCO)
 	while ds.next() do {	
 		type RecordDBTBL25D dfrom = ds.getRecord("DBTBL25D")
 		set SEQ = dfrom.seq
-		
+
+		if 'dfrom.code.contains("//DO NOT MODIFY") quit	
 		type RecordDBTBL25D dto = Class.new("RecordDBTBL25D","%LIBS='SYSDEV',PROCID=:PROCIDT,SEQ=:SEQ")
 		set dto.code = dfrom.code
 		
@@ -346,7 +348,6 @@ public COMPILE(String PROCID,	// Procedure ID
 
 	set PGM = dbtbl25.pgm				// Routine name
 
-
 	type IO io = Class.new("IO")
 	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
 	set io.directory = $$SCAU^%TRNLNM("DQDIR","procedure")
@@ -370,24 +371,6 @@ public COMPILE(String PROCID,	// Procedure ID
 		}
 	}
 
-	
-	/*
-	type DbSet ds=Db.selectDbSet("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCID","SEQ")
-	
-	// Gather signature data
-	set LTD = dbtbl25.ltd			// Date last modified
-	set TIME = dbtbl25.time			// Time last updated
-	set USER = dbtbl25.user			// User who last modified
-	set SIZE = 0
-
-	while ds.next() do {
-		type RecordDBTBL25D d25d = ds.getRecord("DBTBL25D")
-		set FCOUNT = d25d.seq + count
-		set m2src(FCOUNT) = d25d.code
-		set SIZE = SIZE + d25d.code.length()	
-	}
-	*/
-
 	/* If the is an extension of RecordTABLE code, compile as a filer, and we don't need
 	   the signature */
 	if PROCID.beginsWith("Record") set cmpType = "Filer"
@@ -400,21 +383,26 @@ public COMPILE(String PROCID,	// Procedure ID
 		
 		set cmpType = "Procedure"_ "~"_ SIG
 	}
-		
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-        do cmpA2F^UCGM(.m2src,PGM,,,,,,PROCID_ "~"_ cmpType)
+	
+	type Number cmperr = $$cmpA2F^PSLC(m2src(),,PGM,,PROCID_ "~"_ cmpType)	
+        // do cmpA2F^UCGM(.m2src,PGM,,,,,,PROCID_ "~"_ cmpType)
+
+	// replace DBTBL25D content only after successful compilation (cache last correct version)	
+	if cmperr = 0, cmpType '= "Filer" {
+		do Db.delete("DBTBL25D", "%LIBS='SYSDEV' AND PROCID=:PROCID") 	// Delete existing records
+	
+		type Number SEQ = 0
+		for  set SEQ=m2src(SEQ).order() quit:(SEQ>FCOUNT)!(SEQ.isNull())  do { 
+			if m2src(SEQ).contains("//DO NOT MODIFY") quit	
+
+			type RecordDBTBL25D dbtbl25d = Class.new("RecordDBTBL25D","%LIBS='SYSDEV',PROCID=:PROCID,:SEQ")
+			set dbtbl25d.code = m2src(SEQ)
+			do dbtbl25d.save()
+		}
+	}
 
 	quit
 
-public SRCDIR	//
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	quit $$SCAU^%TRNLNM("DQDIR","procedure")
-
-public SRCFILE(String PROCID) // get PSL source file location
-
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-        quit $$SCAU^%TRNLNM("DQDIR",$$SUBDIR^%TRNLNM("procedure",PROCID_".PROC"))
-	
 ERR	//
 
 	type public Number RM

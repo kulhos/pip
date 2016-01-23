@@ -122,8 +122,33 @@ public String getSrc( String proc,	// name of procedure
 	type Number ln = 1
 	type String ret = ""
 	
-	// Try direct M - remove this or move after .psl file at some point
+	// Try .PROC file first
 	do {
+	
+		type IO pslIO = Class.new( "IO")
+	
+		set pslIO.directory = $$SRCDIR^FILEUTL("PROC")
+		set pslIO.fileName = proc_ ".PROC"
+		set pslIO.openParams = "READ"
+		set pslIO.timeout = 5
+	
+		catch ioerror {
+     
+     			if 'pslIO.device.isNull() do pslIO.close()
+     			
+			if 'ioerror.type.isLike("%IO%") throw ioerror
+     			
+     			// Found it, save procedure name
+     			if ioerror.type.isLike("%IOEOF%") set ret = proc
+		}
+
+		do pslIO.open()
+	
+		for  set src(ln) = pslIO.read(), ln = ln + 1
+	}
+	
+	// Try direct M - remove this or move after .psl file at some point
+	if ret.isNull() do {
 		#ACCEPT Date=07/19/2008; Pgm=RussellDS; CR=30801; Group=BYPASS
 		#BYPASS
 		N i,n,rec
@@ -177,6 +202,30 @@ public Boolean isProc( String UNIT)	// name of unit
 	*/
 	
 	type Boolean isProc = false
+	
+	do {
+		type IO procIO = Class.new( "IO")
+	
+		set procIO.directory = $$SRCDIR^FILEUTL("PROC")
+		set procIO.fileName = UNIT_ ".PROC"
+		set procIO.openParams = "READ"
+		set procIO.timeout = 5
+	
+		do {
+			catch ioerror {
+     
+     				if 'procIO.device.isNull() do procIO.close()
+			}
+
+			do procIO.open()
+	
+			set isProc = true
+		
+			do procIO.close()
+		}
+	}
+
+	if isProc quit true
 	
 	type IO pslIO = Class.new( "IO")
 	

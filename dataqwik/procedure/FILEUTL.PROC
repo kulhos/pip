@@ -68,3 +68,32 @@ public EXISTS(String file)
         }
 
         quit isthere
+
+public SRCDIR(String typ, String topdir) //
+
+	type String types()
+        #ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
+	do TYPEINIT^TBXEXTR(.types)
+
+	type String det = types(typ).get()
+	if det.isNull() quit ""
+
+    	#ACCEPT Date=10/15/2013; PGM=JK; CR=4
+	if 'topdir.get().isNull() quit $$SUBDIR^%TRNLNM(topdir, det.piece("|",1))	
+
+        #ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
+        quit $$SCAU^%TRNLNM("DQDIR",det.piece("|",1))
+
+public SRCFILE(String typ, String elem) // get PSL source file location
+
+	type String types()
+        #ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
+	do TYPEINIT^TBXEXTR(.types)
+
+	type String det = types(typ).get()
+	if det.isNull() quit ""
+
+        #ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
+	quit $$SCAU^%TRNLNM("DQDIR",$$SUBDIR^%TRNLNM(det.piece("|",1),elem_"."_typ))
+
+
