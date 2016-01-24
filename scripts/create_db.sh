@@ -81,7 +81,7 @@ echo "\n$cnt foreign keys loaded."
 cnt=0
 for file in ${DIR}/data/*.DAT
  do
-       echo "Loading file ${file}"
+       # echo "Loading file ${file}"
 	fname=$(basename ${file})
        $gtm_dist/mumps -r %XCMD \
 	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXDATA(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
@@ -92,11 +92,17 @@ echo "\n$cnt data files loaded."
 cnt=0
 for file in ${DIR}/dataqwik/procedure/*.PROC
  do
-       echo "Loading file ${file}"
+       # echo "Loading file ${file}"
 	fname=$(basename ${file})
        $gtm_dist/mumps -r %XCMD \
 	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXPROC(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
 	cnt=$(($cnt+1))
 done
 echo "\n$cnt procedures loaded."
+
+echo "Recompiling procedures"
+$gtm_dist/mumps -r %XCMD "do BUILDALL^DBSPROC"
+
+echo "Recompiling filers"
+$gtm_dist/mumps -r %XCMD "do BUILDALL^DBSFILB"
 
