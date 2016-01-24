@@ -18,10 +18,9 @@ ENV LANGUAGE en_US.UTF-8
 RUN mkdir /pip
 
 RUN git clone -b docker https://github.com/kulhos/pip.git /pip/
-RUN wget http://sourceforge.net/projects/fis-gtm/files/GT.M%20Installer/v0.13/gtminstall
-#ADD http://sourceforge.net/projects/fis-gtm/files/GT.M%20Installer/v0.13/gtminstall /pip/
+#RUN wget http://sourceforge.net/projects/fis-gtm/files/GT.M%20Installer/v0.13/gtminstall
+ADD http://sourceforge.net/projects/fis-gtm/files/GT.M%20Installer/v0.13/gtminstall /pip/
 RUN sh gtminstall --utf8 4.8 --keep-obj --ucaseonly-utils --linkexec /pip --overwrite-existing
-#RUN MDIR=`readlink /pip/gtm` && ln -s `dirname ${MDIR}` /pip/gtm_dist
 RUN ln -s $(dirname $(readlink /pip/gtm)) /pip/gtm_dist
 RUN sh /pip/scripts/create_db.sh /pip
 
