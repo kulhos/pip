@@ -1,5 +1,0 @@
-DESCRIPTION	OPTION
-No logging	0
-Log Statement only	1
-Log with individual record keys (UPDATE/DELETE only)	2
-Log with individual record keys and data (UPDATE/DELETE only)	3
