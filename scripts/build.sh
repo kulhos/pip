@@ -17,7 +17,7 @@ cnt=0
 for file in ${DIR}/data/*.G
  do
        #echo "Loading file ${file}"
-       $gtm_dist/mumps -r %XCMD "do READFILE^TBXINST(.code,\"${file}\") w \".\" for i=1:1 quit:'\$d(code(i))  set @code(i)"
+       $gtm_dist/mumps -r %XCMD "do READFILE^TBXINST(.code,\"${file}\") for i=1:1 quit:'\$d(code(i))  set @code(i)"
 	cnt=$(($cnt+1))
 done
 
@@ -29,7 +29,7 @@ for file in ${DIR}/dataqwik/table/*/*.TBL
        #echo "Loading file ${file}"
 	fname=$(basename ${file})
        $gtm_dist/mumps -r %XCMD \
-	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXTBL(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXTBL(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
 	cnt=$(($cnt+1))
 done
 echo "\n$cnt tables loaded."
@@ -40,7 +40,7 @@ for file in ${DIR}/dataqwik/table/*/*.COL
        #echo "Loading file ${file}"
 	fname=$(basename ${file})
        $gtm_dist/mumps -r %XCMD \
-	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXCOL(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXCOL(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
 	cnt=$(($cnt+1))
 done
 echo "\n$cnt columns loaded."
@@ -51,7 +51,7 @@ for file in ${DIR}/dataqwik/trigger/*.TRIG
        #echo "Loading file ${file}"
 	fname=$(basename ${file})
        $gtm_dist/mumps -r %XCMD \
-	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXTRIG(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXTRIG(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
 	cnt=$(($cnt+1))
 done
 echo "\n$cnt triggers loaded."
@@ -62,7 +62,7 @@ for file in ${DIR}/dataqwik/index/*.IDX
        #echo "Loading file ${file}"
 	fname=$(basename ${file})
        $gtm_dist/mumps -r %XCMD \
-	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXIDX(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXIDX(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
 	cnt=$(($cnt+1))
 done
 echo "\n$cnt indexes loaded."
@@ -73,7 +73,7 @@ for file in ${DIR}/dataqwik/foreign_key/*.FKY
        #echo "Loading file ${file}"
 	fname=$(basename ${file})
        $gtm_dist/mumps -r %XCMD \
-	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXFKEY(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXFKEY(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
 	cnt=$(($cnt+1))
 done
 echo "\n$cnt foreign keys loaded."
@@ -84,7 +84,7 @@ for file in ${DIR}/data/*.DAT
        echo "Loading file ${file}"
 	fname=$(basename ${file})
        $gtm_dist/mumps -r %XCMD \
-	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXDATA(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXDATA(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
 	cnt=$(($cnt+1))
 done
 echo "\n$cnt data files loaded."
@@ -95,7 +95,7 @@ for file in ${DIR}/dataqwik/procedure/*.PROC
        echo "Loading file ${file}"
 	fname=$(basename ${file})
        $gtm_dist/mumps -r %XCMD \
-	"do READFILE^TBXINST(.code,\"${file}\") w \$\$LOAD^TBXPROC(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXPROC(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
 	cnt=$(($cnt+1))
 done
 echo "\n$cnt procedures loaded."

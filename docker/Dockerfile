@@ -24,6 +24,6 @@ RUN wget -v http://sourceforge.net/projects/fis-gtm/files/GT.M%20Installer/v0.13
 #ADD http://sourceforge.net/projects/fis-gtm/files/GT.M%20Installer/v0.13/gtminstall /pip/
 RUN sh gtminstall --utf8 4.8 --keep-obj --ucaseonly-utils --linkexec /pip --overwrite-existing
 RUN ln -s $(dirname $(readlink /pip/gtm)) /pip/gtm_dist
-RUN sh /pip/scripts/create_db.sh /pip
+RUN sh /pip/scripts/build.sh /pip
 
 VOLUME /pip
