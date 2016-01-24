@@ -1,4 +1,3 @@
-//DO NOT MODIFY  On-line help utility (terminal mode)|DBSHLP|||||||1
 public DBSHLP(String DINAM,	// Data item name
 	      Number VPT,	// Top display margin		/NOREQ/DFT=10
 	      Number VPB,	// Bottom display margin	/NOREQ/DFT=23
@@ -782,4 +781,4 @@ HDR(	String DINAM,
 	else  set HDR = HDR_"Y"
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^14128"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61277^64016^Dan Russell^14060"	// Signature - LTD^TIME^USER^SIZE

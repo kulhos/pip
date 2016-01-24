@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSITEM ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Create column attributes array|DBSITEM|||||||1
 DBSITEM(TABLES,ITEMS,DBSATT) ; Attribute array [*] /MECH=REFARR:RW
  ;
  N isCNTFUN
@@ -191,7 +190,7 @@ DBSITEM(TABLES,ITEMS,DBSATT) ; Attribute array [*] /MECH=REFARR:RW
  Q return
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5014" ; Signature - LTD^TIME^USER^SIZE
+ Q "61276^62572^Dan Russell^4951" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; DI FROM DBTBL1D WHERE %LIBS='SYSDEV' AND FID=:V1 AND DI=:V2
  ;

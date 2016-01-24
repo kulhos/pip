@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Class Descriptor - Insensitive Group|PSLClass|||||||1
 	/*
 	ORIG:	Frans S.C. Witte, 2007-06-23
 	DESC:	Class Definition Module for PSL class PSLClass
@@ -583,4 +582,4 @@ public String toJSON( PSLTokenizer tknzr	// PSLTokenizer set up for JSON strlits
 	set json = json_ ","_ 9.char()_ """propProc"" : "_ tknzr.addQuotes( this.propProc)
 	quit json_" }"
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^25055"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61461^42874^Frans S.C. Witte^24981"	// Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Code generator for RecordTABLE code|PSLRecordBuilder|||||||1
 	#PACKAGE framework.psl
 	#CLASSDEF extends=Primitive delimiter=9 public
 	/*
@@ -5378,4 +5377,4 @@ private static void addLine2(String srcarr(),		// Source code array
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^192832"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61523^1911^Dan Russell^192755"	// Signature - LTD^TIME^USER^SIZE

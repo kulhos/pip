@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Test PROFILE Server|PBSTST|||||||1
 PBSTST	//Private;Test PROFILE Server
 	/*
 	ORIG:  MATTSON -  1 JUL 1993
@@ -876,4 +875,4 @@ REPLAY(SERVER,SEQ)
 	quit
 	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^18647"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61116^11513^Savitha Venkatesh^18596"	// Signature - LTD^TIME^USER^SIZE

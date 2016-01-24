@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCCLASS ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Class Class methods|UCCLASS|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -181,7 +180,7 @@ cdNewExp(objClass,objStack,objDestr,objAdj) ; stack adjustment procedure
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^14297" ; Signature - LTD^TIME^USER^SIZE
+ Q "61086^28680^Frans S.C. Witte^14245" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vaddSubr(p1,p2,p3,p4) ; PSL.addSubrou

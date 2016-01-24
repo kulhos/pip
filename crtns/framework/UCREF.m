@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCREF ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Methods of PSL Class Reference|UCREF|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -86,4 +85,4 @@ toString ; method Reference.toString; Returns String
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^7450" ; Signature - LTD^TIME^USER^SIZE
+ Q "61058^29757^Frans S.C. Witte^7389" ; Signature - LTD^TIME^USER^SIZE

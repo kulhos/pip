@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCRUNTIM ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Code generators for class Runtime - Insensitive Group|UCRUNTIM|||||||1
  ; I18N=QUIT
  ; *******************************************************************
  ; * IMPORTANT NOTE:                                                 *
@@ -337,7 +336,7 @@ vSIG(this) ; polymorphism dispatch
  I $D(vPslPoly(vC,"vSIG")) Q $$v0vSIG^@vPslPoly(vC,"vSIG")(.this)
  Q $$v0vSIG(.this)
 v0vSIG(this) ; 
- Q "^^^23485" ; Signature - LTD^TIME^USER^SIZE
+ Q "61298^29758^Frans S.C. Witte^23398" ; Signature - LTD^TIME^USER^SIZE
 vcdmNew(vC) ; Constructor, called for Class.new()
  N this
  S this=vC

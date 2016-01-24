@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSUTLQR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  WIK REPORT MAINTENANCE|DBSUTLQR|||||||||||||||||||||1
 DBSUTLQR ; 
  ;
  Q  ; DO NOT CALL AT TOP.
@@ -25,14 +24,14 @@ COPY(DQSCR) ; COPY DQ DEFINITION
  S NAME=$piece(NAME,",",$L(NAME,","))
  ;
  N d5q S d5q=$$vRCgetRecord0^RecordDBTBL5Q("SYSDEV",QRID,0)
- I DQSCR'="" S %ProcessMode=2 S %NOPRMT="Q" D @DQSCR
+ I DQSCR'="" S %O=2 S %NOPRMT="Q" D @DQSCR
  ;
  S TLIB="SYSDEV" S OLNTB=22020 S DQREF=DQTABLE
  S DQREF="["_DQREF_"]"_NAME
  S CQRID=QRID
  ;
  S (FID,SID,QID,QRID,RID,PID,AGID,IDEXCH)=""
- S %READ=DQREF_"/TBL="_$P(DQREF,"]",1)_"]/XPP=D PP^DBSUTL"
+ S %READ=DQREF_"/TBL="_$piece(DQREF,"]",1)_"]/XPP=D PP^DBSUTL"
  ;
  N dbctl S dbctl=$G(^DBCTL("SYS","DBOPT",DBOPT))
  ;
@@ -47,8 +46,8 @@ COPY(DQSCR) ; COPY DQ DEFINITION
  N d5qn S d5qn=$$vReCp1(d5q)
   S vobj(d5qn,-4)=NQRID
   S vobj(d5qn,-100,0)="" S $P(vobj(d5qn,0),$C(124),2)=""
-  S vobj(d5qn,-100,0)="" S $P(vobj(d5qn,0),$C(124),3)=%SystemDate
-  S vobj(d5qn,-100,0)="" S $P(vobj(d5qn,0),$C(124),15)=%UserName
+  S vobj(d5qn,-100,0)="" S $P(vobj(d5qn,0),$C(124),3)=TJD
+  S vobj(d5qn,-100,0)="" S $P(vobj(d5qn,0),$C(124),15)=$$USERNAM^%ZFUNC
  ;
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vReSav1(d5qn) K vobj(d5qn,-100) S vobj(d5qn,-2)=1 TC:vTp  
  ;
@@ -79,7 +78,7 @@ COPY(DQSCR) ; COPY DQ DEFINITION
  K vobj(+$G(d5q)),vobj(+$G(d5qn)) Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2426" ; Signature - LTD^TIME^USER^SIZE
+ Q "61116^42997^Dan Russell^2356" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; LIBS,QRID,SEQ FROM DBTBL6F WHERE LIBS='SYSDEV' AND QRID=:CQRID ORDER BY SEQ ASC
  ;

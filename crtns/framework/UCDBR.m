@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCDBR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Db class, RDB related|UCDBR|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -511,7 +510,7 @@ XvCloseName() ;
  Q "vCloseRDB^vResultSet"
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^46356" ; Signature - LTD^TIME^USER^SIZE
+ Q "61293^42411^Frans S.C. Witte^46304" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vaddSubr(p1,p2,p3,p4) ; PSL.addSubrou

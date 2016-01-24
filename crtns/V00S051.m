@@ -1,5 +1,5 @@
 V00S051	;; -  - 5.3 - SID= <DBSRDS> Required Data Item Set Screen
-	;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+	;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
 	;
 VSTART	; 
 	K VO,VODFT

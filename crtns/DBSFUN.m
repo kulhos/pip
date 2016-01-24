@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSFUN ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Internal Functions|DBSFUN|||||||1
 DBSFUN ; 
  ;
  Q  ; Don't call from top
@@ -78,4 +77,4 @@ SELFID(FILES,DI) ; Column name
  Q VAR(OP)
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3045" ; Signature - LTD^TIME^USER^SIZE
+ Q "61114^71587^Dan Russell^2985" ; Signature - LTD^TIME^USER^SIZE

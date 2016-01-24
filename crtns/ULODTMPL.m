@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure ULODTMPL ****
  ; 
- ; 01/23/2016 14:24 - kulhan
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL template loader|ULODTMPL|||||||1
 ULODTMPL(TEMPLATE,ARRAY,START,XTAGS) ; 
  ;
  N %I N LINE N %START N STOP N TAG
@@ -46,7 +45,7 @@ LINE(LINE,%I) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2867" ; Signature - LTD^TIME^USER^SIZE
+ Q "60339^35081^Dan Russell^2814" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; CODE FROM DBTBL25D WHERE %LIBS='SYSDEV' AND PROCID=:TEMPLATE ORDER BY SEQ
  ;

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Array editor|DBSWRITE|||||||1
 public DBSWRITE(String ARRAY,		// Name of text array to edit
 		Number TOPMARGN,	// Top margin			/NOREQ/DFT=1
 		Number BTMMARGN,	// Bottom margin		/NOREQ/DFT=24
@@ -71,4 +70,4 @@ public DBSWRITE(String ARRAY,		// Name of text array to edit
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^1941"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60425^2982^Dan Russell^1895"	// Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Generic Message Handler|MSG|||||||1
 public MSG(Number MSGID,
            String p1,
            String p2,
@@ -411,4 +410,4 @@ public NEXTVAL	// Returns the highest key value +1
                 
 	quit 
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^9406"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61403^56841^FSCW^9354"	// Signature - LTD^TIME^USER^SIZE

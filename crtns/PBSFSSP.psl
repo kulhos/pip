@@ -1,4 +1,3 @@
-//DO NOT MODIFY  FSSP Service Class Driver|PBSFSSP|||||||1
 PBSFSSP(reply,stfflg,record,rectyp,contxt)	// FSSP Service Class Driver
 	/*
 	   ORIG: MATTSON - 11/08/93
@@ -205,4 +204,4 @@ STFGBL(pkt,reply)	// File record to global
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4049"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "59886^43595^Sanchez SCM Administrator^3991"	// Signature - LTD^TIME^USER^SIZE

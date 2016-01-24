@@ -1,10 +1,10 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Screen DBTBL25 ****
  ; 
- ; 01/22/2016 22:49 - kulhan
+ ; 02/24/2010 18:33 - pip
  ; 
 V00S067(%O,fDBTBL25) ; -  - SID= <DBTBL25> Procedure Definition
- ;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/22/2016 22:49 - kulhan
+ ;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
  ;
  N KEYS N KVAR N VFSN N VO N VODFT N VPGM N vPSL N VSID N VSNAME
  ;

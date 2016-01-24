@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DDP Function/Utility Library|DDPUTL|||||||1
 	/*
 	  Copyright(c)1997 Sanchez Computer Associates, Inc.  All Rights Reserved 
 	       ORIG:  CHENARD
@@ -256,4 +255,4 @@ public SPOOL(DIR)	// Return the spool directory
 
 	quit $$SUBDIR^%TRNLNM(DIR,"SPOOL")
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5903"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60269^49577^kellytp^5843"	// Signature - LTD^TIME^USER^SIZE

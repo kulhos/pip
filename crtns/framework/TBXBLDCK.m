@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure TBXBLDCK ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  TBX Build check|TBXBLDCK|||||||1
  ;  #PACKAGE framework.tbx
  ;
  ;  #OPTION ResultClass ON
@@ -65,4 +64,4 @@ latest(prio) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2888" ; Signature - LTD^TIME^USER^SIZE
+ Q "61446^29875^Frans S.C. Witte^2839" ; Signature - LTD^TIME^USER^SIZE

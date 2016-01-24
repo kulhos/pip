@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PSLX ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Class definition of PSLX|PSLX|||||||2
  ;  #PACKAGE  framework.psl
  ;
  ;  #CLASSDEF extends=PSLCC public delimiter=9
@@ -326,7 +325,7 @@ vSIG(this) ; polymorphism dispatch
  I $D(vPslPoly(vC,"vSIG")) Q $$v0vSIG^@vPslPoly(vC,"vSIG")(.this)
  Q $$v0vSIG(.this)
 v0vSIG(this) ; 
- Q "^^^18927" ; Signature - LTD^TIME^USER^SIZE
+ Q "61461^42885^Frans S.C. Witte^18873" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim

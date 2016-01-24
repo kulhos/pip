@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Rebuild DQ node/column cross reference|DBSDF9|||||||1
 public DBSDF9
 
 	// **********************************************************************
@@ -265,4 +264,4 @@ private %EXT
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^7867"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61413^60987^Dan Russell^7797"	// Signature - LTD^TIME^USER^SIZE

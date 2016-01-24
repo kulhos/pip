@@ -1,10 +1,10 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Screen DBTBL33L ****
  ; 
- ; 01/20/2016 11:55 - kulhan
+ ; 02/24/2010 18:33 - pip
  ; 
 V00S070(%O,fDBTBL33) ; DBS -  - SID= <DBTBL33L> Batch Compilation Attributes
- ;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+ ;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
  ;
  N KVAR N PGM N VPG N vPSL N VSID
  S VSID="DBTBL33L"

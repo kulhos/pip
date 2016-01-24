@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Row class library|UCROW|||||||1
   	/*
 	ORIG: FSANCHEZ - 03/24/2003  arq 51423
 	DESC: PSL Row class library
@@ -1139,4 +1138,4 @@ toString	//Method: Row.toString(colDel,quoChar,fmtDate,fmtTime,fmtBool)
 	set PSL.return="$$"_label_"("_PSL.objectName_","_rowDel_","_mask_","_colDel_","_quoChar_","_fmtDate_","_fmtTime_","_fmtBool_")"
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^39800"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61296^59347^Frans S.C. Witte^39748"	// Signature - LTD^TIME^USER^SIZE

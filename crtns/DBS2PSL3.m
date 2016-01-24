@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBS2PSL3 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL Screen Compiler|DBS2PSL3|||||||1
 DBS2PSL3(dbtbl2) ; DBS - U - V7.0 - PSL Screen compiler
  N I N SAVC N SAVD N X
  ;
@@ -28,7 +27,7 @@ DBS2PSL3(dbtbl2) ; DBS - U - V7.0 - PSL Screen compiler
  .	;
  .	S TMP(998,1)="VDEPRE("_vobjlst("formal")_")  // Data Entry Pre-processor"
  .	S TMP(998,2)=" "
- .	S X="" F I=3:1 S X=$O(OM(X)) Q:X=""  S TMP(998,I)=OM(X)
+ .	S X="" F I=3:1 S X=$order(OM(X)) Q:X=""  S TMP(998,I)=OM(X)
  .	Q  ;isEmpty
  ;
  K OM
@@ -44,12 +43,12 @@ DBS2PSL3(dbtbl2) ; DBS - U - V7.0 - PSL Screen compiler
  .	;
  .	D PPLIB^DBS2PSL4(.OM) ; parse for PP Libs
  .	;
- .	S X="" F I=1:1 S X=$O(OM(X)) Q:X=""  S TMP(999,I)=OM(X)
+ .	S X="" F I=1:1 S X=$order(OM(X)) Q:X=""  S TMP(999,I)=OM(X)
  .	Q  ; is Empty
  ;
  K OM
  ;
-  N V1 S V1=%Library I ($D(^DBTBL(V1,2,SID,0,101))#2) D
+ I $$vDbEx1() D
  .	D SUBVLOD(.dbtbl2)
  .	Q 
  ;
@@ -70,7 +69,7 @@ DBS2PSL3(dbtbl2) ; DBS - U - V7.0 - PSL Screen compiler
  .	Q 
  E  S X41=" // "
  ;
- I $D(BLD(2)),$P(BLD(2)," ;",1)="EXEC" S BLD(2)="VLOD("_vobjlst("formal")_") // Load data from disc - %O = (1-5)"
+ I $D(BLD(2)),$piece(BLD(2)," ;",1)="EXEC" S BLD(2)="VLOD("_vobjlst("formal")_") // Load data from disc - %O = (1-5)"
  I $P(vobj(dbtbl2,0),$C(124),7) S BLD(2.5)=" if '$D(%REPEAT) set %REPEAT="_(23-$P(vobj(dbtbl2,0),$C(124),7))
  I $P(vobj(dbtbl2,0),$C(124),7) S BLD(2.55)=" if '$D(%MODS) set %MODS=1" S VSAV(1,"%MODS")="" S VSAV(1,"%REPEAT")=""
  D ^DBS2PSL4(.dbtbl2)
@@ -97,14 +96,23 @@ SUBVLOD(dbtbl2) ; Substitute VLOD with user defined access section
  ..  Q  ; while ...
  .	;
  .	D PPLIB^DBS2PSL4(.OM) ; parse for PP Libs
- .	S X="" F I=3:.001 S X=$O(OM(X)) Q:X=""  S BLD(I)=OM(X)
+ .	S X="" F I=3:.001 S X=$order(OM(X)) Q:X=""  S BLD(I)=OM(X)
  .	K OM
  .	I '$P(vobj(dbtbl2,0),$C(124),7) S VNEW(100)=" do VLOD("_vobjlst("actual")_")"
  .	Q  ;isEmpty
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3571" ; Signature - LTD^TIME^USER^SIZE
+ Q "60108^20902^Viji Skariah^3518" ; Signature - LTD^TIME^USER^SIZE
+ ;
+vDbEx1() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=101
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,101))#2) Q 0
+ Q 1
  ;
 vOpen1() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS='SYSDEV' AND SID=:SID AND SEQ=0 AND PSEQ BETWEEN 1 AND 20
  ;

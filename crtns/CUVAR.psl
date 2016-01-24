@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Institution Variable Defaults|CUVAR|||||||1
 public CUVAR(String COL)	// Institution Variable Defaults
 
 	/*
@@ -66,4 +65,4 @@ public LIST(VLIST)	// Load a list of Institution Variables if not already define
 	}	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^1461"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60087^61013^Dan Russell^1401"	// Signature - LTD^TIME^USER^SIZE

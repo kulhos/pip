@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Report Compiler - Part 3|DBSRW3|||||||1
 public DBSRW3(RecordDBTBL5H dbtbl5h,String ddmap(),String RPTINFO(,,,))	/* Private - Part 3 of DBSRW
 	ORIG: CHIANG
 	PROCEDURE ID: DBSRW3
@@ -977,4 +976,4 @@ BLDPRNT(String RPTINFO(,,,))	// Private - Build print section
 		
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^31591"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61288^63985^Dan Russell^31525"	// Signature - LTD^TIME^USER^SIZE

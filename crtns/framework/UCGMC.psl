@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Compiler commands - Dictionary Group|UCGMC|||||||1
 	#PACKAGE framework.psl
 	#OPTION  ResultClass ON
 
@@ -1155,4 +1154,4 @@ private void skip(	noret String m2src(),
 	if lptr.isNull() set lptr = m2src("").order(-1) do PSL.error("Missing #END")
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^41680"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61111^17292^Frans S.C. Witte^41613"	// Signature - LTD^TIME^USER^SIZE

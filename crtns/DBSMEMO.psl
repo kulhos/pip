@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Memo field utility|DBSMEMO|||||||1
 DBSMEMO	//	
 
 	// **********************************************************************
@@ -205,4 +204,4 @@ public EDIT(String memoin,	// Input memo field
 
 	quit RETURN
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5284"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61397^49911^Dan Russell^5233"	// Signature - LTD^TIME^USER^SIZE

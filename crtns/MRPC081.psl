@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Compile DQ Runtime Routines|MRPC081|||||||1
 	#OPTION ResultClass ON
 	
 public String MRPC081(ret String RETURN,	// Return value (always null)
@@ -177,4 +176,4 @@ void DEPLN(String NAME)		// "DEP" or "LN" to compile
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3712"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61237^74513^Dan Russell^3652"	// Signature - LTD^TIME^USER^SIZE

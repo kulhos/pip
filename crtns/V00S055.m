@@ -1,10 +1,10 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Screen DBTBL14 ****
  ; 
- ; 01/20/2016 11:55 - kulhan
+ ; 02/24/2010 18:33 - pip
  ; 
 V00S055(%O,dbtbl14q,dbtbl14) ; -  - SID= <DBTBL14> Data-Item Protection
- ;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+ ;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
  ; (DESC,PROT,RUCLS)#1
  ;
  N KEYS N KVAR N VFSN N VO N VODFT N VPGM N vPSL N VSID N VSNAME

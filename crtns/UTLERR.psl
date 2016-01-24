@@ -1,4 +1,3 @@
-//DO NOT MODIFY  SCA error log and display utility|UTLERR|||||||1
 public UTLERR	//
 	#OPTION ResultClass ON
 	// SCA error log and display utility
@@ -992,4 +991,4 @@ private String ETLOC(Error inError)	// Return an error object as a standardized 
 	
 	quit inError.type_ ","_ inError.thrownAt_ ","_ inError.component_ ","_ inError.description_ ","_ inError.ident 
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^27365"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61457^66611^Dan Russell^27300"	// Signature - LTD^TIME^USER^SIZE

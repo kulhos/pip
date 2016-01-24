@@ -1,4 +1,3 @@
-//DO NOT MODIFY  SCA Password Encryption|SCAENC|||||||1
 SCAENC
 	/*
  	 PROCEDURE ID:	SCAENC
@@ -66,4 +65,4 @@ Public ENC(PWD)
 
 	quit ENC
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^1091"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "59495^75633^Lik Kwan^1036"	// Signature - LTD^TIME^USER^SIZE

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBMAP ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Database Mapping procedure|DBMAP|||||||1
  ;  #PACKAGE framework
  ;
  ; *******************************************************************
@@ -684,7 +683,7 @@ ADDMISNG(dbid,table,MAP,SPLIT) ; Split table for missing 100 or null
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^24774" ; Signature - LTD^TIME^USER^SIZE
+ Q "61382^49569^Dan Russell^24717" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vOpen4() ; PSLBOOT result set for STBLRESERVED

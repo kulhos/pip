@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure IPCMGR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Interrupt Process Control Manager|IPCMGR|||||||1
  ;
  Q 
  ;
@@ -12,28 +11,28 @@ REGISTER(PRCTYP,SUBTYP) ; /NOREQ/MECH=VAL
  ;
  TS (vobj):transactionid="CS"
  ;
- N procid S procid=$$vRCgetRecord1^RecordPROCESSID(%ProcessID,0)
+ N procid S procid=$$vRCgetRecord1^RecordPROCESSID($J,0)
  ;
   S $P(vobj(procid),$C(124),6)=PRCTYP
   S $P(vobj(procid),$C(124),7)=$get(SUBTYP)
-  S $P(vobj(procid),$C(124),1)=%CurrentDate
-  S $P(vobj(procid),$C(124),2)=%CurrentTime
+  S $P(vobj(procid),$C(124),1)=$P($H,",",1)
+  S $P(vobj(procid),$C(124),2)=$P($H,",",2)
  ;
  I $$INTRACT^%ZFUNC  S $P(vobj(procid),$C(124),3)="INTERACTIVE"
  E   S $P(vobj(procid),$C(124),3)="DETACHED"
  ;
   S $P(vobj(procid),$C(124),4)=$$TLO^UTLO()
-  S $P(vobj(procid),$C(124),5)=%UserName
+  S $P(vobj(procid),$C(124),5)=$$USERNAM^%ZFUNC
  ;
-  S $P(vobj(procid),$C(124),8)=$get(%UserID)
-  S $P(vobj(procid),$C(124),9)=$get(%UserClass)
+  S $P(vobj(procid),$C(124),8)=$get(%UID)
+  S $P(vobj(procid),$C(124),9)=$get(%UCLS)
  ;
   S $P(vobj(procid),$C(124),10)=$get(%FN)
   S $P(vobj(procid),$C(124),11)=$get(%EVENT)
  ;
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordPROCESSID(procid,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(procid,-100) S vobj(procid,-2)=1 TC:vTp  
  ;
-  N V1 S V1=%ProcessID D vDbDe1()
+  N V1 S V1=$J D vDbDe1()
  ;
   TC:$TL 
  ;
@@ -90,12 +89,12 @@ SIGNAL(PID,ACTREQ,QUALIF) ; Action Qualifier /NOREQ/MECH=VAL
   S $P(vobj(procact),$C(124),2)=$get(QUALIF)
   S $P(vobj(procact),$C(124),3)="ISSUED"
  ;
-  S $P(vobj(procact),$C(124),4)=%ProcessID
-  S $P(vobj(procact),$C(124),5)=%CurrentDate
-  S $P(vobj(procact),$C(124),6)=%CurrentTime
+  S $P(vobj(procact),$C(124),4)=$J
+  S $P(vobj(procact),$C(124),5)=$P($H,",",1)
+  S $P(vobj(procact),$C(124),6)=$P($H,",",2)
  ;
   S $P(vobj(procact),$C(124),8)=$$TLO^UTLO
-  S $P(vobj(procact),$C(124),7)=%UserName
+  S $P(vobj(procact),$C(124),7)=$$USERNAM^%ZFUNC
  ;
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordPROCESSACT(procact,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(procact,-100) S vobj(procact,-2)=1 TC:vTp  
  ;
@@ -111,9 +110,9 @@ INTRPT ; Process interrupt ($ZINTERRUPT)
  ;
  N ACTREQ N QUALIF
  ;
- N procid S procid=$$vRCgetRecord0^RecordPROCESSID(%ProcessID,0)
+ N procid S procid=$$vRCgetRecord0^RecordPROCESSID($J,0)
  ;
- N ds,vos1,vos2,vos3,vos4  N V1 S V1=%ProcessID S ds=$$vOpen2()
+ N ds,vos1,vos2,vos3,vos4  N V1 S V1=$J S ds=$$vOpen2()
  ;
  F  Q:'$$vFetch2()  D
  .	N STATUS S STATUS="PROCESSED"
@@ -161,7 +160,7 @@ INTRPT ; Process interrupt ($ZINTERRUPT)
  ..		K %INTRPT(vobj(procact,-4))
  ..		Q 
  .	;
- .	E  S %INTRPT(vobj(procact,-4))=STATUS_"|"_%CurrentDate_"|"_%CurrentTime
+ .	E  S %INTRPT(vobj(procact,-4))=STATUS_"|"_$P($H,",",1)_"|"_$P($H,",",2)
  .	;
  .	K vobj(+$G(procact)) Q 
  K vobj(+$G(procid)) Q 
@@ -170,7 +169,7 @@ JOBEXAM(FILE) ;
  ;
  N RESULT
  ;
- I '(FILE="") S FILE=FILE_"_"_%ProcessID
+ I '(FILE="") S FILE=FILE_"_"_$J
  ;
  ;  #ACCEPT Date=03/21/07; PGM=EWS; CR=15677; Group=Bypass
  ;*** Start of code by-passed by compiler
@@ -184,8 +183,8 @@ JNL(procid,procact) ;
  N DAT
  N PID N SEQ
  ;
- S DAT=%CurrentDate
- S PID=%ProcessID
+ S DAT=$P($H,",",1)
+ S PID=$J
  S SEQ=$O(^PROCJNL(DAT,PID,""),-1)+1
  ;
  N procjnl S procjnl=$$vcdmNew^RecordPROCESSJNL()
@@ -222,8 +221,8 @@ JNL(procid,procact) ;
  .  S $P(vobj(procjnl),$C(124),21)=$piece(%INTRPT(vobj(procact,-4)),"|",3)
  .	Q 
  E  D
- .  S $P(vobj(procjnl),$C(124),20)=%CurrentDate
- .  S $P(vobj(procjnl),$C(124),21)=%CurrentTime
+ .  S $P(vobj(procjnl),$C(124),20)=$P($H,",",1)
+ .  S $P(vobj(procjnl),$C(124),21)=$P($H,",",2)
  .	Q 
  ;
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordPROCESSJNL(procjnl,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(procjnl,-100) S vobj(procjnl,-2)=1 TC:vTp  
@@ -234,7 +233,7 @@ JNL(procid,procact) ;
  ;
 CLOSE(PID) ; 
  ;
- I ($get(PID)="") S PID=%ProcessID
+ I ($get(PID)="") S PID=$J
  ;
  TS (vobj):transactionid="CS"
   ZWI ^PROCID(PID)
@@ -245,7 +244,7 @@ CLOSE(PID) ;
 SETATTS(ATTS) ; Attributes to modify  /MECH=REFARR:R
  N vTp
  ;
- N PID S PID=%ProcessID
+ N PID S PID=$J
  ;
  N procid S procid=$$vRCgetRecord1^RecordPROCESSID(PID,0)
  ;
@@ -282,7 +281,7 @@ INTTEST(PID) ; Test Interrupt Mechanism
  ;
  D REGISTER("USER","TEST")
  ;
- I ($get(PID)="") S PID=%ProcessID
+ I ($get(PID)="") S PID=$J
  D SIGNAL(PID,"EXEC","write !!,""Process Interrupted Successfully"",!!")
  ;
  D CLOSE()
@@ -325,7 +324,7 @@ CLEANPID ; Clean up PROCESSID entries that are no longer active
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^11501" ; Signature - LTD^TIME^USER^SIZE
+ Q "60739^33736^Dan Russell^11436" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM PROCESSACT WHERE PID=:V1

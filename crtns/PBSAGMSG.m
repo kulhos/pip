@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PBSAGMSG ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Aggregate Message Service Class Driver|PBSAGMSG|||||||1
 PBSAGMSG(agmhdr,vzrecord,vzreply) ; 
  ;
  ; I18N=OFF
@@ -305,7 +304,7 @@ TESTBLD(INPUT,UID,AGMSG,SRVCLSES) ; Service classes for sub messages /MECH=REFNA
  I 'isDONE S ER=$$TESTERR("</MessageHeader>",1) Q 
  I (svclass="") S svclass=7
  I (svclass'=7) S ER=$$TESTERR("Only service class 7 currently supported",0) Q 
- I (msgid="") S msgid=$E(%CurrentDate,3,5)_%CurrentTime
+ I (msgid="") S msgid=$E($P($H,",",1),3,5)_$P($H,",",2)
  I (stfflag="") S stfflag=0
  I (erhopt="") S ER=$$TESTERR("No error handling option specified",0) Q 
  ;
@@ -880,7 +879,7 @@ TESTERR(MSG,isMISING) ; Use missing record message
  Q 1
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^27735" ; Signature - LTD^TIME^USER^SIZE
+ Q "60461^55036^Dan Russell^27663" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim

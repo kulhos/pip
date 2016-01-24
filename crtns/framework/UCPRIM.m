@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCPRIM ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Methods of PSL Class Primitive|UCPRIM|||||||1
  ;
  ;  #PACKAGE framework.psl
  ;
@@ -237,7 +236,7 @@ toVal(expr,def) ; default if not lit. /REQ/MECH=VAL
  Q def
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^19393" ; Signature - LTD^TIME^USER^SIZE
+ Q "61436^42425^Frans S.C. Witte^19331" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

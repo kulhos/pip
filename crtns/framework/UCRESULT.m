@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCRESULT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL ResultSet Class|UCRESULT|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -310,7 +309,7 @@ fetch ; method ResultSet.next; returns Logical
  .	I $$vPSLopti(objectName) S return=$$patch^UCPATCH(subRou,objectName,objectLevel,return)
  .	Q 
  ;
- S postProc("fetch")="ppFetch^"_%RoutineName
+ S postProc("fetch")="ppFetch^"_$T(+0)
  S struct("fetch",subRou,msrc,objectName)=""
  S return="$$vFetch("_objectName_")"
  ;
@@ -449,7 +448,7 @@ fetchPatch(subRou,calledBy,line,frmlObj,actObj) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^23948" ; Signature - LTD^TIME^USER^SIZE
+ Q "61293^42809^Frans S.C. Witte^23895" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vPSLopti(var) ; PSLIdentifier.optimize()

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Institution Variable Defaults|UCXCUVAR|||||||1
 	#PACKAGE framework.psl.upgrade
 	#OPTION  ResultClass ON
 
@@ -140,4 +139,4 @@ public void tbl2dat( String dir)	// create CUVAR.DAT based on current values
 	do io.close()
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5809"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61058^29766^Frans S.C. Witte^5746"	// Signature - LTD^TIME^USER^SIZE

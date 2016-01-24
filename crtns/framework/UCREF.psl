@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Methods of PSL Class Reference|UCREF|||||||1
 	/*
 	ORIG: Frans S.C. Witte 
 	DESC: PSL Object Class Library - Methods of Class Reference 
@@ -194,4 +193,4 @@ toString	// method Reference.toString; Returns String
 	quit
 	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^7450"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61058^29757^Frans S.C. Witte^7389"	// Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  TBX PSLX Interface|TBXPSL|||||||1
 	/*
 	ORIG:	Frans S.C. Witte, 2009-01-15
 	DESC:	deal with .psl file from FP, SP, or MRPC
@@ -136,4 +135,4 @@ private String getFullPath()	// return the complete full path name of the elemen
 	*/
 	quit $$pslRoot^PSLC()_"/"_this.element_ "."_ this.elemType
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5666"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61495^37535^e0101572^5616"	// Signature - LTD^TIME^USER^SIZE

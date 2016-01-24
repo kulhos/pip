@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCDTASYS ****
  ; 
- ; 01/23/2016 20:03 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL compiler load data DATA group|UCDTASYS|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  Q 
@@ -40,7 +39,7 @@ xiniPSLFUNSUB() ; 1st initialization of table in MDB
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^6466" ; Signature - LTD^TIME^USER^SIZE
+ Q "61565^25471^Sha H Mirza^6399" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; TEMPLATE,METHOD,CLASS,LITRESET FROM STBLPSLFUNSUB WHERE TEMPLATE BETWEEN :BEG AND :END ORDER BY TEMPLATE
  ;

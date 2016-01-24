@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Function/MRPC Userclass Authorization|SCADRV11|||||||1
 SCADRV11	// Function/MRPC Userclass Authorization
   /*
 	ORIG: kellyp - 03/04/2005
@@ -266,4 +265,4 @@ END
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4896"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60773^54317^Aries Beltran^4825"	// Signature - LTD^TIME^USER^SIZE

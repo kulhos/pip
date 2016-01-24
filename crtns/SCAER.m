@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAER ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Error log report|SCAER|||||||1
  ; Leave this line until new DBSPROC doesn't replace it (see CR27800)
  ;  #OPTION ResultClass ON
  ; Error log report
@@ -53,7 +52,7 @@ PROC(%ZTLoad) ; Main processing
  N %TAB N TMP N VFMQ N X
  N ERSEQ N OLNTB N SEQ
  ;
- S DATE=%CurrentDate
+ S DATE=$P($H,",",1)
  ;
  S %TAB("DATE")=".TJD4/HLP=[ERROR]DATE/TBL=[ERROR]DATE:DISTINCT/XPP=D DATEPP^SCAER"
  S %TAB("SEQ")=".SEQ2/TBL=""TMP(/RH=Seq     Error ID         Description""/XPR=D SEQPRE^SCAER"
@@ -301,7 +300,7 @@ SEQPRE ; Sequence pre-processor
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^8302" ; Signature - LTD^TIME^USER^SIZE
+ Q "60998^46954^Dan Russell^8255" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vtim2str(vo,vm) ; Time.toString

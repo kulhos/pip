@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSINDX ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Index File Definition|DBSINDX|||||||1
 DBSINDX ; Index File Definition
  ;
  Q 
@@ -46,7 +45,7 @@ MODIFY1(FID) ;
  N DELFLG
  N INDEXNM N VFMQ
  ;
- S %ProcessMode=1
+ S %O=1
  S INDEXNM=" "
  S DELFLG=0
  ;
@@ -75,11 +74,11 @@ MODIFY1(FID) ;
  ;
 MODE ; Determine processing mode
  ;
- I DELFLG S %ProcessMode=3 Q  ; Delete mode
+ I DELFLG S %O=3 Q  ; Delete mode
  ;
- I ($D(^DBTBL("SYSDEV",8,FID,INDEXNM))#2) S %ProcessMode=1 Q  ; Modify mode
+ I ($D(^DBTBL("SYSDEV",8,FID,INDEXNM))#2) S %O=1 Q  ; Modify mode
  ;
- S %ProcessMode=0 ; Create mode
+ S %O=0 ; Create mode
  ;
  Q 
  ;
@@ -174,7 +173,7 @@ DELETE ; Delete Index File Definition
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3856" ; Signature - LTD^TIME^USER^SIZE
+ Q "61247^57696^Dan Russell^3802" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM DBTBL8 WHERE %LIBS='SYSDEV' AND FID=:V1 AND INDEXNM=:V2

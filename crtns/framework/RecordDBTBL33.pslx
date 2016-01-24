@@ -9,6 +9,7 @@
 ,	{ "class" : "RecordDBTBL33",	"method" : "vBypassSave",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 1,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL33",	"method" : "vRCTrig1",	"resultClass" : "void",	"formalList" : "noret RecordDBTBL33 dbtbl33;noret String vpar",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "Trigger BEFORE_INSERT - Before Insert - BI" }
 ,	{ "class" : "RecordDBTBL33",	"method" : "vRCbeforeInsTrigs",	"resultClass" : "void",	"formalList" : "noret List vRCparams",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
+,	{ "class" : "RecordDBTBL33",	"method" : "vRCcascadeDelete",	"resultClass" : "void",	"formalList" : "noret List vRCparams",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL33",	"method" : "vRCchkReqForInsert",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL33",	"method" : "vRCchkReqForUpdate",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL33",	"method" : "vRCdelete",	"resultClass" : "void",	"formalList" : "noret List vRCparams;noret String vRCaudit();noret Boolean isKeyChange",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }

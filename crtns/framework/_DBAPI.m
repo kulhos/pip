@@ -1,9 +1,8 @@
  ; 
- ; **** Routine compiled from DATA-QWIK Procedure _DBAPI ****
+ ; **** Routine compiled from DATA-QWIK Procedure %DBAPI ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Relational Database APIs|%DBAPI|||||||1
  ;
  ; *******************************************************************
  ; * IMPORTANT NOTE:                                                 *
@@ -358,7 +357,7 @@ SVXCHMSG(msgtyp,svid,msg,reply,timeout) ; Timeout interval [*]  /NONULL
  N return S return=""
  ;
  S errnum=0
- S start=(%CurrentDate*100000)+%CurrentTime
+ S start=($P($H,",",1)*100000)+$P($H,",",2)
  S timeleft=timeout
  ;
  ;  #ACCEPT Date=09/10/2007; Pgm=RussellDS; CR=29295; Group=Bypass
@@ -376,7 +375,7 @@ SVXCHMSG(msgtyp,svid,msg,reply,timeout) ; Timeout interval [*]  /NONULL
  ;
  F  D  Q:isDone 
  .	;
- .	S timeleft=timeout-(((%CurrentDate*100000)+%CurrentTime)-start)
+ .	S timeleft=timeout-((($P($H,",",1)*100000)+$P($H,",",2))-start)
  .	I (timeleft<0) D  Q 
  ..		;
  ..		S return="CS_TIMEOUT"
@@ -549,4 +548,4 @@ transermsg(ermsg) ; Error message
  Q $translate(ermsg,$char(10)_$char(44),$char(32)_$char(126))
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^27368" ; Signature - LTD^TIME^USER^SIZE
+ Q "61298^36638^Dan Russell^27312" ; Signature - LTD^TIME^USER^SIZE

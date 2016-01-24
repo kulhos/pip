@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAUCDI ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SCAU Computed Data Items|SCAUCDI|||||||1
  Q 
  ;
 STATUS(UCLS,LSGN,MRSTAT,PWDFAIL) ; 
@@ -51,7 +50,7 @@ EXPIRED(UCLS,LSGN) ;
  ;
  I '$P(scau0,$C(124),27)!('$P(scau0,$C(124),26)) Q 0
  ;
- S IDLE=%CurrentDate-LSGN
+ S IDLE=$P($H,",",1)-LSGN
  ;
  ; Revoked
  I IDLE'<$P(scau0,$C(124),27) Q 2
@@ -63,4 +62,4 @@ EXPIRED(UCLS,LSGN) ;
  Q 0
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3153" ; Signature - LTD^TIME^USER^SIZE
+ Q "60107^24453^sviji^3096" ; Signature - LTD^TIME^USER^SIZE

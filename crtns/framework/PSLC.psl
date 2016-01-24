@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Compiler|PSLC|||||||1
 	/*
 	ORIG: Frans S.C. Witte - 2007-06-11
 	DESC: PSL compiler, Insensitive Group
@@ -1003,4 +1002,4 @@ private Boolean zlink( String mod		// module name
 	/* ======== END TARGET = M ======== */
 	#END
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^36105"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61374^48893^Frans S.C. Witte^36063"	// Signature - LTD^TIME^USER^SIZE

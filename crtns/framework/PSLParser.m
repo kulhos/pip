@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PSLParser ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Class definition of PSLParser|PSLParser|||||||1
  ;  #PACKAGE  framework.psl
  ;  #CLASSDEF extends=PSLCC public
  ;
@@ -1686,7 +1685,7 @@ vSIG(this) ; polymorphism dispatch
  I $D(vPslPoly(vC,"vSIG")) Q $$v0vSIG^@vPslPoly(vC,"vSIG")(.this)
  Q $$v0vSIG(.this)
 v0vSIG(this) ; 
- Q "^^^108572" ; Signature - LTD^TIME^USER^SIZE
+ Q "61461^42879^Frans S.C. Witte^108508" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vlstPos(object,p1,p2,p3) ; List.position

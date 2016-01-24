@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PSLTokenizer ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Class definition of PSLTokenizer|PSLTokenizer|||||||1
  ;  #PACKAGE  framework.psl
  ;
  ;  #CLASSDEF extends=Primitive public delimiter=9
@@ -468,7 +467,7 @@ vSIG(this) ; polymorphism dispatch
  I $D(vPslPoly(vC,"vSIG")) Q $$v0vSIG^@vPslPoly(vC,"vSIG")(.this)
  Q $$v0vSIG(.this)
 v0vSIG(this) ; 
- Q "^^^39006" ; Signature - LTD^TIME^USER^SIZE
+ Q "61461^42883^Frans S.C. Witte^38936" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

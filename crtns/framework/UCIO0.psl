@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Compiletime code of class IO - Insensitive Group|UCIO0|||||||1
 	/*
 	ORIG: Frans S.C. Witte, 2006-07-18
         DESC: Code generation forclass  IO methods
@@ -76,4 +75,4 @@ write	// method IO.write
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3243"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61058^29691^Frans S.C. Witte^3164"	// Signature - LTD^TIME^USER^SIZE

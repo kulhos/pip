@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCSTRING ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL String Method library|UCSTRING|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -1004,7 +1003,7 @@ toTime ; Method: String.toTime - Convert a string to Time (seconds past midnight
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^55402" ; Signature - LTD^TIME^USER^SIZE
+ Q "61450^51791^Frans S.C. Witte^55343" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vMExpr(v1) ; PSL.mExpr

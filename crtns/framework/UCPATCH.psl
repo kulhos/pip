@@ -1,4 +1,3 @@
-//DO NOT MODIFY  code patching utilities - Insensitive Group|UCPATCH|||||||1
 	/*
 	ORIG: FSANCHEZ - 05/01/02
 	DESC: Library of code patching and optimization methods
@@ -902,4 +901,4 @@ private change(code,test,subRou,var,newPtr) ; Change resultSet generate code
 	}
 	quit code
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^33927"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61426^29679^Frans S.C. Witte^33851"	// Signature - LTD^TIME^USER^SIZE

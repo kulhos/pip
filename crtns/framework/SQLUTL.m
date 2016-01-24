@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SQLUTL ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SQL Utilities|SQLUTL|||||||1
  ;  #PACKAGE framework.sql
  ;  #OPTION ResultClass ON
  ;
@@ -156,4 +155,4 @@ VALID24X7(ROUTINE) ;
  S vret=$P(utblrtns,$C(124),1) Q vret
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^8201" ; Signature - LTD^TIME^USER^SIZE
+ Q "61461^41316^Frans S.C. Witte^8156" ; Signature - LTD^TIME^USER^SIZE

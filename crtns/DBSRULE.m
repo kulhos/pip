@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRULE ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Product Rules|DBSRULE|||||||1
 DBSRULE(skipmsg) ; 
  N vpc
  ;
@@ -15,7 +14,7 @@ DBSRULE(skipmsg) ;
  ;
  S TAB=$char(9)
  ;
- S CODE(1)="public "_PGMNAME_TAB_"// Validate rules "_%CurrentDate_" "_$$TIM^%ZM_" - "_$get(%UserID)
+ S CODE(1)="public "_PGMNAME_TAB_"// Validate rules "_$$vdat2str($P($H,",",1),"MM/DD/YEAR")_" "_$$TIM^%ZM_" - "_$get(%UID)
  S CODE(2)=TAB_"// Product rules routine compiled by DBSRULE from table UTBLPRODRL"
  S CODE(3)=TAB_"// Run routine DBSRULE or build DEP/LN filer to re-create this routine"
  S CODE(4)=""
@@ -193,7 +192,36 @@ RUCNT(RULEID) ; Rule Set ID
  Q 0
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5039" ; Signature - LTD^TIME^USER^SIZE
+ Q "60444^50878^Dan Russell^4993" ; Signature - LTD^TIME^USER^SIZE
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc
  ;
 vOpen1() ; RULEID FROM UTBLPRODRL ORDER BY RULEID ASC
  ;

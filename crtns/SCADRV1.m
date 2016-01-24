@@ -1,17 +1,16 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV1 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Password setup/delete|SCADRV1|||||||1
 SCADRV1 ; 
  ;
  D INIT
  Q 
  ;
 INIT ; 
- S UID=%UserID
- S UCLS=%UserClass
+ S UID=%UID
+ S UCLS=%UCLS
  ;
  N %UCLS
  ;
@@ -107,7 +106,7 @@ VALIDATE(PWD,UID) ; SCAU User ID    MECH=VAL/NOREQ
  N ENCMETH S ENCMETH=1 N VALID S VALID=0 N ER
  N ENC N PSWD
  ;
- I ('($D(UID)#2)) S UID=%UserID
+ I ('($D(UID)#2)) S UID=%UID
  ;
  I (UID="") Q 0
  ;
@@ -137,8 +136,8 @@ SCA017 ; Entry Point for SCA017 function
  ;
  N UCLS,UID
  ;
- S UID=%UserID
- S UCLS=%UserClass
+ S UID=%UID
+ S UCLS=%UCLS
  ;
  N scau S scau=$$vRCgetRecord1^RecordSCAU(UID,0)
  ;
@@ -147,4 +146,4 @@ SCA017 ; Entry Point for SCA017 function
  K vobj(+$G(scau)) Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5172" ; Signature - LTD^TIME^USER^SIZE
+ Q "60702^61984^Irina Kin^5118" ; Signature - LTD^TIME^USER^SIZE

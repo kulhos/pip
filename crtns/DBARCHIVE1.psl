@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DBARCHIVE2 Builder|DBARCHIVE1|||||||1
 DBARCHIVE1	
 		 
 	/*
@@ -87,4 +86,4 @@ addcode(String pslcode(),	// PSL code array
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^2573"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61254^68517^Dan Russell^2519"	// Signature - LTD^TIME^USER^SIZE

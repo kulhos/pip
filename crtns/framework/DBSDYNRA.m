@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDYNRA ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA QWIK dynamic Record access|DBSDYNRA|||||||1
  ;  #PACKAGE framework
  ;  #OPTION ResultClass ON
  ;
@@ -332,7 +331,7 @@ ccAftSave(vOid,vT) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^29795" ; Signature - LTD^TIME^USER^SIZE
+ Q "61339^56517^Dan Russell^29730" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vaddSubr(p1,p2,p3,p4) ; PSL.addSubrou

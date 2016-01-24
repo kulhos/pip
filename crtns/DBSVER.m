@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSVER ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Field Validation Utility|DBSVER|||||||1
 DBSVER ; 
  ;
  ; **********************************************************************
@@ -201,4 +200,4 @@ TYPERR(typ) ; Data type is defined as ~p1
  S vret=$$^MSG(742,$P(dvfm,$C(124),1)) Q vret
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^6999" ; Signature - LTD^TIME^USER^SIZE
+ Q "61465^44671^Dan Russell^6933" ; Signature - LTD^TIME^USER^SIZE

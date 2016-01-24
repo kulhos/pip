@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Create/Modify Sub-menus|SCADRV10|||||||1
 SCADRV10        //;Create/Modify Sub-menus
   /*
 	ORIG: alagarss - 12/05/2005
@@ -180,4 +179,4 @@ END(String FN)     //
         set ER="W"  
         quit  
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4670"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60582^20585^SChhabria^4613"	// Signature - LTD^TIME^USER^SIZE

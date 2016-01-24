@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDOM ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Domain Definition|DBSDOM|||||||1
 DBSDOM ; 
  ;
  Q  ; No entry from top
@@ -60,7 +59,7 @@ CREATE ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1529" ; Signature - LTD^TIME^USER^SIZE
+ Q "60913^65027^Dan Russell^1480" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM DBSDOM WHERE SYSSN=:V1 AND DOM=:V2

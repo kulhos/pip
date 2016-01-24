@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCATIM ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  CONVERTS EXTERNAL TIME TO SECONDS|SCATIM|||||||1
 SCATIM ; 
  ;
  D START
@@ -14,7 +13,7 @@ START ;
  ; Entry exceeds 24 hours
  I %TS?1N.N S:%TS>86400 ER=1 S:%TS>86400 RM=$$^MSG(966) S %TN=%TS Q 
  ;
- I %TS="T"!(%TS="C") S %TN=%CurrentTime Q 
+ I %TS="T"!(%TS="C") S %TN=$P($H,",",2) Q 
  S %TS=$translate(%TS," ")
  I %TS="12:00A"!(%TS="12:00AM") S %TN=1 Q 
  ;
@@ -110,4 +109,4 @@ NS ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4416" ; Signature - LTD^TIME^USER^SIZE
+ Q "60178^29149^Sanjay Chhrabria^4351" ; Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  TBX Type Interface|TBXTypeInterface|||||||1
 	/*
 	ORIG:	Frans S.C. Witte, 2009-01-14
 	DESC:	TBX TypeInterface class
@@ -412,4 +411,4 @@ protected String success( String msg)	// Create a return string for success
 	if msg.isNull() quit this.returnSUCCESS
 	quit this.returnSUCCESS_ this.returnDELIM_ msg
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^18044"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61495^37421^e0101572^17984"	// Signature - LTD^TIME^USER^SIZE

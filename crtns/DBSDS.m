@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDS ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Screen Definitions|DBSDS|||||||1
 DBSDS ; 
  ;
  ; *******************************************************************
@@ -94,7 +93,7 @@ LIST ;
  ;
  D OPEN^SCAIO Q:ER 
  ;
- N tmpdqrs,vos1,vos2,vos3,vos4  N V1 S V1=%ProcessID S tmpdqrs=$$vOpen1()
+ N tmpdqrs,vos1,vos2,vos3,vos4  N V1 S V1=$J S tmpdqrs=$$vOpen1()
  ;
  S CNT=0
  F  Q:'$$vFetch1()  D  Q:ER 
@@ -134,7 +133,7 @@ LIST ;
  ;
  D CLOSE^SCAIO
  ;
-  N V2 S V2=%ProcessID D vDbDe1()
+  N V2 S V2=$J D vDbDe1()
  ;
  Q 
  ;
@@ -149,7 +148,7 @@ PRINT ;
  ; IO opened by DBSGETID
  USE IO
  ;
- N rs,vos1,vos2,vos3,vos4  N V1 S V1=%ProcessID S rs=$$vOpen2()
+ N rs,vos1,vos2,vos3,vos4  N V1 S V1=$J S rs=$$vOpen2()
  ;
  F  Q:'$$vFetch2()  D
  .	;
@@ -199,7 +198,7 @@ PRINT ;
  ;
  D CLOSE^SCAIO
  ;
-  N V2 S V2=%ProcessID D vDbDe2()
+  N V2 S V2=$J D vDbDe2()
  ;
  Q 
  ;
@@ -382,7 +381,7 @@ GTPGM ;
  ;
  K vobj(+$G(screen)) Q 
  ;
-PROCDUR(%ProcessMode,SID) ; 
+PROCDUR(%O,SID) ; 
  N vpc,vTp
  ;
  N VFMQ
@@ -390,7 +389,7 @@ PROCDUR(%ProcessMode,SID) ;
  N DBTBL2 S DBTBL2=$$vRCgetRecord1^RecordDBTBL2("SYSDEV",SID,0)
   S vobj(DBTBL2,0)=$G(^DBTBL(vobj(DBTBL2,-3),2,vobj(DBTBL2,-4),0))
  ;
- I (%ProcessMode=0) D
+ I (%O=0) D
  .	;
  .	N PGM
  .	;
@@ -402,7 +401,7 @@ PROCDUR(%ProcessMode,SID) ;
  ;
  ; Accept for parameter mismatch warning
  ;  #ACCEPT Date=07/05/06; PGM=RussellDS; CR=20967; GROUP=MISMATCH
- N vo16 N vo17 N vo18 N vo19 D DRV^USID(%ProcessMode,"DBSDSMP",.DBTBL2,.vo16,.vo17,.vo18,.vo19) K vobj(+$G(vo16)) K vobj(+$G(vo17)) K vobj(+$G(vo18)) K vobj(+$G(vo19)) S vpc=(VFMQ="Q") K:vpc vobj(+$G(DBTBL2)) Q:vpc 
+ N vo16 N vo17 N vo18 N vo19 D DRV^USID(%O,"DBSDSMP",.DBTBL2,.vo16,.vo17,.vo18,.vo19) K vobj(+$G(vo16)) K vobj(+$G(vo17)) K vobj(+$G(vo18)) K vobj(+$G(vo19)) S vpc=(VFMQ="Q") K:vpc vobj(+$G(DBTBL2)) Q:vpc 
  ;
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordDBTBL2(DBTBL2,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(DBTBL2,-100) S vobj(DBTBL2,-2)=1 TC:vTp  
  ;
@@ -568,13 +567,13 @@ EDT(SID,START,MESSAGE) ; Header display
  N dbtbl2 S dbtbl2=$$vRCgetRecord0^RecordDBTBL2("SYSDEV",SID,0)
   S vobj(dbtbl2,0)=$G(^DBTBL(vobj(dbtbl2,-3),2,vobj(dbtbl2,-4),0))
  ;
-  S vobj(dbtbl2,-100,0)="" S $P(vobj(dbtbl2,0),$C(124),3)=%CurrentDate
+  S vobj(dbtbl2,-100,0)="" S $P(vobj(dbtbl2,0),$C(124),3)=$P($H,",",1)
   S vobj(dbtbl2,-100,0)="" S $P(vobj(dbtbl2,0),$C(124),15)=$$USERNAM^%ZFUNC
  ;
  K vobj(+$G(dbtbl2)) Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^14693" ; Signature - LTD^TIME^USER^SIZE
+ Q "61293^41913^Frans S.C. Witte^14644" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID=:V2

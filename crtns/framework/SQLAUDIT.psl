@@ -1,4 +1,3 @@
-//DO NOT MODIFY  SQL AUDIT Command Support|SQLAUDIT|||||||1
 	#PACKAGE framework
 	#OPTION ResultClass ON
 	
@@ -579,4 +578,4 @@ public List BIDATA(Date CDATE,	// DBAUDITLOGD.CDATE
 			
 	quit return	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^18402"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61216^57448^Dan Russell^18343"	// Signature - LTD^TIME^USER^SIZE

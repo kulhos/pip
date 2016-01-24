@@ -1,4 +1,3 @@
-//DO NOT MODIFY  SCA Standard %TAB Definitions|SCATAB|||||||1
 SCATAB
 	// SCA Standard %TAB Definitions
 	/*
@@ -204,4 +203,4 @@ Public DI(DI,DES,LEN,TBL,XPP,XPR,TYP,MIN,MAX,DEC)	// Formatted %TAB entry
 	
 	quit X
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5114"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60227^22950^Hema Puttaswamy^5053"	// Signature - LTD^TIME^USER^SIZE

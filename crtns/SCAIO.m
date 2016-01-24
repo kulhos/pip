@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAIO ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Select IO Device|SCAIO|||||||1
 SCAIO ; Select IO Device
  ;
  ; Entry point for WN default on files
@@ -30,12 +29,12 @@ START ;
  ;
  S ER=0
  ;
- I '$get(%InputTimeOut) D
+ I '$get(%TO) D
  .	;
  .	;   #ACCEPT DATE=12/29/03;PGM=John Carroll;CR=unknown
- .	S %InputTimeOut=999
+ .	S %TO=999
  .	;   #ACCEPT DATE=12/29/03;PGM=John Carroll;CR=unknown
- .	I 0 ;*  if '%InputTimeOut set %InputTimeOut = 60
+ .	I '%TO S %TO=60
  .	Q 
  ;
  I ($D(POP)#2) D  Q 
@@ -86,7 +85,7 @@ PROMPT ; Prompt for device
  ; Device:
  WRITE !,$$^MSG(829)
  ;
- S X=$$TERM^%ZREAD("",70,"","",%InputTimeOut,1)
+ S X=$$TERM^%ZREAD("",70,"","",%TO,1)
  ;
  ; Timeout, continue with current device
  I (%fkey="TIM") S X=""
@@ -383,7 +382,7 @@ RMSQUAL(QUAL,CHSET) ; Character set /MECH=REFNAM:W
  ..		; Only get the first use
  ..		I 'haveUser D
  ...			;
- ...			I '($get(%UserID)="") S IO=IO_"_"_%UserID
+ ...			I '($get(%UID)="") S IO=IO_"_"_%UID
  ...			E  S IO=IO_"_"_$$USERNAM^%ZFUNC
  ...			;
  ...			S haveUser=1
@@ -458,7 +457,7 @@ PAR ; Prompt for open parameters if interactive
  .	;
  .	WRITE " ",IOPAR,"=> "
  .	;
- .	S X=$$TERM^%ZREAD("",70,"","",%InputTimeOut,1)
+ .	S X=$$TERM^%ZREAD("",70,"","",%TO,1)
  .	Q 
  ;
  I (X="") S X=IOPAR
@@ -474,12 +473,12 @@ OPEN ; Open the device - Can be called from external programs
  ;
  I ($D(%OPMODE)#2) D REDIRECT Q:ER 
  ;
- I '$get(%InputTimeOut) D
+ I '$get(%TO) D
  .	;
  .	;   #ACCEPT DATE=12/29/03;PGM=John Carroll;CR=unknown
- .	S %InputTimeOut=999
+ .	S %TO=999
  .	;   #ACCEPT DATE=12/29/03;PGM=John Carroll;CR=unknown
- .	I 0 ;*  if '%InputTimeOut set %InputTimeOut = 60
+ .	I '%TO S %TO=60
  .	Q 
  ;
  ; Don't open for SPL
@@ -532,7 +531,7 @@ OPEN ; Open the device - Can be called from external programs
  E  S Z=$$TERM^%ZOPEN(IO,10)
  ;
  ; Open succeeded
- I Z,(IO'=$I) S %ProcessMode=4 Q 
+ I Z,(IO'=$I) S %O=4 Q 
  ;
  ; Device currently in use
  I ((IOTYP="PTR")!(IOTYP="TRM")) D SETERR^DBSEXECU("DEP","MSG",822) Q 
@@ -549,13 +548,13 @@ QSET ;
  N DATE
  N TIME
  ;
- S DATE=$$vdat2str((+%CurrentDate),"DDMONYEAR")
- S TIME=%CurrentTime
- S IO=$$FILE^%TRNLNM(DATE_"_"_TIME_"_"_(%ProcessID#100000)_".TMP_PNTQ",$$SPLDIR)
+ S DATE=$$vdat2str((+$P($H,",",1)),"DDMONYEAR")
+ S TIME=$P($H,",",2)
+ S IO=$$FILE^%TRNLNM(DATE_"_"_TIME_"_"_($J#100000)_".TMP_PNTQ",$$SPLDIR)
  ;
  N tmppntq S tmppntq=$$vcdmNew^RecordTMPPNTQ()
  ;
-  S vobj(tmppntq,-3)=%ProcessID
+  S vobj(tmppntq,-3)=$J
   S vobj(tmppntq,-4)=IO
   S $P(vobj(tmppntq),$C(124),1)=IOQ
   S $P(vobj(tmppntq),$C(124),2)=$get(IOQPARAM)
@@ -665,13 +664,13 @@ CLOSEQ ; If queued job, dispatch to proper print queue
  ; Not right IO file
  Q:'(IO[".TMP_PNTQ") 
  ;
- N tmppntq,vop1 S tmppntq=$$vRCgetRecord1Opt^RecordTMPPNTQ(%ProcessID,IO,0,.vop1)
+ N tmppntq,vop1 S tmppntq=$$vRCgetRecord1Opt^RecordTMPPNTQ($J,IO,0,.vop1)
  ;
  ; No queue information
  S vpc=($G(vop1)=0) Q:vpc 
  ;
  ; Delete tmp info
-  K ^TMPPNTQ(%ProcessID,IO)
+  K ^TMPPNTQ($J,IO)
  ;
  ; Send to queue
  S X=$$SEND^%ZQUEUE(IO,$P(tmppntq,$C(124),1),$P(tmppntq,$C(124),2),1)
@@ -737,9 +736,9 @@ NOAUTH() ; Check device authorization
  N INST N UTLO
  ;
  ; No user id, no authorization checking
- I ($get(%UserID)="") Q 0
+ I ($get(%UID)="") Q 0
  ;
- N scau S scau=$$vRCgetRecord0Opt^RecordSCAU(%UserID,0,"")
+ N scau S scau=$$vRCgetRecord0Opt^RecordSCAU(%UID,0,"")
  ;
  Q 1
  ;
@@ -770,7 +769,7 @@ AUXPTR() ; Prompt for slave printer
  Q 1
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^16914" ; Signature - LTD^TIME^USER^SIZE
+ Q "60603^44096^Dan Russell^16867" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vdat2str(vo,mask) ; Date.toString

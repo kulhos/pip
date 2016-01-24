@@ -1,10 +1,10 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Screen DBSDOM ****
  ; 
- ; 01/20/2016 11:55 - kulhan
+ ; 02/24/2010 18:33 - pip
  ; 
 V00S046(%O,fDBSDOM) ; -  - SID= <DBSDOM> User-Defined Data Types Maintenance
- ;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+ ;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
  ; The DBSDOM screen enables the institution to create, maintain, and delete
  ; user-defined data types.
  ;
@@ -290,7 +290,7 @@ VP2(fDBSDOM) ;
  ;
  Q:'X 
  ;
- N rs,vos1,vos2,vos3,vos4,vos5,vos6,vos7 S rs=$$vOpen1()
+ N rs,vos1,vos2,vos3,vos4,vos5,vos6,vos7,vos8 S rs=$$vOpen1()
  ;
  I $$vFetch1() D
  .	;
@@ -482,18 +482,20 @@ vL1a1 S vos2=$$BYTECHAR^SQLUTL(254)
 vL1a4 S vos4=$O(^DBINDX("SYSDEV","DOM","PBS",vos3,vos4),1) I vos4="" G vL1a0
  S vos5="SYSDEV",vos6=vos4
  I '($D(^DBTBL("SYSDEV",1,vos4))) S vos5=vos2,vos6=vos2
- S vos7=""
-vL1a8 S vos7=$O(^DBINDX("SYSDEV","DOM","PBS",vos3,vos4,vos7),1) I vos7="" G vL1a4
+ S vos7=0 I '(vos4=vos6) S vos7=1
+ S vos8=""
+vL1a9 S vos8=$O(^DBINDX("SYSDEV","DOM","PBS",vos3,vos4,vos8),1) I vos8="" G vL1a4
+ I vos7 S vos5=vos2,vos6=vos2
  Q
  ;
 vFetch1() ;
  ;
  ;
- I vos1=1 D vL1a8
+ I vos1=1 D vL1a9
  I vos1=2 S vos1=1
  ;
  I vos1=0 S rs="" Q 0
  ;
- S rs=$S(vos7=vos2:"",1:vos7)
+ S rs=$S(vos8=vos2:"",1:vos8)
  ;
  Q 1

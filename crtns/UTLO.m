@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UTLO ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Define teller location utility|UTLO|||||||1
  ; Define teller location (TLO)
  ;
  N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch1^"_$T(+0)
@@ -21,7 +20,7 @@ TLO() ; Function returns TLO
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1495" ; Signature - LTD^TIME^USER^SIZE
+ Q "59495^75673^Lik Kwan^1435" ; Signature - LTD^TIME^USER^SIZE
  ;
 vCatch1 ; Error trap
  ;

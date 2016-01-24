@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL String Method library|UCSTRING|||||||1
 	/*
 	ORIG: FSANCHEZ - 02/17/2003
 	DESC: PSL String Method library
@@ -1382,4 +1381,4 @@ toTime	// Method: String.toTime - Convert a string to Time (seconds past midnigh
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^55402"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61450^51791^Frans S.C. Witte^55343"	// Signature - LTD^TIME^USER^SIZE

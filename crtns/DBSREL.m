@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSREL ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Validate File Relationship Linkage|DBSREL|||||||1
 DBSREL ; 
  ;
  S ER=$$VALIDATE($get(FILES),.LOOP,.RM)
@@ -301,4 +300,4 @@ TBLORD(TABLES) ; List of tables to validate and order
  Q TBLORD
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^10164" ; Signature - LTD^TIME^USER^SIZE
+ Q "61254^68988^Dan Russell^10098" ; Signature - LTD^TIME^USER^SIZE

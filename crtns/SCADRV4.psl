@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Function maintenance|SCADRV4|||||||1
 SCADRV4	//;Function maintenance
 	/*
 	        ORIG: Frank R. Sanchez  (2497)
@@ -295,4 +294,4 @@ ERR	//
 	set VFMQ="Q"
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5343"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "59553^73403^Dan Russell^5290"	// Signature - LTD^TIME^USER^SIZE

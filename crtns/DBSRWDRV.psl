@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Report Writer Driver|DBSRWDRV|||||||1
 DBSRWDRV
 	/*
 	ORIG:
@@ -719,4 +718,4 @@ private VERSION()
 	
 	quit CUVAR.%VN
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^17775"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60571^42180^Dan Russell^17711"	// Signature - LTD^TIME^USER^SIZE

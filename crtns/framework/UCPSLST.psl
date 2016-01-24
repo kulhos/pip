@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSLState - Insensitive Group|UCPSLST|||||||1
 	/*
 	DESC: Utilities to manipulate PSL.pslSt - Insensitive Group
  
@@ -220,4 +219,4 @@ topIf( String pslSt)	// PSLState "object"
 	/* LOCAL SUPPORT FUNCTIONS AND SUBROUTINES			      */
 	/* ------------------------------------------------------------------ */
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^8544"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61045^43029^Frans S.C. Witte^8483"	// Signature - LTD^TIME^USER^SIZE

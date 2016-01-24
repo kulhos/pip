@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSINDXZ ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Rebuild Index Files|DBSINDXZ|||||||1
 DBSINDXZ ; 
  ;
  Q  ; No entry from top
@@ -203,7 +202,7 @@ ALL(sys) ; System name   /NOREQ/DFT="PBS"
  ;
  D SYSVAR^SCADRV0(sys) ; Init system variables
  ;
- S %ProcessMode=0
+ S %O=0
  ;
  I (sys="PBS") D
  .	;
@@ -262,7 +261,7 @@ BUILD(opt) ; Display DQ index files /NOREQ
  ;
  ; Combine ACN,DEP,LN files into one proceesing logic
  ;
- S %ProcessMode=0
+ S %O=0
  ;
  I (($get(index("DEP"))="*")!($get(index("LN"))="*")) S index("ACN")="*"
  ;
@@ -353,7 +352,7 @@ select(index,opt) ; Include DQ tables
  .	S N=""
  .	F  S N=$order(%TAB(N)) Q:(N="")  S ztab(N)=%TAB(N)
  .	;
- .	S %ProcessMode=1
+ .	S %O=1
  .	S OLNTB=34
  .	S %CTPRMT="2|38"
  .	S %FRAME=2
@@ -462,7 +461,7 @@ partial(FID) ; Table name
  .	S IDXNAM(SEQ)=indexnm
  . Q 
  ;
- S %ProcessMode=1
+ S %O=1
  S OLNTB=34
  S %CTPRMT="2|38"
  S %FRAME=2
@@ -503,7 +502,7 @@ buildtab(FID,INDEX,INDEXFL,%READ,%TAB) ; %TAB entries for UTLREAD
  ;
 RUNLOG(fid) ; Table name
  ;
- I '$$rdb^UCDBRT(fid) WRITE !,fid,?20,$$TIM^%ZM(%CurrentTime)
+ I '$$rdb^UCDBRT(fid) WRITE !,fid,?20,$$TIM^%ZM($P($H,",",2))
  ;
  Q 
  ;
@@ -522,7 +521,7 @@ EXT(files) ; Files list
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^14192" ; Signature - LTD^TIME^USER^SIZE
+ Q "61185^65719^Dan Russell^14139" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; INDEXNM FROM DBTBL8 WHERE %LIBS='SYSDEV' AND FID=:V1
  ;

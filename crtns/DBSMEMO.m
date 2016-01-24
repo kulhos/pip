@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSMEMO ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Memo field utility|DBSMEMO|||||||1
 DBSMEMO ; 
  ;
  ; **********************************************************************
@@ -50,7 +49,7 @@ READ(ref) ; Global reference
  S ref=$E(ref,1,$L(ref)-1)_",seq)"
  ;
  ;  #ACCEPT Date=10/24/05; Pgm=RussellDS; CR=17834
- F  S seq=$O(@ref) Q:(seq="")  S memo=memo_@ref
+ F  S seq=$order(@ref) Q:(seq="")  S memo=memo_@ref
  ;
  Q memo
  ;
@@ -131,4 +130,4 @@ EDIT(memoin,memoout) ; Output/modified memo field /MECH=REF:W
  Q RETURN
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5284" ; Signature - LTD^TIME^USER^SIZE
+ Q "61397^49911^Dan Russell^5233" ; Signature - LTD^TIME^USER^SIZE

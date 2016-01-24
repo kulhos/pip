@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PSLRecordBuilder ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Code generator for RecordTABLE code|PSLRecordBuilder|||||||1
  ;  #PACKAGE framework.psl
  ;  #CLASSDEF extends=Primitive delimiter=9 public
  ;
@@ -4118,7 +4117,7 @@ vSIG(this) ; polymorphism dispatch
  I $D(vPslPoly(vC,"vSIG")) Q $$v0vSIG^@vPslPoly(vC,"vSIG")(.this)
  Q $$v0vSIG(.this)
 v0vSIG(this) ; 
- Q "^^^192832" ; Signature - LTD^TIME^USER^SIZE
+ Q "61523^1911^Dan Russell^192755" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vdat2str(vo,mask) ; Date.toString

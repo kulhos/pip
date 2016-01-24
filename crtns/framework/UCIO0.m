@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCIO0 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Compiletime code of class IO - Insensitive Group|UCIO0|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -55,4 +54,4 @@ write ; method IO.write
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3243" ; Signature - LTD^TIME^USER^SIZE
+ Q "61058^29691^Frans S.C. Witte^3164" ; Signature - LTD^TIME^USER^SIZE

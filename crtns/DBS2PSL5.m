@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBS2PSL5 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL Screen Compiler|DBS2PSL5|||||||1
 DBS2PSL5 ; DBS - U - V7.0 PSL Screen Compiler
  ;
  ; TITOVE - initialized variables for the first run through
@@ -20,7 +19,7 @@ DBS2PSL5 ; DBS - U - V7.0 PSL Screen Compiler
  ;
  I '($D(TMP(1000))#2) D
  .	S VRSEQ=0 S XR8=1
- .	 N V1 S V1=%Library I '($D(^DBTBL(V1,2,SID,0,21))#2) D
+ .	I '$$vDbEx1() D
  ..		;
  ..		; Screen post processor does not contain any code
  ..		S TMP(1000,1)=""
@@ -69,14 +68,14 @@ DBS2PSL5 ; DBS - U - V7.0 PSL Screen Compiler
  S TMP(1000,XR8+1)="VR"_VRSEQ_"("_vobjlst("formal")_") "
  S XR8=XR8+2
  ;
- F  S XR1=$P(XR0,")",XR9) D:XR1="" DONE Q:XR1=""  D
+ F  S XR1=$piece(XR0,")",XR9) D:XR1="" DONE Q:XR1=""  D
  .	N %I1 N I
  .	N DINAM
  .	;
- .	S XR1=$P(XR1,"(",2)
+ .	S XR1=$piece(XR1,"(",2)
  .	N CODE
  .	S CODE=" I "
- .	F %I1=1:1 S DINAM=$P(XR1,",",%I1) Q:DINAM=""  D REQ(DINAM,.CODE) I ER Q 
+ .	F %I1=1:1 S DINAM=$piece(XR1,",",%I1) Q:DINAM=""  D REQ(DINAM,.CODE) I ER Q 
  .	;
  .	; Remove , from end of command line
  .	;
@@ -85,7 +84,7 @@ DBS2PSL5 ; DBS - U - V7.0 PSL Screen Compiler
  .	S TMP(1000,XR8)=" // ("_XR1_")"
  .	S XR8=XR8+1
  .	S CODE=$E(CODE,1,$L(CODE)-1)
- .	I $O(CODE(""))="" S CODE=CODE_" quit"
+ .	I $order(CODE(""))="" S CODE=CODE_" quit"
  .	S TMP(1000,XR8)=""
  .	S XR8=XR8+1
  .	;
@@ -93,7 +92,7 @@ DBS2PSL5 ; DBS - U - V7.0 PSL Screen Compiler
  .	S XR8=XR8+1
  .	;
  .	F I=1:1 Q:'($D(CODE(I))#2)  S TMP(1000,XR8)=" if "_$E(CODE(I),1,$L(CODE(I))-1) S XR8=XR8+1
- .	I $O(CODE(""))'="" S TMP(1000,XR8-1)=TMP(1000,XR8-1)_" quit"
+ .	I $order(CODE(""))'="" S TMP(1000,XR8-1)=TMP(1000,XR8-1)_" quit"
  .	;
  .	S TMP(1000,XR8)=""
  .	S XR8=XR8+1
@@ -116,9 +115,9 @@ REQ(DINAM,CODE) ;
  .	N DFID N DLIB N X
  .	S ER=""
  .	I DINAM'?1"["1E.E1"]"1E.E D DEFAULT(DINAM,.DFID) I ER D ERR Q 
- .	S DLIB=%Library
+ .	S DLIB=%LIBS
  .	S PFID=$get(FILES)
- .	S DFID=$P(PFID,",",1)
+ .	S DFID=$piece(PFID,",",1)
  .	S X=DINAM
  .	D ^DBSDI
  .	I ER D ERR
@@ -132,7 +131,7 @@ REQ(DINAM,CODE) ;
  .	; TITOVE - PATCH END
  .	Q 
  ;
- S Z=$S(DINAM[",":"["_$P(DINAM,",",2,3),1:DINAM)
+ S Z=$S(DINAM[",":"["_$piece(DINAM,",",2,3),1:DINAM)
  S NS=$$XLATE(Z)
  ; on the screen
  I '($D(%NAMCUR(Z))#2) D ERR Q 
@@ -153,7 +152,7 @@ REQ(DINAM,CODE) ;
  S X1=""
  I XON S X1="'"
  ;
- I $L(CODE)>200 S z=$O(CODE(""),-1)+1 S CODE(z)=CODE S CODE=" I "
+ I $L(CODE)>200 S z=$order(CODE(""),-1)+1 S CODE(z)=CODE S CODE=" I "
  S CODE=CODE_"("_NS_X1_"="_QQ_"),"
  Q 
  ;
@@ -183,7 +182,7 @@ DEFAULT(DINAM,DFID) ;
  F vTBLNO=1:1:$L(FILES,",") D  Q:quit 
  .	S DFID=$piece(FILES,",",vTBLNO)
  .	I DFID'="" D
- ..		S DLIB=%Library
+ ..		S DLIB=%LIBS
  ..		S X=vDINAM
  ..		D ^DBSDI
  ..		I ER S ER=0
@@ -222,21 +221,30 @@ VAR ;
  S NS=""
  I '($D(SID)#2) Q 
  S x=0
- N rs,vos1,vos2,vos3,vos4,vos5,vos6,vos7  N V1 S V1=%Library S rs=$$vOpen1()
+ N rs,vos1,vos2,vos3,vos4,vos5,vos6,vos7 S rs=$$vOpen1()
  S vpc='$$vFetch1() Q:vpc 
  S Z=$P(rs,$C(9),2)
  S pos=$P(rs,$C(9),3)
- S NS=$E($P(Z,",",1),3,99)
- I NS[">>" S NS=$P(NS,">>",1)
+ S NS=$E($piece(Z,",",1),3,99)
+ I NS[">>" S NS=$piece(NS,">>",1)
  ; repeat region
  I %NAMCUR(DINAM)["+" S NS=NS_"(1)"
  I '(pos="") S NS="$P("_NS_","_"""|"""_","_pos_")"
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^7284" ; Signature - LTD^TIME^USER^SIZE
+ Q "60662^55395^Pete Chenard^7231" ; Signature - LTD^TIME^USER^SIZE
  ;
-vOpen1() ; NAME,PROMPT,POS FROM DBTBL2D WHERE LIBS=:V1 AND SID=:SID AND SEQ>0 AND NAME=:DINAM
+vDbEx1() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=21
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,21))#2) Q 0
+ Q 1
+ ;
+vOpen1() ; NAME,PROMPT,POS FROM DBTBL2D WHERE LIBS=:%LIBS AND SID=:SID AND SEQ>0 AND NAME=:DINAM
  ;
  ;
  S vos1=2
@@ -245,7 +253,7 @@ vOpen1() ; NAME,PROMPT,POS FROM DBTBL2D WHERE LIBS=:V1 AND SID=:SID AND SEQ>0 AN
  ;
 vL1a0 S vos1=0 Q
 vL1a1 S vos2=$$BYTECHAR^SQLUTL(254)
- S vos3=$G(V1) I vos3="" G vL1a0
+ S vos3=$G(%LIBS) I vos3="" G vL1a0
  S vos4=$G(SID) I vos4="" G vL1a0
  S vos5=$G(DINAM) I vos5="",'$D(DINAM) G vL1a0
  S vos6=0

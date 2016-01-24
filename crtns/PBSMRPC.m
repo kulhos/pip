@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PBSMRPC ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  MRPC Service Class Driver|PBSMRPC|||||||1
 PBSMRPC(vzreply,vzstfflg,vzrecord,vzrectyp,vzcontxt) ; Context  /NOREQ
  ;
  N vziserror N vzerror
@@ -87,7 +86,7 @@ PBSMRPC(vzreply,vzstfflg,vzrecord,vzrectyp,vzcontxt) ; Context  /NOREQ
  .	S vzcall="$$"_vzcall
  . Q 
  ;
- N scatbl5a,vop3 S scatbl5a=$$vCa8(vzprocid,%UserClass,.vop3)
+ N scatbl5a,vop3 S scatbl5a=$$vCa8(vzprocid,%UCLS,.vop3)
  ;
  ; Determine if authorized for this userclass
  I ($G(vop3)=0),'$$vCaEx1() D  Q 1
@@ -155,7 +154,7 @@ STF(pkt,reply) ; Reply  /MECH=REF:W
  N io S io=$$vClVobj($ST,"IO")
  ;
  S $P(vobj(io,1),"|",2)=$$SCAU^%TRNLNM("SPOOL")
- S $P(vobj(io,1),"|",1)="STF_"_$J(%CurrentDate,0,"DDMMYEAR")_".MRPC"
+ S $P(vobj(io,1),"|",1)="STF_"_$$vdat2str($P($H,",",1),"DDMMYEAR")_".MRPC"
  ;
  S $P(vobj(io,1),"|",3)="WRITE/APPEND/SHARE"
  S $P(vobj(io,1),"|",4)=2
@@ -183,19 +182,19 @@ STFGBL(pkt,reply) ; Reply  /MECH=REF:W
  N %seq N %sq
  N STF
  ;
- S STF(%UserID)="" ; Prevent warning related to lock
- L +STF(%UserID)
+ S STF(%UID)="" ; Prevent warning related to lock
+ L +STF(%UID)
  ;
- S %sq=$O(^STF(%UserID,""),-1)+1
+ S %sq=$O(^STF(%UID,""),-1)+1
  ;
  N stf1,vop1,vop2,vop3 S stf1="",vop3=0
  ;
-  S vop2=%UserID
+  S vop2=%UID
   S vop1=%sq
-  S $P(stf1,$C(124),6)=%UserStation
+  S $P(stf1,$C(124),6)=TLO
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" S ^STF(vop2,vop1)=$$RTBAR^%ZFUNC(stf1) S vop3=1 TC:vTp  
  ;
- L -STF(%UserID)
+ L -STF(%UID)
  ;
  ; Save in 400 byte chunks
  S %seq=1
@@ -205,7 +204,7 @@ STFGBL(pkt,reply) ; Reply  /MECH=REF:W
  .	;
  .	S pkt=$E(pkt,$L(saveVal)+1,1048575)
  .	;
- .	N stf,vop4,vop5,vop6,vop7 S stf="",vop7=0 S vop6=%UserID S vop5=%sq S vop4=%seq
+ .	N stf,vop4,vop5,vop6,vop7 S stf="",vop7=0 S vop6=%UID S vop5=%sq S vop4=%seq
  .	;
  .  S $P(stf,$C(124),1)=saveVal
  .	;
@@ -219,7 +218,7 @@ STFGBL(pkt,reply) ; Reply  /MECH=REF:W
  .	;
  .	S reply=$E(reply,$L(saveVal)+1,1048575)
  .	;
- .	N stf,vop8,vop9,vop10,vop11 S stf="",vop11=0 S vop10=%UserID S vop9=%sq S vop8=%seq
+ .	N stf,vop8,vop9,vop10,vop11 S stf="",vop11=0 S vop10=%UID S vop9=%sq S vop8=%seq
  .	;
  .  S $P(stf,$C(124),1)=saveVal
  .	;
@@ -361,8 +360,8 @@ APPLYOVR(verrors,vzsupv) ; Supervisor override array
  ..		;
  ..		I (TBL="CIF") D
  ...			I (IDENT="") Q  ; null values
- ...			N XSEQ S XSEQ=$O(^DAYEND(%SystemDate,"XBADC",%UserID,IDENT,""),-1)+1
- ...			N xbadc S xbadc=$$vRCgetRecord1^RecordDAYENDXBADC(%SystemDate,%UserID,IDENT,XSEQ,ET,0)
+ ...			N XSEQ S XSEQ=$O(^DAYEND(TJD,"XBADC",%UID,IDENT,""),-1)+1
+ ...			N xbadc S xbadc=$$vRCgetRecord1^RecordDAYENDXBADC(TJD,%UID,IDENT,XSEQ,ET,0)
  ...		  S $P(vobj(xbadc),$C(124),1)=SPVUID
  ...		 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordDAYENDXBADC(xbadc,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(xbadc,-100) S vobj(xbadc,-2)=1 TC:vTp  
  ...			K vobj(+$G(xbadc)) Q 
@@ -376,9 +375,9 @@ APPLYOVR(verrors,vzsupv) ; Supervisor override array
  ...			; Don't log unless we've got a valid account number
  ...			Q:(CID'>0) 
  ...			;
- ...			S XSEQ=$O(^DAYEND(%SystemDate,"XBAD",%UserID,CID,""),-1)+1
+ ...			S XSEQ=$O(^DAYEND(TJD,"XBAD",%UID,CID,""),-1)+1
  ...			;
- ...			N xbad S xbad=$$vRCgetRecord1^RecordDAYENDXBAD(%SystemDate,%UserID,CID,XSEQ,ET,0)
+ ...			N xbad S xbad=$$vRCgetRecord1^RecordDAYENDXBAD(TJD,%UID,CID,XSEQ,ET,0)
  ...			;
  ...		  S $P(vobj(xbad),$C(124),1)=SPVUID
  ...		  S $P(vobj(xbad),$C(124),2)=IDENT
@@ -456,7 +455,7 @@ OVRMSG(OVR) ; Build override message
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^15028" ; Signature - LTD^TIME^USER^SIZE
+ Q "61475^61681^Dan Russell^14970" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vCaEx1() ; {Cache}%CACHE("SCATBL5A").isDefined("SCATBL5A","RPCID=:vzprocid,UCLS='*'")
@@ -465,6 +464,35 @@ vCaEx1() ; {Cache}%CACHE("SCATBL5A").isDefined("SCATBL5A","RPCID=:vzprocid,UCLS=
  ;  #OPTIMIZE FUNCTIONS OFF
  N vRec,vop1 S vRec=$$vCa8(vzprocid,"*",.vop1)
  S vret=$G(vop1)=1 Q vret
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc
  ; ----------------
  ;  #OPTION ResultClass 1
 vCaEx2() ; {Cache}%CACHE("SCAU").isDefined("SCAU","UID = :SPVUID")

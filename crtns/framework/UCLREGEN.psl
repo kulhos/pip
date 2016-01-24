@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Auto Literal Code Regenerator, DATA group|UCLREGEN|||||||1
 	/*
 	ORIG: RussellDS - 04/18/2005
 	DESC: PSL Auto Literal Code Regenerator, Data group
@@ -479,4 +478,4 @@ public STOP
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^12631"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61293^42610^Frans S.C. Witte^12556"	// Signature - LTD^TIME^USER^SIZE

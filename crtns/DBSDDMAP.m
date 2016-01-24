@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDDMAP ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Map wide tables into smaller for Oracle|DBSDDMAP|||||||1
  ;
  Q 
  ;
@@ -226,7 +225,7 @@ XFR(FILENAME) ; Table name
  S QUOTE=$char(34)
  ;
  ; Build header for the map table
- WRITE "T,",%CurrentDate,",",%CurrentTime,",",QUOTE,"WTBLMAP",QUOTE,",1,N,G"
+ WRITE "T,",$P($H,",",1),",",$P($H,",",2),",",QUOTE,"WTBLMAP",QUOTE,",1,N,G"
  WRITE !,"F,WTNAME"
  WRITE !,"S,T"
  WRITE !,"D,D,",QUOTE,FILENAME,QUOTE,!
@@ -235,7 +234,7 @@ XFR(FILENAME) ; Table name
  S INDEX=""
  F  S INDEX=$order(SORTFID(INDEX)) Q:(INDEX="")  D
  .	S STNAME="W_"_FILENAME_"_"_INDEX
- .	WRITE "T,",%CurrentDate,",",%CurrentTime,",",QUOTE,"WTBLMAP",QUOTE,",2,N,G",!
+ .	WRITE "T,",$P($H,",",1),",",$P($H,",",2),",",QUOTE,"WTBLMAP",QUOTE,",2,N,G",!
  .	WRITE "F,WTNAME,COLNAME,STNAME",!
  .	WRITE "S,T,T,T",!
  .	S DI=""
@@ -283,7 +282,7 @@ writeIt(file,data) ; Data to write
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^9315" ; Signature - LTD^TIME^USER^SIZE
+ Q "61006^63993^Dan Russell^9242" ; Signature - LTD^TIME^USER^SIZE
  ;
 vClVobj(vSt,vCls) ; Create a new object
  ;

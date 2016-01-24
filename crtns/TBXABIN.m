@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure TBXABIN ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  TBX autobuild |TBXABIN|||||||1
  ;
  ;  #OPTION ResultClass ON
  ; Display any error and then quit, which will exit back to shel
@@ -117,7 +116,7 @@ errormsg(errMsg) ; Message associated with failure
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^8466" ; Signature - LTD^TIME^USER^SIZE
+ Q "61544^27162^Jaywant Khairnar^8419" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  MSQL Service Class Driver|PBSMSQL|||||||1
 public PBSMSQL(String REPLY,Boolean STFFLG,String RECORD,Number RECTYP,String CONTEXT)	// MSQL Service Class Driver
 	/*
 	   ORIG: MATTSON - 11/08/93
@@ -872,4 +871,4 @@ CHKTBL(String TABLE)	//Check if table is restricted
 
 	quit 1
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^23907"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61571^56885^Dan Russell^23849"	// Signature - LTD^TIME^USER^SIZE

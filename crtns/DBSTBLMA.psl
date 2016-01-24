@@ -1,4 +1,3 @@
-//DO NOT MODIFY  C-S-UTBL Table Maintenance Code Generator|DBSTBLMA|||||||1
 DBSTBLMA	// C-S-UTBL Table Maintenance Code Generator
 	/*
 	DESC:  Generates procedure DBSTBLMB - compiled table maintenance
@@ -429,4 +428,4 @@ addcode(Number TABS,		// Add new line to CODE array
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^11609"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61239^41322^Dan Russell^11534"	// Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Move data to formatted rms output file|DBSTLOAD|||||||1
 	#PACKAGE framework
 	 //Private;To load the data from a table to a RMS file for transfer to a client
 
@@ -599,4 +598,4 @@ private TESTFFID
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^18366"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61333^34998^Dan Russell^18294"	// Signature - LTD^TIME^USER^SIZE

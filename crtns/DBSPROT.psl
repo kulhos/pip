@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Data Item Protection Utility|DBSPROT|||||||1
 DBSPROT	
 		 
 	/*
@@ -302,4 +301,4 @@ PP3	// GROUP post processor
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5795"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60257^34885^Dan Russell^5734"	// Signature - LTD^TIME^USER^SIZE

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRWUTL ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Compiler Utilities|DBSRWUTL|||||||1
 DBSRWUTL ; 
  ;
  Q  ; Don't call from top
@@ -1050,7 +1049,7 @@ vstats(SEQ,SRCVAL,TRGTVAL,STATINFO,VSTATS) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^34751" ; Signature - LTD^TIME^USER^SIZE
+ Q "61288^63893^Dan Russell^34682" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim

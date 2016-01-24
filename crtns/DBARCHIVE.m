@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBARCHIVE ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Archive Driver and Functions|DBARCHIVE|||||||1
 DBARCHIVE ; 
  ;
  ; *******************************************************************
@@ -103,8 +102,8 @@ ARCHIVE(ARCHTBL,THRUDATE,SELECT,FROM,WHERE) ; Where clause [*]
  ;
  N dbarchist S dbarchist=$$vcdmNew^RecordDBARCHIST() S vobj(dbarchist,-3)=ARCHTBL S vobj(dbarchist,-4)=archseq
  ;
-  S $P(vobj(dbarchist),$C(124),1)=%CurrentDate
-  S $P(vobj(dbarchist),$C(124),2)=%CurrentTime
+  S $P(vobj(dbarchist),$C(124),1)=$P($H,",",1)
+  S $P(vobj(dbarchist),$C(124),2)=$P($H,",",2)
   S $P(vobj(dbarchist),$C(124),5)=0
   S $P(vobj(dbarchist),$C(124),6)=0
   S $P(vobj(dbarchist),$C(124),7)=0
@@ -190,8 +189,8 @@ ARCHIVE(ARCHTBL,THRUDATE,SELECT,FROM,WHERE) ; Where clause [*]
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordDBARCHIST(dbarchist,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(dbarchist,-100) S vobj(dbarchist,-2)=1 TC:vTp  
  .	K vobj(+$G(rs)) Q 
  ;
-  S $P(vobj(dbarchist),$C(124),3)=%CurrentDate
-  S $P(vobj(dbarchist),$C(124),4)=%CurrentTime
+  S $P(vobj(dbarchist),$C(124),3)=$P($H,",",1)
+  S $P(vobj(dbarchist),$C(124),4)=$P($H,",",2)
  ;
  I stop  S $P(vobj(dbarchist),$C(124),7)=1
  ;
@@ -515,7 +514,7 @@ INCLUDEDCHK(ARCHTBL,INCLUDED) ; List of included with tables
  Q ERRMSG
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^22716" ; Signature - LTD^TIME^USER^SIZE
+ Q "61254^68475^Dan Russell^22653" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vRsGetCol(object,column) ; Runtime ResultSet.getCol()

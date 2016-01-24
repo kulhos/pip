@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Aggregate Message Service Class Driver|PBSAGMSG|||||||1
 PBSAGMSG(String agmhdr(), String vzrecord(), String vzreply)	
 		 
 	/*
@@ -1096,4 +1095,4 @@ TESTERR(String MSG,		// Error message
 	
 	quit 1
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^27735"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60461^55036^Dan Russell^27663"	// Signature - LTD^TIME^USER^SIZE

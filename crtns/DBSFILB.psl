@@ -1,4 +1,3 @@
-//DO NOT MODIFY  RecordTABLE code generator|DBSFILB|||||||1
 DBSFILB	/* Utility to generate PSL RecordTABLE code
 
 	---- Comments --------------------------------------------------------
@@ -103,4 +102,4 @@ public SYSMAPLB(String tag,		// Line tag
 	
 	quit RETURN
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^2326"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61282^64286^Dan Russell^2267"	// Signature - LTD^TIME^USER^SIZE

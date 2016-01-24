@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSWRITE ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Array editor|DBSWRITE|||||||1
 DBSWRITE(ARRAY,TOPMARGN,BTMMARGN,MAXLINES,SOURCE,HEAD) ; Header info   /NOREQ
  ;
  N EDTOPT N N N varray N ZTEMP
@@ -28,9 +27,9 @@ DBSWRITE(ARRAY,TOPMARGN,BTMMARGN,MAXLINES,SOURCE,HEAD) ; Header info   /NOREQ
  ;
  ; Get editor option - Unix or VMS
  S EDTOPT="EDT" ; Default
- I '($get(%UserID)="") D
+ I '($get(%UID)="") D
  .	;
- .	N scau S scau=$G(^SCAU(1,%UserID))
+ .	N scau S scau=$G(^SCAU(1,%UID))
  .	;
  .	I '($P(scau,$C(124),21)="") S EDTOPT=$P(scau,$C(124),21)
  .	;
@@ -54,4 +53,4 @@ DBSWRITE(ARRAY,TOPMARGN,BTMMARGN,MAXLINES,SOURCE,HEAD) ; Header info   /NOREQ
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1941" ; Signature - LTD^TIME^USER^SIZE
+ Q "60425^2982^Dan Russell^1895" ; Signature - LTD^TIME^USER^SIZE

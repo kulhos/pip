@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Method Descriptor - Insensitive Group|PSLMethod|||||||1
 	/*
 	ORIG:	Frans S.C. Witte, 2007-06-22
 	DESC:	Class Definition Module for PSL class PSLMethod
@@ -495,4 +494,4 @@ public final Number typeDecl( String clsdes	// PSLClass descriptor
 
 	quit 0
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^20307"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61461^42876^Frans S.C. Witte^20231"	// Signature - LTD^TIME^USER^SIZE

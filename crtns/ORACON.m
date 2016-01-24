@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure ORACON ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  ORACON - Procedure|ORACON|||||||1
 ORACON ; Connects to oracle database
  ;
  Q 
@@ -43,4 +42,4 @@ RUNC ; Connect with no break
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1519" ; Signature - LTD^TIME^USER^SIZE
+ Q "60092^50707^Badrinath Giridharan^1469" ; Signature - LTD^TIME^USER^SIZE

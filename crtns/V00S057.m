@@ -1,10 +1,10 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Screen DBTBL1D ****
  ; 
- ; 01/20/2016 11:55 - kulhan
+ ; 02/24/2010 18:33 - pip
  ; 
 V00S057(%O,fDBTBL1D,fDBTBL1) ; -  - SID= <DBTBL1D> Data Item Definition
- ;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+ ;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
  ;
  N KVAR N PGM N VPG N vPSL N VSID
  S VSID="DBTBL1D"

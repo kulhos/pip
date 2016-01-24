@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure CUVAR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Institution Variable Defaults|CUVAR|||||||1
 CUVAR(COL) ; Institution Variable Defaults
  N vret
  ;
@@ -46,4 +45,4 @@ LIST(VLIST) ; Load a list of Institution Variables if not already defined
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1461" ; Signature - LTD^TIME^USER^SIZE
+ Q "60087^61013^Dan Russell^1401" ; Signature - LTD^TIME^USER^SIZE

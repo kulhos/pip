@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Function Authorization|SCADRV6|||||||1
   /*
 	ORIG: alagarss - 12/05/2005
 	DESC: Function Authorization
@@ -157,4 +156,4 @@ VEXIT   //
         set ER="W"
         quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3625"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60620^27431^Renga SP^3570"	// Signature - LTD^TIME^USER^SIZE

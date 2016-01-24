@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRWBNR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Banner Print|DBSRWBNR|||||||1
 DBSRWBNR(IO,BNRINFO) ; 
  ;
  N N
@@ -31,9 +30,9 @@ DBSRWBNR(IO,BNRINFO) ;
  .	I I>21 WRITE $char(12),! ; New page
  .	Q 
  ;
- WRITE !,"              User: ",%UserID
- WRITE ?45,"Run: ",%CurrentDate,"  ",$$TIM^%ZM,!
- I $get(%SystemDate) WRITE ?42,"System: ",%SystemDate,!
+ WRITE !,"              User: ",%UID
+ WRITE ?45,"Run: ",$$vdat2str($P($H,",",1),"MM/DD/YEAR"),"  ",$$TIM^%ZM,!
+ I $get(TJD) WRITE ?42,"System: ",$S(TJD'="":$ZD(TJD,"MM/DD/YEAR"),1:""),!
  WRITE !
  ;
  S RID=BNRINFO("RID")
@@ -97,4 +96,33 @@ DBSRWBNR(IO,BNRINFO) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3007" ; Signature - LTD^TIME^USER^SIZE
+ Q "61288^63986^Dan Russell^2944" ; Signature - LTD^TIME^USER^SIZE
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSCDI ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DQ computed data items|DBSCDI|||||||1
  ;
  Q 
  ;
@@ -35,7 +34,7 @@ PROTPGM(FID) ; Data item protection run-time routine
  ;
 REQFLD(FID) ; Required data items for a DQ file
  N list
- S FID=$P(FID,",",1) ; Primary file
+ S FID=$piece(FID,",",1) ; Primary file
  S list=$$vDbRow6()
  Q list
  ;
@@ -78,7 +77,7 @@ VALPGM(pgm) ; Validate routine name syntax and also not in MRTNS directory
  Q 0
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4886" ; Signature - LTD^TIME^USER^SIZE
+ Q "61569^11635^Sha H Mirza^4832" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbRow1() ; Db.GetOneRow( "DES", "DBTBL1D", "'SYSDEV',FID,DI", 9)

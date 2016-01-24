@@ -1,10 +1,8 @@
 { "class" : "RecordERROR9",	"accessLevel" : 2,	"adjustor" : "",	"classType" : 0,	"constructor" : "classNew^DBSDYNRA",	"delimiter" : 12,	"destructor" : "",	"extends" : "Record",	"flags" : "",	"isAbstract" : false,	"isNoInstance" : false,	"package" : "framework",	"propProc" : ""
 , "methods" : [ 
-{ "class" : "RecordERROR9",	"method" : "archive",	"resultClass" : "Number",	"formalList" : "noret String archiveDir;noret Number archiveNum;noret Date archiveDate",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
-,	{ "class" : "RecordERROR9",	"method" : "columnList",	"resultClass" : "List",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
+{ "class" : "RecordERROR9",	"method" : "columnList",	"resultClass" : "List",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordERROR9",	"method" : "columnListBM",	"resultClass" : "List",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordERROR9",	"method" : "columnListCMP",	"resultClass" : "List",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
-,	{ "class" : "RecordERROR9",	"method" : "getArchiveFile",	"resultClass" : "String",	"formalList" : "noret String archiveTable;noret Number option;noret Date archiveKey",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordERROR9",	"method" : "getColumnMap",	"resultClass" : "void",	"formalList" : "noret String map()",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordERROR9",	"method" : "logUserclass",	"resultClass" : "Boolean",	"formalList" : "noret String operation",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordERROR9",	"method" : "throwError",	"resultClass" : "void",	"formalList" : "noret String MSG",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }

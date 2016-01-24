@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Mass Recompile for DI Protection|DBSPROT5|||||||1
 DBSPROT5	
 		 
 	/*
@@ -111,4 +110,4 @@ PPFID	// Post processor for FID
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^2086"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60257^34992^Dan Russell^2020"	// Signature - LTD^TIME^USER^SIZE

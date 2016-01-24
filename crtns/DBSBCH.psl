@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Batch Definition Compiler|DBSBCH|||||||1
 	/*
 	ORIG: MATTSON - 02/27/2003
 	DESC: Batch Definition Compiler
@@ -810,4 +809,4 @@ public ERRLOG(Error vErr)
 	do LOGERR^UTLERR(.vErr) 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^25015"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61571^56930^Dan Russell^24958"	// Signature - LTD^TIME^USER^SIZE

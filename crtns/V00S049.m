@@ -1,5 +1,5 @@
 V00S049	;; -  - 5.3 - SID= <DBSFMTDAY> Days Of The Week/Months Of The Year Def
-	;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+	;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
 	;
 VSTART	; 
 	K VO,VODFT

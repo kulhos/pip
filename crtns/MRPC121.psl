@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Sanchez/Profile Java Interface|MRPC121|||||||1
 MRPC121(String RETURN,Number VERSION,String REQUEST,String CODE,String CMPTOK,String LOCFILE,String OBJTYPE,String OBJID,String TOKEN,String USER)
 
 	/*
@@ -99,4 +98,4 @@ MRPC121(String RETURN,Number VERSION,String REQUEST,String CODE,String CMPTOK,St
 	else  set RETURN=$$V2LV^MSG(.RETURN)
 	quit ""
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^2909"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61161^48458^Dan Russell^2846"	// Signature - LTD^TIME^USER^SIZE

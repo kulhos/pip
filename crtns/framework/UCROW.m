@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCROW ****
  ; 
- ; 01/23/2016 20:03 - kulhan
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL Row class library|UCROW|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -40,7 +39,7 @@ classNew ; Class constructor for new Row object
  I (del=""!(del="""""")) S del=$$getDelCT("") ; not filled by template
  ;
  S struct("Row",subRou,var,varPtr)=del_tab_list
- S postProc("Row")="pp^"_%RoutineName
+ S postProc("Row")="pp^"_$T(+0)
  ;
  I method="new" S return="$C(-1)" ; Class.new
  Q 
@@ -101,7 +100,7 @@ buildList(list,del) ; delimiter
 getCol ; Get column value
  N vo6
  ;
- S postProc("Row")="pp^"_%RoutineName
+ S postProc("Row")="pp^"_$T(+0)
  ;
  ;  #ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
  N varPtr S varPtr=$$getNew^UCGM(objectName,objectLevel)
@@ -373,7 +372,7 @@ getDel ; get the delimiter list of a Row object
  ;
  N rec S rec=$get(struct("Row",subRou,objectName,newPtr))
  ;
- S postProc("Row")="pp^"_%RoutineName
+ S postProc("Row")="pp^"_$T(+0)
  ;
  S return=$$getDelCT(rec) ; FSCW CR 11984: use $$getDelCT()
  ;
@@ -390,7 +389,7 @@ getProp ; get the properties list of a Row object
  ;
  N rec S rec=$get(struct("Row",subRou,objectName,newPtr))
  ;
- S postProc("Row")="pp^"_%RoutineName
+ S postProc("Row")="pp^"_$T(+0)
  I '($piece(rec,$char(9),2)="") S return=$piece(rec,$char(9),2)
  Q 
  ;
@@ -411,7 +410,7 @@ setProp ; Set the properties list of a Row object
  S $piece(rec,$char(9))=del
  ;
  S struct("Row",subRou,objectName,newPtr)=rec
- S postProc("Row")="pp^"_%RoutineName
+ S postProc("Row")="pp^"_$T(+0)
  Q 
  ;
 setDel ; Set the delimiter attribute of a Row object
@@ -428,7 +427,7 @@ setDel ; Set the delimiter attribute of a Row object
  ;
  S $piece(rec,$char(9))=del
  S struct("Row",subRou,objectName,newPtr)=rec
- S postProc("Row")="pp^"_%RoutineName
+ S postProc("Row")="pp^"_$T(+0)
  ;
  Q 
  ;
@@ -742,7 +741,7 @@ toString ; Method: Row.toString(colDel,quoChar,fmtDate,fmtTime,fmtBool)
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^39800" ; Signature - LTD^TIME^USER^SIZE
+ Q "61296^59347^Frans S.C. Witte^39748" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vopenBuf(v1,v2) ; PSL.openBuffer

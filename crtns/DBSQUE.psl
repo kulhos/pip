@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Return Report Writer Queries|DBSQUE|||||||1
 DBSQUE	/* Public - Return Report Writer Queries for queuing system
 
 	ORIG: CHIANG - 24 SEP 1993
@@ -163,4 +162,4 @@ QA	// Private - Test all reports
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3317"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60148^65610^Dan Russell^3257"	// Signature - LTD^TIME^USER^SIZE

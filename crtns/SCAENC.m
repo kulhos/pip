@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAENC ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SCA Password Encryption|SCAENC|||||||1
 SCAENC ; 
  ;
  S ENC=$$ENC(X)
@@ -28,4 +27,4 @@ ENC(PWD) ;
  Q ENC
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1091" ; Signature - LTD^TIME^USER^SIZE
+ Q "59495^75633^Lik Kwan^1036" ; Signature - LTD^TIME^USER^SIZE

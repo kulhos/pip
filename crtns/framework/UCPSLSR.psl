@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Handling PSLSubrou|UCPSLSR|||||||1
 	/*
 	ORIG: Frans S.C. Witte - 2006-06-06
 	DESC: PSL compiler, Insensitive Group - PSLSubrou related code
@@ -304,4 +303,4 @@ private void tagPatch( PSLSubrou sr, Number tagnr)
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^12105"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60946^40568^Frans S.C. Witte^12054"	// Signature - LTD^TIME^USER^SIZE

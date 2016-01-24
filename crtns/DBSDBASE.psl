@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Oracle/DB2 Database Utilities|DBSDBASE|||||||1
 DBSDBASE
 	
 	// *******************************************************************
@@ -364,4 +363,4 @@ public BUILD    // Build Stored procedures for all tables in the DB
  
         quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^9893"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60955^55454^Dan Russell^9830"	// Signature - LTD^TIME^USER^SIZE

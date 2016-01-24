@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL ByteString Method library|UCBYTSTR|||||||1
 	/*
 	ORIG: Frans S.C. Witte, 2006-04-24
 	DESC: PSL ByteString Method library
@@ -622,4 +621,4 @@ void psl2m(	Number minArg,	// minimum number of arguments	/REQ/MECH=VAL
 	do mtd2m^UCPRIM( "Z"_ PSL.method.upperCase(), pslPrsr.pslMtd( mid).inLiteral, minArg, maxArg)
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^25536"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61461^41407^Frans S.C. Witte^25473"	// Signature - LTD^TIME^USER^SIZE

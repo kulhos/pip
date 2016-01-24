@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Report Query Parser|DBSRWQRY|||||||1
 Public DBSRWQRY(RecordDBTBL5H dbtbl5h,String PQINFO(),String WHERE)
 	/*
 
@@ -413,4 +412,4 @@ KEYWRDS(String X,String TAB)	// Private - Parse X for keywords and build TAB
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^11663"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60680^47183^Dan Russell^11600"	// Signature - LTD^TIME^USER^SIZE

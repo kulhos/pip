@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Db class, Runtime code|UCDBRT|||||||1
 	/*
 	ORIG: Frans S.C. Witte - 2005-03-22
 	DESC: Code for methods of class Db that is called at runtime
@@ -2758,4 +2757,4 @@ public RsSelList( String select)	// SELECT-clause (*1)
 	if expr.extract(1,4)="ALL "      set expr = expr.extract( 5,expr.length())
 	quit expr
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^111808"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61480^60691^Dan Russell^111754"	// Signature - LTD^TIME^USER^SIZE

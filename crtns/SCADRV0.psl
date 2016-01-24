@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PROFILE System Driver, Part II|SCADRV0|||||||1
 private SCADRV0(FN,INPUT)
  	/*
  	 PROCEDURE ID:	SCADRV0
@@ -1163,4 +1162,4 @@ Public NOISO	// Specify NoIsolation (M database feature only)
 	//I18N=ON
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^26667"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60773^54266^Aries Beltran^26604"	// Signature - LTD^TIME^USER^SIZE

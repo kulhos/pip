@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDFR1 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Data Dictionary List|DBSDFR1|||||||1
 DBSDFR1 ; 
  ;
   S ER=0
@@ -11,7 +10,7 @@ DBSDFR1 ;
  N CNT N DBOPT N DOC N %FRAME N N N OLNTB N TEMP N VRWOPT
  N FIL N H2 N IO N PGM N %READ N RID N SORT N %TAB N VFMQ N vudwhere N WHERE
  ;
-  N V1 S V1=%ProcessID D vDbDe1()
+  N V1 S V1=$J D vDbDe1()
  ;
  S SORT="NOD,POS"
  ;
@@ -50,7 +49,7 @@ DBSDFR1 ;
  ;
  D OPEN^SCAIO Q:ER 
  ;
- N tmpdqrs,vos1,vos2,vos3,vos4  N V2 S V2=%ProcessID S tmpdqrs=$$vOpen1()
+ N tmpdqrs,vos1,vos2,vos3,vos4  N V2 S V2=$J S tmpdqrs=$$vOpen1()
  ;
  S CNT=0
  F  Q:'$$vFetch1()  D  Q:ER 
@@ -73,7 +72,7 @@ DBSDFR1 ;
  ;
  D CLOSE^SCAIO
  ;
-  N V3 S V3=%ProcessID D vDbDe2()
+  N V3 S V3=$J D vDbDe2()
  ;
  Q 
  ;
@@ -94,7 +93,7 @@ VALIDWHR ; Validate where clause entered
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2842" ; Signature - LTD^TIME^USER^SIZE
+ Q "60527^73806^Dan Russell^2789" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID=:V1

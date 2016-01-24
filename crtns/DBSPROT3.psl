@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Data Item Protection Utility (build)|DBSPROT3|||||||1
 DBSPROT3
 
 	/*
@@ -1059,4 +1058,4 @@ addcode(Number TABS,		// Number of tabs to add
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^29920"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61377^49746^Badrinath Giridharan^29850"	// Signature - LTD^TIME^USER^SIZE

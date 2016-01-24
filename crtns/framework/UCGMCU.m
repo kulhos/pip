@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCGMCU ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Psl compiler - compiler upgrades|UCGMCU|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -499,7 +498,7 @@ getUpgList() ;
  ;
  ; ---------------------------------------------------------------------
 info(info) ; 
- N prsr  D vcdmNew^PSLParser(.prsr,"PSLParser",%RoutineName)
+ N prsr  D vcdmNew^PSLParser(.prsr,"PSLParser",$T(+0))
  D log^PSLParser(.prsr,,0," ",1,"LIST",info)
  Q 
  ;
@@ -769,7 +768,7 @@ time(vStr) ; boot-safe String to Time conversion
  Q $$vStrTM(vStr)
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^84144" ; Signature - LTD^TIME^USER^SIZE
+ Q "61530^32515^Frans S.C. Witte^84080" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrJD(string,mask) ; String.toDate

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV0 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PROFILE System Driver, Part II|SCADRV0|||||||1
 SCADRV0(FN,INPUT) ; 
  ;
  ; Compile procedure SCAUTL1 and build routine NOISO
@@ -45,8 +44,8 @@ NXTMENU ; Next menu
  ;
  I '$get(MENU) S EXIT=1 Q 
  ;
- S MENUNO=$P(MENU(MENU),"|",1)
- S PRMPT=$P(MENU(MENU),"|",2)
+ S MENUNO=$piece(MENU(MENU),"|",1)
+ S PRMPT=$piece(MENU(MENU),"|",2)
  ;
  I DISPLAY D DISPLAY
  I STATLIN D STATLIN
@@ -55,7 +54,7 @@ NXTMENU ; Next menu
  I MENU=1,$$CHKREST S ER=1 Q 
  ;
  ; Update time change
- I (%CurrentTime-$P($get(OLDTIME),"|",2))<60 D TIME
+ I ($P($H,",",2)-$piece($get(OLDTIME),"|",2))<60 D TIME
  ;
  D DSPMENU(MENU,PRMPT)
  ;
@@ -64,8 +63,8 @@ NXTMENU ; Next menu
  ;
  I '%AUTOMNU S X=$$READ($get(RPTX)) K RPTX
  I %AUTOMNU D
- .	N %ProcessMode
- .	S %ProcessMode=99
+ .	N %O
+ .	S %O=99
  .	WRITE vcps
  .	S X=$$SELECT^SCADRV2("")
  .	WRITE vcpr
@@ -83,11 +82,11 @@ NXTMENU ; Next menu
  I %fkey="KYB" D KYB^SCADRV2 D STATLIN
  ;
  ; Save input for DUP
- I X'="" S $P(MENU(MENU),"|",3)=X
+ I X'="" S $piece(MENU(MENU),"|",3)=X
  I $E(X,$L(X))="?" S %fkey="SEL"
  ;
  I %fkey="CUU" D BACKUP Q 
- I %fkey="DUP" S X=$P(MENU(MENU),"|",3) WRITE X
+ I %fkey="DUP" S X=$piece(MENU(MENU),"|",3) WRITE X
  I %fkey="END" D CLRMENU Q 
  I %fkey="ESC" S EXIT=1 Q 
  I %fkey="FND" D  Q:X="" 
@@ -108,11 +107,11 @@ NXTMENU ; Next menu
  ; Use the UP ARROW key to return to the menu~p1
  I X="" S RM=$$^MSG(2842,$char(7)) D PNTRM(%AUTOMNU) Q 
  ;   Save input (again) for DUP
- S $P(MENU(MENU),"|",3)=X
+ S $piece(MENU(MENU),"|",3)=X
  ;
  ; Handle block mode type input
  S INPUT=""
- I $P(X,",",2,99)'="" S INPUT="/,"_$P(X,",",2,99) S X=$P(X,",",1)
+ I $piece(X,",",2,99)'="" S INPUT="/,"_$piece(X,",",2,99) S X=$piece(X,",",1)
  ;
  ; Check input and dispatch if necessary
  D PROC(X,INPUT)
@@ -184,7 +183,7 @@ DISPATCH(scatbl) ; Dispatch to selected function
  I $$CHKREST S (ER,DISPEXIT)=1 Q 
  ;
  S %ID=$$SYSLOG ; Log function start
- S JOB=%ProcessID
+ S JOB=$J
  S %JRNL=0 ; Journal count
  ;
  ; Set system variables.   %sn - System name
@@ -213,10 +212,10 @@ DISPATCH(scatbl) ; Dispatch to selected function
  ; Save menu information
  F I=1:1:MENU D
  .	N tmpmenu,vop3,vop4,vop5 S vop4=JOB,vop3=I,tmpmenu=$$vRCgetRecord1Opt^RecordTMPMENU(JOB,I,0,.vop5)
- .  S $P(tmpmenu,$C(124),1)=$P(MENU(I),"|",1)
- .  S $P(tmpmenu,$C(124),2)=$P(MENU(I),"|",2)
- .  S $P(tmpmenu,$C(124),3)=$P(MENU(I),"|",3)
- .  S $P(tmpmenu,$C(124),4)=$P(MENU(I),"|",4)
+ .  S $P(tmpmenu,$C(124),1)=$piece(MENU(I),"|",1)
+ .  S $P(tmpmenu,$C(124),2)=$piece(MENU(I),"|",2)
+ .  S $P(tmpmenu,$C(124),3)=$piece(MENU(I),"|",3)
+ .  S $P(tmpmenu,$C(124),4)=$piece(MENU(I),"|",4)
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" S ^TMP(0,vop4,vop3)=$$RTBAR^%ZFUNC(tmpmenu) S vop5=1 TC:vTp  
  . Q 
  ;
@@ -224,8 +223,8 @@ DISPATCH(scatbl) ; Dispatch to selected function
  I NOREST D  K:ER vobj(+$G(savesys)) Q:ER 
  .	N norest,vop6,vop7 S vop6=JOB,norest=$$vRCgetRecord1Opt^RecordNOREST(JOB,0,.vop7)
  .  S vop6=JOB
- .  S $P(norest,$C(124),2)=%CurrentTime
- .  S $P(norest,$C(124),1)=%CurrentDate
+ .  S $P(norest,$C(124),2)=$P($H,",",2)
+ .  S $P(norest,$C(124),1)=$P($H,",",1)
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" S ^%ZNOREST(vop6)=$$RTBAR^%ZFUNC(norest) S vop7=1 TC:vTp  
  . Q 
  ;
@@ -276,7 +275,7 @@ DISPATCH(scatbl) ; Dispatch to selected function
  I ($get(ER)=0),$get(vVER) S ER=1
  I ($get(ER)'=0),($get(RM)=""),'($get(vVRM)="") S RM=vVRM
  ;
- S JOB=%ProcessID
+ S JOB=$J
  ;
  N savedrv,vop8,vop9 S vop8=JOB,savedrv=$$vRCgetRecord1Opt^RecordSAVEDRV(JOB,0,"")
   S vop9="" N von S von="" F  S von=$O(^TMP(0,"SAVEDRV",vop8,von)) quit:von=""  S vop9=vop9_^TMP(0,"SAVEDRV",vop8,von)
@@ -320,7 +319,7 @@ READ(x) ; Read input and return it
  N TIMEREM N TIM
  ;
  S EXIT=0
- S TIMEREM=%InputTimeOut
+ S TIMEREM=%TO
  S TIM=60
  S x=$get(x)
  WRITE vcps,x,vcpr
@@ -355,7 +354,7 @@ SUBMENU(FN) ; Check for and select submenu options
  S X=$$^DBSMBAR(39,"","","",.OPTION)
  I X="" Q ""
  ;
- Q $P(OPTION(X),"|",2)
+ Q $piece(OPTION(X),"|",2)
  ;
 %SN ; Change to new system variables
  ;
@@ -379,7 +378,7 @@ RESET() ; Reset variables for this session
  N EXIT
  N I N JOB
  ;
- S JOB=%ProcessID
+ S JOB=$J
  ;
  N savevar S savevar=$$vRCgetRecord1^RecordSAVEVAR(JOB,0)
  I '$G(vobj(savevar,-2)) K vobj(+$G(savevar)) Q 0
@@ -402,10 +401,10 @@ RESET() ; Reset variables for this session
  .	I I="SAVTMP" Q 
  .	;
  .	N tmpmenu S tmpmenu=$$vRCgetRecord0Opt^RecordTMPMENU(JOB,I,0,"")
- .	S $P(MENU(I),"|",1)=$P(tmpmenu,$C(124),1)
- .	S $P(MENU(I),"|",2)=$P(tmpmenu,$C(124),2)
- .	S $P(MENU(I),"|",3)=$P(tmpmenu,$C(124),3)
- .	S $P(MENU(I),"|",4)=$P(tmpmenu,$C(124),4)
+ .	S $piece(MENU(I),"|",1)=$P(tmpmenu,$C(124),1)
+ .	S $piece(MENU(I),"|",2)=$P(tmpmenu,$C(124),2)
+ .	S $piece(MENU(I),"|",3)=$P(tmpmenu,$C(124),3)
+ .	S $piece(MENU(I),"|",4)=$P(tmpmenu,$C(124),4)
  . Q 
  ;
  N ddpsts S ddpsts=""
@@ -426,7 +425,7 @@ CHKREST() ; Check menu restrictions and accrual restrictions
  I %ACRREST,($D(^TTR("PA"))#2) S ET="ACCRSTCT" Q 1
  ;
  ; Unrestricted ucls
- I %UserClass="MGR"!(%UserClass="SCA") Q 0
+ I %UCLS="MGR"!(%UCLS="SCA") Q 0
  ;
  ; Menu restriction
  ;
@@ -518,9 +517,9 @@ VALIDFN(fn,scatbl) ; Check validity of selected function
   K vobj(+$G(scatbl)) S scatbl=$$vRCgetRecord1^RecordSCATBL(fn,0)
  ;
  ; Userclass ~p1 not authorized for this function
- N scatbl3 S scatbl3=$$vRCgetRecord0Opt^RecordSCATBL3(fn,%UserClass,0,"")
+ N scatbl3 S scatbl3=$$vRCgetRecord0Opt^RecordSCATBL3(fn,%UCLS,0,"")
  ;
- I $P(scatbl3,$C(124),1)'=1 S RM=$$^MSG(2898,%UserClass) Q ""
+ I $P(scatbl3,$C(124),1)'=1 S RM=$$^MSG(2898,%UCLS) Q ""
  ;
  ; Invalid network function
  I $P(vobj(scatbl),$C(124),5),%LOGID S RM=$$^MSG(1409) Q ""
@@ -532,10 +531,10 @@ VALIDFN(fn,scatbl) ; Check validity of selected function
  I $get(%NET)=0,$P(vobj(scatbl),$C(124),5),$P(vobj(scatbl),$C(124),6) S RM=$$^MSG(1360) Q ""
  ;
  ; Function invalid before ~p1
- I $P(vobj(scatbl),$C(124),7),%CurrentTime<$P(vobj(scatbl),$C(124),7) S RM=$$^MSG(1132,$$TIM^%ZM($P(vobj(scatbl),$C(124),7))) Q ""
+ I $P(vobj(scatbl),$C(124),7),$P($H,",",2)<$P(vobj(scatbl),$C(124),7) S RM=$$^MSG(1132,$$TIM^%ZM($P(vobj(scatbl),$C(124),7))) Q ""
  ;
  ; Function invalid after ~p1
- I $P(vobj(scatbl),$C(124),8),%CurrentTime>$P(vobj(scatbl),$C(124),8) S RM=$$^MSG(1131,$$TIM^%ZM($P(vobj(scatbl),$C(124),8))) Q ""
+ I $P(vobj(scatbl),$C(124),8),$P($H,",",2)>$P(vobj(scatbl),$C(124),8) S RM=$$^MSG(1131,$$TIM^%ZM($P(vobj(scatbl),$C(124),8))) Q ""
  ;
  S ER=0
  Q fn
@@ -558,7 +557,7 @@ KILL0() ; Call by: D KILL0(.TMP0)
  N cuvar S cuvar=$$vRCgetRecord0Opt^RecordCUVAR(0,"")
   S cuvar=$G(^CUVAR(2))
  ;  #accept pgm=spier;date=12/8/03; CR=unknown
- S %SystemDate=$P(cuvar,$C(124),1)
+ S TJD=$P(cuvar,$C(124),1)
  ;
  Q 
  ;
@@ -603,29 +602,29 @@ SYSVAR(sysvar) ;
  D INIT^%ZM(.list)
  ;
  ;  #accept pgm=spier;date=12/8/03; CR=unknown
- S %SystemDate=$P(cuvar,$C(124),1)
- S %ED=$S(%SystemDate'="":$ZD(%SystemDate,"MM/DD/YEAR"),1:"")
+ S TJD=$P(cuvar,$C(124),1)
+ S %ED=$S(TJD'="":$ZD(TJD,"MM/DD/YEAR"),1:"")
  ;  #accept pgm=spier;date=12/8/03; CR=unknown
- S %CompanyName=$P(vop4,$C(124),1)
+ S %CO=$P(vop4,$C(124),1)
  S %ODP=$P(vop6,$C(124),1)
  S %MCP=$P(vop2,$C(124),1)
  ;  #accept pgm=spier;date=12/8/03; CR=unknown
- S %SystemCurrency=$P(vop1,$C(124),1)
+ S %CRCD=$P(vop1,$C(124),1)
  S %EMUCRCD=$P(vop5,$C(124),16)
  S %RESPROC=$P(vop7,$C(124),1)
  ;  #accept pgm=spier;date=12/8/03; CR=unknown
- S %VersionID=$P(vop3,$C(124),1)
+ S %VN=$P(vop3,$C(124),1)
  ;  #accept pgm=spier;date=12/8/03; CR=unknown
- S %ClientVersionID=$get(%ClientVersionID) I %ClientVersionID="" S %ClientVersionID=%VersionID
+ S %VNC=$get(%VNC) I %VNC="" S %VNC=%VN
  ;  #accept pgm=spier;date=12/8/03; CR=unknown
- S %Identifier=$$USERNAM^%ZFUNC
+ S %IDENT=$$USERNAM^%ZFUNC
  ;  #accept pgm=spier;date=12/8/03; CR=unknown
- S %ServerChannelID="PA"
+ S %SVCHNID="PA"
  S %DB=$$TRNLNM^%ZFUNC("SCAU$DB") ; defined database type
  I %DB="" S %DB="GTM" ; default DB type is GTM
  S sysvar="S %=$C(124)"
  F i=1:1:$L(list,",") D
- .	S x=$P(list,",",i)
+ .	S x=$piece(list,",",i)
  .	S y=@x
  .	S sysvar=sysvar_","_x_"="""_y_""""
  .	Q 
@@ -640,7 +639,7 @@ BACKUP ; Backup one menu level
  ;
 NEWMENU ; New menu selected, set it up
  ;
- S $P(MENU(MENU),"|",4)=DESC S MENU=MENU+1
+ S $piece(MENU(MENU),"|",4)=DESC S MENU=MENU+1
  S MENU(MENU)=%FN_"|"_NEWPRMPT
  ;
  Q 
@@ -651,9 +650,9 @@ SYSLOG() ; Log function started in SYSLOG
  ;
  I $get(%LOGID)="" S %LOGID=$$LOGID^SCADRV
  ;
- S LOGINF=%UserID_$char(17)_%UserStation_$char(17)_$get(%FN)_$char(17)_%CurrentTime
- S $P(LOGINF,$char(17),7)=$P(%LOGID,"|",2)
- S $P(LOGINF,$char(17),9)=%CurrentDate
+ S LOGINF=%UID_$char(17)_TLO_$char(17)_$get(%FN)_$char(17)_$P($H,",",2)
+ S $piece(LOGINF,$char(17),7)=$piece(%LOGID,"|",2)
+ S $piece(LOGINF,$char(17),9)=$P($H,",",1)
  ;
  Q LOGINF
  ;
@@ -669,33 +668,33 @@ SYSLOGXT(DATA) ;
  ;
  S HLOG=$H
  ;
- I $get(%SystemDate)="" D
+ I $get(TJD)="" D
  .	N cuvar S cuvar=$$vRCgetRecord0Opt^RecordCUVAR(0,"")
  .	 S cuvar=$G(^CUVAR(2))
  .	;   #accept pgm=spier;date=12/8/03; CR=unknown
- .	S %SystemDate=$P(cuvar,$C(124),1)
+ .	S TJD=$P(cuvar,$C(124),1)
  .	;   #accept pgm=spier;date=12/8/03; CR=unknown
- .	I %SystemDate="" S %SystemDate=%CurrentDate
+ .	I TJD="" S TJD=$P($H,",",1)
  . Q 
  ;
  I $get(%LOGID)="" S %LOGID=$$LOGID^SCADRV
  S TIME=$$GETTIM^%ZFUNC
- S NODE=$P(%LOGID,"|",3)
+ S NODE=$piece(%LOGID,"|",3)
  ;
  ; File locally only
  N syslog,vop1,vop2,vop3,vop4,vop5 S syslog="",vop5=0
-  S vop4=%SystemDate
+  S vop4=TJD
   S vop3=TIME
   S vop2=NODE
-  S vop1=%ProcessID
-  S $P(syslog,$C(124),1)=$P(DATA,"|",1)
-  S $P(syslog,$C(124),2)=$P(DATA,"|",2)
-  S $P(syslog,$C(124),3)=$P(DATA,"|",3)
-  S $P(syslog,$C(124),4)=$P(DATA,"|",4)
-  S $P(syslog,$C(124),5)=$P(HLOG,",",2)
-  S $P(syslog,$C(124),7)=$P(DATA,"|",7)
+  S vop1=$J
+  S $P(syslog,$C(124),1)=$piece(DATA,"|",1)
+  S $P(syslog,$C(124),2)=$piece(DATA,"|",2)
+  S $P(syslog,$C(124),3)=$piece(DATA,"|",3)
+  S $P(syslog,$C(124),4)=$piece(DATA,"|",4)
+  S $P(syslog,$C(124),5)=$piece(HLOG,",",2)
+  S $P(syslog,$C(124),7)=$piece(DATA,"|",7)
   S $P(syslog,$C(124),8)=+HLOG
-  S $P(syslog,$C(124),9)=$P(DATA,"|",9)
+  S $P(syslog,$C(124),9)=$piece(DATA,"|",9)
  I $get(%SN)="GLS"  S $P(syslog,$C(124),6)=$get(CO)
  ;
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" S ^SYSLOG(vop4,vop3,vop2,vop1)=$$RTBAR^%ZFUNC(syslog) S vop5=1 TC:vTp  
@@ -720,7 +719,7 @@ DISPLAY ; Display header and menu
  I $P(vop1,$C(124),1)'="" D DRVMSG($P(vop1,$C(124),1))
  WRITE $$LINE^%TRMVT(80,1,4)
  ;
- F I=1:1:MENU-1 D DSPMENU(I,$P(MENU(I),"|",2),$P(MENU(I),"|",4))
+ F I=1:1:MENU-1 D DSPMENU(I,$piece(MENU(I),"|",2),$piece(MENU(I),"|",4))
  ;
  I $D(%MSGS) D PNTRM()
  D STATLIN
@@ -740,9 +739,9 @@ DATE ; Display current calendar date (and system date for IBS)
   S cuvar=$G(^CUVAR(2))
   S vop1=$G(^CUVAR("CONAM"))
  ;
- S DATE=$S(%CurrentDate'="":$ZD(%CurrentDate,"MM/DD/YEAR"),1:"")
- I $P(cuvar,$C(124),1),($P(cuvar,$C(124),1)-%CurrentDate) S DATE="["_$$vdat2str($P(cuvar,$C(124),1),$get(%MSKD))_"]  "_DATE
- E  S DATE="["_%UserStation_"]  "_DATE
+ S DATE=$$vdat2str($P($H,",",1),"MM/DD/YEAR")
+ I $P(cuvar,$C(124),1),($P(cuvar,$C(124),1)-$P($H,",",1)) S DATE="["_$$vdat2str($P(cuvar,$C(124),1),$get(%MSKD))_"]  "_DATE
+ E  S DATE="["_TLO_"]  "_DATE
  WRITE $J("",68-$L($P(vop1,$C(124),1))-$L(DATE)),DATE
  ;
  Q 
@@ -751,7 +750,7 @@ TIME ; Display current time
  ;
  WRITE vidrev,$$CUP^%TRMVT(70,1),$J($$TIM^%ZM,10)," ",vidoff
  ;
- S OLDTIME=%CurrentTime ; Last time displayed
+ S OLDTIME=$P($H,",",2) ; Last time displayed
  ;
  Q 
  ;
@@ -792,8 +791,8 @@ PNTRM(er) ; Display message(s) on next to bottom line(s) of screen
  S DY=23
  I $D(RM)<9 D MSG(RM) I 1
  E  D  ; Get starting line number
- .	F  S N=$O(RM(N)) Q:N=""  S DY=DY-1
- .	F  S N=$O(RM(N)) Q:N=""  S DY=DY+1 D MSG(RM(N))
+ .	F  S N=$order(RM(N)) Q:N=""  S DY=DY-1
+ .	F  S N=$order(RM(N)) Q:N=""  S DY=DY+1 D MSG(RM(N))
  .	Q 
  I 'er Q 
  D CLRMSGS
@@ -805,7 +804,7 @@ MSG(msg) ; Write message at line specified
  ; Only wait on error if last line
  I (DY=23),er S WAIT=1
  E  S WAIT=0
- WRITE $$MSG^%TRMVT(msg,er,WAIT,1,DY,%InputTimeOut,1)
+ WRITE $$MSG^%TRMVT(msg,er,WAIT,1,DY,%TO,1)
  S %MSGS(DY)="" ; Indicate line where message displayed
  ;
  Q 
@@ -815,8 +814,8 @@ CLRMSGS ; Clear any messages displayed
  N BTM N TOP N I
  ;
  I '($D(vcll)#2) S vcll=$$CLL^%TRMVT
- S TOP=$O(%MSGS(""))
- S BTM=$O(%MSGS(""),-1)
+ S TOP=$order(%MSGS(""))
+ S BTM=$order(%MSGS(""),-1)
  F I=TOP:1:BTM WRITE $$CUP^%TRMVT(1,I),vcll
  K %MSGS,RM
  ;
@@ -834,13 +833,13 @@ CLRMENU ; Clear menus and return to top
  ;
  Q 
  ;
-EXT(%UserID,%FN) ; External function call from PROFILE function
+EXT(%UID,%FN) ; External function call from PROFILE function
  ;
  N PGM
  ;
  N scatbl
  ;
- N scau S scau=$$vRCgetRecord1^RecordSCAU(%UserID,0)
+ N scau S scau=$$vRCgetRecord1^RecordSCAU(%UID,0)
  ;
  D VALIDUID^SCADRV K:ER vobj(+$G(scau)) Q:ER 
  D LOADSCAU^SCADRV(scau) K:ER vobj(+$G(scau)) Q:ER 
@@ -883,7 +882,7 @@ NOISO ; Specify NoIsolation (M database feature only)
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^26667" ; Signature - LTD^TIME^USER^SIZE
+ Q "60773^54266^Aries Beltran^26604" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vdat2str(vo,mask) ; Date.toString

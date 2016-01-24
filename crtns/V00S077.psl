@@ -1,5 +1,5 @@
 V00S077( Number %ProcessMode,RecordDBTBL6F DBTBL6F)   //DBS - DBS - SID= <DBTBL6FF> QWIK Report Format Definition (Linked)
- ;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+ ;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
  #WARN ACCESS,MISMATCH OFF
  	/*
  	ORIG: CHENARDP - 02/27/2003

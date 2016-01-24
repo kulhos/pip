@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Column class - DD Group|UCCOLUMN|||||||1
 	/*
 	DESC: Library of Column methods - DD Group
  
@@ -894,4 +893,4 @@ private String dynamic( Boolean external,	// are values in external representati
 	if fset quit " D propSet^DBSDYNRA("_ var_ ","_ property_ ","_ LEFTEXMARK_ ","_ bAudit_ ","_ external_ ")"
 	quit "$$propGet^DBSDYNRA("_ var_ ","_ property_ ")"
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^36747"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61348^60532^Frans S.C. Witte^36690"	// Signature - LTD^TIME^USER^SIZE

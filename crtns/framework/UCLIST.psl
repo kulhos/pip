@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL List Class library|UCLIST|||||||1
 	/*
 	ORIG: FSANCHEZ - 02/17/2003
 	DESC: PSL List Method library
@@ -370,4 +369,4 @@ private sort	// Method: List.sort( String delimiter, Boolean allowDuplicate) - S
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^14582"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61061^59051^Frans S.C. Witte^14528"	// Signature - LTD^TIME^USER^SIZE

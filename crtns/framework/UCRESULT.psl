@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL ResultSet Class|UCRESULT|||||||1
 	/*
 	 ORIG: FSANCHEZ - 01/15/98
 	 DESC: Library of ResultSet methods
@@ -690,4 +689,4 @@ private fetchPatch( String subRou,
 	set msrc(line+1)=mcode
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^23948"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61293^42809^Frans S.C. Witte^23895"	// Signature - LTD^TIME^USER^SIZE

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSTBL ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Screen Table Lookup|DBSTBL|||||||1
 DBSTBL(vREF,vSTR,vFMT,vMIN,vMAX,vPT,vPB,vHLP,vHDG,vUFK) ; 
  ;
  ; I18N=OFF
@@ -1102,7 +1101,7 @@ ARRAY(vREF,vINFO) ; Information need to process lookup  /MECH=REFARR:W
  ..		N V S V=vINFO("MAX")
  ..		;
  ..		;    #ACCEPT Date=11/29/04;PGM=RussellDS;CR=13258
- ..		S vINFO("START")=$O(@vREF)
+ ..		S vINFO("START")=$order(@vREF)
  ..		Q 
  .	;
  .	S vINFO("STOP")=vINFO("MIN")
@@ -1253,7 +1252,7 @@ LOOKUPPP(FORMAT,FILES,ARRAY) ; Converted column headings [*] /MECH=REFARR:W
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^41515" ; Signature - LTD^TIME^USER^SIZE
+ Q "61565^25470^Sha H Mirza^41454" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrLike(object,p1,p2) ; String.isLike

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Linked Screen Template|DBSLNKT|||||||1
 DBSLNKT //DBS - U - V7.0 - Multiple page screens base program
 
  	/*
@@ -39,4 +38,4 @@ VBTM
 	do ^DBSCRT8A
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^877"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60680^50161^Pete Chenard^822"	// Signature - LTD^TIME^USER^SIZE

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PSLCC ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Class definition of PSLCC|PSLCC|||||||2
  ;  #PACKAGE  framework.psl
  ;
  ;  #CLASSDEF extends=Primitive public delimiter=9
@@ -309,7 +308,7 @@ vSIG(this) ; polymorphism dispatch
  I $D(vPslPoly(vC,"vSIG")) Q $$v0vSIG^@vPslPoly(vC,"vSIG")(.this)
  Q $$v0vSIG(.this)
 v0vSIG(this) ; 
- Q "^^^21457" ; Signature - LTD^TIME^USER^SIZE
+ Q "61461^42873^Frans S.C. Witte^21401" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vRwTO1(vRow,vObj) ; Copy Row to PSLClass

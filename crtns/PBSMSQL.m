@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PBSMSQL ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  MSQL Service Class Driver|PBSMSQL|||||||1
 PBSMSQL(REPLY,STFFLG,RECORD,RECTYP,CONTEXT) ; MSQL Service Class Driver
  ;
  N RETVAL
@@ -228,8 +227,8 @@ SPVOVR(vrflg,vsupv) ;
  ...			S IDENT=$piece(vrflg(STSEQ,SEQ1),"|",2)
  ...			I ZTBL="CIF" D
  ....				I (IDENT="") Q  ; null values
- ....				N XSEQ S XSEQ=$O(^DAYEND(%SystemDate,"XBADC",%UserID,IDENT,""),-1)+1
- ....				N xbadc S xbadc=$$vRCgetRecord1^RecordDAYENDXBADC(%SystemDate,%UserID,IDENT,XSEQ,ET,0)
+ ....				N XSEQ S XSEQ=$O(^DAYEND(TJD,"XBADC",%UID,IDENT,""),-1)+1
+ ....				N xbadc S xbadc=$$vRCgetRecord1^RecordDAYENDXBADC(TJD,%UID,IDENT,XSEQ,ET,0)
  ....			  S $P(vobj(xbadc),$C(124),1)=UID
  ....			 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordDAYENDXBADC(xbadc,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(xbadc,-100) S vobj(xbadc,-2)=1 TC:vTp  
  ....				K vobj(+$G(xbadc)) Q 
@@ -243,9 +242,9 @@ SPVOVR(vrflg,vsupv) ;
  ....				; Don't log unless we've got a valid account number
  ....				Q:(CID'>0) 
  ....				;
- ....				S XSEQ=$O(^DAYEND(%SystemDate,"XBAD",%UserID,CID,""),-1)+1
+ ....				S XSEQ=$O(^DAYEND(TJD,"XBAD",%UID,CID,""),-1)+1
  ....				;
- ....				N xbad S xbad=$$vRCgetRecord1^RecordDAYENDXBAD(%SystemDate,%UserID,CID,XSEQ,ET,0)
+ ....				N xbad S xbad=$$vRCgetRecord1^RecordDAYENDXBAD(TJD,%UID,CID,XSEQ,ET,0)
  ....				;
  ....			  S $P(vobj(xbad),$C(124),1)=UID
  ....			  S $P(vobj(xbad),$C(124),2)=IDENT
@@ -315,7 +314,7 @@ ERRRPLY(buffer) ; Build standard server error reply
  ; If off-line, put into exception
  I STFFLG D STF
  ;
- I '(buffer="") D clearBuffer^SQLBUF(%SessionID,buffer)
+ I '(buffer="") D clearBuffer^SQLBUF(%TOKEN,buffer)
  ;
  Q 1
  ;
@@ -357,7 +356,7 @@ STF ; Store and forward handling of rejected updates
  ;
  N NSEQ N ZBRCD N ZBUF N ZDATE N ZTOKEN N ZUID
  ;
- S ZTOKEN=%SessionID
+ S ZTOKEN=%TOKEN
  ;
  ; Buffer Name
  N rs,vos1,vos2,vos3,vos4 S rs=$$vOpen1()
@@ -375,7 +374,7 @@ STF ; Store and forward handling of rejected updates
  I ZBRCD="" S ZBRCD="" ; Back Office Branch Code
  ;
  ; Get next SEQ from STFSQL
- S ZDATE=%CurrentDate
+ S ZDATE=$P($H,",",1)
  N rsstf,vos5,vos6,vos7,vos8 S rsstf=$$vOpen2()
  I $$vFetch2() S NSEQ=rsstf+1
  E  S NSEQ=1
@@ -389,7 +388,7 @@ STF ; Store and forward handling of rejected updates
  .	; set the record in STFSQL
  .	N stfsql S stfsql=$$vcdmNew^RecordSTFSQL()
  .	 S vobj(stfsql,1,1)=""
- .  S vobj(stfsql,-3)=%CurrentDate
+ .  S vobj(stfsql,-3)=$P($H,",",1)
  .  S vobj(stfsql,-4)=NSEQ
  .  S vobj(stfsql,-5)=vop5
  .  S $P(vobj(stfsql),$C(124),3)=ZBRCD
@@ -484,7 +483,7 @@ CHKTBL(TABLE) ; Check if table is restricted
  Q 1
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^23907" ; Signature - LTD^TIME^USER^SIZE
+ Q "61571^56885^Dan Russell^23849" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; BUFFER FROM DBBUF WHERE TOKEN=:ZTOKEN
  ;

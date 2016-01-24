@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UPID ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Data item protection utility|UPID|||||||1
 UPID(FID,PGM) ; Data item protection utility
  N vpc
  ;
@@ -84,7 +83,7 @@ PGM(FID) ;
  Q PGM
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4697" ; Signature - LTD^TIME^USER^SIZE
+ Q "60282^65131^Dan Russell^4639" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; DISTINCT FID FROM DBTBL14 WHERE FID=:FID
  ;

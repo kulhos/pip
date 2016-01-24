@@ -7,6 +7,7 @@
 ,	{ "class" : "RecordDBTBL9",	"method" : "logUserclass",	"resultClass" : "Boolean",	"formalList" : "noret String operation",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "throwError",	"resultClass" : "void",	"formalList" : "noret String MSG",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "vBypassSave",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 1,	"comment" : "" }
+,	{ "class" : "RecordDBTBL9",	"method" : "vRCcheckForeignKeys",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "vRCchkReqForInsert",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "vRCchkReqForUpdate",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "vRCdelete",	"resultClass" : "void",	"formalList" : "noret List vRCparams;noret String vRCaudit();noret Boolean isKeyChange",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
@@ -18,6 +19,7 @@
 ,	{ "class" : "RecordDBTBL9",	"method" : "vRCmiscValidations",	"resultClass" : "void",	"formalList" : "noret List vRCparams;noret Number processMode",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "vRCrequiredErr",	"resultClass" : "void",	"formalList" : "noret String column",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "vRCsetDefaults",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
+,	{ "class" : "RecordDBTBL9",	"method" : "vRCsetForeignKeys",	"resultClass" : "void",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "vRCtrimNumber",	"resultClass" : "String",	"formalList" : "noret String str",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "vRCupdateDB",	"resultClass" : "void",	"formalList" : "noret Number processMode;noret List vRCparams;noret String vRCaudit();noret String vRCauditIns()",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }
 ,	{ "class" : "RecordDBTBL9",	"method" : "vRCvalidateDD",	"resultClass" : "void",	"formalList" : "noret Number processMode",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 0,	"comment" : "" }

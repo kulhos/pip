@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBS2PSLT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL Screen Compiler Template|DBS2PSLT|||||||1
 DBS2PSLT ; DBSSCR
  ;
 VSTART ; 
@@ -11,19 +10,19 @@ VSTART ;
  ;
  ; %O (0-Create  1-Modify  2-Inquiry  3-Delete  4-Print  5-Blank screen)
 V0 ; 
- S:'($D(%ProcessMode)#2) %ProcessMode=5
+ S:'($D(%O)#2) %O=5
  ; ==================== Display blank screen         (%O=5)
 V5 ; 
- I %ProcessMode=5 D VPR D VDA D V5^DBSPNT Q 
+ I %O=5 D VPR D VDA D V5^DBSPNT Q 
  ;
  ; ====================  Display Form
  D ^DBSPNT()
  ;  #ACCEPT DATE=11/05/03; PGM=Screen Compiler;CR=UNKNOWN;GROUP=XECUTE
- I %ProcessMode=2!(%ProcessMode=3) D ^DBSCRT8A XECUTE:'$D(%PAGE) KVAR Q  ; Inquiry/Delete
+ I %O=2!(%O=3) D ^DBSCRT8A XECUTE:'$D(%PAGE) KVAR Q  ; Inquiry/Delete
  ; ====================  Set up data entry control table
  ;
 vTBL ; 
- I %ProcessMode<2 D VTAB
+ I %O<2 D VTAB
  Q 
  ;
 VNEW ; Initialize arrays if %O=0
@@ -90,4 +89,4 @@ vREAD ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3030" ; Signature - LTD^TIME^USER^SIZE
+ Q "60680^50161^Pete Chenard^2968" ; Signature - LTD^TIME^USER^SIZE

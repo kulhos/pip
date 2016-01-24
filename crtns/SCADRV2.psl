@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Sub-routines for ^SCADRV0|SCADRV2|||||||1
 SCADRV2
  	/*
  	 PROCEDURE ID:	SCADRV2
@@ -163,4 +162,4 @@ DUMMY	// Private - Tied to function SCADRV
 	*/
 	quit 
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4038"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60243^25879^Sanjay Chhrabria^3980"	// Signature - LTD^TIME^USER^SIZE

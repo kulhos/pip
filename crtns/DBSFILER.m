@@ -1,14 +1,13 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSFILER ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY   DATA-QWIK general purpose database filer|DBSFILER|||||||1
 DBSFILER ; 
  ;
  Q  ; Do not call from top
  ;
-EXT(fid,%ProcessMode,par) ; Parameters  /NOREQ
+EXT(fid,%O,par) ; Parameters  /NOREQ
  ;
  ; vfkey() is public array used by SQL for buffered commits in
  ; order to perform foreign key checking at end.
@@ -35,7 +34,7 @@ EXT(fid,%ProcessMode,par) ; Parameters  /NOREQ
  ;
  I 'vtp TS *:transactionid="CS"
  ;
- I (%ProcessMode=2) D  ; Integrity check
+ I (%O=2) D  ; Integrity check
  .	;
  .	N vpgmx
  .	;
@@ -213,4 +212,4 @@ value(v,typ) ; Data type
  Q RETURN
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^8206" ; Signature - LTD^TIME^USER^SIZE
+ Q "61311^54316^Dan Russell^8131" ; Signature - LTD^TIME^USER^SIZE

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAUTL ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SCA Utilities|SCAUTL|||||||1
  ;
  ; I18N=QUIT
  ;
@@ -37,15 +36,15 @@ TRACE(beg,max,del,zsh,dev,expr,varlist) ; Trace M code
  I (zsh="") S zsh="*"
  I expr'="" S expr=expr_" "
  ;
- I (dev="") S dev=$$FILE^%TRNLNM("mtrace_"_%ProcessID_".dat","SCAU$SPOOL")
+ I (dev="") S dev=$$FILE^%TRNLNM("mtrace_"_$J_".dat","SCAU$SPOOL")
  I '$$FILE^%ZOPEN(dev,"WRITE/NEWV",2,1024) Q 
  ;
-  K ^TMPTRACE(%ProcessID)
-  K ^TMPTRACE(%ProcessID)
+  K ^TMPTRACE($J)
+  K ^TMPTRACE($J)
  ;
  N tmptrc,vop1,vop2 S tmptrc="",vop2=0
  ;
-  S vop1=%ProcessID
+  S vop1=$J
   S $P(tmptrc,$C(124),1)=beg
   S $P(tmptrc,$C(124),2)=max
   S $P(tmptrc,$C(124),3)=del
@@ -62,7 +61,7 @@ TRACE(beg,max,del,zsh,dev,expr,varlist) ; Trace M code
  ..		;
  ..		N tmptrcv,vop3,vop4,vop5 S tmptrcv="",vop5=0
  ..		;
- ..	  S vop4=%ProcessID
+ ..	  S vop4=$J
  ..	  S vop3=var
  ..	  S $P(tmptrcv,$C(124),1)="<Unknown>"
  ..		;
@@ -92,7 +91,7 @@ trace(%Ztag) ; Execute trace
  ;
  N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch1^"_$T(+0)
  ;
- N tmptrc S tmptrc=$$vRCgetRecord0^RecordTMPTRACE(%ProcessID,0)
+ N tmptrc S tmptrc=$$vRCgetRecord0^RecordTMPTRACE($J,0)
  ;
  S %Zcnt=$P(vobj(tmptrc),$C(124),8)
  S %Zdev=$P(vobj(tmptrc),$C(124),5)
@@ -166,13 +165,13 @@ varlist(%ZLIST) ; Display value of local variables
  ;
  S %ZVAR=""
  ;
- N rstmp,vos1,vos2,vos3,vos4  N V1 S V1=%ProcessID S rstmp=$$vOpen1()
+ N rstmp,vos1,vos2,vos3,vos4  N V1 S V1=$J S rstmp=$$vOpen1()
  ;
  F  Q:'$$vFetch1()  D
  .	;
  . S %ZVAR=rstmp
  .	;
- .	N tmptrcv,vop1,vop2,vop3 S vop2=%ProcessID,vop1=%ZVAR,tmptrcv=$$vRCgetRecord0Opt^RecordTMPTRACEV(%ProcessID,%ZVAR,0,.vop3)
+ .	N tmptrcv,vop1,vop2,vop3 S vop2=$J,vop1=%ZVAR,tmptrcv=$$vRCgetRecord0Opt^RecordTMPTRACEV($J,%ZVAR,0,.vop3)
  .	;
  .	S %ZVAL=$get(@%ZVAR,"<Undefined>")
  . I %ZVAL=$P(tmptrcv,$C(124),1) Q 
@@ -203,8 +202,8 @@ exit(tmptrc) ; Exit trace
  S dev=$P(vobj(tmptrc),$C(124),5)
  S zsh=$P(vobj(tmptrc),$C(124),4)
  ;
-  K ^TMPTRACE(%ProcessID)
-  K ^TMPTRACE(%ProcessID)
+  K ^TMPTRACE($J)
+  K ^TMPTRACE($J)
  ;
  USE dev D zshow(zsh)
  CLOSE dev
@@ -237,7 +236,7 @@ LOWER(str) ; Convert string to lower case
  Q $ZCONVERT(str,"L")
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^8480" ; Signature - LTD^TIME^USER^SIZE
+ Q "60739^33854^Dan Russell^8435" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; VAR FROM TMPTRACEV WHERE PID=:V1
  ;

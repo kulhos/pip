@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Report Alignment Print|DBSRWALN|||||||1
 DBSRWALN(String RID,String IO,Number COUNT)	/* Private - Part DBSRW*
 	ORIG: CHIANG - 8/16/88
 	PROCEDURE ID: DBSRWALN
@@ -153,4 +152,4 @@ GRPDTL(String RID,	// Private - Check detail status at this level
 
 	quit DETAIL
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4348"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61431^63999^Dan Russell^4282"	// Signature - LTD^TIME^USER^SIZE

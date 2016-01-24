@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL query code generator|UCQRYBLD|||||||1
 	/* In framework, but not part of the compiler
 	   */
 	#PACKAGE framework
@@ -471,4 +470,4 @@ private GETFROM(String WHERE,
 
 	quit FROM
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^13615"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61293^42704^Frans S.C. Witte^13557"	// Signature - LTD^TIME^USER^SIZE

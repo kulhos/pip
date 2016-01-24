@@ -1,10 +1,10 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Screen DBTBL1E ****
  ; 
- ; 01/20/2016 11:55 - kulhan
+ ; 02/24/2010 18:33 - pip
  ; 
 V00S058(%O,fDBTBL1D,fDBTBL1) ; DBS -  - SID= <DBTBL1E> Files Definition - Detail
- ;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+ ;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
  ;
  N KEYS N KVAR N VFSN N VO N VODFT N VPGM N vPSL N VSID N VSNAME
  ;
@@ -875,9 +875,9 @@ vL2a1 S vos2=$$BYTECHAR^SQLUTL(254)
  S vos4=$G(DI) I vos4="",'$D(DI) G vL2a0
  S vos5=""
 vL2a5 S vos5=$O(^DBTBL("SYSDEV",1,vos3,9,vos5),1) I vos5="" G vL2a0
+ I '(vos5'=vos4) G vL2a5
  S vos6=$G(^DBTBL("SYSDEV",1,vos3,9,vos5))
  I '($P(vos6,"|",9)="M"!($P(vos6,"|",9)="B")) G vL2a5
- I '(vos5'=vos4) G vL2a5
  Q
  ;
 vFetch2() ;

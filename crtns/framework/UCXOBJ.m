@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCXOBJ ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Object tables access - Insensitive Group|UCXOBJ|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -84,7 +83,7 @@ omTryPrim(prsr,tknzr,cls,mtd) ; method name (*1)
  Q retval
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^7761" ; Signature - LTD^TIME^USER^SIZE
+ Q "61058^29773^Frans S.C. Witte^7689" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; CLASS FROM OBJECT WHERE LOWER(CLASS) = :V1
  ;

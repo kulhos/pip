@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDRV1 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Create functions|DBSDRV1|||||||1
 DBSDRV1 ; 
  ;
  ; Call from top to create function to access DQ generated screens
@@ -153,9 +152,9 @@ SET(FN,DESC,PRP,PGM,QUEUE) ;
  ;
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordSCATBL(scatbl,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(scatbl,-100) S vobj(scatbl,-2)=1 TC:vTp  
  ;
- I '($get(%UserClass)="") D
+ I '($get(%UCLS)="") D
  .	;
- .	N scatbl3 S scatbl3=$$vcdmNew^RecordSCATBL3() S vobj(scatbl3,-3)=FN S vobj(scatbl3,-4)=%UserClass
+ .	N scatbl3 S scatbl3=$$vcdmNew^RecordSCATBL3() S vobj(scatbl3,-3)=FN S vobj(scatbl3,-4)=%UCLS
  .	;
  .  S $P(vobj(scatbl3),$C(124),1)=""
  .	;
@@ -168,4 +167,4 @@ SET(FN,DESC,PRP,PGM,QUEUE) ;
  K vobj(+$G(scatbl)) Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3725" ; Signature - LTD^TIME^USER^SIZE
+ Q "60425^2579^Dan Russell^3676" ; Signature - LTD^TIME^USER^SIZE

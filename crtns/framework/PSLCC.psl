@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Class definition of PSLCC|PSLCC|||||||2
 	/*
 	ORIG: Frans S.C. Witte - 2007-10-16
 	DESC: PSL compiler, Insensitive Group - #CLASSDEF for PSLCC
@@ -523,4 +522,4 @@ public final void setUcopts( String ucopts) //
 	/* Instance support methods					      */
 	/* ****************************************************************** */
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^21457"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61461^42873^Frans S.C. Witte^21401"	// Signature - LTD^TIME^USER^SIZE

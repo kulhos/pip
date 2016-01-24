@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSTBLMA ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  C-S-UTBL Table Maintenance Code Generator|DBSTBLMA|||||||1
 DBSTBLMA ; C-S-UTBL Table Maintenance Code Generator
  ;
  ; I18N=OFF
@@ -18,7 +17,7 @@ DBSTBLMA ; C-S-UTBL Table Maintenance Code Generator
  S TAB=$char(9)
  ;
  D addcode(0,"DBSTBLMB(Number %ProcessMode, RecordDBTBL1 dbtbl1, String KEY())"_TAB_"// C-S-UTBL Table Maintenance Compiled Program")
- D addcode(1,"// Last compiled:  "_%CurrentDate_" "_$$TIM^%ZM_" - "_%UserName)
+ D addcode(1,"// Last compiled:  "_$$vdat2str($P($H,",",1),"MM/DD/YEAR")_" "_$$TIM^%ZM_" - "_$$USERNAM^%ZFUNC)
  D addcode(0,"")
  D addcode(1,"// THIS IS A COMPILED ROUTINE.  Compiled by procedure DBSTBLMA")
  D addcode(0,"")
@@ -331,7 +330,36 @@ addcode(TABS,CODE) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^11609" ; Signature - LTD^TIME^USER^SIZE
+ Q "61239^41322^Dan Russell^11534" ; Signature - LTD^TIME^USER^SIZE
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

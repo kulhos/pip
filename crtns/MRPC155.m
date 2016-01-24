@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure MRPC155 ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SQL Reports|MRPC155|||||||||||||||||||||1
 MRPC155(RETURN,VERSN,EXPR) ; 
  ;
   S ER=0 ; Error indicator
@@ -2186,7 +2185,7 @@ getColAtts(class,gcol,input,tok) ; Build column record
  Q input
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^73019" ; Signature - LTD^TIME^USER^SIZE
+ Q "61024^48559^e0101711^72961" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim

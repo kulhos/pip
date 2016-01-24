@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCDBSET ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Class DbSet methods - Insensitive Group|UCDBSET|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -125,4 +124,4 @@ propRef(table,objExpr,ptr) ;
  Q $$curVal^UCCOLUMN(lvn,table,property,0,objExpr,.ptr)
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^8761" ; Signature - LTD^TIME^USER^SIZE
+ Q "61186^61461^Dan Russell^8689" ; Signature - LTD^TIME^USER^SIZE

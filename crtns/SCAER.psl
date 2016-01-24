@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Error log report|SCAER|||||||1
 	// Leave this line until new DBSPROC doesn't replace it (see CR27800)
 	#OPTION ResultClass ON
 	// Error log report
@@ -349,4 +348,4 @@ private void SEQPRE	// Sequence pre-processor
 		
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^8302"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60998^46954^Dan Russell^8255"	// Signature - LTD^TIME^USER^SIZE

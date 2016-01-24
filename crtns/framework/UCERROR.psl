@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Error class, compiletime + runtime|UCERROR|||||||1
 	/*
 	 ORIG: KWANL - 10/11/2006
 	 DESC:
@@ -114,4 +113,4 @@ private toString() // method Error.toString()
 	set PSL.return = PSL.objectName
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4173"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60946^40563^Frans S.C. Witte^4106"	// Signature - LTD^TIME^USER^SIZE

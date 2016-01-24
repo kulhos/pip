@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Number Class Method Library|UCNUMBER|||||||1
 	/*
 	ORIG: FSANCHEZ - 03/17/2003
 	DESC: PSL Number Class Method Library
@@ -280,4 +279,4 @@ zero	// Method Number.zero - returns zero fill
 	quit
 	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^10642"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61537^60709^Frans S.C. Witte^10577"	// Signature - LTD^TIME^USER^SIZE

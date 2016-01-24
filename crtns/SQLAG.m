@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SQLAG ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SQL aggregate table builder engine|SQLAG|||||||1
 SQLAG ; 
  ;
  Q 
@@ -222,7 +221,7 @@ BLDCODE(dbtbl22,INFO,COLREFS,PSLCODE,RTN) ; Routine name   /MECH=REF:W
  S TAB=$char(9)
  ;
  D addcode(RTN_TAB_"// DQ Aggregate Definition Routine for AGID = "_vobj(dbtbl22,-4))
- D addcode(TAB_"// Last compiled:  "_%CurrentDate_" "_$$TIM^%ZM_" - "_$get(%UserID))
+ D addcode(TAB_"// Last compiled:  "_$$vdat2str($P($H,",",1),"MM/DD/YEAR")_" "_$$TIM^%ZM_" - "_$get(%UID))
  D addcode("")
  D addcode(TAB_"// THIS IS A COMPILED ROUTINE.  Compiled by procedure SQLAG.")
  D addcode("")
@@ -1011,7 +1010,7 @@ addcode(LINE) ; New line of code to add
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^26795" ; Signature - LTD^TIME^USER^SIZE
+ Q "60242^50783^Dan Russell^26730" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim
@@ -1020,6 +1019,35 @@ vStrTrim(object,p1,p2) ; String.trim
  I p1'<0 S object=$$RTCHR^%ZFUNC(object,p2)
  I p1'>0 F  Q:$E(object,1)'=p2  S object=$E(object,2,1048575)
  Q object
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

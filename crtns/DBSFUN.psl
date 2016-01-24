@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Internal Functions|DBSFUN|||||||1
 DBSFUN	
 		 
 	/*
@@ -126,4 +125,4 @@ SELFID(String FILES,	// Access files
 	
 	quit VAR(OP)
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3045"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61114^71587^Dan Russell^2985"	// Signature - LTD^TIME^USER^SIZE

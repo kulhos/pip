@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCSCHEMA ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL Method Library - Schema Class|UCSCHEMA|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -106,7 +105,7 @@ delTable ; method Schema.deleteTable()
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^7305" ; Signature - LTD^TIME^USER^SIZE
+ Q "61058^29762^Frans S.C. Witte^7238" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vMExpr(v1) ; PSL.mExpr

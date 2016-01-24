@@ -1,4 +1,3 @@
-//DO NOT MODIFY   DATA-QWIK general purpose database filer|DBSFILER|||||||1
 DBSFILER
 		 
 	/*
@@ -319,4 +318,4 @@ value(String v,		// Input value
 	
 	quit RETURN
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^8206"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61311^54316^Dan Russell^8131"	// Signature - LTD^TIME^USER^SIZE

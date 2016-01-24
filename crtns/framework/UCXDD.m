@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCXDD ****
  ; 
- ; 01/23/2016 14:24 - kulhan
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  DQ DD access - DD Group|UCXDD|||||||1
  ;  #PACKAGE framework
  ;  #OPTION ResultClass ON
  ;
@@ -1696,7 +1695,7 @@ fromPSLTable(td) ;
  Q td
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^167327" ; Signature - LTD^TIME^USER^SIZE
+ Q "61397^34727^Frans S.C. Witte^167273" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

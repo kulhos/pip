@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRWQRY ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Query Parser|DBSRWQRY|||||||1
 DBSRWQRY(dbtbl5h,PQINFO,WHERE) ; 
  N vpc
   S:'$D(vobj(dbtbl5h,0)) vobj(dbtbl5h,0)=$S(vobj(dbtbl5h,-2):$G(^DBTBL(vobj(dbtbl5h,-3),5,vobj(dbtbl5h,-4),0)),1:"")
@@ -316,7 +315,7 @@ KEYWRDS(X,TAB) ; Private - Parse X for keywords and build TAB
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^11663" ; Signature - LTD^TIME^USER^SIZE
+ Q "60680^47183^Dan Russell^11600" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

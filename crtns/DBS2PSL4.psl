@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Screen Compiler|DBS2PSL4|||||||1
 DBS2PSL4(RecordDBTBL2 dbtbl2)	//DBS2PSL4; - V7.0 - PSL Screen compiler
 	/*
 	       ORIG:  CHIANG - 1/15/86
@@ -1109,4 +1108,4 @@ value(v,typ,var)	; Convert internal to external format
 	I $G(var),v?1A.AN!(v?1"%".AN) S v=q_"<<"_v_">>"_q	; <<variavle>>
 	Q v
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^34690"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61569^11634^Sha H Mirza^34637"	// Signature - LTD^TIME^USER^SIZE

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSTBLL ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  List All The Tables|DBSTBLL|||||||1
 DBSTBLL(TABLETYP) ; Table type (CTBL, STBL, or UTBL)
  ;
  N append
@@ -203,7 +202,7 @@ LISTPP(X) ; Input value
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5222" ; Signature - LTD^TIME^USER^SIZE
+ Q "60659^41656^Dan Russell^5170" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; DI,POS FROM DBTBL1D WHERE %LIBS='SYSDEV' AND FID=:TABLE AND NOD=:V1 ORDER BY POS ASC
  ;

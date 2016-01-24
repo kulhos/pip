@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCATAB ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SCA Standard %TAB Definitions|SCATAB|||||||1
 SCATAB ; 
  ; SCA Standard %TAB Definitions
  ;
@@ -34,8 +33,8 @@ DI(DI,DES,LEN,TBL,XPP,XPR,TYP,MIN,MAX,DEC) ; Formatted %TAB entry
  N dbtbl1d
  ;
  I DI'="" D  I ER Q ""
- .	S FID=$P($P(DI,"]",1),"[",2)
- .	S DINAM=$P(DI,"]",2)
+ .	S FID=$piece($piece(DI,"]",1),"[",2)
+ .	S DINAM=$piece(DI,"]",2)
  .	S dbtbl1d=$$vRCgetRecord0Opt^RecordDBTBL1D("SYSDEV",FID,DINAM,0,"")
  .	Q 
  I DI=""  S dbtbl1d=""
@@ -85,4 +84,4 @@ DI(DI,DES,LEN,TBL,XPP,XPR,TYP,MIN,MAX,DEC) ; Formatted %TAB entry
  Q X
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5114" ; Signature - LTD^TIME^USER^SIZE
+ Q "60227^22950^Hema Puttaswamy^5053" ; Signature - LTD^TIME^USER^SIZE

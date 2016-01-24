@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSTLOAD ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Move data to formatted rms output file|DBSTLOAD|||||||1
  ;  #PACKAGE framework
  ;Private;To load the data from a table to a RMS file for transfer to a client
  ;
@@ -466,7 +465,7 @@ TESTFFID ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^18366" ; Signature - LTD^TIME^USER^SIZE
+ Q "61333^34998^Dan Russell^18294" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vRsRowGC(vNms,vTps) ; Runtime ResultSet.getRow().getColumns()

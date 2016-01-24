@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Procedure Definition|DBSPROC|||||||1
 public DBSPROC	// Procedure definition
 	/*
 	 	 
@@ -82,93 +81,46 @@ public EXT(Number %ProcessMode)	//
 	if %ProcessMode=3 do { quit	// Delete old definition
 		do Db.delete("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCID")
 		do Db.delete("DBTBL25","%LIBS='SYSDEV' AND PROCID=:PROCID")
-		#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-		type Number x = $$DELETE^%OSSCRPT($$SRCFILE^FILEUTL("PROC",PROCID))
-		
-		// remove compiled code
-		// check SYSMAP references, schedule for recompile
 
 		lock -DBTBL("SYSDEV",25,PROCID)
 	}
 
-	type String DQFILE = $$SRCFILE^FILEUTL("PROC",PROCID)
 	type DbSet ds=Db.selectDbSet("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCID","SEQ ASC")
 
 	if ds.isEmpty() do {	// New procedure
 		
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-		if $$EXISTS^FILEUTL(DQFILE), $$SIZE^FILEUTL(DQFILE)>0 quit	// use existing file
-
-		type IO io = Class.new("IO")
-		#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-		set io.directory = $$PARSE^%ZFUNC(DQFILE,"DIRECTORY")
-		#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-		set io.fileName = $$PARSE^%ZFUNC(DQFILE, "NAME")_$$PARSE^%ZFUNC(DQFILE, "TYPE")
-		set io.openParams = "WRITE/NEWV"
-
-		catch ioerr {
-			if 'io.device.isNull() do io.close()
-			if ioerr'["PSL-E-IO" throw ioerr
-
-			write "I/O error: ", ioerr.type,!
-		}
-		
-		do io.open()
-
-		type RecordDBTBL25 proc = Db.getRecord("DBTBL25","%LIBS='SYSDEV',PROCID=:PROCID")
-        	do io.write("//DO NOT MODIFY  "_proc.des_"|"_proc.pgm_"||||"_proc.rpcvar_"|"_proc.rpcvar1)
-
 		set TAB = 9.char()
 	
 		//Header information
-		do io.write(TAB_"/*")				// All is in PSL format
-		do io.write( TAB_" ORIG: "_%UserID_" - "_%SystemDate.toString()) 	// Developer , date
-		do io.write( TAB_" DESC: ")			// Description
-		do io.write( TAB)
-		do io.write( TAB_" ---- Comments --------------------------------------------------------")
-		do io.write( TAB)
-		do io.write( TAB_" ---- Revision History ------------------------------------------------")
-		do io.write( TAB)
-		do io.write( TAB_" ****** Consider using setAuditFlag for all objects in this procedure")
-		do io.write( TAB_"   example :do dep.setAuditFlag(1)")
-		do io.write( TAB)
-		do io.write( TAB_"*/")
-		do io.close()
+		set filstr(1) = TAB_"/*"				// All is in PSL format
+		set filstr(2) = TAB_" ORIG: "_%UserID_" - "_%SystemDate.toString() 	// Developer , date
+		set filstr(3) = TAB_" DESC: "			// Description
+		set filstr(4) = TAB
+		set filstr(5) = TAB_" ---- Comments --------------------------------------------------------"
+		set filstr(6) = TAB
+		set filstr(7) = TAB_" ---- Revision History ------------------------------------------------"
+		set filstr(8) = TAB
+		set filstr(9) = TAB_" ****** Consider using setAuditFlag for all objects in this procedure"
+		set filstr(10) = TAB_"   example :do dep.setAuditFlag(1)"
+		set filstr(11) = TAB
+		set filstr(12) = TAB_"*/"
 	}
-	/*
 	else  while ds.next() do {
 		type RecordDBTBL25D dbtbl25d = ds.getRecord("DBTBL25D")
 		set filstr(dbtbl25d.seq) = dbtbl25d.code	
 	}
-	*/
+	
+	do ^DBSWRITE("filstr")		// Access editor
 
-        // Get editor option
-        type String EDTOPT = ""                      // Default
-
-        if '%UserID.get().isNull() do {
-
-                type RecordSCAU scau = Db.getRecord("SCAU", "UID=:%UserID", 1)
-                set EDTOPT = scau.editor
-                if (EDTOPT = "DBS") set EDTOPT = ""
-        }
-
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	type Boolean updated = '$$EDTOPT^%OSSCRPT(EDTOPT, DQFILE)
-
-	; Restore auto-wrap
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	use 0 write $$SCRAWON^%TRMVT
-
-	if 'updated do { quit		// <F11> exit
+	if VFMQ="Q" do { quit		// <F11> exit
 		lock -DBTBL("SYSDEV",25,PROCID) 		
 		if %ProcessMode=1 set RM=$$^MSG(6710,PROCID)	// Not Modified
 	}
-
-	/*
-	TODO - replace DBTBL25D content only after successful compilation (cache last correct version)	
+		
 	do Db.delete("DBTBL25D", "%LIBS='SYSDEV' AND PROCID=:PROCID") 	// Delete existing records
 	
 	if 'filstr(1).order(),filstr(1).isNull() lock -DBTBL("SYSDEV",25,PROCID) quit	// if everything is deleted from the editor
+	
 	
 	set SEQ = 0
 	for  set SEQ=filstr(SEQ).order() quit:SEQ.isNull()  do { 
@@ -176,44 +128,13 @@ public EXT(Number %ProcessMode)	//
 		set dbtbl25d.code = filstr(SEQ)
 		do dbtbl25d.save()
 	}
-	*/
+		
 
 	// Update audit information and the Time
 	type RecordDBTBL25 dbtbl25 = Db.getRecord("DBTBL25","%LIBS='SYSDEV',PROCID=:PROCID",1)
 	set dbtbl25.user = %UserID
 	set dbtbl25.time = %CurrentTime
 	
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	if $$EXISTS^FILEUTL(DQFILE), $$SIZE^FILEUTL(DQFILE)>0 do {
-
-		type IO io = Class.new("IO")
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-		set io.directory = $$PARSE^%ZFUNC(DQFILE,"DIRECTORY")
-
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-		set io.fileName = $$PARSE^%ZFUNC(DQFILE, "NAME")_$$PARSE^%ZFUNC(DQFILE, "TYPE")
-		set io.openParams = "READ"
-
-		catch ioerr {
-			if 'io.device.isNull() do io.close()
-			if ioerr'["PSL-E-IO" throw ioerr
-
-			write "I/O error: ", ioerr.type,!
-		}
-		
-		do io.open()
-
-		type String hdr = io.read()
-		do io.close()
-
-		if 'hdr.contains("//DO NOT MODIFY") quit
-
-		set dbtbl25.pgm = hdr.piece("|",2)
-		set dbtbl25.rpcvar = hdr.piece("|",6)
-		set dbtbl25.rpcvar1 = hdr.piece("|",7)
-		
-	}
-
 	do dbtbl25.save() 
 
 	lock -DBTBL("SYSDEV",25,PROCID)	
@@ -258,11 +179,6 @@ public COPY	// Copy definition (Called by function DBSPROCCO)
 	do dbtbl25t.setMode(0)
 	
 	do dbtbl25t.save()
-
-	// TODO check existence of PROCIDF
-
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	type String tmp = $$COPYFIL^%OSSCRPT($$SRCFILE^FILEUTL("PROC",PROCIDF), $$SRCFILE^FILEUTL("PROC",PROCIDT))
 	
 	type DbSet ds=Db.selectDbSet("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCIDF","SEQ ASC")
 
@@ -270,14 +186,7 @@ public COPY	// Copy definition (Called by function DBSPROCCO)
 	while ds.next() do {	
 		type RecordDBTBL25D dfrom = ds.getRecord("DBTBL25D")
 		set SEQ = dfrom.seq
-
-		if SEQ=1 do {
-			if dfrom.code.contains("//DO NOT MODIFY") do { quit
-				// TODO set new header and quit
-			}
-			// TODO set new header and add dfrom first line
-		}
-
+		
 		type RecordDBTBL25D dto = Class.new("RecordDBTBL25D","%LIBS='SYSDEV',PROCID=:PROCIDT,SEQ=:SEQ")
 		set dto.code = dfrom.code
 		
@@ -313,7 +222,6 @@ public BUILD	// Build run-time routine (Called by function DBSPROCB)
 	do Db.delete("TMPDQ","PID=:%ProcessID")
 	
 	// "Press any key" message and pause
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
 	write $$MSG^%TRMVT("",,1)
 	
 	quit
@@ -344,41 +252,29 @@ public COMPILE(String PROCID,	// Procedure ID
 	write !, PROCID, !
 	
 	type RecordDBTBL25 dbtbl25 = Db.getRecord("DBTBL25","%LIBS=:%LIBS,PROCID=:PROCID")
-	// type RecordDBTBL25D dbtbl25d = Db.getRecord("DBTBL25D","%LIBS=:%LIBS,PROCID=:PROCID,SEQ=1")
+	type RecordDBTBL25D dbtbl25d = Db.getRecord("DBTBL25D","%LIBS=:%LIBS,PROCID=:PROCID,SEQ=1")
 
 	if dbtbl25.pgm.isNull() do { quit 
 		set RM = $$^MSG(3056,PROCID) 
-		#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
 		write $$MSG^%TRMVT(RM)
 		hang 2 
 	}	
 
 	set PGM = dbtbl25.pgm				// Routine name
-
-	type String procfile = $$SRCFILE^FILEUTL("PROC",PROCID)
-
-	type IO io = Class.new("IO")
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	set io.directory = $$PARSE^%ZFUNC(procfile,"DIRECTORY")
-	#ACCEPT Date=20-JAN-2016;PGM=kulhan;WARN=ACCESS;CR=4
-	set io.fileName = $$PARSE^%ZFUNC(procfile, "NAME")_$$PARSE^%ZFUNC(procfile, "TYPE")
-	set io.openParams = "READ"
-
-	do {
-		catch iox {
-			if 'io.device.isNull() do io.close()
-			if iox["IOEOF" quit
-			throw iox
-		}
 		
-		do io.open()
+	type DbSet ds=Db.selectDbSet("DBTBL25D","%LIBS='SYSDEV' AND PROCID=:PROCID","SEQ")
+	
+	// Gather signature data
+	set LTD = dbtbl25.ltd			// Date last modified
+	set TIME = dbtbl25.time			// Time last updated
+	set USER = dbtbl25.user			// User who last modified
+	set SIZE = 0
 
-		type String REC
-		for  set REC=io.read()  do {
-			set FCOUNT = FCOUNT + 1
-			set m2src(FCOUNT) = REC
-			set SIZE = SIZE + REC.length()	
-		}
+	while ds.next() do {
+		type RecordDBTBL25D d25d = ds.getRecord("DBTBL25D")
+		set FCOUNT = d25d.seq + count
+		set m2src(FCOUNT) = d25d.code
+		set SIZE = SIZE + d25d.code.length()	
 	}
 
 	/* If the is an extension of RecordTABLE code, compile as a filer, and we don't need
@@ -393,26 +289,12 @@ public COMPILE(String PROCID,	// Procedure ID
 		
 		set cmpType = "Procedure"_ "~"_ SIG
 	}
-	
-	type Number cmperr = $$cmpA2F^PSLC(m2src(),,PGM,,PROCID_ "~"_ cmpType)	
-        // do cmpA2F^UCGM(.m2src,PGM,,,,,,PROCID_ "~"_ cmpType)
-
-	// replace DBTBL25D content only after successful compilation (cache last correct version)	
-	if cmperr = 0, cmpType '= "Filer" {
-		do Db.delete("DBTBL25D", "%LIBS='SYSDEV' AND PROCID=:PROCID") 	// Delete existing records
-	
-		type Number SEQ = 0
-		for  set SEQ=m2src(SEQ).order() quit:(SEQ>FCOUNT)!(SEQ.isNull())  do { 
-			if SEQ=1,m2src(SEQ).contains("//DO NOT MODIFY") quit	
-
-			type RecordDBTBL25D dbtbl25d = Class.new("RecordDBTBL25D","%LIBS='SYSDEV',PROCID=:PROCID,:SEQ")
-			set dbtbl25d.code = m2src(SEQ)
-			do dbtbl25d.save()
-		}
-	}
+		
+        do cmpA2F^UCGM(.m2src,PGM,,,,,,PROCID_ "~"_ cmpType)
 
 	quit
 
+	
 ERR	//
 
 	type public Number RM
@@ -421,4 +303,4 @@ ERR	//
 	hang 2
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^11449"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61233^38565^Dan Russell^7808"	// Signature - LTD^TIME^USER^SIZE

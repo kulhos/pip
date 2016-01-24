@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Db class, RDB related|UCDBR|||||||1
 	/*
 	ORIG: Frans S.C. Witte - 03/22/05
 	DESC: Generating code for methods of class Db in case of RDB
@@ -1155,4 +1154,4 @@ public XvCloseName() quit "vCloseRDB^vResultSet"
 	Used here and by UCPATCH.
 	*/
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^46356"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61293^42411^Frans S.C. Witte^46304"	// Signature - LTD^TIME^USER^SIZE

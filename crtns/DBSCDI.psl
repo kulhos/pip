@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DQ computed data items|DBSCDI|||||||1
 	/*
 
 	-------Revision History-------------------------------------------
@@ -256,4 +255,4 @@ VALPGM(pgm) 	// Validate routine name syntax and also not in MRTNS directory
 	if pgmStr["CRTNS" set RM=$$^MSG(871)_""_%ZR(pgm)_pgm_".m" quit 1
 	quit 0
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4886"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61569^11635^Sha H Mirza^4832"	// Signature - LTD^TIME^USER^SIZE

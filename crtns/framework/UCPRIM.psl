@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Methods of PSL Class Primitive|UCPRIM|||||||1
 
 	/*
 	ORIG: Frans S.C. Witte 
@@ -490,4 +489,4 @@ toVal(	String expr,	// string to convert	/REQ/MECH=VAL
 
 	quit def
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^19393"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61436^42425^Frans S.C. Witte^19331"	// Signature - LTD^TIME^USER^SIZE

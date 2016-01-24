@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Report Statistics Print|DBSRWSTS|||||||1
 public DBSRWSTS(String VSTATS())	/* Part DBSRW*
 	ORIG: CHIANG - 1/1/85
 	PROCEDURE ID: DBSRWBNR
@@ -270,4 +269,4 @@ VBRSAVE(Number LINE,String DATA)        // Private - Save for report browser
         do tmprptbr.bypassSave()
         quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^6358"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61288^64007^Dan Russell^6291"	// Signature - LTD^TIME^USER^SIZE

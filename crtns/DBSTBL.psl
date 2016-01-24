@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Screen Table Lookup|DBSTBL|||||||1
 public DBSTBL(String vREF, String vSTR, String vFMT, Number vMIN, Number vMAX, Number vPT, Number vPB, String vHLP, String vHDG, String vUFK)
 
 	/*
@@ -1711,4 +1710,4 @@ public LOOKUPPP(String FORMAT,	// Input lookup format
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^41515"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61565^25470^Sha H Mirza^41454"	// Signature - LTD^TIME^USER^SIZE

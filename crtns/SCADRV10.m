@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV10 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Create/Modify Sub-menus|SCADRV10|||||||1
 SCADRV10 ; ;Create/Modify Sub-menus
  D INIT
  Q 
@@ -12,7 +11,7 @@ INIT ;
  ;
  S %PG=0
  S %PAGE=1
- S %ProcessMode=0
+ S %O=0
  D VPG
  Q 
  ;
@@ -51,7 +50,7 @@ VPG01(FN) ; Call screen
  N fSCATBL4 S fSCATBL4=$$vcdmNew^RecordSCATBL4()
   S vobj(fSCATBL4,-3)=FN
  ;
- N vo1 N vo2 N vo3 N vo4 D DRV^USID(%ProcessMode,"SCATBL4",.fSCATBL4,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
+ N vo1 N vo2 N vo3 N vo4 D DRV^USID(%O,"SCATBL4",.fSCATBL4,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
  K vobj(+$G(fSCATBL4)) Q 
  ;
 PPG00(FN) ; Set up repeat fields
@@ -106,24 +105,24 @@ FILE(FN) ; File data
  . Q 
  ;
  S N=""
- F I=1:1 S N=$O(LINK(N)) Q:N=""  D
+ F I=1:1 S N=$order(LINK(N)) Q:N=""  D
  .	I LINK(N)="" Q 
  .	S NEWARR(I)=DSC(N)_"|@"_LINK(N)
  .	Q 
  ;
  S (L,M)=""
- F  S M=$O(OLDARR(M)) Q:M=""  D
- .	S %ProcessMode=3
+ F  S M=$order(OLDARR(M)) Q:M=""  D
+ .	S %O=3
  .	S SNAME=OLDARR(M)
  .	D vDbDe2()
  .	Q 
  ;
- F  S L=$O(NEWARR(L)) Q:L=""  D
- .	S %ProcessMode=0
+ F  S L=$order(NEWARR(L)) Q:L=""  D
+ .	S %O=0
  .	N fSCATBL4 S fSCATBL4=$$vRCgetRecord1^RecordSCATBL4(FN,L,0)
  .	;
- .  S $P(vobj(fSCATBL4),$C(124),1)=$P(NEWARR(L),"|",1)
- .  S $P(vobj(fSCATBL4),$C(124),2)=$P(NEWARR(L),"|",2)
+ .  S $P(vobj(fSCATBL4),$C(124),1)=$piece(NEWARR(L),"|",1)
+ .  S $P(vobj(fSCATBL4),$C(124),2)=$piece(NEWARR(L),"|",2)
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordSCATBL4(fSCATBL4,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(fSCATBL4,-100) S vobj(fSCATBL4,-2)=1 TC:vTp  
  .	K vobj(+$G(fSCATBL4)) Q 
  Q 
@@ -142,7 +141,7 @@ END(FN) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4670" ; Signature - LTD^TIME^USER^SIZE
+ Q "60582^20585^SChhabria^4613" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SCATBL4 WHERE FN='FN' AND SEQ=:V1

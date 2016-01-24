@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSPROT5 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Mass Recompile for DI Protection|DBSPROT5|||||||1
 DBSPROT5 ; 
  N vTp
  ;
@@ -29,7 +28,7 @@ DBSPROT5 ;
  .	;
  .	N CNT S CNT=0
  .	;
- .	 N V1 S V1=%ProcessID D vDbDe1()
+ .	 N V1 S V1=$J D vDbDe1()
  .	;
  .	N ds,vos1,vos2,vos3,vos4 S ds=$$vOpen1()
  .	;
@@ -49,7 +48,7 @@ DBSPROT5 ;
  ..		;
  ..		I isOK D
  ...			;
- ...			N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=%ProcessID S vobj(tmpdq,-4)=vop2
+ ...			N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=$J S vobj(tmpdq,-4)=vop2
  ...			;
  ...		 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordTMPDQ(tmpdq,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(tmpdq,-100) S vobj(tmpdq,-2)=1 TC:vTp  
  ...			;
@@ -64,7 +63,7 @@ DBSPROT5 ;
  .	;
  .	N CNT S CNT=0
  .	;
- .	 N V1 S V1=%ProcessID D vDbDe2()
+ .	 N V1 S V1=$J D vDbDe2()
  .	;
  .	N ds,vos5,vos6,vos7,vos8 S ds=$$vOpen2()
  .	;
@@ -84,7 +83,7 @@ DBSPROT5 ;
  ..		;
  ..		I isOK D
  ...			;
- ...			N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=%ProcessID S vobj(tmpdq,-4)=vop5
+ ...			N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=$J S vobj(tmpdq,-4)=vop5
  ...			;
  ...		 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordTMPDQ(tmpdq,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(tmpdq,-100) S vobj(tmpdq,-2)=1 TC:vTp  
  ...			;
@@ -95,7 +94,7 @@ DBSPROT5 ;
  .	I (+CNT'=+0) D EXT^DBSRWDRV ; Compile them
  . Q 
  ;
-  N V1 S V1=%ProcessID D vDbDe3()
+  N V1 S V1=$J D vDbDe3()
  ;
  Q 
  ;
@@ -106,7 +105,7 @@ PPFID ; Post processor for FID
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2086" ; Signature - LTD^TIME^USER^SIZE
+ Q "60257^34992^Dan Russell^2020" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID = :V1

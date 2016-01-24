@@ -1,16 +1,15 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSEXEQ ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  QWIK REPORT WRITER|DBSEXEQ|||||||1
 DBSEXEQ ; 
  ;
  ; I18N=OFF
  ;
  Q  ; No entry from top
  ;
-CREATE(%ProcessMode) ; 
+CREATE(%O) ; 
  ;
  N QFLAG N ZQRUN
  N %PAGE N %PG N DBOPT N I N SEQ
@@ -21,8 +20,8 @@ CREATE(%ProcessMode) ;
  S ZQRUN=""
  S QFLAG=0
  ;
- I %ProcessMode=0 S QRID=$$FIND^DBSGETID("DBTBL5Q",1)
- E  I %ProcessMode=1 S QRID=$$FIND^DBSGETID("DBTBL5Q",0)
+ I %O=0 S QRID=$$FIND^DBSGETID("DBTBL5Q",1)
+ E  I %O=1 S QRID=$$FIND^DBSGETID("DBTBL5Q",0)
  ;
  Q:(QRID="") 
  ;
@@ -33,8 +32,8 @@ CREATE(%ProcessMode) ;
  ;
  I ($G(vobj(d5q,-2))=0) D
  .	;
- .  S vobj(d5q,-100,0)="" S $P(vobj(d5q,0),$C(124),15)=%UserID
- .  S vobj(d5q,-100,0)="" S $P(vobj(d5q,0),$C(124),3)=%CurrentDate
+ .  S vobj(d5q,-100,0)="" S $P(vobj(d5q,0),$C(124),15)=%UID
+ .  S vobj(d5q,-100,0)="" S $P(vobj(d5q,0),$C(124),3)=$P($H,",",1)
  .  S vobj(d5q,-100,0)="" S $P(vobj(d5q,0),$C(124),4)=1
  .  S vobj(d5q,-100,0)="" S $P(vobj(d5q,0),$C(124),5)=80
  .  S vobj(d5q,-100,0)="" S $P(vobj(d5q,0),$C(124),12)=1
@@ -42,7 +41,7 @@ CREATE(%ProcessMode) ;
  .	Q 
  ;
  ;  #ACCEPT Date=04/28/2008; Pgm=RussellDS; CR=33611; Group=MISMATCH
- N vo1 N vo2 N vo3 N vo4 D DRV^USID(%ProcessMode,"DBTBL5Q",.d5q,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
+ N vo1 N vo2 N vo3 N vo4 D DRV^USID(%O,"DBTBL5Q",.d5q,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
   S:'$D(vobj(d5q,0)) vobj(d5q,0)=$S(vobj(d5q,-2):$G(^DBTBL(vobj(d5q,-3),6,vobj(d5q,-4),0)),1:"")
  ;
  I VFMQ="Q" K vobj(+$G(d5q)) Q 
@@ -165,7 +164,7 @@ RUN ; Run QWIK Report (Function DBSQRR)
  S %PG=1
  ;
  ; Protect ACCESS FILES and DATA ITEMS prompts
- S %ProcessMode=2
+ S %O=2
  S ZQRUN=1
  ;
  ;  #ACCEPT Date=04/28/2008; Pgm=RussellDS; CR=33611; Group=MISMATCH
@@ -257,19 +256,19 @@ CMPALL ; Mass recompile QWIK report (function DBSQRB)
  N CNT
  N QRID
  ;
-  N V1 S V1=%ProcessID D vDbDe3()
+  N V1 S V1=$J D vDbDe3()
  ;
  S CNT=$$LIST^DBSGETID("DBTBL5Q")
  Q:'CNT 
  ;
- N ds,vos1,vos2,vos3,vos4  N V2 S V2=%ProcessID S ds=$$vOpen1()
+ N ds,vos1,vos2,vos3,vos4  N V2 S V2=$J S ds=$$vOpen1()
  ;
  F  Q:'$$vFetch1()  D
  . N tmpdq,vop1 S vop1=$P(ds,$C(9),2),tmpdq=$$vRCgetRecord1Opt^RecordTMPDQ($P(ds,$C(9),1),vop1,1,"")
  .	D COMPILE(vop1)
  . Q 
  ;
-  N V3 S V3=%ProcessID D vDbDe4()
+  N V3 S V3=$J D vDbDe4()
  ;
  Q 
  ;
@@ -669,7 +668,7 @@ FIXFMT(INPUT,TABLES,NLEN,NDEC,NFMT) ; Format  /NOREQ/MECH=REFNAM:W
  Q return
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^16766" ; Signature - LTD^TIME^USER^SIZE
+ Q "61453^45871^Dan Russell^16715" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM DBTBL6F WHERE QRID=:QRID

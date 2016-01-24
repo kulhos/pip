@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Program name/screen id linkage utility|USID|||||||1
 	// Program name/screen id linkage utility
 	/*
 	   ORIG:  Allan R. Mattson (6915) - 08/18/86
@@ -139,4 +138,4 @@ LINK(RecordDBTBL2 dbtbl2,
 	else  set %LINK=28
 	quit %LINK
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3522"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "59922^59214^Dan Russell^3454"	// Signature - LTD^TIME^USER^SIZE

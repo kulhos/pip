@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCROWSET ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL RowSet class library|UCROWSET|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -140,7 +139,7 @@ colSub(context,table,column) ; name of column (*3)
  Q $get(context("Inst"),"vR")_"."_$ZCONVERT(column,"L")
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^12431" ; Signature - LTD^TIME^USER^SIZE
+ Q "61293^42828^Frans S.C. Witte^12373" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vaddSubr(p1,p2,p3,p4) ; PSL.addSubrou

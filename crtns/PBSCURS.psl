@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Profile Server Cursor Prool Process|PBSCURS|||||||1
 PBSCURS
 	/*
 	Procedure ID:	PBSCURS - Profile Server Cursor Pool
@@ -654,4 +653,4 @@ ERRLOG(String ET)
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^15316"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61380^47623^Badrinath Giridharan^15248"	// Signature - LTD^TIME^USER^SIZE

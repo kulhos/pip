@@ -1,4 +1,3 @@
-//DO NOT MODIFY  SCA Julian Date Conversion|SCAJD|||||||1
 public SCAJD(STRING,MASK)	// SCA Julian Date Conversion
 	/*	  
 	   ORIG:  BALDWIN - 15 APR 1991
@@ -664,4 +663,4 @@ ERR	set DN=-1
 
 	quit 
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^11130"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60487^37529^Pat Kelly^11073"	// Signature - LTD^TIME^USER^SIZE

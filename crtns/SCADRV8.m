@@ -1,21 +1,20 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV8 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  CREATE/MODIFY/DELETE NEW MENU|SCADRV8|||||||1
 SCADRV8 ; 
  ;
  Q 
  ;
 NEW ; 
- S %ProcessMode=0 D INIT Q 
+ S %O=0 D INIT Q 
  ;
 UPD ; 
- S %ProcessMode=1 D INIT Q 
+ S %O=1 D INIT Q 
  ;
 DEL ; 
- S %ProcessMode=3 D INIT Q 
+ S %O=3 D INIT Q 
  ;
 INIT ; 
  ;
@@ -53,10 +52,10 @@ VPG1 ;
  S %READ="@@%FN,,,DESC/REQ,PROMPT/REQ"
  ;
  ; Description: ~p1
- I %ProcessMode=3 S %TAB("DEL")=".DEL1" S HDG2=$$^MSG(8233,DESC) S %READ="@HDG,,@HDG2,DEL/REQ" S DEL=1 S %NOPRMT="F"
+ I %O=3 S %TAB("DEL")=".DEL1" S HDG2=$$^MSG(8233,DESC) S %READ="@HDG,,@HDG2,DEL/REQ" S DEL=1 S %NOPRMT="F"
  D ^UTLREAD
  ;
- I %ProcessMode=3,'DEL S VFMQ="Q"
+ I %O=3,'DEL S VFMQ="Q"
  ;
  D VER
  Q 
@@ -66,7 +65,7 @@ VER ;
  I VFMQ="Q" D END Q 
  D FILE
  ;
- I %ProcessMode=0 D EXT^SCADRV5
+ I %O=0 D EXT^SCADRV5
  ;
  D END
  Q 
@@ -74,7 +73,7 @@ VER ;
 FILE ; 
  N vTp
  ;
- I %ProcessMode=3 D vDbDe1() Q 
+ I %O=3 D vDbDe1() Q 
  ;
  N scamenu0 S scamenu0=$$vRCgetRecord1^RecordSCAMENU0(MENU,0)
   S $P(vobj(scamenu0),$C(124),1)=DESC
@@ -87,10 +86,10 @@ END ;
  I VFMQ="Q" D
  .	;
  .	; Menu ~p1 not created
- .	I %ProcessMode=0 S RM=$$^MSG(1711,MENU) Q 
+ .	I %O=0 S RM=$$^MSG(1711,MENU) Q 
  .	;
  .	; Menu ~p1 not modified
- .	I %ProcessMode=1 S RM=$$^MSG(1713,MENU) Q 
+ .	I %O=1 S RM=$$^MSG(1713,MENU) Q 
  .	;
  .	; Menu ~p1 not deleted
  .	S RM=$$^MSG(1712,MENU)
@@ -99,10 +98,10 @@ END ;
  E  D
  .	;
  .	; Menu ~p1 created
- .	I %ProcessMode=0 S RM=$$^MSG(1708,MENU) Q 
+ .	I %O=0 S RM=$$^MSG(1708,MENU) Q 
  .	;
  .	; Menu ~p1 modified
- .	I %ProcessMode=1 S RM=$$^MSG(1710,MENU) Q 
+ .	I %O=1 S RM=$$^MSG(1710,MENU) Q 
  .	;
  .	; Menu ~p1 deleted
  .	S RM=$$^MSG(1709,MENU)
@@ -161,7 +160,7 @@ PPMENU ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3619" ; Signature - LTD^TIME^USER^SIZE
+ Q "60218^26329^Sanjay Chhrabria^3557" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SCAMENU0 WHERE MENU=:MENU

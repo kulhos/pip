@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Batch Procedure Definition|DBSBAT|||||||1
 	#PACKAGE framework
 			 
 	/*
@@ -323,4 +322,4 @@ pp	// UTLREAD post processor to check duplicate name
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^6275"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61341^48273^Dan Russell^6217"	// Signature - LTD^TIME^USER^SIZE

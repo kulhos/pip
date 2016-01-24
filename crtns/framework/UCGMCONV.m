@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCGMCONV ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL Code conversion utility library|UCGMCONV|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION ResultClass ON
  ;
@@ -153,7 +152,7 @@ isGlvn(expr) ;
  Q $$isArr^UCGM(expr)
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^9446" ; Signature - LTD^TIME^USER^SIZE
+ Q "61348^60742^Frans S.C. Witte^9377" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

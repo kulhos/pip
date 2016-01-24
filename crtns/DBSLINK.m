@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSLINK ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DBSDSMP - Procedure|DBSLINK|||||||1
 DBSLINK(dbtbl2) ; ;DBS - U - v7.0 - PSL Linked Screen Compiler
  N vTp
  N % N %TAB N BLD N CMD N D N DEF N DES N DLIB N EXTSID N FA N FB N FILE N FILER N FILES N FLAG N HELP N HV N i N I N IDXX N ISEQ N KVAR N LOOP N MAXLN N MPLCT N N N NEW N NI N NOLINK N NS N NUL N OD N OK N OL
@@ -44,7 +43,7 @@ DBSLINK(dbtbl2) ; ;DBS - U - v7.0 - PSL Linked Screen Compiler
  D PARLIST^DBS2PSL0(.dbtbl2,.vobjlst,FILES,.vFID) ; build formal and actual parameter lists
  S SCRER=0
  ;
- N rs,vos1,vos2,vos3,vos4,vos5  N V1 S V1=%Library S rs=$$vOpen1()
+ N rs,vos1,vos2,vos3,vos4,vos5 S rs=$$vOpen1()
  I '$$vFetch1() Q 
  S i=""
  F SCRNUM=1:1 S SID=$get(sidArray(SCRNUM)) Q:(SID="")  D BUILD(SID,SCRNUM) Q:ER 
@@ -56,20 +55,20 @@ BUILD(SID,SCRNUM) ; Build multiple screen program
  N vTp,vo2
  ;
  N DFID N DLIB N DT N EXTSID N FILES N LIB N parlst N PFID N PGM N SCRER N SEQ N vFID N Vprot N X N Z
- N ds  N V1 S V1=%Library S ds=$$vOpen2()
+ N ds S ds=$$vOpen2()
  N dbtbl2d
  N pproc
  N dbtblpp
  ;
- I ($get(%Library)="") S %Library="SYSDEV"
+ I ($get(%LIBS)="") S %LIBS="SYSDEV"
  I $E(SID,1)="@" D APPEND S SCRNUM=SCRNUM-1 D vKill1(""),vKill2("") K vobj(+$G(ds)) Q 
- I SID["[" S X=$piece(SID,"]",1) S %Library=$piece(X,"[",2) S SID=$piece(SID,"]",2)
+ I SID["[" S X=$piece(SID,"]",1) S %LIBS=$piece(X,"[",2) S SID=$piece(SID,"]",2)
  ;
  ;  Invalid screen name
-  N V2 S V2=%Library I '($D(^DBTBL(V2,2,SID))) WRITE ?20,$$^MSG(1458,SID) S SCRER=1 D vKill1(""),vKill2("") K vobj(+$G(ds)) Q  ; Invalid screen name ~p1
+ I '$$vDbEx1() WRITE ?20,$$^MSG(1458,SID) S SCRER=1 D vKill1(""),vKill2("") K vobj(+$G(ds)) Q  ; Invalid screen name ~p1
  ;
  K DT
- N dbtbl2 S dbtbl2=$$vRCgetRecord0^RecordDBTBL2(%Library,SID,0)
+ N dbtbl2 S dbtbl2=$$vRCgetRecord0^RecordDBTBL2(%LIBS,SID,0)
   S vobj(dbtbl2,0)=$G(^DBTBL(vobj(dbtbl2,-3),2,vobj(dbtbl2,-4),0))
  S FILES=$P(vobj(dbtbl2,0),$C(124),1)
  ;
@@ -109,7 +108,7 @@ BUILD(SID,SCRNUM) ; Build multiple screen program
  .	Q 
  ;
  ; Display pre-proc
-  N V3 S V3=%Library I ($D(^DBTBL(V3,2,SID,0,121))#2) D
+ I $$vDbEx2() D
  .	S TMP(CMD)=" do VDSPPRE^"_PGM_"("_parlst("actual")_")"
  .	Q 
  ;
@@ -178,7 +177,7 @@ LOAD(dbtbl2,ds,dbtbl2d,pprocs,dbtbl2pp) ;
  .	;set SEQ=dbtbl2d(i).seq
  .	;
  .	;load column pre/post procs
- .	N ds2,vos1,vos2,vos3,vos4,vos5,vos6  N V1 S V1=%Library S ds2=$$vOpen5()
+ .	N ds2,vos1,vos2,vos3,vos4,vos5,vos6 S ds2=$$vOpen5()
  .	F  Q:'$$vFetch5()  D
  ..  N dbtbl2pp S dbtbl2pp=$$vRCgetRecord1Opt^RecordDBTBL2PP($P(ds2,$C(9),1),$P(ds2,$C(9),2),$P(ds2,$C(9),3),$P(ds2,$C(9),4),1,"")
  ..		S X=$P(dbtbl2pp,$C(12),1)
@@ -207,12 +206,12 @@ FILE(SCRNUM) ;
  D FLD^DBSBLD
  K SCREEN
  ;
- N dbtbl1,vop1,vop2,vop3 S vop1=%Library,vop2=FID,dbtbl1=$$vRCgetRecord0Opt^RecordDBTBL1(%Library,FID,0,"")
+ N dbtbl1,vop1,vop2,vop3 S vop1=%LIBS,vop2=FID,dbtbl1=$$vRCgetRecord0Opt^RecordDBTBL1(%LIBS,FID,0,"")
   S vop3=$G(^DBTBL(vop1,1,vop2,101))
- N dbtbl2,vop4,vop5,vop6 S vop4=%Library,vop5=SID,dbtbl2=$$vRCgetRecord0Opt^RecordDBTBL2(%Library,SID,0,"")
+ N dbtbl2,vop4,vop5,vop6 S vop4=%LIBS,vop5=SID,dbtbl2=$$vRCgetRecord0Opt^RecordDBTBL2(%LIBS,SID,0,"")
   S vop6=$G(^DBTBL(vop4,2,vop5,0))
  ;type RecordCUVAR cuvar=Db.getRecord("CUVAR")
-  N V1 S V1=%Library S USERVLOD=($D(^DBTBL(V1,2,SID,0,101))#2)
+ S USERVLOD=$$vDbEx3()
  ;
  S RPCFLG=1
  ;
@@ -235,7 +234,7 @@ FILE(SCRNUM) ;
  .	N OM
  .	N i
  .	S X=100.99
- .	N ds,vos1,vos2,vos3,vos4,vos5  N V2 S V2=%Library S ds=$$vOpen6()
+ .	N ds,vos1,vos2,vos3,vos4,vos5 S ds=$$vOpen6()
  .	S i=0
  .	F  Q:'$$vFetch6()  D
  ..  N dbtblpp S dbtblpp=$$vRCgetRecord1Opt^RecordDBTBL2PP($P(ds,$C(9),1),$P(ds,$C(9),2),$P(ds,$C(9),3),$P(ds,$C(9),4),1,"")
@@ -330,7 +329,7 @@ FILE(SCRNUM) ;
  S X1=X1+1.001
  ;
  ; ---------- Without Display Pre-processor
-  N V2 S V2=%Library I '($D(^DBTBL(V2,2,SID,0,121))#2) D
+ I '$$vDbEx4() D
  .	S REPORT(X1)=" if '%ProcessMode do VNEW("_vobjlst("actual")_")" S X1=X1+.001
  .	S REPORT(X1)=" if %ProcessMode do VLOD("_vobjlst("actual")_") if $G(ER) set VFMQ=""Q"" quit" S X1=X1+.001
  .	S REPORT(X1)=" do VPG("_vobjlst("actual")_")" S X1=X1+.001
@@ -358,7 +357,7 @@ FILE(SCRNUM) ;
  S X1=XLT("V0")+.001 K REPORT(XLT("V0"))
  ;
  ; ---------- With screen pre-processor
-  N V3 S V3=%Library I ($D(^DBTBL(V3,2,SID,0,61))#2) D
+ I $$vDbEx5() D
  .	N tag
  .	S tag="VSCRPRE("_vobjlst("formal")_") // Screen Pre-Processor"
  .	D PPUTIL(61,tag)
@@ -410,7 +409,7 @@ PPUTIL(node,tag) ;
  N I N OM N X N X1 N X2 N Z
  S X=node-.001 S X2=X+20
  ;
- N ds,vos1,vos2,vos3,vos4,vos5,vos6,vos7  N V1 S V1=%Library S ds=$$vOpen7()
+ N ds,vos1,vos2,vos3,vos4,vos5,vos6,vos7 S ds=$$vOpen7()
  S I=0
  F  Q:'$$vFetch7()  D
  .	N code
@@ -445,17 +444,17 @@ VALID(dbtbl2,SID,scrnum) ; Validate screen linkage file relationships
  S mfile=","_$P(vobj(dbtbl2,0),$C(124),1)_","
  ; Check each screen
  ;
- N rs  N V1 S V1=%Library S rs=$$vOpen8()
+ N rs S rs=$$vOpen8()
  I '$$vFetch8(rs) K vobj(+$G(rs)) Q 
  F i=1:1:28 D  Q:ER 
  .	S sid=$P(vobj(rs),$C(9),$$vRsGetCol(rs,i))
  .	Q:sid="" 
- .	 N V2,V3 S V2=%Library,V3=sid I '($D(^DBTBL(V2,2,V3))) S ER=1 S RM=$$^MSG(1458,sid) Q 
+ .	 N V1 S V1=sid I '$$vDbEx6() S ER=1 S RM=$$^MSG(1458,sid) Q 
  .	S sidArray(i)=sid
  .	S scrnum=scrnum+1
  .	I $E(sid,1)="@" Q  ; @[lib]sid
  .	;
- .	N scr,vop1,vop2,vop3 S vop1=%Library,vop2=sid,scr=$$vRCgetRecord0Opt^RecordDBTBL2(%Library,sid,0,"")
+ .	N scr,vop1,vop2,vop3 S vop1=%LIBS,vop2=sid,scr=$$vRCgetRecord0Opt^RecordDBTBL2(%LIBS,sid,0,"")
  .	 S vop3=$G(^DBTBL(vop1,2,vop2,0))
  .	S file=$P(vop3,$C(124),1)
  .	;
@@ -492,7 +491,7 @@ BLD1(AR) ;
  ;
  S fid=""
  F  S fid=$order(LOOP(-1,fid)) Q:fid=""!(LOOP(-1,fid)=AR) 
- N dbtbl1,vop1,vop2,vop3 S vop1=%Library,vop2=fid,dbtbl1=$$vRCgetRecord0Opt^RecordDBTBL1(%Library,fid,0,"")
+ N dbtbl1,vop1,vop2,vop3 S vop1=%LIBS,vop2=fid,dbtbl1=$$vRCgetRecord0Opt^RecordDBTBL1(%LIBS,fid,0,"")
   S vop3=$G(^DBTBL(vop1,1,vop2,16))
  S keys=$P(vop3,$C(124),1)
  S lastkey=$piece(keys,",",$L(keys,",")) ; get last key
@@ -517,7 +516,7 @@ END ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^17703" ; Signature - LTD^TIME^USER^SIZE
+ Q "61277^63996^Dan Russell^17651" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vRsGetCol(object,column) ; Runtime ResultSet.getCol()
@@ -531,6 +530,60 @@ vRsGetCol(object,column) ; Runtime ResultSet.getCol()
  N pos S pos=$L($piece((","_select_","),","_column_",",1),",")
  Q pos
  ;
+vDbEx1() ; min(1): DISTINCT LIBS,SID FROM DBTBL2 WHERE LIBS=:%LIBS AND SID=:SID
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID))) Q 0
+ Q 1
+ ;
+vDbEx2() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=121
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,121))#2) Q 0
+ Q 1
+ ;
+vDbEx3() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=101
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,101))#2) Q 0
+ Q 1
+ ;
+vDbEx4() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=121
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,121))#2) Q 0
+ Q 1
+ ;
+vDbEx5() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=61
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,61))#2) Q 0
+ Q 1
+ ;
+vDbEx6() ; min(1): DISTINCT LIBS,SID FROM DBTBL2 WHERE LIBS=:%LIBS AND SID=:V1
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,V1))) Q 0
+ Q 1
+ ;
 vKill1(ex1) ; Delete objects dbtbl2d()
  ;
  N n1 S (n1)=""
@@ -543,7 +596,7 @@ vKill2(ex1) ; Delete objects dbtblpp()
  F  S n1=$O(dbtblpp(n1)) Q:n1=""  K:'((n1=ex1)) vobj(dbtblpp(n1))
  Q
  ;
-vOpen1() ; LNK1,LNK2,LNK3,LNK4,LNK5,LNK6,LNK7,LNK8,LNK9,LNK10,LNK11,LNK12,LNK13,LNK14,LNK15,LNK16,LNK17,LNK18,LNK19,LNK20,LNK21,LNK22,LNK23,LNK24,LNK25,LNK26,LNK27,LNK28 FROM DBTBL2 WHERE LIBS=:V1 AND SID=:SID
+vOpen1() ; LNK1,LNK2,LNK3,LNK4,LNK5,LNK6,LNK7,LNK8,LNK9,LNK10,LNK11,LNK12,LNK13,LNK14,LNK15,LNK16,LNK17,LNK18,LNK19,LNK20,LNK21,LNK22,LNK23,LNK24,LNK25,LNK26,LNK27,LNK28 FROM DBTBL2 WHERE LIBS=:%LIBS AND SID=:SID
  ;
  ;
  S vos1=2
@@ -552,7 +605,7 @@ vOpen1() ; LNK1,LNK2,LNK3,LNK4,LNK5,LNK6,LNK7,LNK8,LNK9,LNK10,LNK11,LNK12,LNK13,
  ;
 vL1a0 S vos1=0 Q
 vL1a1 S vos2=$$BYTECHAR^SQLUTL(254)
- S vos3=$G(V1) I vos3="" G vL1a0
+ S vos3=$G(%LIBS) I vos3="" G vL1a0
  S vos4=$G(SID) I vos4="" G vL1a0
  I '($D(^DBTBL(vos3,2,vos4))) G vL1a0
  Q
@@ -572,7 +625,7 @@ vFetch1() ;
  ;
  Q 1
  ;
-vOpen2() ; LIBS,SID,SEQ FROM DBTBL2D WHERE LIBS=:V1 AND SID=:SID AND SEQ>0
+vOpen2() ; LIBS,SID,SEQ FROM DBTBL2D WHERE LIBS=:%LIBS AND SID=:SID AND SEQ>0
  ;
  N vOid
  ;
@@ -587,7 +640,7 @@ vOpen2() ; LIBS,SID,SEQ FROM DBTBL2D WHERE LIBS=:V1 AND SID=:SID AND SEQ>0
  ;
 vL2a0 S vobj(vOid,0)=0 Q
 vL2a1 S vobj(vOid,1)=$$BYTECHAR^SQLUTL(254)
- S vobj(vOid,2)=$G(V1) I vobj(vOid,2)="" G vL2a0
+ S vobj(vOid,2)=$G(%LIBS) I vobj(vOid,2)="" G vL2a0
  S vobj(vOid,3)=$G(SID) I vobj(vOid,3)="" G vL2a0
  S vobj(vOid,4)=0
 vL2a5 S vobj(vOid,4)=$O(^DBTBL(vobj(vOid,2),2,vobj(vOid,3),vobj(vOid,4)),1) I vobj(vOid,4)="" G vL2a0
@@ -669,7 +722,7 @@ vFetch4(vOid) ;
  ;
  Q 1
  ;
-vOpen5() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V1 AND SID=:SID AND SEQ=:SEQ
+vOpen5() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=:SEQ
  ;
  ;
  S vos1=2
@@ -678,7 +731,7 @@ vOpen5() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V1 AND SID=:SID AND SEQ=:
  ;
 vL5a0 S vos1=0 Q
 vL5a1 S vos2=$$BYTECHAR^SQLUTL(254)
- S vos3=$G(V1) I vos3="" G vL5a0
+ S vos3=$G(%LIBS) I vos3="" G vL5a0
  S vos4=$G(SID) I vos4="" G vL5a0
  S vos5=$G(SEQ)
  S vos5=+vos5
@@ -698,7 +751,7 @@ vFetch5() ;
  ;
  Q 1
  ;
-vOpen6() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V2 AND SID=:SID AND SEQ=0 AND PSEQ BETWEEN 101 AND 120
+vOpen6() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ BETWEEN 101 AND 120
  ;
  ;
  S vos1=2
@@ -707,7 +760,7 @@ vOpen6() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V2 AND SID=:SID AND SEQ=0
  ;
 vL6a0 S vos1=0 Q
 vL6a1 S vos2=$$BYTECHAR^SQLUTL(254)
- S vos3=$G(V2) I vos3="" G vL6a0
+ S vos3=$G(%LIBS) I vos3="" G vL6a0
  S vos4=$G(SID) I vos4="" G vL6a0
  S vos5=101
  I $D(^DBTBL(vos3,2,vos4,0,vos5)),'(vos5>120) G vL6a7
@@ -726,7 +779,7 @@ vFetch6() ;
  ;
  Q 1
  ;
-vOpen7() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V1 AND SID=:SID AND SEQ=0 AND PSEQ BETWEEN :X AND :X2
+vOpen7() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ BETWEEN :X AND :X2
  ;
  ;
  S vos1=2
@@ -735,7 +788,7 @@ vOpen7() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V1 AND SID=:SID AND SEQ=0
  ;
 vL7a0 S vos1=0 Q
 vL7a1 S vos2=$$BYTECHAR^SQLUTL(254)
- S vos3=$G(V1) I vos3="" G vL7a0
+ S vos3=$G(%LIBS) I vos3="" G vL7a0
  S vos4=$G(SID) I vos4="" G vL7a0
  S vos5=$G(X)
  S vos6=$G(X2)
@@ -756,7 +809,7 @@ vFetch7() ;
  ;
  Q 1
  ;
-vOpen8() ; LNK1,LNK2,LNK3,LNK4,LNK5,LNK6,LNK7,LNK8,LNK9,LNK10,LNK11,LNK12,LNK13,LNK14,LNK15,LNK16,LNK17,LNK18,LNK19,LNK20,LNK21,LNK22,LNK23,LNK24,LNK25,LNK26,LNK27,LNK28 FROM DBTBL2 WHERE LIBS=:V1 AND SID=:SID
+vOpen8() ; LNK1,LNK2,LNK3,LNK4,LNK5,LNK6,LNK7,LNK8,LNK9,LNK10,LNK11,LNK12,LNK13,LNK14,LNK15,LNK16,LNK17,LNK18,LNK19,LNK20,LNK21,LNK22,LNK23,LNK24,LNK25,LNK26,LNK27,LNK28 FROM DBTBL2 WHERE LIBS=:%LIBS AND SID=:SID
  ;
  N vOid
  ;
@@ -771,7 +824,7 @@ vOpen8() ; LNK1,LNK2,LNK3,LNK4,LNK5,LNK6,LNK7,LNK8,LNK9,LNK10,LNK11,LNK12,LNK13,
  ;
 vL8a0 S vobj(vOid,0)=0 Q
 vL8a1 S vobj(vOid,1)=$$BYTECHAR^SQLUTL(254)
- S vobj(vOid,2)=$G(V1) I vobj(vOid,2)="" G vL8a0
+ S vobj(vOid,2)=$G(%LIBS) I vobj(vOid,2)="" G vL8a0
  S vobj(vOid,3)=$G(SID) I vobj(vOid,3)="" G vL8a0
  I '($D(^DBTBL(vobj(vOid,2),2,vobj(vOid,3)))) G vL8a0
  Q

@@ -1,10 +1,8 @@
 { "class" : "RecordDBIMPORTD",	"accessLevel" : 2,	"adjustor" : "",	"classType" : 0,	"constructor" : "classNew^DBSDYNRA",	"delimiter" : 124,	"destructor" : "",	"extends" : "Record",	"flags" : "",	"isAbstract" : false,	"isNoInstance" : false,	"package" : "profile.psl",	"propProc" : ""
 , "methods" : [ 
-{ "class" : "RecordDBIMPORTD",	"method" : "archive",	"resultClass" : "Number",	"formalList" : "noret String archiveDir;noret Number archiveNum;noret Date archiveDate",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
-,	{ "class" : "RecordDBIMPORTD",	"method" : "columnList",	"resultClass" : "List",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
+{ "class" : "RecordDBIMPORTD",	"method" : "columnList",	"resultClass" : "List",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordDBIMPORTD",	"method" : "columnListBM",	"resultClass" : "List",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordDBIMPORTD",	"method" : "columnListCMP",	"resultClass" : "List",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
-,	{ "class" : "RecordDBIMPORTD",	"method" : "getArchiveFile",	"resultClass" : "String",	"formalList" : "noret String archiveTable;noret Number option;noret Date archiveKey",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordDBIMPORTD",	"method" : "getColumnMap",	"resultClass" : "void",	"formalList" : "noret String map()",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordDBIMPORTD",	"method" : "logUserclass",	"resultClass" : "Boolean",	"formalList" : "noret String operation",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "RecordDBIMPORTD",	"method" : "throwError",	"resultClass" : "void",	"formalList" : "noret String MSG",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }

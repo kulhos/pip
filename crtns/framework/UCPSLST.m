@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCPSLST ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSLState - Insensitive Group|UCPSLST|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -117,4 +116,4 @@ topIf(pslSt) ; PSLState "object"
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^8544" ; Signature - LTD^TIME^USER^SIZE
+ Q "61045^43029^Frans S.C. Witte^8483" ; Signature - LTD^TIME^USER^SIZE

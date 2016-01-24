@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Rebuild Index Files|DBSINDXZ|||||||1
 DBSINDXZ	
 		 
 	/*
@@ -633,4 +632,4 @@ public EXT(List files)	// Files list
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^14192"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61185^65719^Dan Russell^14139"	// Signature - LTD^TIME^USER^SIZE

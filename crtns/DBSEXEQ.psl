@@ -1,4 +1,3 @@
-//DO NOT MODIFY  QWIK REPORT WRITER|DBSEXEQ|||||||1
 DBSEXEQ	  
 	 /* DBS - U - V5.0 - QWIK REPORT
 	    Copyright(c)2003 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/13/03 16:04:18 - RUSSELL
@@ -791,4 +790,4 @@ public FIXFMT(String INPUT,	// Input string
 
 	quit return
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^16766"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61453^45871^Dan Russell^16715"	// Signature - LTD^TIME^USER^SIZE

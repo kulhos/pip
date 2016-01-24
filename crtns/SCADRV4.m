@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV4 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Function maintenance|SCADRV4|||||||1
 SCADRV4 ; ;Function maintenance
  ;
 NEW ; 
@@ -26,12 +25,12 @@ DEL ;
  D INIT(3)
  Q 
  ;
-INIT(%ProcessMode) ; 
+INIT(%O) ; 
  ;
  N OLNTB,VFMQ
  S %PG=0
  S %PAGE=1
- I %ProcessMode<2,$get(%IPMODE)'["NOINT" S %PAGE=2
+ I %O<2,$get(%IPMODE)'["NOINT" S %PAGE=2
  K FN
  N fSCATBL
  D VPG(.fSCATBL)
@@ -53,10 +52,10 @@ VPG(fSCATBL) ; Page control
 VPG00 ; Set up
  ;
  S %TAB("FN")=".FN2/TBL=[SCATBL]/XPP=D PPFUN^SCADRV4"
- I %ProcessMode=2 S %TAB("IO")=$$IO^SCATAB($I)
+ I %O=2 S %TAB("IO")=$$IO^SCATAB($I)
  ;
  S %READ="@@%FN,,,FN/REQ" S %NOPRMT="N"
- I %ProcessMode=2 S %READ=%READ_",IO/REQ"
+ I %O=2 S %READ=%READ_",IO/REQ"
  ;
  D ^UTLREAD
  ;
@@ -72,7 +71,7 @@ PPFUN ; UID post processor
  I ER Q 
  ;
  ; SCA can modify anything
- I %UserClass="SCA" Q 
+ I %UCLS="SCA" Q 
  ;
  ; Z's can be modified
  I $E(X,1)="Z" Q 
@@ -82,7 +81,7 @@ PPFUN ; UID post processor
  ;
  ; Userclass ~p1 must use function name starting with ""Z""
  S ER=1
- S RM=$$^MSG(2897,%UserClass)
+ S RM=$$^MSG(2897,%UCLS)
  Q 
  ;
 DELCHK ; Ensure cannot delete if linked in a menu or sub-menu
@@ -117,15 +116,15 @@ DELCHK ; Ensure cannot delete if linked in a menu or sub-menu
 VPG01(fSCATBL) ; Function screen
  ;
   K vobj(+$G(fSCATBL)) S fSCATBL=$$vRCgetRecord1^RecordSCATBL(FN,0)
- I %ProcessMode=2,IO'=$I D OPEN^SCAIO I ER S VFMQ="Q" Q 
+ I %O=2,IO'=$I D OPEN^SCAIO I ER S VFMQ="Q" Q 
  ;
- N vo1 N vo2 N vo3 N vo4 D DRV^USID(%ProcessMode,"SCATBL",.fSCATBL,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
+ N vo1 N vo2 N vo3 N vo4 D DRV^USID(%O,"SCATBL",.fSCATBL,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
  ;
  Q 
  ;
 VPG02(fSCATBL) ; Documentation screen
  ;
- S %OSAV=%ProcessMode
+ S %OSAV=%O
  S %SN="FUNDOC"
  S PG=FN
  K DOC
@@ -155,18 +154,18 @@ VPG02(fSCATBL) ; Documentation screen
  S SRM=80
  S PIO=$I
  S %TB=$char(9)
- S JOB=%ProcessID
+ S JOB=$J
  S (DTAB,MR)=5
  ;
  ; Function Documentation
  D ^DBSWRITE("DOC",3,22,99999,"",$$^MSG(3248))
  ;
- S %ProcessMode=%OSAV
+ S %O=%OSAV
  Q 
  ;
 VER(fSCATBL) ; 
  ;
- I %ProcessMode=2!(%ProcessMode=4)!(VFMQ="Q") D END Q 
+ I %O=2!(%O=4)!(VFMQ="Q") D END Q 
  ;
  D FILE(.fSCATBL)
  ;
@@ -179,7 +178,7 @@ FILE(fSCATBL) ;
  ;
  N option,seq,TEMP,user
  ;
- S option=%ProcessMode
+ S option=%O
  S (user,seq)=""
  ;
  I VFMQ="F",$D(DOC) D
@@ -188,7 +187,7 @@ FILE(fSCATBL) ;
  .	;
  .	S X1=""
  .	F I=1:1 D  Q:X1="" 
- ..		S X1=$O(DOC(X1))
+ ..		S X1=$order(DOC(X1))
  ..		I X1="" Q 
  ..		N scatbld S scatbld=$$vRCgetRecord1^RecordSCATBLDOC(FN,X1,0)
  ..	  S $P(vobj(scatbld),$C(124),1)=DOC(X1)
@@ -196,14 +195,14 @@ FILE(fSCATBL) ;
  ..		K vobj(+$G(scatbld)) Q 
  .	Q 
  ;
- S %ProcessMode=option
+ S %O=option
  K X
  ;
- I %ProcessMode'=3 D
+ I %O'=3 D
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordSCATBL(fSCATBL,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(fSCATBL,-100) S vobj(fSCATBL,-2)=1 TC:vTp  
  .	N scatbl3 S scatbl3=$$vRCgetRecord1^RecordSCATBL3(FN,"SCA",0)
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vReSav2(scatbl3) S vobj(scatbl3,-2)=1 TC:vTp  
- .	K vobj(+$G(scatbl3)) N scatbl3 S scatbl3=$$vRCgetRecord1^RecordSCATBL3(FN,%UserClass,0)
+ .	K vobj(+$G(scatbl3)) N scatbl3 S scatbl3=$$vRCgetRecord1^RecordSCATBL3(FN,%UCLS,0)
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vReSav2(scatbl3) S vobj(scatbl3,-2)=1 TC:vTp  
  .	K vobj(+$G(scatbl3)) Q 
  E  I VFMQ="D" D
@@ -213,15 +212,15 @@ FILE(fSCATBL) ;
  ;
 END ; 
  ;
- I ER!(%ProcessMode=2)!(%ProcessMode=4) Q 
+ I ER!(%O=2)!(%O=4) Q 
  ;
  I VFMQ="Q" D
  .	;
  .	; Function ~p1 not created
- .	I %ProcessMode=0 S RM=$$^MSG(1148,FN) Q 
+ .	I %O=0 S RM=$$^MSG(1148,FN) Q 
  .	;
  .	; Function ~p1 not modified
- .	I %ProcessMode=1 S RM=$$^MSG(1150,FN) Q 
+ .	I %O=1 S RM=$$^MSG(1150,FN) Q 
  .	;
  .	; Function ~p1 not deleted
  .	S RM=$$^MSG(1149,FN)
@@ -229,10 +228,10 @@ END ;
  E  D
  .	;
  .	; Function ~p1 created
- .	I %ProcessMode=0 S RM=$$^MSG(1144,FN) Q 
+ .	I %O=0 S RM=$$^MSG(1144,FN) Q 
  .	;
  .	; Function ~p1 modified
- .	I %ProcessMode=1 S RM=$$^MSG(1147,FN) Q 
+ .	I %O=1 S RM=$$^MSG(1147,FN) Q 
  .	;
  .	; Function ~p1 deleted
  .	S RM=$$^MSG(1145,FN)
@@ -253,10 +252,10 @@ PROG ; Check validity of program name
  .	Q 
  ;
  ; Strip off parameter passing
- S Z=$P(Z,"(",1)
+ S Z=$piece(Z,"(",1)
  ;
  ; Program ~p1 does not exist
- I '$$VALID^%ZRTNS($P(Z,"^",2)) D
+ I '$$VALID^%ZRTNS($piece(Z,"^",2)) D
  .	S ER=1
  .	S RM=$$^MSG(2275,Z)
  .	Q 
@@ -271,7 +270,7 @@ ERR ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5343" ; Signature - LTD^TIME^USER^SIZE
+ Q "59553^73403^Dan Russell^5290" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SCATBLDOC WHERE FN=:FN

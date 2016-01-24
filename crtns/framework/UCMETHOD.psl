@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Library of PSL* methods|UCMETHOD|||||||1
 	  /*
 	ORIG: FSANCHEZ - 02/19/2003
 	DESC: Library of PSL methods
@@ -1229,4 +1228,4 @@ tblHasMasf	// property PSLTable.hasMasterfield: Return 1 table has Masterfields
 	set PSL.return = $$tokenPop^UCPATCH( PSL.mExpr( "'"_ $$tokenPush^UCPATCH( PSL.objectName, "PSLTable")_ ".masterfieldList.isNull()"), 1)
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^48544"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61537^29763^Frans S.C. Witte^48487"	// Signature - LTD^TIME^USER^SIZE

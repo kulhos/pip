@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRWDST ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Writer Distribution|DBSRWDST|||||||1
 DBSRWDST ; 
  ;
  Q  ; Can't call from top
@@ -50,7 +49,7 @@ EXT(RID,VMODE) ;
  .	Q 
  ;
  ; Delete any old data
-  K ^TMPRPTDS(%ProcessID)
+  K ^TMPRPTDS($J)
  ;
  USE 0
  S POP=0 D ^SCAIO ; Set device to 0
@@ -63,7 +62,7 @@ EXT(RID,VMODE) ;
  ; Produce individual reports by the distribution key values
  S DISTKEY=$piece(DISTKEY,".",2) ; Just use column name
  ;
- N rs,vos1,vos2,vos3,vos4  N V1 S V1=%ProcessID S rs=$$vOpen1()
+ N rs,vos1,vos2,vos3,vos4  N V1 S V1=$J S rs=$$vOpen1()
  F  Q:'$$vFetch1()  D
  .	N IO N VDISTKEY N VRWOPT
  .	;
@@ -86,7 +85,7 @@ EXT(RID,VMODE) ;
  ..		USE IO
  ..		WRITE HEADER
  ..		;
- ..		N ds,vos5,vos6,vos7,vos8,vos9  N V2 S V2=%ProcessID S ds=$$vOpen2()
+ ..		N ds,vos5,vos6,vos7,vos8,vos9  N V2 S V2=$J S ds=$$vOpen2()
  ..		;
  ..		F  Q:'$$vFetch2()  D
  ...   N vo1,vop4,vop5,vop6,vop7 S vop4=$P(ds,$C(9),1),vop5=$P(ds,$C(9),2),vop6=$P(ds,$C(9),3),vo1=$$vRCgetRecord1Opt^RecordTMPRPTDS(vop4,vop5,vop6,1,"")
@@ -105,7 +104,7 @@ EXT(RID,VMODE) ;
  .	Q 
  ;
  ; Delete temporary table
-  K ^TMPRPTDS(%ProcessID)
+  K ^TMPRPTDS($J)
  ;
  Q 
  ;
@@ -127,7 +126,7 @@ BBMBIO(RID,DISTKEY,VALUE) ;
  Q IO
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4366" ; Signature - LTD^TIME^USER^SIZE
+ Q "60107^27446^Viji Skariah^4296" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; DISTINCT DISTKEY FROM TMPRPTDS WHERE JOBNO=:V1
  ;

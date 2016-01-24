@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Foreign key definition|DBSFK|||||||1
 DBSFK	
 		 
 	/*
@@ -68,4 +67,4 @@ DBSFK
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^1463"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61161^48265^Dan Russell^1410"	// Signature - LTD^TIME^USER^SIZE

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UTLERR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  SCA error log and display utility|UTLERR|||||||1
 UTLERR ; 
  ;  #OPTION ResultClass ON
  ; SCA error log and display utility
@@ -172,7 +171,7 @@ Process(%ZTError,%ZTINFO,%ZTDY,RM) ; Return message(s)
 LogIt(%ZTError,%ZTINFO) ; Process and symbol table info
  N vTp
  ;
- N SaveDate S SaveDate=%CurrentDate
+ N SaveDate S SaveDate=$P($H,",",1)
  N %ZTSEQ
  N errType N istr N var
  ;
@@ -191,8 +190,8 @@ LogIt(%ZTError,%ZTINFO) ; Process and symbol table info
  S CNT=1
  F  D  Q:'(SEQ="") 
  .	;
- .	S SEQ=1000000+%CurrentTime
- .	S SEQ=SEQ_$E((1000000+(%ProcessID#1000000)),2,7)
+ .	S SEQ=1000000+$P($H,",",2)
+ .	S SEQ=SEQ_$E((1000000+($J#1000000)),2,7)
  .	S SEQ=SEQ_$E((100+CNT),2,3)
  .	;
  .	N rs,vos1,vos2,vos3,vos4,vos5  N V1 S V1=SaveDate S rs=$$vOpen1()
@@ -215,10 +214,10 @@ LogIt(%ZTError,%ZTINFO) ; Process and symbol table info
   S vobj(error,1)=""
   S vobj(error,3)=""
  ;
-  S vobj(error,-100,1)="" S $P(vobj(error,1),$C(124),1)=$get(%UserID)
-  S vobj(error,-100,1)="" S $P(vobj(error,1),$C(124),2)=%CurrentTime
-  S vobj(error,-100,1)="" S $P(vobj(error,1),$C(124),3)=$get(%UserStation)
-  S vobj(error,-100,1)="" S $P(vobj(error,1),$C(124),4)=%ProcessID
+  S vobj(error,-100,1)="" S $P(vobj(error,1),$C(124),1)=$get(%UID)
+  S vobj(error,-100,1)="" S $P(vobj(error,1),$C(124),2)=$P($H,",",2)
+  S vobj(error,-100,1)="" S $P(vobj(error,1),$C(124),3)=$get(TLO)
+  S vobj(error,-100,1)="" S $P(vobj(error,1),$C(124),4)=$J
   S vobj(error,-100,1)="" S $P(vobj(error,1),$C(124),9)=$E($$SCAU^%TRNLNM("DIR"),1,25)
  ;
  ; Save routine info
@@ -476,7 +475,7 @@ Log2File(isSecondary) ; Call because of secondary
  ;
  N io S io=$$vClVobj($ST,"IO")
  N device
- N fileName S fileName="PROFILE_ERROR.LOG_"_$J(%CurrentDate,0,"YEARMMDD")_"_"_%CurrentTime
+ N fileName S fileName="PROFILE_ERROR.LOG_"_$$vdat2str($P($H,",",1),"YEARMMDD")_"_"_$P($H,",",2)
  ;
  N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch4^"_$T(+0)
  ;
@@ -490,7 +489,7 @@ Log2File(isSecondary) ; Call because of secondary
  D write^UCIO(io,"")
  D write^UCIO(io,"===================================================")
  D write^UCIO(io,"")
- D write^UCIO(io,%CurrentDate_" "_%CurrentTime)
+ D write^UCIO(io,$$vdat2str($P($H,",",1),"MM/DD/YEAR")_" "_$$vtim2str($P($H,",",2),"24:60:SS"))
  D write^UCIO(io,"")
  D write^UCIO(io,"===================================================")
  D write^UCIO(io,"")
@@ -542,7 +541,7 @@ ETLOC(inError) ; Return an error object as a standardized string
  Q $P(inError,",",3)_","_$P(inError,",",2)_","_$P($P(inError,",",3),"-",1)_","_$P(inError,",",4)_","_$P($P(inError,",",3),"-",3)
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^27365" ; Signature - LTD^TIME^USER^SIZE
+ Q "61457^66611^Dan Russell^27300" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace
@@ -559,6 +558,48 @@ vStrRep(object,p1,p2,p3,p4,qt) ; String.replace
  .	I p3 S p3=p3-1 I p3=0 S y=$L(object)+1
  .	Q 
  Q object
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vtim2str(vo,vm) ; Time.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (vm="") S vm="24:60:SS"
+ N cc
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ SET cc=$ZDATE(","_vo,vm)
+ ;*** End of code by-passed by compiler ***
+ Q cc
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrFnd(object,p1,p2,p3,qt) ; String.find

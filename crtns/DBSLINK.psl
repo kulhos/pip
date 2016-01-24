@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DBSDSMP - Procedure|DBSLINK|||||||1
 DBSLINK(RecordDBTBL2 dbtbl2)	//;DBS - U - v7.0 - PSL Linked Screen Compiler
 	/*
 	   ORIG:  Frank R. Sanchez  (2497)
@@ -565,4 +564,4 @@ APPSID
 END	//
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^17703"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61277^63996^Dan Russell^17651"	// Signature - LTD^TIME^USER^SIZE

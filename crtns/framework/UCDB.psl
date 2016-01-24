@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Class Db methods - DD Group|UCDB|||||||1
 	/*
 	ORIG: FSANCHEZ - 01/15/98
 	DESC: Library of Db methods
@@ -4644,4 +4643,4 @@ private mapPSLvar( String expr
 	set expr=$$UNTOK^%ZS(expr,.tok)
 	quit expr
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^180563"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61473^50060^Frans S.C. Witte^180506"	// Signature - LTD^TIME^USER^SIZE

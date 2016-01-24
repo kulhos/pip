@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCLIST ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL List Class library|UCLIST|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -224,7 +223,7 @@ sort ; Method: List.sort( String delimiter, Boolean allowDuplicate) - Sort a lis
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^14582" ; Signature - LTD^TIME^USER^SIZE
+ Q "61061^59051^Frans S.C. Witte^14528" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vMExpr(v1) ; PSL.mExpr

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  General Purpose Screen Driver|DBSDEUTB|||||||1
 DBSDEUTB	// General Purpose Screen Driver
 	/*
 	DESC:  Generates procedure DBSDEUTA - compiled table maintenance
@@ -351,4 +350,4 @@ private addcode(Number TABS,		// Add new line to CODE array
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^10693"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61239^41321^Dan Russell^10630"	// Signature - LTD^TIME^USER^SIZE

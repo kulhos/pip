@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Data-Qwik runtime filer & PSL utilities|UCUTILN|||||||1
 	/*
 	ORIG: FSANCHEZ - 11/11/2003
 	DESC: Data-Qwik runtime filer and PSL utilities
@@ -259,4 +258,4 @@ public String setPar( String parList,
 
 	quit parList
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^9595"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61263^26519^Frans S.C. Witte^9523"	// Signature - LTD^TIME^USER^SIZE

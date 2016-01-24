@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Userclass Maintenance|SCADRV7|||||||1
 SCADRV7	// Userclass Maintenance
 	/*
 	       ORIG: Frank Sanchez
@@ -185,4 +184,4 @@ END	// Finish up
 	quit
 	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3339"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60275^61883^kellytp^3285"	// Signature - LTD^TIME^USER^SIZE

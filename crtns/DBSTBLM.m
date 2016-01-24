@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSTBLM ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  C-S-UTBL Table Maintenance|DBSTBLM|||||||1
 DBSTBLM(TABLETYP) ; System, User, and Common Table Maintenance
  ;
  ; Compile procedure DBSTBLMA (DBSTBLMB Builder)
@@ -18,12 +17,12 @@ DBSTBLM(TABLETYP) ; System, User, and Common Table Maintenance
  ;
  I '($D(%FN)#2) S %FN="UTBL001"
  ;
- I ($get(%UserClass)="") D
+ I ($get(%UCLS)="") D
  .	;
- .	N scau S scau=$G(^SCAU(1,%UserID))
+ .	N scau S scau=$G(^SCAU(1,%UID))
  .	;
- .	S %UserClass=$P(scau,$C(124),5)
- .	I (%UserClass="") S %UserClass="NOCLASS"
+ .	S %UCLS=$P(scau,$C(124),5)
+ .	I (%UCLS="") S %UCLS="NOCLASS"
  . Q 
  ;
  I ($get(TABLETYP)="") S TABLETYP="UTBL"
@@ -113,7 +112,7 @@ LOOKUP(TABLETYP,tbllist) ;
 LOADTA(TABLETYP) ; Load lookup info into temporary table
  N vpc,vTp
  ;
-  K ^TMP(%ProcessID)
+  K ^TMP($J)
  ;
  N ds,vos1,vos2,vos3,vos4,vos5 S ds=$$vOpen2()
  ;
@@ -130,9 +129,9 @@ LOADTA(TABLETYP) ; Load lookup info into temporary table
  .	;
  .	S key1=$$QSUB^%ZS(key1,"""")
  .	;
- .	 N V1,V2 S V1=%ProcessID,V2=key1 I '($D(^TMP(V1,V2))#2) D
+ .	 N V1,V2 S V1=$J,V2=key1 I '($D(^TMP(V1,V2))#2) D
  ..		;
- ..		N tlookup S tlookup=$$vcdmNew^RecordTLOOKUP() S vobj(tlookup,-3)=%ProcessID S vobj(tlookup,-4)=key1
+ ..		N tlookup S tlookup=$$vcdmNew^RecordTLOOKUP() S vobj(tlookup,-3)=$J S vobj(tlookup,-4)=key1
  ..		;
  ..	  S $P(vobj(tlookup),$C(124),1)=vop2_$J(" ",(20-$L(vop2)))_$P(dbtbl1,$C(124),1)
  ..	  S $P(vobj(tlookup),$C(124),2)=vop2
@@ -335,7 +334,7 @@ SCREEN(dbtbl1) ; Call defined screen to maintain this table
  .	;
  .	; Deletion is restricted
  .	I $P(vobj(dbtbl1,22),$C(124),10) S ER=1 S RM=$$^MSG(806)
- .	E  S %ProcessMode=3
+ .	E  S %O=3
  .	Q 
  E  D
  .	N I
@@ -351,8 +350,8 @@ SCREEN(dbtbl1) ; Call defined screen to maintain this table
  .	S collist=$E(collist,1,$L(collist)-1)
  .	S where=$E(where,1,$L(where)-5)
  .	;
- .	I $$DYNSEL(collist,fid,where,.KEY) S %ProcessMode=1 ; Modify
- .	E  S %ProcessMode=0 ; Create
+ .	I $$DYNSEL(collist,fid,where,.KEY) S %O=1 ; Modify
+ .	E  S %O=0 ; Create
  .	Q 
  ;
  ; Otherwise, need to deal with old screens via fsn
@@ -381,13 +380,13 @@ SCREEN(dbtbl1) ; Call defined screen to maintain this table
  .	D ^@PGM ; Screen will load data
  .	Q:ER!(VFMQ="Q") 
  .	;
- .	D EXT^DBSFILER(fid,%ProcessMode) ; Save data
+ .	D EXT^DBSFILER(fid,%O) ; Save data
  .	Q 
  ;
  ; Call ^DBSTBLMB for screens converted to PSL
  E  D
  .	;
- .	S RM=$$^DBSTBLMB(%ProcessMode,.dbtbl1,.KEY)
+ .	S RM=$$^DBSTBLMB(%O,.dbtbl1,.KEY)
  .	I '(RM="") S ER=1
  .	Q 
  ;
@@ -400,7 +399,7 @@ SCREEN(dbtbl1) ; Call defined screen to maintain this table
  ; not Created,not Modified,not Displayed,not Deleted,not Printed
  E  S MSG=$$^MSG(8259)
  ;
- S MSG=$piece(MSG,",",%ProcessMode+1)
+ S MSG=$piece(MSG,",",%O+1)
  ; 5652 = Record ~p1.  ~p2 -- 603 = Continue?
  S MSG=$$^MSG(5652,MSG,$$^MSG(603))
  ;
@@ -512,7 +511,7 @@ INTGRE ; Table Integrate Check
  ;
  N RID N TABLETYP N TMP
  ;
-  K ^TMP(%ProcessID)
+  K ^TMP($J)
  ;
  ; Please Wait ...
  WRITE $$MSG^%TRMVT($$^MSG(5624),0,0)
@@ -565,7 +564,7 @@ INTGRE ; Table Integrate Check
  ....				I match D
  .....					;
  .....					S CNT=CNT+1
- .....					N tblint S tblint=$$vcdmNew^RecordTBLINT() S vobj(tblint,-3)=%ProcessID S vobj(tblint,-4)=CNT
+ .....					N tblint S tblint=$$vcdmNew^RecordTBLINT() S vobj(tblint,-3)=$J S vobj(tblint,-4)=CNT
  .....				  S $P(vobj(tblint),$C(124),1)=fid2
  .....				  S $P(vobj(tblint),$C(124),2)=acckeys2
  .....				  S $P(vobj(tblint),$C(124),3)=fid
@@ -580,7 +579,7 @@ INTGRE ; Table Integrate Check
  S RID="TBLINT"
  D DRV^URID
  ;
-  K ^TMP(%ProcessID)
+  K ^TMP($J)
  ;
  Q 
  ;
@@ -624,24 +623,24 @@ CHKACCES(TABLETYP,dbtbl1,mode) ;
  I TABLETYP="STBL" D  Q 
  .	;
  .	; User does not have write access
- .	I %UserClass'="SCA" S ER=1 S RM=$$^MSG(2846)
+ .	I %UCLS'="SCA" S ER=1 S RM=$$^MSG(2846)
  .	Q 
  ;
  ; Get userclass access rights
  I TABLETYP="UTBL" D
  .	;
- .	 N V1,V2 S V1=key1,V2=%UserClass I '($D(^UTBL("UTBL",V1,V2))#2) Q 
+ .	 N V1 S V1=key1 I '$$vDbEx2() Q 
  .	;
- .	N utblutbl S utblutbl=$G(^UTBL("UTBL",key1,%UserClass))
+ .	N utblutbl S utblutbl=$G(^UTBL("UTBL",key1,%UCLS))
  .	;
  .	S ACCRGHTS=$P(utblutbl,$C(124),1)
  . Q 
  ;
  E  D  ; CTBL
  .	;
- .	 N V1,V2 S V1=key1,V2=%UserClass I '($D(^CTBL("CTBL",V1,V2))#2) Q 
+ .	 N V1 S V1=key1 I '$$vDbEx3() Q 
  .	;
- .	N ctblutbl S ctblutbl=$G(^CTBL("CTBL",key1,%UserClass))
+ .	N ctblutbl S ctblutbl=$G(^CTBL("CTBL",key1,%UCLS))
  .	;
  .	S ACCRGHTS=$P(ctblutbl,$C(124),1)
  . Q 
@@ -664,8 +663,8 @@ CHKACCES(TABLETYP,dbtbl1,mode) ;
  .	;
  .	I 'ANY D
  ..		;
- ..		I %UserClass="SCA" S ACCRGHTS="RWD"
- ..		E  I %UserClass="MGR" S ACCRGHTS="RWD"
+ ..		I %UCLS="SCA" S ACCRGHTS="RWD"
+ ..		E  I %UCLS="MGR" S ACCRGHTS="RWD"
  ..		E  S ACCRGHTS="R"
  ..		Q 
  .	Q 
@@ -777,7 +776,7 @@ ACCESS ; Post processor for access mode
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^20357" ; Signature - LTD^TIME^USER^SIZE
+ Q "61219^67049^Dan Russell^20298" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrLike(object,p1,p2) ; String.isLike
@@ -818,6 +817,24 @@ vStrFnd(object,p1,p2,p3,qt) ; String.find
  .	F  S p2=$F(object,p1,p2) Q:p2=0!($L($E(object,1,p2-1),qt)#2) 
  .	Q 
  Q p2
+ ;
+vDbEx2() ; min(1): DISTINCT TBL,KEY FROM UTBLUTBL WHERE TBL=:V1 AND KEY=:%UCLS
+ ;
+ N vsql1,vsql3
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ ;
+ S vsql3=$G(%UCLS) I vsql3="" Q 0
+ I '($D(^UTBL("UTBL",V1,vsql3))#2) Q 0
+ Q 1
+ ;
+vDbEx3() ; min(1): DISTINCT TBL,UCLS FROM CTBLUTBLF WHERE TBL=:V1 AND UCLS=:%UCLS
+ ;
+ N vsql1,vsql3
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ ;
+ S vsql3=$G(%UCLS) I vsql3="" Q 0
+ I '($D(^CTBL("CTBL",V1,vsql3))#2) Q 0
+ Q 1
  ;
 vOpen0(exe,vsql,vSelect,vFrom,vWhere,vOrderby,vGroupby,vParlist,vOff) ; Dynamic MDB ResultSet
  ;

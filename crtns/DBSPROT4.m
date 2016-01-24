@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSPROT4 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Generate DI Protection Code for Screens|DBSPROT4|||||||1
 DBSPROT4(FILES,DINAM,%MCODE,TYPE,VTABNO,vobjlst) ; 
  ;
  N isPSL
@@ -140,4 +139,4 @@ DBSPROT4(FILES,DINAM,%MCODE,TYPE,VTABNO,vobjlst) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^6076" ; Signature - LTD^TIME^USER^SIZE
+ Q "60541^55254^Dan Russell^6003" ; Signature - LTD^TIME^USER^SIZE

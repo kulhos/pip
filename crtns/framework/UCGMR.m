@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCGMR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL Compiler - Runtime system|UCGMR|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -153,7 +152,7 @@ LOG(vLabref,vErr) ; Entry point to call error logger
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^15166" ; Signature - LTD^TIME^USER^SIZE
+ Q "61293^42583^Frans S.C. Witte^15106" ; Signature - LTD^TIME^USER^SIZE
  ;
 vCatch1 ; Error trap
  ;

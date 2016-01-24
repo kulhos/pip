@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA QWIK Interpretive Table verification|DBSTBLA|||||||1
 public DBSTBLA(String vREF, String vSTR, String vFMT)
 
 	/*
@@ -173,4 +172,4 @@ public DBSTBLA(String vREF, String vSTR, String vFMT)
 	
 	quit vRETURN.extract(1, 80)
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4201"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60579^13625^Badrinath Giridharan^4127"	// Signature - LTD^TIME^USER^SIZE

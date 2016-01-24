@@ -1,11 +1,11 @@
  ; 
  ; **** Routine compiled from unknown source ****
  ; 
- ; 01/23/2016 14:24 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
 DBSTBLMB(%O,dbtbl1,KEY) ; C-S-UTBL Table Maintenance Compiled Program
   S:'$D(vobj(dbtbl1,22)) vobj(dbtbl1,22)=$S(vobj(dbtbl1,-2):$G(^DBTBL(vobj(dbtbl1,-3),1,vobj(dbtbl1,-4),22)),1:"")
- ; Last compiled:  01/23/2016 02:24 PM - kulhan
+ ; Last compiled:  01/19/2016 12:23 PM - root
  ;
  ; THIS IS A COMPILED ROUTINE.  Compiled by procedure DBSTBLMA
  ;

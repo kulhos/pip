@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCPATCH ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  code patching utilities - Insensitive Group|UCPATCH|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -458,7 +457,7 @@ change(code,test,subRou,var,newPtr) ; Change resultSet generate code
  Q code
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^33927" ; Signature - LTD^TIME^USER^SIZE
+ Q "61426^29679^Frans S.C. Witte^33851" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Define teller location utility|UTLO|||||||1
 	// Define teller location (TLO)
 	/*
 	    ORIG:  Robert B. Sproul (8971) - 03/09/88
@@ -68,4 +67,4 @@ public TLO()	// Function returns TLO
 
 	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^1495"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "59495^75673^Lik Kwan^1435"	// Signature - LTD^TIME^USER^SIZE

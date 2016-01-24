@@ -3,7 +3,7 @@
 { "class" : "SCADRV7",	"method" : "DEL",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "Userclass Deletion" }
 ,	{ "class" : "SCADRV7",	"method" : "END",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "Finish up" }
 ,	{ "class" : "SCADRV7",	"method" : "FILE",	"resultClass" : "",	"formalList" : "ret RecordSCAU0 scau0",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "File/Delete the Userclass" }
-,	{ "class" : "SCADRV7",	"method" : "INIT",	"resultClass" : "",	"formalList" : "ret Number %ProcessMode",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "Screen Control" }
+,	{ "class" : "SCADRV7",	"method" : "INIT",	"resultClass" : "",	"formalList" : "ret Integer %O",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "Screen Control" }
 ,	{ "class" : "SCADRV7",	"method" : "INQ",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "Userclass Inquiry" }
 ,	{ "class" : "SCADRV7",	"method" : "NEW",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "Userclass Creation" }
 ,	{ "class" : "SCADRV7",	"method" : "PPUCLS",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "UCLS post processor" }

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCBYTSTR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL ByteString Method library|UCBYTSTR|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -288,7 +287,7 @@ psl2m(minArg,maxArg) ; maximum number of arguments /REQ/MECH=VAL
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^25536" ; Signature - LTD^TIME^USER^SIZE
+ Q "61461^41407^Frans S.C. Witte^25473" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vopenBuf(v1,v2) ; PSL.openBuffer

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Non-Standard Message Handler|PBSNSM|||||||1
 private PBSNSM(String vzpkt,
 	       String vznsmpgm,
 	       Number vstart,
@@ -214,4 +213,4 @@ MSGOUT(reply,fields)	//Private//Build server reply
 	//Insert code to construct server reply
 	quit 0
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5362"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60876^56527^Dan Russell^5302"	// Signature - LTD^TIME^USER^SIZE

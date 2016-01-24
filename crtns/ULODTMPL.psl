@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL template loader|ULODTMPL|||||||1
 public ULODTMPL(String TEMPLATE,String ARRAY,Number START,String XTAGS())
 	/*
 	ORIG: RUSSELL - 01/03/2002
@@ -108,4 +107,4 @@ LINE(String LINE,
 	}
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^2867"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60339^35081^Dan Russell^2814"	// Signature - LTD^TIME^USER^SIZE

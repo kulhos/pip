@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCPSLSR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Handling PSLSubrou|UCPSLSR|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION ResultClass ON
  ;
@@ -101,4 +100,4 @@ tagPatch(sr,tagnr) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^12105" ; Signature - LTD^TIME^USER^SIZE
+ Q "60946^40568^Frans S.C. Witte^12054" ; Signature - LTD^TIME^USER^SIZE

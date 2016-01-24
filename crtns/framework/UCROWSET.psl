@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL RowSet class library|UCROWSET|||||||1
   	/*
 	ORIG: Frans S.C. Witte
 	DESC: PSL RowSet class library
@@ -313,4 +312,4 @@ public colSub(	String context(),	// context data (*1)
 	*/
 	quit context("Inst").get("vR")_"."_column.lowerCase()
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^12431"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61293^42828^Frans S.C. Witte^12373"	// Signature - LTD^TIME^USER^SIZE

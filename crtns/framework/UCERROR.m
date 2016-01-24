@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCERROR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Error class, compiletime + runtime|UCERROR|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -77,7 +76,7 @@ toString() ; method Error.toString()
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4173" ; Signature - LTD^TIME^USER^SIZE
+ Q "60946^40563^Frans S.C. Witte^4106" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vMExpr(v1) ; PSL.mExpr

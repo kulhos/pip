@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCXCUVAR ****
  ; 
- ; 01/23/2016 14:24 - kulhan
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Institution Variable Defaults|UCXCUVAR|||||||1
  ;  #PACKAGE framework.psl.upgrade
  ;  #OPTION  ResultClass ON
  ;
@@ -61,7 +60,7 @@ tbl2dat(dir) ; create CUVAR.DAT based on current values
  K vobj(+$G(io)) Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5809" ; Signature - LTD^TIME^USER^SIZE
+ Q "61058^29766^Frans S.C. Witte^5746" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vOpen1(vSelect,vOff) ; PSLBOOT result set for CUVAR

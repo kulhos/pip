@@ -1,4 +1,3 @@
-//DO NOT MODIFY  SCA short named driver|DRV|||||||1
   /*
 	ORIG: alagarss - 08/11/2005
 	DESC: SCA short named driver
@@ -15,4 +14,4 @@
  */
 	do ^SCADRV quit 
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^477"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60141^27763^Sanjay Chhrabria^426"	// Signature - LTD^TIME^USER^SIZE

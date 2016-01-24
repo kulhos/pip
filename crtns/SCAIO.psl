@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Select IO Device|SCAIO|||||||1
 public SCAIO	// Select IO Device
 	/*
 	   ORIG: Dan S. Russell
@@ -990,4 +989,4 @@ AUXPTR()	// Prompt for slave printer
 
 	quit 1
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^16914"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60603^44096^Dan Russell^16867"	// Signature - LTD^TIME^USER^SIZE

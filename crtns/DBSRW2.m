@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRW2 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Compiler - Part 2|DBSRW2|||||||1
 DBSRW2(dbtbl5h,ddmap,RPTINFO,PQINFO) ; 
  ;
  N LVL
@@ -940,7 +939,7 @@ BLDSELCT(ddmap,RPTINFO,TABLVL) ;
  .	Q 
  ;
  ; Add accept to avoid compiler warning on dynamic where clause
- I DYNWHERE D addcode^DBSRWUTL(TABLVL,"#ACCEPT DATE="_%CurrentDate_";PGM=Report Writer Generator;CR=20967")
+ I DYNWHERE D addcode^DBSRWUTL(TABLVL,"#ACCEPT DATE="_$$vdat2str($P($H,",",1),"MM/DD/YEAR")_";PGM=Report Writer Generator;CR=20967")
  ;
  D addcode^DBSRWUTL(TABLVL,CODE)
  D addcode^DBSRWUTL(TABLVL,"#ACCEPT Date=10/13/2008;Pgm=RussellDS;CR=35741;Group=READ")
@@ -961,7 +960,7 @@ ISVAR(X) ; Private - Return 1 if X is a valid variable name
  Q OK
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^34972" ; Signature - LTD^TIME^USER^SIZE
+ Q "61431^64028^Dan Russell^34906" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace
@@ -978,6 +977,35 @@ vStrRep(object,p1,p2,p3,p4,qt) ; String.replace
  .	I p3 S p3=p3-1 I p3=0 S y=$L(object)+1
  .	Q 
  Q object
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrFnd(object,p1,p2,p3,qt) ; String.find

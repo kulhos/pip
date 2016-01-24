@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDEUTL ****
  ; 
- ; 01/23/2016 14:23 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DBSDEUTL - Procedure|DBSDEUTL|||||||1
 DBSDEUTL(OPT,SID,FPRE) ; Public;Genearl purpose driver to create,modify and delete tables.
  ;
  ; Compile procedure DBSDEUTB (DBSDEUTA Builder)
@@ -238,7 +237,7 @@ GETKEYS(acckeys,keys,select,where) ;
  Q keycnt
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^7851" ; Signature - LTD^TIME^USER^SIZE
+ Q "61166^77119^Dan Russell^7797" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen0(exe,vsql,vSelect,vFrom,vWhere,vOrderby,vGroupby,vParlist,vOff) ; Dynamic MDB ResultSet
  ;

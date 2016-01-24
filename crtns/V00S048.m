@@ -1,5 +1,5 @@
 V00S048	;; -  - 5.3 - SID= <DBSFMT> DQ Format Type Definition
-	;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+	;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
 	;
 VSTART	; 
 	K VO,VODFT

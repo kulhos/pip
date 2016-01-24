@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Code conversion utility library|UCGMCONV|||||||1
 	/*
 	ORIG: FSANCHEZ - 03/11/2003
 	DESC: PSL compiler, Object Group, PSL and M conversion utilities library
@@ -261,4 +260,4 @@ private Boolean isGlvn( PSLExpression expr	// expression to be checked
 	#ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
 	quit $$isArr^UCGM(expr)
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^9446"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61348^60742^Frans S.C. Witte^9377"	// Signature - LTD^TIME^USER^SIZE

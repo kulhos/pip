@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV2 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Sub-routines for ^SCADRV0|SCADRV2|||||||1
 SCADRV2 ; 
  Q 
  ;
@@ -124,7 +123,7 @@ DUMMY ; Private - Tied to function SCADRV
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4038" ; Signature - LTD^TIME^USER^SIZE
+ Q "60243^25879^Sanjay Chhrabria^3980" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; SNUMB,FUNMENU,MDESC FROM SCAMENU WHERE MNUMB=:MENUNO ORDER BY SNUMB
  ;

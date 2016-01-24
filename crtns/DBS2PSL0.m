@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBS2PSL0 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL Screen Compiler|DBS2PSL0|||||||1
 DBS2PSL0(dbtbl2,VPT,VPB) ; -  - V7.0 - PSL Screen Compiler
  N vTp
  ;
@@ -55,53 +54,53 @@ DBS2PSL0(dbtbl2,VPT,VPB) ; -  - V7.0 - PSL Screen Compiler
  D LOAD
  D TABINFO(SID,.ditab)
  S VPROBJ=0
- S VPT=DT(1)\1000 S VPB=DT($O(DT(""),-1))\1000
+ S VPT=DT(1)\1000 S VPB=DT($order(DT(""),-1))\1000
  Q 
  ;
 LOAD ; Create DT(SEQ) & %NAMCUR(DINAM) array's
  N dinam N DINAM N x
  S x=""
  S SEQ=0
- N ds,vos1,vos2,vos3,vos4,vos5,vos6  N V1 S V1=%Library S ds=$$vOpen1()
+ N ds,vos1,vos2,vos3,vos4,vos5,vos6 S ds=$$vOpen1()
  F  Q:'$$vFetch1()  D
  . N dbtbl2d S dbtbl2d=$$vRCgetRecord1^RecordDBTBL2D($P(ds,$C(9),1),$P(ds,$C(9),2),$P(ds,$C(9),3),1)
  .	S SEQ=vobj(dbtbl2d,-5)
  .	S dinam=$P(vobj(dbtbl2d),$C(124),5)
- .	S $PIECE(x,"|",1)=$P(vobj(dbtbl2d),$C(124),1)
- .	S $PIECE(x,"|",2)=$P(vobj(dbtbl2d),$C(124),2)
- .	S $PIECE(x,"|",3)=$P(vobj(dbtbl2d),$C(124),3)
- .	S $PIECE(x,"|",5)=$P(vobj(dbtbl2d),$C(124),5)
- .	S $PIECE(x,"|",6)=$P(vobj(dbtbl2d),$C(124),6)
- .	S $PIECE(x,"|",7)=$P(vobj(dbtbl2d),$C(124),7)
- .	S $PIECE(x,"|",8)=$P(vobj(dbtbl2d),$C(124),8)
- .	S $PIECE(x,"|",9)=$P(vobj(dbtbl2d),$C(124),9)
- .	S $PIECE(x,"|",10)=$P(vobj(dbtbl2d),$C(124),10)
- .	S $PIECE(x,"|",11)=$P(vobj(dbtbl2d),$C(124),11)
- .	S $PIECE(x,"|",12)=$P(vobj(dbtbl2d),$C(124),12)
- .	S $PIECE(x,"|",13)=$P(vobj(dbtbl2d),$C(124),13)
- .	S $PIECE(x,"|",14)=$P(vobj(dbtbl2d),$C(124),14)
- .	S $PIECE(x,"|",15)=$P(vobj(dbtbl2d),$C(124),15)
- .	S $PIECE(x,"|",18)=$P(vobj(dbtbl2d),$C(124),18)
- .	S $PIECE(x,"|",21)=$P(vobj(dbtbl2d),$C(124),21)
- .	S $PIECE(x,"|",22)=$P(vobj(dbtbl2d),$C(124),22)
- .	S $PIECE(x,"|",30)=$P(vobj(dbtbl2d),$C(124),30)
+ .	S $piece(x,"|",1)=$P(vobj(dbtbl2d),$C(124),1)
+ .	S $piece(x,"|",2)=$P(vobj(dbtbl2d),$C(124),2)
+ .	S $piece(x,"|",3)=$P(vobj(dbtbl2d),$C(124),3)
+ .	S $piece(x,"|",5)=$P(vobj(dbtbl2d),$C(124),5)
+ .	S $piece(x,"|",6)=$P(vobj(dbtbl2d),$C(124),6)
+ .	S $piece(x,"|",7)=$P(vobj(dbtbl2d),$C(124),7)
+ .	S $piece(x,"|",8)=$P(vobj(dbtbl2d),$C(124),8)
+ .	S $piece(x,"|",9)=$P(vobj(dbtbl2d),$C(124),9)
+ .	S $piece(x,"|",10)=$P(vobj(dbtbl2d),$C(124),10)
+ .	S $piece(x,"|",11)=$P(vobj(dbtbl2d),$C(124),11)
+ .	S $piece(x,"|",12)=$P(vobj(dbtbl2d),$C(124),12)
+ .	S $piece(x,"|",13)=$P(vobj(dbtbl2d),$C(124),13)
+ .	S $piece(x,"|",14)=$P(vobj(dbtbl2d),$C(124),14)
+ .	S $piece(x,"|",15)=$P(vobj(dbtbl2d),$C(124),15)
+ .	S $piece(x,"|",18)=$P(vobj(dbtbl2d),$C(124),18)
+ .	S $piece(x,"|",21)=$P(vobj(dbtbl2d),$C(124),21)
+ .	S $piece(x,"|",22)=$P(vobj(dbtbl2d),$C(124),22)
+ .	S $piece(x,"|",30)=$P(vobj(dbtbl2d),$C(124),30)
  .	S TOTOBJ=TOTOBJ+1
- .	I dinam?1"<<".E1">>" S dinam=$E($P(dinam,">>",1),3,999)
+ .	I dinam?1"<<".E1">>" S dinam=$E($piece(dinam,">>",1),3,999)
  .	;
  .	; Convert <<VAR,FMT,SIZE,...>> to standard DT()
  .	S DINAM=dinam
  .	; convert <<"TEXT">> to TEXT
  .	I $P(vobj(dbtbl2d),$C(124),11)?1"<<"1E.E1">>" S x=$$VAR(dbtbl2d)
  .	;
- .	I $E(DINAM,1)="[",DINAM?.E1",".E1"]"1E.E S DINAM="["_$P(DINAM,",",2)
- .	S %NAMCUR(DINAM)=$P(x,"|",1)
+ .	I $E(DINAM,1)="[",DINAM?.E1",".E1"]"1E.E S DINAM="["_$piece(DINAM,",",2)
+ .	S %NAMCUR(DINAM)=$piece(x,"|",1)
  .	I %NAMCUR,%NAMCUR(DINAM)>%NAMCUR D
  ..		S %NAMCUR(DINAM)=%NAMCUR(DINAM)_"+"
- ..		S ZREPEAT($P(x,"|",5))=""
+ ..		S ZREPEAT($piece(x,"|",5))=""
  ..		Q 
  .	;
  .	; Null text tags
- .	I $E(DINAM,1)="@",$P(x,"|",2)["*" S $P(x,"|",5)=""
+ .	I $E(DINAM,1)="@",$piece(x,"|",2)["*" S $piece(x,"|",5)=""
  .	S DT(SEQ)=x
  .	K vobj(+$G(dbtbl2d)) Q  ; while
  ;
@@ -112,52 +111,52 @@ VAR(dbtbl2d) ; <<VAR,PMT,FMT,SIZE,TBL,MIN,MAX,DEC>>
  N X N Y N Z
  ;
  S (X,Z)=""
- S $P(X,"|",1)=$P(vobj(dbtbl2d),$C(124),1)
- S $P(X,"|",2)=$P(vobj(dbtbl2d),$C(124),2)
- S $P(X,"|",3)=$P(vobj(dbtbl2d),$C(124),3)
- S $P(X,"|",5)=$P(vobj(dbtbl2d),$C(124),5)
- S $P(X,"|",6)=$P(vobj(dbtbl2d),$C(124),6)
- S $P(X,"|",7)=$P(vobj(dbtbl2d),$C(124),7)
- S $P(X,"|",8)=$P(vobj(dbtbl2d),$C(124),8)
- S $P(X,"|",9)=$P(vobj(dbtbl2d),$C(124),9)
- S $P(X,"|",10)=$P(vobj(dbtbl2d),$C(124),10)
- S $P(X,"|",11)=$P(vobj(dbtbl2d),$C(124),11)
- S $P(X,"|",12)=$P(vobj(dbtbl2d),$C(124),12)
- S $P(X,"|",13)=$P(vobj(dbtbl2d),$C(124),13)
- S $P(X,"|",14)=$P(vobj(dbtbl2d),$C(124),14)
- S $P(X,"|",15)=$P(vobj(dbtbl2d),$C(124),15)
- S $P(X,"|",18)=$P(vobj(dbtbl2d),$C(124),18)
- S $P(X,"|",21)=$P(vobj(dbtbl2d),$C(124),21)
- S $P(X,"|",22)=$P(vobj(dbtbl2d),$C(124),22)
+ S $piece(X,"|",1)=$P(vobj(dbtbl2d),$C(124),1)
+ S $piece(X,"|",2)=$P(vobj(dbtbl2d),$C(124),2)
+ S $piece(X,"|",3)=$P(vobj(dbtbl2d),$C(124),3)
+ S $piece(X,"|",5)=$P(vobj(dbtbl2d),$C(124),5)
+ S $piece(X,"|",6)=$P(vobj(dbtbl2d),$C(124),6)
+ S $piece(X,"|",7)=$P(vobj(dbtbl2d),$C(124),7)
+ S $piece(X,"|",8)=$P(vobj(dbtbl2d),$C(124),8)
+ S $piece(X,"|",9)=$P(vobj(dbtbl2d),$C(124),9)
+ S $piece(X,"|",10)=$P(vobj(dbtbl2d),$C(124),10)
+ S $piece(X,"|",11)=$P(vobj(dbtbl2d),$C(124),11)
+ S $piece(X,"|",12)=$P(vobj(dbtbl2d),$C(124),12)
+ S $piece(X,"|",13)=$P(vobj(dbtbl2d),$C(124),13)
+ S $piece(X,"|",14)=$P(vobj(dbtbl2d),$C(124),14)
+ S $piece(X,"|",15)=$P(vobj(dbtbl2d),$C(124),15)
+ S $piece(X,"|",18)=$P(vobj(dbtbl2d),$C(124),18)
+ S $piece(X,"|",21)=$P(vobj(dbtbl2d),$C(124),21)
+ S $piece(X,"|",22)=$P(vobj(dbtbl2d),$C(124),22)
   S $P(vobj(dbtbl2d),$C(124),30)=$P(vobj(dbtbl2d),$C(124),5)
- S $P(X,"|",30)=$P(vobj(dbtbl2d),$C(124),30)
+ S $piece(X,"|",30)=$P(vobj(dbtbl2d),$C(124),30)
  S Y=$P(vobj(dbtbl2d),$C(124),11) S Y=$E(Y,3,$L(Y)-2) ;strip off <<  >>
  I Y?1A.AN!(Y?1"%".AN)!(Y?1A.AN1"("1AN.AN1")") D  Q X
- .	S $P(X,"|",5)=Y
- .	S $P(X,"|",11)=""
- .	S $P(X,"|",2)=$P(vobj(dbtbl2d),$C(124),10)
+ .	S $piece(X,"|",5)=Y
+ .	S $piece(X,"|",11)=""
+ .	S $piece(X,"|",2)=$P(vobj(dbtbl2d),$C(124),10)
  .	Q 
  ;
  ; <<VAR>> or <<$function>> syntax
- I $E(Y,1)="$"!($P(Y,",",4)="") Q X
- I $P(Y,",",4)=0 Q $P(X,"|",1,10)_"|<<"_$P(Y,",",1)_">>|"_$P(X,"|",12,99)
+ I $E(Y,1)="$"!($piece(Y,",",4)="") Q X
+ I $piece(Y,",",4)=0 Q $piece(X,"|",1,10)_"|<<"_$piece(Y,",",1)_">>|"_$piece(X,"|",12,99)
  ;
- S $P(Z,"|",5)=$P(Y,",",1) ; data item name ... replace with var name
- S $P(Z,"|",11)=$P(Y,",",2) ; prompt
- S $P(Z,"|",10)=$P(Y,",",3) ; typ
- S $P(Z,"|",3)=$P(Y,",",4) ; len
- S $P(Z,"|",13)=$P(Y,",",5) ; min
- S $P(Z,"|",14)=$P(Y,",",6) ; max
- S $P(Z,"|",15)=$P(Y,",",7) ; decimal
- I $P(Y,",",8)>0 S $P(Z,"|",21)=124 S $P(Z,"|",22)=$P(Y,",",8) ; position
- S $P(Z,"|",6)=$P(Y,",",9,99) ; table
- S $P(Z,"|",1)=$P(X,"|",1) ; location preamble
- S $P(Z,"|",12)=$P(X,"|",12) ;required flag
- S $P(Z,"|",18)=$P(X,"|",18) ; print edit
- S $P(Z,"|",2)=$P(Y,",",3) ;format
+ S $piece(Z,"|",5)=$piece(Y,",",1) ; data item name ... replace with var name
+ S $piece(Z,"|",11)=$piece(Y,",",2) ; prompt
+ S $piece(Z,"|",10)=$piece(Y,",",3) ; typ
+ S $piece(Z,"|",3)=$piece(Y,",",4) ; len
+ S $piece(Z,"|",13)=$piece(Y,",",5) ; min
+ S $piece(Z,"|",14)=$piece(Y,",",6) ; max
+ S $piece(Z,"|",15)=$piece(Y,",",7) ; decimal
+ I $piece(Y,",",8)>0 S $piece(Z,"|",21)=124 S $piece(Z,"|",22)=$piece(Y,",",8) ; position
+ S $piece(Z,"|",6)=$piece(Y,",",9,99) ; table
+ S $piece(Z,"|",1)=$piece(X,"|",1) ; location preamble
+ S $piece(Z,"|",12)=$piece(X,"|",12) ;required flag
+ S $piece(Z,"|",18)=$piece(X,"|",18) ; print edit
+ S $piece(Z,"|",2)=$piece(Y,",",3) ;format
  ;
-  N V1 S V1=%Library I $$vDbEx1() S $P(Z,"|",9)=1 ;pre proc
-  N V2 S V2=%Library I $$vDbEx2() S $P(Z,"|",8)=1 ; post proc
+ I $$vDbEx1() S $piece(Z,"|",9)=1 ;pre proc
+ I $$vDbEx2() S $piece(Z,"|",8)=1 ; post proc
  Q Z
  ;
  ; ---------- Data item protection
@@ -188,26 +187,26 @@ PARLIST(dbtbl2,vobjlst,FILES,vFID,vSN) ; Short Name reference REQ/MECH:REF
  ;
  I FILES'="" D
  .	N fid
- .	S (LIB,DLIB)=%Library S PFID=$P(FILES,",",1)
+ .	S (LIB,DLIB)=%LIBS S PFID=$piece(FILES,",",1)
  .	;
  .	; build actual and formal parameter list.
  .	F i=1:1:$L(FILES,",") D
- ..		S fid=$P(FILES,",",i)
+ ..		S fid=$piece(FILES,",",i)
  ..		I '($D(fsn(fid))#2) D fsn^DBSDD(.fsn,fid) ; file header info
- ..		S vobjlst("actual")=vobjlst("actual")_",."_$P(fsn(fid),"|",1) ;actual parameter list for all procedure calls
+ ..		S vobjlst("actual")=vobjlst("actual")_",."_$piece(fsn(fid),"|",1) ;actual parameter list for all procedure calls
  ..		I $E(vobjlst("actual"),$L(vobjlst("actual")))="(" S vobjlst("actual")=$E(vobjlst("actual"),1,$L(vobjlst("actual"))-1)
  ..		;
- ..		S vobjlst("tab")=vobjlst("tab")_",."_$P(fsn(fid),"|",1) ;actual parameter list for all procedure calls
+ ..		S vobjlst("tab")=vobjlst("tab")_",."_$piece(fsn(fid),"|",1) ;actual parameter list for all procedure calls
  ..		I $E(vobjlst("tab"),$L(vobjlst("tab")))="(" S vobjlst("tab")=$E(vobjlst("tab"),1,$L(vobjlst("tab"))-1)
  ..		;
- ..		S vobjlst("formal")=vobjlst("formal")_",Record"_fid_" "_$P(fsn(fid),"|",1) ; formal list
+ ..		S vobjlst("formal")=vobjlst("formal")_",Record"_fid_" "_$piece(fsn(fid),"|",1) ; formal list
  ..		I $E(vobjlst("formal"),$L(vobjlst("formal")))="(" S vobjlst("formal")=$E(vobjlst("formal"),1,$L(vobjlst("formal"))-1)
  ..		;
  ..		I ($D(vFID(fid))#2) D
  ...			S vobjlst("formal")=vobjlst("formal")_"()" ; add parens if array of objects
  ...			S vobjlst("actual")=vobjlst("actual")_"()" ; add parens if array of objects
  ...			Q 
- ..		S vobjlst(i)=$P(fsn(fid),"|",1)_"|"_fid_"|Record"_fid
+ ..		S vobjlst(i)=$piece(fsn(fid),"|",1)_"|"_fid_"|Record"_fid
  ..		Q  ; FOR
  .	Q  ; if FILES'="" ..
  ;
@@ -224,21 +223,21 @@ REPEAT(dbtbl2,vFID,vSN) ; Short name array [*] /NOREQ/MECH:REF
  N di N fid N name N sn
  ;
  I '$P(vobj(dbtbl2,0),$C(124),7) Q 
- N ds,vos1,vos2,vos3,vos4,vos5  N V1 S V1=%Library S ds=$$vOpen2()
+ N ds,vos1,vos2,vos3,vos4,vos5 S ds=$$vOpen2()
  F  Q:'$$vFetch2()  D
  . N dbtbl2d S dbtbl2d=$$vRCgetRecord1Opt^RecordDBTBL2D($P(ds,$C(9),1),$P(ds,$C(9),2),$P(ds,$C(9),3),1,"")
  . I $P(dbtbl2d,$C(124),1)\1000<$P(vobj(dbtbl2,0),$C(124),7) Q  ; not in repeat region
  .	S name=$P(dbtbl2d,$C(124),5)
  . I $E(name,1)'="[" Q  ; not a real column name
- .	S fid=$P($E(name,2,1048575),"]",1)
- .	I fid["," S fid=$P(fid,",",2)
+ .	S fid=$piece($E(name,2,1048575),"]",1)
+ .	I fid["," S fid=$piece(fid,",",2)
  .	I '($D(fsn(fid))#2) D fsn^SQLDD(.fsn,fid)
- .	S sn=$P(fsn(fid),"|",1)
+ .	S sn=$piece(fsn(fid),"|",1)
  .	I $E(sn,$L(sn))="(" S sn=$E(sn,1,$L(sn)-1)
  .	S vFID(fid)=sn
  .	S vSN(sn)=fid ; file is part of repeat region
  .	S sn=$ZCONVERT(sn,"U")
- .	S di=$P(name,"]",2)
+ .	S di=$piece(name,"]",2)
  .	S di=$ZCONVERT(di,"U")
  .	S REPEAT(sn_"."_di)="" ; Used in REPEATCK^DBS2PSL4
  . Q 
@@ -284,31 +283,31 @@ TABINFO(SID,ditab) ; Data item/%TAB array  /MECH=REFARR:W
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^11043" ; Signature - LTD^TIME^USER^SIZE
+ Q "61569^11632^Sha H Mirza^10990" ; Signature - LTD^TIME^USER^SIZE
  ;
-vDbEx1() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V1 AND SID=:SID AND SEQ=:SEQ AND PSEQ=1
+vDbEx1() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=:SEQ AND PSEQ=1
  ;
- N vsql1
+ N vsql1,vsql2
  S vsql1=$$BYTECHAR^SQLUTL(254)
- ;
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
  ;
  ;
  S SEQ=+SEQ
- I '($D(^DBTBL(V1,2,SID,SEQ,1))#2) Q 0
+ I '($D(^DBTBL(vsql2,2,SID,SEQ,1))#2) Q 0
  Q 1
  ;
-vDbEx2() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V2 AND SID=:SID AND SEQ=:SEQ AND PSEQ=21
+vDbEx2() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=:SEQ AND PSEQ=21
  ;
- N vsql1
+ N vsql1,vsql2
  S vsql1=$$BYTECHAR^SQLUTL(254)
- ;
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
  ;
  ;
  S SEQ=+SEQ
- I '($D(^DBTBL(V2,2,SID,SEQ,21))#2) Q 0
+ I '($D(^DBTBL(vsql2,2,SID,SEQ,21))#2) Q 0
  Q 1
  ;
-vOpen1() ; LIBS,SID,SEQ FROM DBTBL2D WHERE LIBS=:V1 AND SID=:SID AND SEQ>:SEQ
+vOpen1() ; LIBS,SID,SEQ FROM DBTBL2D WHERE LIBS=:%LIBS AND SID=:SID AND SEQ>:SEQ
  ;
  ;
  S vos1=2
@@ -317,7 +316,7 @@ vOpen1() ; LIBS,SID,SEQ FROM DBTBL2D WHERE LIBS=:V1 AND SID=:SID AND SEQ>:SEQ
  ;
 vL1a0 S vos1=0 Q
 vL1a1 S vos2=$$BYTECHAR^SQLUTL(254)
- S vos3=$G(V1) I vos3="" G vL1a0
+ S vos3=$G(%LIBS) I vos3="" G vL1a0
  S vos4=$G(SID) I vos4="" G vL1a0
  S vos5=$G(SEQ)
  S vos6=0
@@ -337,7 +336,7 @@ vFetch1() ;
  ;
  Q 1
  ;
-vOpen2() ; LIBS,SID,SEQ FROM DBTBL2D WHERE LIBS=:V1 AND SID=:SID AND SEQ>0
+vOpen2() ; LIBS,SID,SEQ FROM DBTBL2D WHERE LIBS=:%LIBS AND SID=:SID AND SEQ>0
  ;
  ;
  S vos1=2
@@ -346,7 +345,7 @@ vOpen2() ; LIBS,SID,SEQ FROM DBTBL2D WHERE LIBS=:V1 AND SID=:SID AND SEQ>0
  ;
 vL2a0 S vos1=0 Q
 vL2a1 S vos2=$$BYTECHAR^SQLUTL(254)
- S vos3=$G(V1) I vos3="" G vL2a0
+ S vos3=$G(%LIBS) I vos3="" G vL2a0
  S vos4=$G(SID) I vos4="" G vL2a0
  S vos5=0
 vL2a5 S vos5=$O(^DBTBL(vos3,2,vos4,vos5),1) I vos5="" G vL2a0

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Local procedure runtime driver|DBSDRV|||||||1
 	#PACKAGE framework
 	#OPTION ResultClass ON
 	/*
@@ -558,4 +557,4 @@ public void cmdline(String cmdStr,	// Command string
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^17183"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61462^42586^Dan Russell^17121"	// Signature - LTD^TIME^USER^SIZE

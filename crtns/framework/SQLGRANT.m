@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SQLGRANT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SQL Grant/Revoke Command Support|SQLGRANT|||||||1
  ;  #PACKAGE framework
  ;  #OPTION ResultClass ON
  ;
@@ -223,7 +222,7 @@ REVOKE(expr,tok,sqlcnt) ; Rows deleted
  K vobj(+$G(rs)) Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^8265" ; Signature - LTD^TIME^USER^SIZE
+ Q "61332^71489^Dan Russell^8199" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM DBACCRTS WHERE TABLENAME=:V1 AND USERCLASS=:UCLS

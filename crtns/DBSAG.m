@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSAG ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Aggregate definitions|DBSAG|||||||1
 DBSAG ; 
  ;
  Q 
@@ -381,7 +380,7 @@ GETDB() ;
  Q DB
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^9418" ; Signature - LTD^TIME^USER^SIZE
+ Q "60913^31094^Dan Russell^9366" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM DBTBL22C WHERE %LIBS='SYSDEV' and AGID=:AGID

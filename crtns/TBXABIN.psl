@@ -1,4 +1,3 @@
-//DO NOT MODIFY  TBX autobuild |TBXABIN|||||||1
 
 	/*
 	Original: Jaywant Khairnar - 2009-06-12
@@ -266,4 +265,4 @@ private Number errormsg(String errMsg)	// Message associated with failure
 	quit 1		// Error indicator
 	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^8466"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61544^27162^Jaywant Khairnar^8419"	// Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Menu driver and maintenance|SCADRV5|||||||1
 	/*
 	ORIG: chhabris - 08/03/2005
 	DESC: Menu driver and maintenance
@@ -288,4 +287,4 @@ DSPFUN	// Function SELECT
 	quit
  
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5644"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60187^24547^Sanjay Chhrabria^5584"	// Signature - LTD^TIME^USER^SIZE

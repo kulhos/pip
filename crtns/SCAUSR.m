@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAUSR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  New Employee/User|SCAUSR|||||||1
 SCAUSR ; Set up new Employee/User
  ;
  Q 
@@ -30,7 +29,7 @@ DEL ; User Deletion
  ;
  Q 
  ;
-INIT(%ProcessMode) ; 
+INIT(%O) ; 
  ;
  N CIFNAM N IO N RELCIF N UID N VFMQ
  ;
@@ -51,11 +50,11 @@ QUERY ; Query for User ID
  N %READ N %TAB
  ;
  S %TAB("UID")=".UID1/HLP=[SCAU]UID/XPP=D PPUID^SCAUSR"
- I %ProcessMode S %TAB("UID")=%TAB("UID")_"/TBL=[SCAU]"
+ I %O S %TAB("UID")=%TAB("UID")_"/TBL=[SCAU]"
  ;
  S %READ="@@%FN,,,UID/REQ"
  ;
- I %ProcessMode=2 D
+ I %O=2 D
  .	S %TAB("IO")=$$IO^SCATAB($I)
  .	S %READ=%READ_",IO"
  .	Q 
@@ -85,10 +84,10 @@ SCREEN(fSCAU) ; Call screen driver
  ;
   K vobj(+$G(fSCAU)) S fSCAU=$$vRCgetRecord1^RecordSCAU(UID,0)
  ;
- I %ProcessMode D LOADRA
- I %ProcessMode=2,IO'=$I D OPEN^SCAIO Q:ER 
+ I %O D LOADRA
+ I %O=2,IO'=$I D OPEN^SCAIO Q:ER 
  ;
- N vo1 N vo2 N vo3 N vo4 D DRV^USID(%ProcessMode,"SCAUSR1",.fSCAU,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
+ N vo1 N vo2 N vo3 N vo4 D DRV^USID(%O,"SCAUSR1",.fSCAU,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
  ;
  Q 
  ;
@@ -109,7 +108,7 @@ LOADRA ; Load related account customer #'s and names
  ;
 VER(scau) ; Verify screen status and file
  ;
- I %ProcessMode=2!(%ProcessMode=4)!(VFMQ="Q") D END Q 
+ I %O=2!(%O=4)!(VFMQ="Q") D END Q 
  ;
  D FILE(.scau)
  ;
@@ -122,7 +121,7 @@ FILE(scau) ; File data
  ;
  N RECIF
  ;
- I (%ProcessMode=0)!(%ProcessMode=1) S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordSCAU(scau,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(scau,-100) S vobj(scau,-2)=1 TC:vTp  
+ I (%O=0)!(%O=1) S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordSCAU(scau,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(scau,-100) S vobj(scau,-2)=1 TC:vTp  
  ;
  I ER Q 
  ;
@@ -145,21 +144,21 @@ FILE(scau) ; File data
  ;
 END ; End of processing
  ;
- I ER!(%ProcessMode=2)!(%ProcessMode=4) Q 
+ I ER!(%O=2)!(%O=4) Q 
  ;
  I VFMQ="Q" D
  .	; User ~p1 not created
- .	I %ProcessMode=0 S RM=$$^MSG(2873,UID)
+ .	I %O=0 S RM=$$^MSG(2873,UID)
  .	;
  .	; User ~p1 not modified
- .	E  I %ProcessMode=1 S RM=$$^MSG(2875,UID)
+ .	E  I %O=1 S RM=$$^MSG(2875,UID)
  .	Q 
  E  D
  .	; User ~p1 created
- .	I %ProcessMode=0 S RM=$$^MSG(2868,UID) Q 
+ .	I %O=0 S RM=$$^MSG(2868,UID) Q 
  .	;
  .	; User ~p1 modified
- .	E  I %ProcessMode=1 S RM=$$^MSG(2872,UID) Q 
+ .	E  I %O=1 S RM=$$^MSG(2872,UID) Q 
  .	Q 
  ;
  S ER="W"
@@ -184,7 +183,7 @@ RESET ; Reset user's manual revoke status
  I $$STATUS^SCAUCDI($P(vobj(scau),$C(124),5),$P(vobj(scau),$C(124),8),$P(vobj(scau),$C(124),44),$P(vobj(scau),$C(124),43))'=1 D
  .	;
  .  S $P(vobj(scau),$C(124),43)=0
- .  S $P(vobj(scau),$C(124),8)=%CurrentDate
+ .  S $P(vobj(scau),$C(124),8)=$P($H,",",1)
  .  S $P(vobj(scau),$C(124),44)=0
  .  S $P(vobj(scau),$C(124),45)=""
  .	;
@@ -200,9 +199,10 @@ RESET ; Reset user's manual revoke status
  S ER="W"
  ;
  K vobj(+$G(scau)) Q 
+ ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4128" ; Signature - LTD^TIME^USER^SIZE
+ Q "60604^26252^SSethy^4079" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SCAUR1 WHERE UID=:UID

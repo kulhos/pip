@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSFVER ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Table Relationship Verification|DBSFVER|||||||1
 DBSFVER ; 
  ;
  S ER=$$VALIDATE(FILES,.RM)
@@ -69,4 +68,4 @@ VALIDATE(TABLES,RM) ; Error message /MECH=REFNAM:W
  Q ER
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1993" ; Signature - LTD^TIME^USER^SIZE
+ Q "60425^2727^Dan Russell^1929" ; Signature - LTD^TIME^USER^SIZE

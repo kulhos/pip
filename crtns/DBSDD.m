@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDD ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Data Dictionary Function Library|DBSDD|||||||1
 DBSDD ; 
  ;
  ; *******************************************************************
@@ -742,7 +741,7 @@ FIELD(ddexpr,loc,x,vdd) ; Dictionary records   /NOREQ/MECH=REFARR:RW
  Q $piece(x,"|",loc)
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^32842" ; Signature - LTD^TIME^USER^SIZE
+ Q "61254^68547^Dan Russell^32779" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

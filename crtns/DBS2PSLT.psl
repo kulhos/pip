@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Screen Compiler Template|DBS2PSLT|||||||1
 DBS2PSLT //DBSSCR
 
   /*
@@ -123,4 +122,4 @@ vREAD
 	#ACCEPT DATE=11/05/03; PGM=Screen Compiler;CR=UNKNOWN;GROUP=DEAD
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3030"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60680^50161^Pete Chenard^2968"	// Signature - LTD^TIME^USER^SIZE

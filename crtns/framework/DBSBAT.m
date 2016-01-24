@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSBAT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Batch Procedure Definition|DBSBAT|||||||1
  ;  #PACKAGE framework
  ;
  Q  ; No entry from top
@@ -74,11 +73,11 @@ BUILD ;
  ;
  Q:'$$LIST^DBSGETID("DBTBL33")  ; Select names
  ;
- N rs,vos1,vos2,vos3,vos4  N V1 S V1=%ProcessID S rs=$$vOpen2()
+ N rs,vos1,vos2,vos3,vos4  N V1 S V1=$J S rs=$$vOpen2()
  ;
  F  Q:'$$vFetch2()  D COMPILE(rs)
  ;
-  N V2 S V2=%ProcessID D vDbDe1()
+  N V2 S V2=$J D vDbDe1()
  ;
  Q 
  ;
@@ -98,13 +97,13 @@ COMPILE(BCHID) ;
  ;
  Q 
  ;
-exec(%ProcessMode) ; 
+exec(%O) ; 
  N vTp
  ;
  N zproc
  N %READ N %TAB N BCHID N buf N DBTBL N VFMQ
  ;
- I (%ProcessMode=0) S %TAB("BCHID")="[DBTBL33]BCHID/TBL=[DBTBL33]:NOVAL/XPP=D pp^DBSBAT"
+ I (%O=0) S %TAB("BCHID")="[DBTBL33]BCHID/TBL=[DBTBL33]:NOVAL/XPP=D pp^DBSBAT"
  E  S %TAB("BCHID")="[DBTBL33]BCHID/TBL=[DBTBL33]"
  ;
  S %READ="@@%FN/CEN/REV,,BCHID/REQ"
@@ -133,7 +132,7 @@ exec(%ProcessMode) ;
  .  S $P(vobj(fDBTBL33),$C(124),18)=10
  .	Q 
  ;
- N vo1 N vo2 N vo3 N vo4 D DRV^USID(%ProcessMode,"DBTBL33L",.fDBTBL33,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
+ N vo1 N vo2 N vo3 N vo4 D DRV^USID(%O,"DBTBL33L",.fDBTBL33,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
  ;
  I (VFMQ="Q") D  K vobj(+$G(fDBTBL33)) Q 
  .	;
@@ -170,7 +169,7 @@ exec(%ProcessMode) ;
  .	I (VFMQ="Q") K buf
  .	Q 
  ;
- I (VFMQ="Q"),(%ProcessMode=0) D  K vobj(+$G(fDBTBL33)) Q 
+ I (VFMQ="Q"),(%O=0) D  K vobj(+$G(fDBTBL33)) Q 
  .	;
  .	L -DBTBL("SYSDEV",33,BCHID)
  .	Q 
@@ -178,13 +177,13 @@ exec(%ProcessMode) ;
  ; All user input is done, update the database
  TS (vobj):transactionid="CS"
  ;
- I (%ProcessMode=3) D
+ I (%O=3) D
  .	;
  .	N pgm S pgm=$P(vobj(fDBTBL33),$C(124),2)
  .	;
  .	I '(pgm="") D DEL^%ZRTNDEL(pgm) ; Delete routine
  .	;
- .	 N V1 S V1=vobj(fDBTBL33,-4)  ZWI ^DBTBL("SYSDEV",33,V1)
+ .	 N V1 S V1=vobj(fDBTBL33,-4) D vDbDe2()
  .	Q 
  ;
  E  I $D(vobj(fDBTBL33,-100)) S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordDBTBL33(fDBTBL33,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(fDBTBL33,-100) S vobj(fDBTBL33,-2)=1 TC:vTp  
@@ -196,7 +195,7 @@ exec(%ProcessMode) ;
  .	N secseq N seq
  .	N sec N x
  .	;
- .	D vDbDe2()
+ .	D vDbDe3()
  .	;
  .	S isSecTop=0
  .	S (sec,seq)=""
@@ -238,7 +237,7 @@ exec(%ProcessMode) ;
  ...			K vobj(+$G(dbtbl33d)) Q 
  ..		Q 
  .	;
- .  S $P(vobj(fDBTBL33),$C(124),5)=%CurrentTime
+ .  S $P(vobj(fDBTBL33),$C(124),5)=$P($H,",",2)
  .	S vobj(fDBTBL33,-2)=1
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordDBTBL33(fDBTBL33,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(fDBTBL33,-100) S vobj(fDBTBL33,-2)=1 TC:vTp  
  .	Q 
@@ -263,7 +262,7 @@ pp ; UTLREAD post processor to check duplicate name
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^6275" ; Signature - LTD^TIME^USER^SIZE
+ Q "61341^48273^Dan Russell^6217" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID = :V2
@@ -283,7 +282,22 @@ vDbDe1() ; DELETE FROM TMPDQ WHERE PID = :V2
  Q 
  ; ----------------
  ;  #OPTION ResultClass 1
-vDbDe2() ; DELETE FROM DBTBL33D WHERE %LIBS='SYSDEV' AND BCHID=:BCHID
+vDbDe2() ; DELETE FROM DBTBL33 WHERE %LIBS='SYSDEV' AND BCHID=:V1
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ TS (vobj):transactionid="CS"
+ N vRec S vRec=$$vRCgetRecord1^RecordDBTBL33("SYSDEV",V1,0)
+ I $G(vobj(vRec,-2))=1 S vobj(vRec,-2)=3 D
+ .	;     #ACCEPT Date=07/09/2008; Pgm=RussellDS; CR=30801; Group=BYPASS
+ .	;*** Start of code by-passed by compiler
+ .	D vSave^RecordDBTBL33(vRec,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/",0)
+ .	;*** End of code by-passed by compiler ***
+ .	Q 
+  TC:$TL 
+ K vobj(+$G(vRec)) Q 
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vDbDe3() ; DELETE FROM DBTBL33D WHERE %LIBS='SYSDEV' AND BCHID=:BCHID
  ;
  ;  #OPTIMIZE FUNCTIONS OFF
  TS (vobj):transactionid="CS"

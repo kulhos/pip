@@ -1,4 +1,3 @@
-//DO NOT MODIFY  General purpose report writer|DBSRPT|||||||1
 private DBSRPT(String from, String select, String where, String orderby, String rptnam)	
 		 
 	/*
@@ -82,4 +81,4 @@ private DBSRPT(String from, String select, String where, String orderby, String 
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^2137"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60659^41667^Dan Russell^2076"	// Signature - LTD^TIME^USER^SIZE

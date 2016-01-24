@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Screen Compiler|DBS2PSL0|||||||1
 DBS2PSL0(RecordDBTBL2 dbtbl2,String VPT,String VPB)	// -  - V7.0 - PSL Screen Compiler
 	/*
 	       ORIG:  CHIANG - 15 AUG 1991
@@ -360,4 +359,4 @@ private TABINFO(String SID,	// Screen ID
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^11043"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61569^11632^Sha H Mirza^10990"	// Signature - LTD^TIME^USER^SIZE

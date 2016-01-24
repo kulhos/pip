@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDF9 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Rebuild DQ node/column cross reference|DBSDF9|||||||1
 DBSDF9 ; 
  ;
  ; **********************************************************************
@@ -25,11 +24,11 @@ DBSDF9 ;
  ; Prompt for list of tables
  Q:'$$LIST^DBSGETID("DBTBL1") 
  ;
- N rs,vos1,vos2,vos3,vos4  N V1 S V1=%ProcessID S rs=$$vOpen1()
+ N rs,vos1,vos2,vos3,vos4  N V1 S V1=$J S rs=$$vOpen1()
  ;
  F  Q:'$$vFetch1()  D BLDINDX(rs)
  ;
-  N V2 S V2=%ProcessID D vDbDe1()
+  N V2 S V2=$J D vDbDe1()
  ;
  ; Done
  ;  #ACCEPT DATE=03/11/2008; PGM=Dan Russell; CR=30801; Group=ACCESS
@@ -47,10 +46,10 @@ BUILDALL ;
  ;
 BLDINDX(TABLE) ; Table name
  ;
- N %ProcessMode
+ N %O
  N LISTDFT N LISTREQ N nullChar
  ;
- S %ProcessMode=0
+ S %O=0
  S (LISTDFT,LISTREQ)=""
  S nullChar=$$BYTECHAR^SQLUTL(254)
  ;
@@ -188,7 +187,7 @@ DBSUTL9 ;
  ;
  ; Rebuild field ID index file
  WRITE !!,$$^MSG("3221"),!!
- WRITE %CurrentDate,"  ",%CurrentTime,!!
+ WRITE $$vdat2str($P($H,",",1),"MM/DD/YEAR"),"  ",$$vtim2str($P($H,",",2),"24:60:SS"),!!
  ;
  N ds,vos1,vos2,vos3 S ds=$$vOpen5()
  ;
@@ -216,7 +215,7 @@ DBSUTL9 ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^7867" ; Signature - LTD^TIME^USER^SIZE
+ Q "61413^60987^Dan Russell^7797" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID=:V2
@@ -234,6 +233,48 @@ vDbDe1() ; DELETE FROM TMPDQ WHERE PID=:V2
  .	Q 
   TC:$TL 
  Q 
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vtim2str(vo,vm) ; Time.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (vm="") S vm="24:60:SS"
+ N cc
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ SET cc=$ZDATE(","_vo,vm)
+ ;*** End of code by-passed by compiler ***
+ Q cc
  ;
 vOpen1() ; ELEMENT FROM TMPDQ WHERE PID=:V1 ORDER BY ELEMENT ASC
  ;

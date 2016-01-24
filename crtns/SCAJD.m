@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAJD ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SCA Julian Date Conversion|SCAJD|||||||1
 SCAJD(STRING,MASK) ; SCA Julian Date Conversion
  ;
  N %MLIST,ALPHA,DAY,DE,DN,DS,ME,MONTH,MS,ORDER,YE,YEAR,YS
@@ -74,7 +73,7 @@ ALLNUM ; All Numeric
  ;
 AllN1 ; Determine which piece we've got
  ;
- S J=$O(ORDER(J)) Q:J="" 
+ S J=$order(ORDER(J)) Q:J="" 
  I J'=MS D  Q 
  .	I J'=DS D  Q 
  ..		N YL
@@ -145,7 +144,7 @@ HASA2 ;
  ;
 HASA1 ; Determine which piece we've got
  ;
- S J=$O(ORDER(J)) Q:J="" 
+ S J=$order(ORDER(J)) Q:J="" 
  I J=MS S MONTH=PARTS(I) Q 
  I J=DS S DAY=PARTS(I) Q 
  I J=YS S YEAR=PARTS(I) Q 
@@ -173,7 +172,7 @@ HASPUNC ; Date has puncuation characters
  ;
 HASP1 ; Determine which piece we've got
  ;
- S J=$O(ORDER(J)) Q:J="" 
+ S J=$order(ORDER(J)) Q:J="" 
  I J=MS S MONTH=PARTS(I) Q 
  I J=DS S DAY=PARTS(I) Q 
  I J=YS S YEAR=PARTS(I) Q 
@@ -248,7 +247,7 @@ CALCYEAR ; Calculate Current Year
  ;
  N D
  ;
- S D=+%SystemDate
+ S D=+TJD
  ;
  S YEAR=$ZD(D,"YEAR")
  ;
@@ -304,8 +303,8 @@ VALIDATE ; Validate Date Components
  I DAY>30,MONTH=4!(MONTH=6)!(MONTH=9)!(MONTH=11) D BADDAY(DAY) Q 
  I MONTH=2,(('DL&(DAY>28))!(DL&(DAY>29))) D BADDAY(DAY) Q 
  ;
- I DL=0 S %DJ=$P("0,31,59,90,120,151,181,212,243,273,304,334",",",MONTH)+DAY
- E  S %DJ=$P("0,31,60,91,121,152,182,213,244,274,305,335",",",MONTH)+DAY
+ I DL=0 S %DJ=$piece("0,31,59,90,120,151,181,212,243,273,304,334",",",MONTH)+DAY
+ E  S %DJ=$piece("0,31,60,91,121,152,182,213,244,274,305,335",",",MONTH)+DAY
  ;
  ; Days in normal 365 day years
  S DN=%DJ+((YEAR-1841)*365)
@@ -399,7 +398,7 @@ TODAY ; T = today's system date from CUVAR(2)
   S cuvar=$G(^CUVAR(2))
  ;
  I $P(cuvar,$C(124),1) S DN=$P(cuvar,$C(124),1)
- E  S DN=%CurrentDate
+ E  S DN=$P($H,",",1)
  I STRING?1"T+".E S DN=DN+$E(STRING,3,1048575)
  E  I STRING?1"T-".E S DN=DN-$E(STRING,3,1048575)
  E  I '(STRING="T") D BADEXPR(STRING)
@@ -408,7 +407,7 @@ TODAY ; T = today's system date from CUVAR(2)
  ;
 CALENDAR ; C = today's calendar (+%CurrentDate) date
  ;
- S DN=%CurrentDate
+ S DN=$P($H,",",1)
  I STRING?1"C+".E S DN=DN+$E(STRING,3,1048575)
  E  I STRING?1"C-".E S DN=DN-$E(STRING,3,1048575)
  E  I '(STRING="C") D BADEXPR(STRING)
@@ -576,4 +575,4 @@ ERR ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^11130" ; Signature - LTD^TIME^USER^SIZE
+ Q "60487^37529^Pat Kelly^11073" ; Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PROFILE System Driver, Part I|SCADRV|||||||1
 public SCADRV
 	/*
 	ORIG: Vitaliy Antonov - 6/13/2002
@@ -787,4 +786,4 @@ CHKSTAT(RecordSCAU scau)	// Check User STATUS
 
 	quit 
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^17919"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60723^27201^SSethy^17858"	// Signature - LTD^TIME^USER^SIZE

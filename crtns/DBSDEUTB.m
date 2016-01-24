@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDEUTB ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  General Purpose Screen Driver|DBSDEUTB|||||||1
 DBSDEUTB ; General Purpose Screen Driver
  ;
  ; I18N=OFF
@@ -34,7 +33,7 @@ DBSDEUTB ; General Purpose Screen Driver
  S TAB=$char(9)
  ;
  D addcode(0,"private DBSDEUTA(String SID, Number ProcMode, String KEY(),String FPRE)"_TAB_"// Generic Screen Driver")
- D addcode(1,"// Last compiled:  "_%CurrentDate_" "_%CurrentTime_" - "_%UserName)
+ D addcode(1,"// Last compiled:  "_$$vdat2str($P($H,",",1),"MM/DD/YEAR")_" "_$$vtim2str($P($H,",",2),"24:60:SS")_" - "_$$USERNAM^%ZFUNC)
  D addcode(0,"")
  D addcode(1,"// THIS IS A COMPILED ROUTINE.  Compiled by procedure DBSDEUTB")
  D addcode(0,"")
@@ -247,7 +246,49 @@ addcode(TABS,CODE) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^10693" ; Signature - LTD^TIME^USER^SIZE
+ Q "61239^41321^Dan Russell^10630" ; Signature - LTD^TIME^USER^SIZE
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vtim2str(vo,vm) ; Time.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (vm="") S vm="24:60:SS"
+ N cc
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ SET cc=$ZDATE(","_vo,vm)
+ ;*** End of code by-passed by compiler ***
+ Q cc
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

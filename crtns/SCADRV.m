@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PROFILE System Driver, Part I|SCADRV|||||||1
 SCADRV ; 
  ;
  ;  #ACCEPT Date=11/3/06; Pgm=RussellDS; CR=22719; Group=BYPASS
@@ -27,11 +26,11 @@ UID ; Standard PROFILE username access
  D PAINTSCR ; Paint screen
  ;
  ; Get user id
- S %UserID=$$GETUID()
+ S %UID=$$GETUID()
  ; No user id entered
- I (%UserID="") D EXIT Q 
+ I (%UID="") D EXIT Q 
  ;
- N scau S scau=$$vRCgetRecord1^RecordSCAU(%UserID,0)
+ N scau S scau=$$vRCgetRecord1^RecordSCAU(%UID,0)
  ;
  ; Invalid user ID
  I '$G(vobj(scau,-2)) D SETERR^DBSEXECU("SCAU","MSG",1504) D EXIT K vobj(+$G(scau)) Q 
@@ -52,7 +51,7 @@ UID ; Standard PROFILE username access
  ;
  ; Update SCAU with successful login info.
   S $P(vobj(scau),$C(124),43)=0
-  S $P(vobj(scau),$C(124),8)=%CurrentDate
+  S $P(vobj(scau),$C(124),8)=$P($H,",",1)
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordSCAU(scau,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(scau,-100) S vobj(scau,-2)=1 TC:vTp  
  ;
  D VARSET(.scau) ; Set variables
@@ -71,9 +70,9 @@ VMSUID ; Private -  VMS username access
  D INIT ; Init screen and key variables
  ;
  ; Get PROFILE user id
- S %UserID=$$GETUID()
+ S %UID=$$GETUID()
  ;
- N scau S scau=$$vRCgetRecord1^RecordSCAU(%UserID,0)
+ N scau S scau=$$vRCgetRecord1^RecordSCAU(%UID,0)
  ;
  ; Invalid user ID
  I '$G(vobj(scau,-2)) D SETERR^DBSEXECU("SCAU","MSG",1504) D EXIT K vobj(+$G(scau)) Q 
@@ -82,7 +81,7 @@ VMSUID ; Private -  VMS username access
  D VALIDUID I ER D EXIT K vobj(+$G(scau)) Q  ; Validate user
  ;
  ; First sign-on of the day
- I ($P(vobj(scau),$C(124),8)'=%CurrentDate) D PAINTSCR S vpc=$$PROMPT K:vpc vobj(+$G(scau)) Q:vpc 
+ I ($P(vobj(scau),$C(124),8)'=$P($H,",",1)) D PAINTSCR S vpc=$$PROMPT K:vpc vobj(+$G(scau)) Q:vpc 
  ;
  D VARSET(.scau) ; Set variables
  ;
@@ -105,7 +104,7 @@ ATTACH(pid,fn,input) ;
  new (%TO,pid,fn,input,ER,RM)
  ;*** End of code by-passed by compiler ***
  ;
- N JOB S JOB=%ProcessID
+ N JOB S JOB=$J
  ;
  N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch1^"_$T(+0)
  ;
@@ -150,7 +149,7 @@ ATTACH(pid,fn,input) ;
  ;
 INIT ; Initialization and terminal setting
  ;
- N JOB S JOB=%ProcessID
+ N JOB S JOB=$J
  ;
  N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch2^"_$T(+0)
  ;
@@ -172,7 +171,7 @@ INIT ; Initialization and terminal setting
  S %="|"
  S %SN=""
  ;
- S %UserStation=$$TLO^UTLO
+ S TLO=$$TLO^UTLO
  ;
  D ZBINIT^%TRMVT()
  S vidinc=$$VIDINC^%TRMVT
@@ -227,7 +226,7 @@ PAINTSCR ; Paint header, copyright, and message
  ;
   S X="Sanchez Computer Associates"
  ;
- WRITE $$CUP^%TRMVT((80-$L(X))\2,3),X
+ WRITE $$CUP^%TRMVT(26,3),X
  ;
   WRITE $$CUP^%TRMVT(12,7),$$DBLH^%TRMVT("PIP Version 0.2")
  ;
@@ -253,7 +252,7 @@ COPYRT(X) ;
  ; I18N=OFF
  S X(1)="PROFILE(R) is a registered trademark of Sanchez Computer Associates, Inc."
  S X(2)="DATA-QWIK is a trademark of Sanchez Computer Associates, Inc."
- S X(3)="Copyright(C)"_$$YEAR^SCADAT(+%CurrentDate,1)_" by Sanchez Computer Associates, Inc."
+ S X(3)="Copyright(C)"_$$YEAR^SCADAT(+$P($H,",",1),1)_" by Sanchez Computer Associates, Inc."
  S X(4)="All Rights Reserved."
  I 1 S X(4)=X(4)_"    Version "_"7.0"
  ; I18N=ON
@@ -285,7 +284,7 @@ SCAUID(USERID) ;
 PROMPT() ; Continue prompt for VMS username access
  ; Return 0 if success, 1 if failure
  ;
- WRITE $$MSG^%TRMVT("",0,1,1,24,%InputTimeOut,1)
+ WRITE $$MSG^%TRMVT("",0,1,1,24,%TO,1)
  I $get(%fkey)="TIM" Q 1
  ;
  Q 0
@@ -293,10 +292,10 @@ PROMPT() ; Continue prompt for VMS username access
 LOADSCAU(scau) ; Load ^SCAU variables
  ;
  S %AUTOMNU=$P(vobj(scau),$C(124),2)
- S %UserClass=$P(vobj(scau),$C(124),5)
+ S %UCLS=$P(vobj(scau),$C(124),5)
  ;
  ; Restrict Userclass During Accruals
- N scau0 S scau0=$G(^SCAU(0,%UserClass))
+ N scau0 S scau0=$G(^SCAU(0,%UCLS))
  S %ACRREST=$P(scau0,$C(124),9)
  ;
  Q 
@@ -307,7 +306,7 @@ GETPWD(scau) ; Get password
  N ENC N X
  ;
  ; Maximum Number Of Retries
- N scau0 S scau0=$G(^SCAU(0,%UserClass))
+ N scau0 S scau0=$G(^SCAU(0,%UCLS))
  S PWDTRY=$P(scau0,$C(124),5)
  ;
  I ($P(vobj(scau),$C(124),6)="*")!($P(vobj(scau),$C(124),6)="") S ER=1 S ET="INVLDPWD" D ^UTLERR Q 
@@ -319,14 +318,14 @@ GETPWD(scau) ; Get password
  I ER S ET="ACCVIO" Q 
  ;
  ; Allow entry of new password
- I $P(vobj(scau),$C(124),4)!(%CurrentDate>$P(vobj(scau),$C(124),7)) D  I ER Q 
+ I $P(vobj(scau),$C(124),4)!($P($H,",",1)>$P(vobj(scau),$C(124),7)) D  I ER Q 
  .	; Password has expired
  .	WRITE $$MSG^%TRMVT($$^MSG(2138),0,1,1,24,60,1)
  .	I %fkey="TIM"!(%fkey="ESC") S ER=1 S ET="ACCVIO" Q 
  .	;
  .	D NEWPWD(.scau)
  .	;
- .	I %CurrentDate>$P(vobj(scau),$C(124),7) S ER=1 S ET="PWDEXP" Q 
+ .	I $P($H,",",1)>$P(vobj(scau),$C(124),7) S ER=1 S ET="PWDEXP" Q 
  .	I $P(vobj(scau),$C(124),4) S ER=1 S ET="SV_NEWPWREQ" Q 
  .	Q 
  ;
@@ -422,8 +421,8 @@ NEWPWD(scau) ; Allow entry of new password
 CHKEXP(scau) ; Check password expiration for warning
  ;
  N MSG
- I $P(vobj(scau),$C(124),7)>(%CurrentDate+7) Q  ; Not expiring in next 7 days
- I $P(vobj(scau),$C(124),8)=%CurrentDate Q  ; Already logged for today
+ I $P(vobj(scau),$C(124),7)>($P($H,",",1)+7) Q  ; Not expiring in next 7 days
+ I $P(vobj(scau),$C(124),8)=$P($H,",",1) Q  ; Already logged for today
  ;
  ; Your password expires on ~p1
  S MSG=$$^MSG(7136,$$vdat2str($P(vobj(scau),$C(124),7),"MM/DD/YEAR"))
@@ -438,11 +437,11 @@ VALIDUID ; Validate %UID and device restrictions
   S ER=0
     S RM=""
  ;
- I (%UserID="") S ER=1 S ET="ACCVIO" Q 
-  N V1 S V1=%UserID I '($D(^SCAU(1,V1))#2) S ER=1 S ET="ACCVIO" Q 
+ I (%UID="") S ER=1 S ET="ACCVIO" Q 
+ I '$$vDbEx1() S ER=1 S ET="ACCVIO" Q 
  ;
  ; Check to see if device is restricted from this user then quit
- N device,vop1 S vop1=%UserStation,device=$$vRCgetRecord1Opt^RecordDEVICE(%UserStation,0,"")
+ N device,vop1 S vop1=TLO,device=$$vRCgetRecord1Opt^RecordDEVICE(TLO,0,"")
   S device=$G(^%SYSVAR(3,vop1,0))
  I $P(device,$C(124),9)'=1 Q 
  ;
@@ -453,7 +452,7 @@ VALIDUID ; Validate %UID and device restrictions
 VARSET(scau) ; 
  N vTp
  ;
- N JOB S JOB=%ProcessID
+ N JOB S JOB=$J
  N DRVVARS N I N MNUM N MPRMPT N v
  ;
  N rs,vos1,vos2,vos3 S rs=$$vOpen1()
@@ -462,10 +461,10 @@ VARSET(scau) ;
  ;
  S DRVVARS="S %ACRREST="_(+%ACRREST)
  S DRVVARS=DRVVARS_",%AUTOMNU="_(+%AUTOMNU)
- S DRVVARS=DRVVARS_",TLO="""_%UserStation_""""
- S DRVVARS=DRVVARS_",%UCLS="""_%UserClass_""""
+ S DRVVARS=DRVVARS_",TLO="""_TLO_""""
+ S DRVVARS=DRVVARS_",%UCLS="""_%UCLS_""""
  S DRVVARS=DRVVARS_",%UDFN="_%UDFN
- S DRVVARS=DRVVARS_",%UID="""_%UserID_""""
+ S DRVVARS=DRVVARS_",%UID="""_%UID_""""
  ;
  ; Add previously defined variables
  F I=1:1:$L(drvlist,",") D
@@ -482,7 +481,7 @@ VARSET(scau) ;
  ; Load menu data
  S MENU=1
  ;
- N scau0 S scau0=$G(^SCAU(0,%UserClass))
+ N scau0 S scau0=$G(^SCAU(0,%UCLS))
  S MNUM=$P(scau0,$C(124),2)
  ;
  I (MNUM="") S MNUM=1
@@ -515,7 +514,7 @@ CLOSE ; Reset terminal with necessary parameters
  ;
 EXIT ; Report any error, and exit
  ;
- N JOB S JOB=%ProcessID
+ N JOB S JOB=$J
  ;
  ; Delete all driver information
   K ^TMP(0,JOB)
@@ -557,7 +556,7 @@ CHKSTAT(scau) ; Check User STATUS
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^17919" ; Signature - LTD^TIME^USER^SIZE
+ Q "60723^27201^SSethy^17858" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vdat2str(vo,mask) ; Date.toString
@@ -587,6 +586,14 @@ vdat2str(vo,mask) ; Date.toString
  set cc=$ZD(vo,mask,$G(lmon),$G(lday))
  ;*** End of code by-passed by compiler ***
  Q cc
+ ;
+vDbEx1() ; min(1): DISTINCT UID FROM SCAU WHERE UID=:%UID
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%UID) I vsql2="" Q 0
+ I '($D(^SCAU(1,vsql2))#2) Q 0
+ Q 1
  ;
 vOpen1() ; USERFN FROM CTBLUDFN
  ;

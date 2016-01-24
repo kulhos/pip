@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCUTILN ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Data-Qwik runtime filer & PSL utilities|UCUTILN|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -110,4 +109,4 @@ setPar(parList,insert) ;
  Q parList
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^9595" ; Signature - LTD^TIME^USER^SIZE
+ Q "61263^26519^Frans S.C. Witte^9523" ; Signature - LTD^TIME^USER^SIZE

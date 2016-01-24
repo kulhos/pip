@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSGETID ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Get ID(s)|DBSGETID|||||||1
 DBSGETID ; DATA-QWIK Get ID(s)
  ;
  Q  ; No entry from top
@@ -15,7 +14,7 @@ FIND(DQTABLE,NEW) ; 1 = new item, 0 = exists [*]  /REQ/MECH=VAL
  N %FRAME N OLNTB
  N %NOPRMT N %READ N %TAB N NAME N VFMQ
  ;
- S %TAB("NAME")=$$TBLPRMPT(DQTABLE)_"/XPP=do PP^"_%RoutineName_"("""_DQTABLE_""","_NEW_")" I ER Q ""
+ S %TAB("NAME")=$$TBLPRMPT(DQTABLE)_"/XPP=do PP^"_$T(+0)_"("""_DQTABLE_""","_NEW_")" I ER Q ""
  ;
  S %FRAME=2
  S OLNTB=40
@@ -54,7 +53,7 @@ LIST(DQTABLE,OPTION,IO,PNTDOC) ; Print documentation flag [*]   /NOREQ/MECH=REF:
  N %FRAME N CNT N LEN N OLNTB
  N %CTPRMT N %NOPRMT N %READ N %TAB N DESC N HELP N VFMQ N X N ZSEL
  ;
-  N V1 S V1=%ProcessID D vDbDe1()
+  N V1 S V1=$J D vDbDe1()
  ;
  S CNT=0
  S HELP="* = All  AB* = From AB to ABz  AB-CD = From AB to CD  'AB = Not AB "
@@ -67,7 +66,7 @@ LIST(DQTABLE,OPTION,IO,PNTDOC) ; Print documentation flag [*]   /NOREQ/MECH=REF:
  S LEN=LEN+(LEN\2)
  S %TAB("ZSEL")=%TAB("ZSEL")_"/LEN="_LEN
  ;
- S %TAB("ZSEL")=%TAB("ZSEL")_"/XPP=D LISTPP^"_%RoutineName_"("""_DQTABLE_""")"
+ S %TAB("ZSEL")=%TAB("ZSEL")_"/XPP=D LISTPP^"_$T(+0)_"("""_DQTABLE_""")"
  ;
  S DESC=$piece($piece(%TAB("ZSEL"),"/DES=",2),"/",1)
  S LEN=LEN+$L(DESC)
@@ -166,8 +165,8 @@ LISTBLD(DQID,DQTABLE) ; DATA-QWIK table   /REQ/MECH=VAL
  S CNT=0
  S N=""
  F  S N=$order(LIST(N)) Q:(N="")  D
- .	 N V1 S V1=%ProcessID I '($D(^TEMP(V1,N))#2) D
- ..		N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=%ProcessID S vobj(tmpdq,-4)=N
+ .	 N V1 S V1=$J I '($D(^TEMP(V1,N))#2) D
+ ..		N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=$J S vobj(tmpdq,-4)=N
  ..		;
  ..	 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordTMPDQ(tmpdq,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(tmpdq,-100) S vobj(tmpdq,-2)=1 TC:vTp  
  ..		;
@@ -293,7 +292,7 @@ DYNSEL(DQTABLE,WHERE,LIST) ; List of selected values  /NOREQ/MECH=REF:W
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^10642" ; Signature - LTD^TIME^USER^SIZE
+ Q "61349^37709^Badrinath Giridharan^10589" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID = :V1

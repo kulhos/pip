@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCCOLSF ****
  ; 
- ; 01/23/2016 20:03 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Masterfield and Subfield related|UCCOLSF|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -520,7 +519,7 @@ sortSfd(sfd,byTnP) ; byTnP(sft,sfp)=columnname [| sft2]
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^36653" ; Signature - LTD^TIME^USER^SIZE
+ Q "61233^52291^Dan Russell^36588" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vopenBuf(v1,v2) ; PSL.openBuffer

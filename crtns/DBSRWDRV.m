@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRWDRV ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Writer Driver|DBSRWDRV|||||||1
 DBSRWDRV ; 
  ;
  Q 
@@ -19,13 +18,13 @@ BUILD ; Prompt for reports to build, then build them
 BUILDALL ; Build all reports
  N vTp
  ;
-  N V1 S V1=%ProcessID D vDbDe1()
+  N V1 S V1=$J D vDbDe1()
  ;
  N rs,vos1,vos2,vos3 S rs=$$vOpen1()
  ;
  F  Q:'$$vFetch1()  D
  .	;
- . N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=%ProcessID S vobj(tmpdq,-4)=rs
+ . N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=$J S vobj(tmpdq,-4)=rs
  .	;
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordTMPDQ(tmpdq,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(tmpdq,-100) S vobj(tmpdq,-2)=1 TC:vTp  
  .	K vobj(+$G(tmpdq)) Q 
@@ -40,7 +39,7 @@ BUILDEM ; Generate run-time code for report(s)
  N PID N RID
  ;
  S STOP=0
- S PID=%ProcessID
+ S PID=$J
  ;
  N tmpdqrs,vos1,vos2,vos3,vos4 S tmpdqrs=$$vOpen2()
  ;
@@ -51,7 +50,7 @@ BUILDEM ; Generate run-time code for report(s)
  .	D COMPILE(RID)
  .	Q 
  ;
-  N V1 S V1=%ProcessID D vDbDe2()
+  N V1 S V1=$J D vDbDe2()
  ;
  Q 
  ;
@@ -66,7 +65,7 @@ COPY ; Copy existing report definition
  ;
 CREATE ; 
  ;
- N %ProcessMode
+ N %O
  ;
  S RID=$$FIND^DBSGETID("DBTBL5H",1) Q:(RID="") 
  ;
@@ -78,7 +77,7 @@ CREATE ;
  .	S RM=$piece(STATUS,"|",2)
  .	Q 
  ;
- S %ProcessMode=0
+ S %O=0
  D ^FORMDQ5(RID)
  ;
  Q 
@@ -133,7 +132,7 @@ LIST ; List report definition
  ;
  D OPEN^SCAIO Q:ER 
  ;
- N tmpdqrs,vos1,vos2,vos3,vos4  N V1 S V1=%ProcessID S tmpdqrs=$$vOpen3()
+ N tmpdqrs,vos1,vos2,vos3,vos4  N V1 S V1=$J S tmpdqrs=$$vOpen3()
  ;
  S CNT=0
  F  Q:'$$vFetch3()  D  Q:ER 
@@ -156,7 +155,7 @@ LIST ; List report definition
  ;
  D CLOSE^SCAIO
  ;
-  N V2 S V2=%ProcessID D vDbDe3()
+  N V2 S V2=$J D vDbDe3()
  ;
  Q 
  ;
@@ -199,7 +198,7 @@ COMPILE(RID) ;
 SETHDR() ; 
  N vTp
  ;
- N %A N %A N DQSCR N FID N PGM N %ProcessMode
+ N %A N %A N DQSCR N FID N PGM N %O
  N LIBS N RM N SID N SORT N VFMQ N X N Z
  N ER N I
  ;
@@ -209,7 +208,7 @@ SETHDR() ;
  ;
  S DQSCR=$$DQSCR Q:DQSCR="" 
  S LIBS="SYSDEV"
- S %ProcessMode=0
+ S %O=0
  D @DQSCR ; Main page
  I VFMQ="Q" Q 0
  ;
@@ -218,7 +217,7 @@ SETHDR() ;
  D ^@PGM
  I VFMQ="Q" Q 0
  ;
- S $piece(%A(0),"|",15)=%UserID
+ S $piece(%A(0),"|",15)=%UID
  ;
  F I=1:1:10 D
  .	N X
@@ -263,7 +262,7 @@ SETHDR() ;
   S:'$D(vobj(dbtbl5h,-100,"1*","LIBS")) vobj(dbtbl5h,-100,"1*","LIBS")="T001"_$G(vobj(dbtbl5h,-3)),vobj(dbtbl5h,-100,"1*")="" S vobj(dbtbl5h,-3)="SYSDEV"
   S:'$D(vobj(dbtbl5h,-100,"2*","RID")) vobj(dbtbl5h,-100,"2*","RID")="T002"_$G(vobj(dbtbl5h,-4)),vobj(dbtbl5h,-100,"2*")="" S vobj(dbtbl5h,-4)=RID
   S:'$D(vobj(dbtbl5h,-100,0,"PFID")) vobj(dbtbl5h,-100,0,"PFID")="U001"_$P(vobj(dbtbl5h,0),$C(124),1),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),1)=FID
-  S:'$D(vobj(dbtbl5h,-100,0,"DATE")) vobj(dbtbl5h,-100,0,"DATE")="D003"_$P(vobj(dbtbl5h,0),$C(124),3),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),3)=%CurrentDate
+  S:'$D(vobj(dbtbl5h,-100,0,"DATE")) vobj(dbtbl5h,-100,0,"DATE")="D003"_$P(vobj(dbtbl5h,0),$C(124),3),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),3)=$P($H,",",1)
   S:'$D(vobj(dbtbl5h,-100,0,"RSIZE")) vobj(dbtbl5h,-100,0,"RSIZE")="N005"_$P(vobj(dbtbl5h,0),$C(124),5),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),5)=$piece(%A(0),"|",5)
   S:'$D(vobj(dbtbl5h,-100,0,"PSIZE")) vobj(dbtbl5h,-100,0,"PSIZE")="N006"_$P(vobj(dbtbl5h,0),$C(124),6),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),6)=$piece(%A(0),"|",6)
   S:'$D(vobj(dbtbl5h,-100,0,"RESFLG")) vobj(dbtbl5h,-100,0,"RESFLG")="N007"_$P(vobj(dbtbl5h,0),$C(124),7),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),7)=$piece(%A(0),"|",7)
@@ -273,7 +272,7 @@ SETHDR() ;
   S:'$D(vobj(dbtbl5h,-100,0,"INLIST")) vobj(dbtbl5h,-100,0,"INLIST")="L011"_$P(vobj(dbtbl5h,0),$C(124),11),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),11)=$piece(%A(0),"|",11)
   S:'$D(vobj(dbtbl5h,-100,0,"OUTLIST")) vobj(dbtbl5h,-100,0,"OUTLIST")="L012"_$P(vobj(dbtbl5h,0),$C(124),12),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),12)=$piece(%A(0),"|",12)
   S:'$D(vobj(dbtbl5h,-100,0,"MSQL")) vobj(dbtbl5h,-100,0,"MSQL")="L013"_$P(vobj(dbtbl5h,0),$C(124),13),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),13)=$piece(%A(0),"|",13)
-  S:'$D(vobj(dbtbl5h,-100,0,"UID")) vobj(dbtbl5h,-100,0,"UID")="T015"_$P(vobj(dbtbl5h,0),$C(124),15),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),15)=%UserID
+  S:'$D(vobj(dbtbl5h,-100,0,"UID")) vobj(dbtbl5h,-100,0,"UID")="T015"_$P(vobj(dbtbl5h,0),$C(124),15),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),15)=%UID
   S:'$D(vobj(dbtbl5h,-100,0,"BANNER")) vobj(dbtbl5h,-100,0,"BANNER")="L016"_$P(vobj(dbtbl5h,0),$C(124),16),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),16)=$piece(%A(0),"|",16)
   S:'$D(vobj(dbtbl5h,-100,0,"ALIGN")) vobj(dbtbl5h,-100,0,"ALIGN")="L017"_$P(vobj(dbtbl5h,0),$C(124),17),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),17)=$piece(%A(0),"|",17)
   S:'$D(vobj(dbtbl5h,-100,0,"NEWCOMP")) vobj(dbtbl5h,-100,0,"NEWCOMP")="L018"_$P(vobj(dbtbl5h,0),$C(124),18),vobj(dbtbl5h,-100,0)="" S $P(vobj(dbtbl5h,0),$C(124),18)=$piece(%A(0),"|",18)
@@ -501,7 +500,7 @@ GROUP() ;
  D
  .	WRITE $$CUP^%TRMVT(0,5),$$CLP^%TRMVT,$$LINE^%TRMVT(80)
  .	S GRP=""
- .	F  S GRP=$O(GROUP(GRP)) Q:GRP=""  D
+ .	F  S GRP=$order(GROUP(GRP)) Q:GRP=""  D
  ..		WRITE $$VIDOFF^%TRMVT
  ..		WRITE !,GRP,")",?6
  ..		I $piece(GROUP(GRP),"|",3) WRITE $$VIDREV^%TRMVT
@@ -572,7 +571,7 @@ SAVEDATA(RID,ARRAY,START) ;
  S OK=0 ; Signal once get non-nulls
  S SEQ=START
  S N=""
- F  S N=$O(ARRAY(N)) Q:N=""  D
+ F  S N=$order(ARRAY(N)) Q:N=""  D
  .	;
  .	I OK!(ARRAY(N)'="") D
  ..		N dbtbl5pr,vop1,vop2,vop3,vop4 S dbtbl5pr="",vop4=0
@@ -593,7 +592,7 @@ VERSION() ;
  Q "7.0"
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^17775" ; Signature - LTD^TIME^USER^SIZE
+ Q "60571^42180^Dan Russell^17711" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID=:V1

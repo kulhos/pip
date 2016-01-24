@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCOBJECT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL Object Class Library|UCOBJECT|||||||1
  ;
  ;  #PACKAGE framework.psl
  ;
@@ -140,7 +139,7 @@ getClass ; method Object.getClass; returns string
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^10524" ; Signature - LTD^TIME^USER^SIZE
+ Q "61061^59085^Frans S.C. Witte^10466" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vopenBuf(v1,v2) ; PSL.openBuffer

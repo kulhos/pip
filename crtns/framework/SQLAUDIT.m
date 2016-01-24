@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SQLAUDIT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  SQL AUDIT Command Support|SQLAUDIT|||||||1
  ;  #PACKAGE framework
  ;  #OPTION ResultClass ON
  ;
@@ -172,15 +171,15 @@ shouldLog(TABLE,operation,option,userclasses,isPositive) ; Returned list is posi
 auditLog(operation,opon,statement,using) ; Using clause
  N vTp
  ;
- N SEQ S SEQ=$O(^DBAUDITLOG(%CurrentDate,%ProcessID,""),-1)+1
+ N SEQ S SEQ=$O(^DBAUDITLOG($P($H,",",1),$J,""),-1)+1
  ;
- N auditlog S auditlog=$$vcdmNew^RecordDBAUDITLOG() S vobj(auditlog,-3)=%CurrentDate S vobj(auditlog,-4)=%ProcessID S vobj(auditlog,-5)=SEQ
+ N auditlog S auditlog=$$vcdmNew^RecordDBAUDITLOG() S vobj(auditlog,-3)=$P($H,",",1) S vobj(auditlog,-4)=$J S vobj(auditlog,-5)=SEQ
   S vobj(auditlog,1,1)=""
   S vobj(auditlog,2,1)=""
  ;
-  S vobj(auditlog,-100,"0*")="" S $P(vobj(auditlog),$C(124),1)=%UserID
-  S vobj(auditlog,-100,"0*")="" S $P(vobj(auditlog),$C(124),2)=%UserStation
-  S vobj(auditlog,-100,"0*")="" S $P(vobj(auditlog),$C(124),3)=%CurrentTime
+  S vobj(auditlog,-100,"0*")="" S $P(vobj(auditlog),$C(124),1)=%UID
+  S vobj(auditlog,-100,"0*")="" S $P(vobj(auditlog),$C(124),2)=TLO
+  S vobj(auditlog,-100,"0*")="" S $P(vobj(auditlog),$C(124),3)=$P($H,",",2)
   S vobj(auditlog,-100,"0*")="" S $P(vobj(auditlog),$C(124),4)=operation
   S vobj(auditlog,-100,"0*")="" S $P(vobj(auditlog),$C(124),5)=opon
   S vobj(auditlog,-100,"1,1")="" S vobj(auditlog,1,1)=statement
@@ -193,9 +192,9 @@ auditLog(operation,opon,statement,using) ; Using clause
 auditLogDetail(SEQ,KEYS) ; key(s) as name-value pairs
  N vTp
  ;
- N RECSEQ S RECSEQ=$O(^DBAUDITLOG(%CurrentDate,%ProcessID,SEQ,""),-1)+1
+ N RECSEQ S RECSEQ=$O(^DBAUDITLOG($P($H,",",1),$J,SEQ,""),-1)+1
  ;
- N auditlogd S auditlogd=$$vcdmNew^RecordDBAUDITLOGD() S vobj(auditlogd,-3)=%CurrentDate S vobj(auditlogd,-4)=%ProcessID S vobj(auditlogd,-5)=SEQ S vobj(auditlogd,-6)=RECSEQ
+ N auditlogd S auditlogd=$$vcdmNew^RecordDBAUDITLOGD() S vobj(auditlogd,-3)=$P($H,",",1) S vobj(auditlogd,-4)=$J S vobj(auditlogd,-5)=SEQ S vobj(auditlogd,-6)=RECSEQ
  ;
   S vobj(auditlogd,-100,"0*")="" S $P(vobj(auditlogd),$C(124),1)=KEYS
  ;
@@ -391,7 +390,7 @@ BIDATA(CDATE,PID,SEQ,RECSEQ,KEYS) ; DBAUDITLOGD.KEYS
  Q return
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^18402" ; Signature - LTD^TIME^USER^SIZE
+ Q "61216^57448^Dan Russell^18343" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrGSUB(object,tag,del1,del2,pos) ; String.getSub passing Strings

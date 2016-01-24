@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Data Dictionary Function Library|DBSDD|||||||1
 DBSDD	
 
 	// *******************************************************************
@@ -1183,4 +1182,4 @@ FIELD(String ddexpr,	// Data item reference
 	
 	quit x.piece("|", loc)
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^32842"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61254^68547^Dan Russell^32779"	// Signature - LTD^TIME^USER^SIZE

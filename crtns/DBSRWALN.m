@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRWALN ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Alignment Print|DBSRWALN|||||||1
 DBSRWALN(RID,IO,COUNT) ; 
  N vpc
  ;
@@ -137,7 +136,7 @@ GRPDTL(RID,GRP,FROM,TO) ;
  Q DETAIL
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4348" ; Signature - LTD^TIME^USER^SIZE
+ Q "61431^63999^Dan Russell^4282" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; LIBS,RID,GRP,ITMSEQ FROM DBTBL5D WHERE LIBS='SYSDEV' AND RID=:RID AND GRP=:GRP ORDER BY ITMSEQ ASC
  ;

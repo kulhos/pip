@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCREC4OP ****
  ; 
- ; 01/23/2016 20:03 - kulhan
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Record Optimization - Insensitive Group|UCREC4OP|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -1924,7 +1923,7 @@ setDecVal(sr,ovs,field,val) ; value to assign
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^181289" ; Signature - LTD^TIME^USER^SIZE
+ Q "61473^50064^Frans S.C. Witte^181216" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vPSLopti(var) ; PSLIdentifier.optimize()

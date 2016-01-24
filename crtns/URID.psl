@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Program name/report id linkage utility|URID|||||||1
 public	URID
 
 	/*
@@ -161,4 +160,4 @@ ERR	// Private
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^2858"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "59973^70888^Chad Smith^2790"	// Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Get SCA copyright notice|SCACOPYR|||||||1
 public SCACOPYR(LINE)
 	/*
  	 PROCEDURE ID:	SCACOPYR
@@ -67,4 +66,4 @@ Public	EXT
 	quit MSG
 	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^1668"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60627^21758^Hema Puttaswamy^1610"	// Signature - LTD^TIME^USER^SIZE

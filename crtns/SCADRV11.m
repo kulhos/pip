@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV11 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Function/MRPC Userclass Authorization|SCADRV11|||||||1
 SCADRV11 ; Function/MRPC Userclass Authorization
  ;
  Q 
@@ -41,7 +40,7 @@ INIT ; Initialize query screen
  N CNT N I N N
  N FNARR N HDG N MSG N OLNTB N PRM1 N PRM2 N %READ N UCLSARR N %UX N VFMQ
  ;
- N scau0 S scau0=$$vRCgetRecord0Opt^RecordSCAU0(%UserClass,0,"")
+ N scau0 S scau0=$$vRCgetRecord0Opt^RecordSCAU0(%UCLS,0,"")
  N scatbl S scatbl=$$vRCgetRecord0Opt^RecordSCATBL(%FN,0,"")
  ;
  ; Define current user's class as secure (SEC=1) or not secured (SEC=0)
@@ -114,21 +113,21 @@ FILE ; File data
  ...			N scatbl3 S scatbl3=$$vRCgetRecord1^RecordSCATBL3(FN,UCLS,0)
  ...			I $G(vobj(scatbl3,-2))  S $P(vobj(scatbl3),$C(124),1)=1
  ...		 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordSCATBL3(scatbl3,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(scatbl3,-100) S vobj(scatbl3,-2)=1 TC:vTp  
- ...			S %ProcessMode=0
+ ...			S %O=0
  ...			S SCATBL3=""
  ...			S LOGIT=1
  ...			K vobj(+$G(scatbl3)) Q 
  ..		E  I LV=1,OPT="D" D  ; Delete func. auth.
  ...			I '($D(^SCATBL(1,FN,UCLS))#2) Q 
  ...			I $$SECURE(UCLS) D vDbDe1()
- ...			S %ProcessMode=3
+ ...			S %O=3
  ...			S LOGIT=1
  ...			Q 
  ..		E  I LV=5,OPT="A" D  ; Add MRPC auth.
  ...			N scatbl5a S scatbl5a=$$vRCgetRecord1^RecordSCATBL5A(FN,UCLS,0)
  ...			I $G(vobj(scatbl5a,-2)) K vobj(+$G(scatbl5a)) Q 
  ...		 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordSCATBL5A(scatbl5a,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(scatbl5a,-100) S vobj(scatbl5a,-2)=1 TC:vTp  
- ...			S %ProcessMode=0
+ ...			S %O=0
  ...			S SCATBL5A=""
  ...			S LOGIT=1
  ...			S RPCID=FN
@@ -136,12 +135,12 @@ FILE ; File data
  ..		E  I LV=5,OPT="D" D  ; Delete MRPC auth.
  ...			I '($D(^SCATBL(5,FN,UCLS))#2) Q 
  ...			I $$SECURE(UCLS) D vDbDe2()
- ...			S %ProcessMode=3
+ ...			S %O=3
  ...			S LOGIT=1
  ...			S RPCID=FN
  ...			Q 
  ..		;
- ..		I LOGIT D ^DBSLOG(FID,%ProcessMode,.UX)
+ ..		I LOGIT D ^DBSLOG(FID,%O,.UX)
  ..		Q 
  .	Q 
  Q 
@@ -215,7 +214,7 @@ END ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4896" ; Signature - LTD^TIME^USER^SIZE
+ Q "60773^54317^Aries Beltran^4825" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SCATBL3 WHERE FN=:FN AND UCLS=:UCLS

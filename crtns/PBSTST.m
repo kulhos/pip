@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PBSTST ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Test PROFILE Server|PBSTST|||||||1
 PBSTST ; Private;Test PROFILE Server
  ;
  N quit
@@ -31,12 +30,12 @@ PBSTST ; Private;Test PROFILE Server
  .	WRITE !!,"svclass: ",svcls,!,"message: ",vzmsg
  .	;
  .	I svcls=2 D
- ..		S %JRNL(1)=$P(vzmsg,$char(28),2)
- ..		S reply=$$FSSP^PBSCLI($P(vzmsg,$char(28),1))
+ ..		S %JRNL(1)=$piece(vzmsg,$char(28),2)
+ ..		S reply=$$FSSP^PBSCLI($piece(vzmsg,$char(28),1))
  ..		Q 
  .	;
  .	I svcls=3 D
- ..		F i=1:1:6 S x(i)=$P(vzmsg,$char(28),i)
+ ..		F i=1:1:6 S x(i)=$piece(vzmsg,$char(28),i)
  ..		S reply=$$MRPC^PBSCLI(x(1),x(2),x(3),x(4),x(5),x(6))
  ..		Q 
  .	;
@@ -294,7 +293,7 @@ csis(signont) ; Private;Test CSIS service class
  D signon
  I ER Q 
  ;
- S token=$P(%LOGID,"|",6)
+ S token=$piece(%LOGID,"|",6)
  ; type RecordSIGNONT signont=Db.getRecord("SIGNONT","UID='*',TOKEN=:token")
  ; set signont.="/HTML"
  ;
@@ -350,7 +349,7 @@ msql ; Private;Test MSQL service class
  .	I FLD(1)'="" D
  ..		N I
  ..		;
- ..		F I=1:1:$L(FLD(2)," ") S SUB(I)=$P(FLD(2)," ",I)
+ ..		F I=1:1:$L(FLD(2)," ") S SUB(I)=$piece(FLD(2)," ",I)
  ..		S FLD(2)=$$V2LV^MSG(.SUB)
  ..		Q 
  .	;
@@ -373,7 +372,7 @@ nxtline(routine,text) ; Private;Return tag of next line containing argument
  N t N tag N x
  ;
  I routine'["^" S routine="^"_routine
- S tag=$P(routine,"^",1) S routine="^"_$P(routine,"^",2)
+ S tag=$piece(routine,"^",1) S routine="^"_$piece(routine,"^",2)
  ;
  ; find "text" in "tag" section of "routine"
  S t=""
@@ -749,7 +748,7 @@ REPLAY(SERVER,SEQ) ;
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^18647" ; Signature - LTD^TIME^USER^SIZE
+ Q "61116^11513^Savitha Venkatesh^18596" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vdat2str(vo,mask) ; Date.toString

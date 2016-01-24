@@ -1,19 +1,18 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCACOPYR ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Get SCA copyright notice|SCACOPYR|||||||1
 SCACOPYR(LINE) ; 
  ;
  N USERNAME,%TIM
  ;
- I '$D(%UserStation) N %UserStation S %UserStation=$$TLO^UTLO
- S LINE=" ;;Copyright(c)"_$S(%CurrentDate'="":$ZD(%CurrentDate,"YEAR"),1:"")
+ I '$D(TLO) N TLO S TLO=$$TLO^UTLO
+ S LINE=" ;;Copyright(c)"_$$vdat2str($P($H,",",1),"YEAR")
  S LINE=LINE_" Sanchez Computer Associates, Inc.  All Rights Reserved"
  S %TIM=$$TIM^%ZM(,"24:60")
- S LINE=LINE_" - "_$$vdat2str(%CurrentDate,$get(%MSKD))_" "_%TIM_" - "
- S LINE=LINE_%UserName
+ S LINE=LINE_" - "_$$vdat2str($P($H,",",1),$get(%MSKD))_" "_%TIM_" - "
+ S LINE=LINE_$$USERNAM^%ZFUNC
  ;
  Q 
  ;
@@ -26,7 +25,7 @@ EXT ;
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1668" ; Signature - LTD^TIME^USER^SIZE
+ Q "60627^21758^Hema Puttaswamy^1610" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vdat2str(vo,mask) ; Date.toString

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRW3 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Compiler - Part 3|DBSRW3|||||||1
 DBSRW3(dbtbl5h,ddmap,RPTINFO) ; 
  ;
  N SKIPLF
@@ -885,7 +884,7 @@ BLDPRNT(RPTINFO) ; Private - Build print section
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^31591" ; Signature - LTD^TIME^USER^SIZE
+ Q "61288^63985^Dan Russell^31525" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; DI FROM DBTBL1D WHERE %LIBS='SYSDEV' AND FID=:TABLE AND POS=1
  ;

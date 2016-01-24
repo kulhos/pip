@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSHLP ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  On-line help utility (terminal mode)|DBSHLP|||||||1
 DBSHLP(DINAM,VPT,VPB,VALUE,HDR) ; Header   /NOREQ
  ;
   ; Bottom most line of screen
@@ -658,7 +657,7 @@ HDR(DINAM,HDR) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^14128" ; Signature - LTD^TIME^USER^SIZE
+ Q "61277^64016^Dan Russell^14060" ; Signature - LTD^TIME^USER^SIZE
  ;
 vClVobj(vSt,vCls) ; Create a new object
  ;

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Update EFD Table from SQLBUF|SQLEFD|||||||1
 SQLEFD(Date EFDATE, String sqlbuff())
 
 	/*
@@ -189,4 +188,4 @@ private hostvar(String expr,	// SQL expression
 	
 	quit expr
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4528"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60172^39223^Dan Russell^4468"	// Signature - LTD^TIME^USER^SIZE

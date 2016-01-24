@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure MTMFUNCS ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Message Transport Manager Functions|MTMFUNCS|||||||1
 MTMFUNCS ; Library;PROFILE Message Transport Manager Functions
  ;
  Q 
@@ -89,24 +88,24 @@ SVSTATS ; ;Request Message Tranport Manager Server Statistics
  ; Display stats and update database
  ;
  K DATA
- S DATE=%CurrentDate
- S TIME=%CurrentTime
+ S DATE=$P($H,",",1)
+ S TIME=$P($H,",",2)
  ;
  I UPDTDB L +MTMSVST(DATE,MTMID):2 E  S ER=1 S ET="RECLOC" Q 
  ;
- F I=1:1 S X=$P(RM,$$FS,I) Q:X=""  D
+ F I=1:1 S X=$piece(RM,$$FS,I) Q:X=""  D
  .	;
  .	N ACTIVE N AVG N MIN N MAX N REQ N RESP N TRACKED
  .	N SVTYP
  .	;
- .	S SVTYP=$P(X,"|",1)
- .	S TRACKED=$P(X,"|",2)\1000
- .	S ACTIVE=$P(X,"|",3)
- .	S REQ=$P(X,"|",4)
- .	S RESP=$P(X,"|",5)
- .	S AVG=$P(X,"|",6)/1000
- .	S MIN=$P(X,"|",7)/1000
- .	S MAX=$P(X,"|",8)/1000
+ .	S SVTYP=$piece(X,"|",1)
+ .	S TRACKED=$piece(X,"|",2)\1000
+ .	S ACTIVE=$piece(X,"|",3)
+ .	S REQ=$piece(X,"|",4)
+ .	S RESP=$piece(X,"|",5)
+ .	S AVG=$piece(X,"|",6)/1000
+ .	S MIN=$piece(X,"|",7)/1000
+ .	S MAX=$piece(X,"|",8)/1000
  .	;
  .	D DFORMAT(.SVTYP,.ACTIVE,.REQ,.RESP)
  .	;
@@ -153,7 +152,7 @@ SVSTATS ; ;Request Message Tranport Manager Server Statistics
  S SVTYPS=I-1
  S SID="MTMSVSTATS"
  ;
- S %ProcessMode=2
+ S %O=2
  I IO'=$I D OPEN^SCAIO I ER Q 
  S %PG=1
  S %PAGE=SVTYPS\15
@@ -164,9 +163,9 @@ SVSTATS ; ;Request Message Tranport Manager Server Statistics
  ;
  F  D  Q:VFMQ="Q" 
  .	S %MODS=((%PG-1)*15)+1
- .	S %REPEAT=$S(%ProcessMode=4:SVTYPS,1:15)
+ .	S %REPEAT=$S(%O=4:SVTYPS,1:15)
  .	I %MODS+15>SVTYPS S %REPEAT=SVTYPS#15
- . N vo1 N vo2 N vo3 N vo4 N vo5 D DRV^USID(%ProcessMode,SID,.vo1,.vo2,.vo3,.vo4,.vo5) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4)) K vobj(+$G(vo5))
+ . N vo1 N vo2 N vo3 N vo4 N vo5 D DRV^USID(%O,SID,.vo1,.vo2,.vo3,.vo4,.vo5) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4)) K vobj(+$G(vo5))
  .	;
  .	Q:VFMQ="Q" 
  .	S %PG=%PG+1
@@ -197,24 +196,24 @@ CLSTATS ; ;Request Message Tranport Manager Client Statistics
  ;
  ; Display stats
  K DATA
- S DATE=%CurrentDate
- S TIME=%CurrentTime
- S CLCNCT=$P(RM,$$FS,1)
- S MAXCNCT=$P(RM,$$FS,2)
- S RM=$P(RM,$$FS,3,9999)
+ S DATE=$P($H,",",1)
+ S TIME=$P($H,",",2)
+ S CLCNCT=$piece(RM,$$FS,1)
+ S MAXCNCT=$piece(RM,$$FS,2)
+ S RM=$piece(RM,$$FS,3,9999)
  ;
- F I=1:1 S X=$P(RM,$$FS,I) Q:X=""  D
+ F I=1:1 S X=$piece(RM,$$FS,I) Q:X=""  D
  .	;
  .	N CNCTTIM N REQ N REQACT N RESP N SRVID N TIMLAST
  .	N CLID
  .	;
- .	S CLID=$P(X,"|",1)
- .	S CNCTTIM=$P(X,"|",2)\1000
- .	S TIMLAST=$P(X,"|",3)/1000
- .	S REQ=$P(X,"|",4)
- .	S RESP=$P(X,"|",5)
- .	S REQACT=$P(X,"|",6)
- .	S SRVID=$P(X,"|",7)
+ .	S CLID=$piece(X,"|",1)
+ .	S CNCTTIM=$piece(X,"|",2)\1000
+ .	S TIMLAST=$piece(X,"|",3)/1000
+ .	S REQ=$piece(X,"|",4)
+ .	S RESP=$piece(X,"|",5)
+ .	S REQACT=$piece(X,"|",6)
+ .	S SRVID=$piece(X,"|",7)
  .	S REQACT=$S(REQACT=1:"Q",REQACT=2:"S",1:"N")
  .	S SRVID=$S(SRVID<0:"",1:$J(SRVID,2))
  .	S DATA(I)=$E(CLID,1,25)_"|"_$$DISPTIM(CNCTTIM)_"|"
@@ -225,7 +224,7 @@ CLSTATS ; ;Request Message Tranport Manager Client Statistics
  S CLIENTS=I-1
  S SID="MTMCLSTATS"
  ;
- S %ProcessMode=2
+ S %O=2
  I IO'=$I D OPEN^SCAIO I ER Q 
  ;
  S %PG=1
@@ -238,9 +237,9 @@ CLSTATS ; ;Request Message Tranport Manager Client Statistics
  ;
  F  D  Q:VFMQ="Q" 
  .	S %MODS=((%PG-1)*15)+1
- .	S %REPEAT=$S(%ProcessMode=4:CLIENTS,1:15)
+ .	S %REPEAT=$S(%O=4:CLIENTS,1:15)
  .	I %MODS+15>CLIENTS S %REPEAT=CLIENTS#15
- . N vo6 N vo7 N vo8 N vo9 N vo10 D DRV^USID(%ProcessMode,SID,.vo6,.vo7,.vo8,.vo9,.vo10) K vobj(+$G(vo6)) K vobj(+$G(vo7)) K vobj(+$G(vo8)) K vobj(+$G(vo9)) K vobj(+$G(vo10))
+ . N vo6 N vo7 N vo8 N vo9 N vo10 D DRV^USID(%O,SID,.vo6,.vo7,.vo8,.vo9,.vo10) K vobj(+$G(vo6)) K vobj(+$G(vo7)) K vobj(+$G(vo8)) K vobj(+$G(vo9)) K vobj(+$G(vo10))
  .	;
  .	Q:VFMQ="Q" 
  .	S %PG=%PG+1
@@ -270,20 +269,20 @@ PENDING ; ;Request Message Tranport Manager Pending Message Info
  ;
  ; Display pending messages
  K DATA
- S DATE=%CurrentDate
- S TIME=%CurrentTime
+ S DATE=$P($H,",",1)
+ S TIME=$P($H,",",2)
  ;
- F I=1:1 S X=$P(RM,$$FS,I) Q:X=""  D
+ F I=1:1 S X=$piece(RM,$$FS,I) Q:X=""  D
  .	;
  .	N CONNECT N WAIT
  .	N CLIENT N PRCNM N SVID N SVTYP
  .	;
- .	S SVID=$P(X,"|",1)
- .	S SVTYP=$P(X,"|",2)
- .	S PRCNM=$P(X,"|",3)
- .	S CONNECT=$P(X,"|",4)\1000
- .	S CLIENT=$P(X,"|",5)
- .	S WAIT=$P(X,"|",6)\1000
+ .	S SVID=$piece(X,"|",1)
+ .	S SVTYP=$piece(X,"|",2)
+ .	S PRCNM=$piece(X,"|",3)
+ .	S CONNECT=$piece(X,"|",4)\1000
+ .	S CLIENT=$piece(X,"|",5)
+ .	S WAIT=$piece(X,"|",6)\1000
  .	S WAIT=$S(WAIT:$$DISPTIM(WAIT),1:"")
  .	S DATA(I)=SVID_"|"_PRCNM_"|"_SVTYP_"|"_$$DISPTIM(CONNECT)_"|"
  .	S DATA(I)=DATA(I)_CLIENT_"|"_WAIT
@@ -292,7 +291,7 @@ PENDING ; ;Request Message Tranport Manager Pending Message Info
  S SERVERS=I-1
  S SID="MTMPENDING"
  ;
- S %ProcessMode=2
+ S %O=2
  I IO'=$I D OPEN^SCAIO I ER Q 
  ;
  S %PG=1
@@ -303,9 +302,9 @@ PENDING ; ;Request Message Tranport Manager Pending Message Info
  F I=1:1:%PAGE S VPG(I)=$$^MSG(4313,I)
  F  D  Q:VFMQ="Q" 
  .	S %MODS=((%PG-1)*8)+1
- .	S %REPEAT=$S(%ProcessMode=4:SERVERS,1:8)
+ .	S %REPEAT=$S(%O=4:SERVERS,1:8)
  .	I %MODS+8>SERVERS S %REPEAT=SERVERS#8
- . N vo11 N vo12 N vo13 N vo14 N vo15 D DRV^USID(%ProcessMode,SID,.vo11,.vo12,.vo13,.vo14,.vo15) K vobj(+$G(vo11)) K vobj(+$G(vo12)) K vobj(+$G(vo13)) K vobj(+$G(vo14)) K vobj(+$G(vo15))
+ . N vo11 N vo12 N vo13 N vo14 N vo15 D DRV^USID(%O,SID,.vo11,.vo12,.vo13,.vo14,.vo15) K vobj(+$G(vo11)) K vobj(+$G(vo12)) K vobj(+$G(vo13)) K vobj(+$G(vo14)) K vobj(+$G(vo15))
  .	Q:VFMQ="Q" 
  .	S %PG=%PG+1
  .	Q 
@@ -341,8 +340,8 @@ DELSRVPR ; Pre-processor to Server ID prompt.
  ;
  Q:INFO'["|"  ; No servers connected
  F I=1:1 D  Q:X="" 
- .	S X=$P(INFO,$$FS,I)
- .	I X'="" S VALID($P(X,"|",1))=$P(X,"|",3)
+ .	S X=$piece(INFO,$$FS,I)
+ .	I X'="" S VALID($piece(X,"|",1))=$piece(X,"|",3)
  .	Q 
  Q 
  ;
@@ -536,14 +535,14 @@ VERSION ; Request Message Tranport Manager Version Info
  I RM'["|" S ER="W" Q  ; No servers connected
  ;
  ; Display version information
- S DATE=%CurrentDate
- S TIME=%CurrentTime
+ S DATE=$P($H,",",1)
+ S TIME=$P($H,",",2)
  F I=1:1 S X=$piece(RM,"|",I) Q:(X="")  S DATA(I)=X
  ;
  S SERVERS=I-1
  S SID="MTMVERSION"
  ;
- S %ProcessMode=2
+ S %O=2
  I IO'=$I D OPEN^SCAIO I ER Q 
  ;
  S %PG=1
@@ -555,9 +554,9 @@ VERSION ; Request Message Tranport Manager Version Info
  ;
  F  D  Q:VFMQ="Q" 
  .	S %MODS=((%PG-1)*8)+1
- .	S %REPEAT=$S(%ProcessMode=4:SERVERS,1:8)
+ .	S %REPEAT=$S(%O=4:SERVERS,1:8)
  .	I %MODS+8>SERVERS S %REPEAT=SERVERS#8
- . N vo16 N vo17 N vo18 N vo19 N vo20 D DRV^USID(%ProcessMode,SID,.vo16,.vo17,.vo18,.vo19,.vo20) K vobj(+$G(vo16)) K vobj(+$G(vo17)) K vobj(+$G(vo18)) K vobj(+$G(vo19)) K vobj(+$G(vo20))
+ . N vo16 N vo17 N vo18 N vo19 N vo20 D DRV^USID(%O,SID,.vo16,.vo17,.vo18,.vo19,.vo20) K vobj(+$G(vo16)) K vobj(+$G(vo17)) K vobj(+$G(vo18)) K vobj(+$G(vo19)) K vobj(+$G(vo20))
  .	;
  .	Q:VFMQ="Q" 
  .	S %PG=%PG+1
@@ -585,12 +584,12 @@ PARAM ; ;Request Message Tranport Manager Startup Parameter Info
  I RM'["|" S ER="W" Q 
  ;
  ; Display MTM parameters
- S DATE=%CurrentDate
- S TIME=%CurrentTime
+ S DATE=$P($H,",",1)
+ S TIME=$P($H,",",2)
  S DATA=RM
  S SID="MTMPARAM"
  ;
- S %ProcessMode=2
+ S %O=2
  I IO'=$I D OPEN^SCAIO I ER Q 
  ;
  S %PG=1
@@ -601,7 +600,7 @@ PARAM ; ;Request Message Tranport Manager Startup Parameter Info
  ; Servers - Page ~p1
  F I=1:1:%PAGE S VPG(I)=$$^MSG(4313,I)
  F  D  Q:VFMQ="Q" 
- . N vo21 N vo22 N vo23 N vo24 N vo25 D DRV^USID(%ProcessMode,SID,.vo21,.vo22,.vo23,.vo24,.vo25) K vobj(+$G(vo21)) K vobj(+$G(vo22)) K vobj(+$G(vo23)) K vobj(+$G(vo24)) K vobj(+$G(vo25))
+ . N vo21 N vo22 N vo23 N vo24 N vo25 D DRV^USID(%O,SID,.vo21,.vo22,.vo23,.vo24,.vo25) K vobj(+$G(vo21)) K vobj(+$G(vo22)) K vobj(+$G(vo23)) K vobj(+$G(vo24)) K vobj(+$G(vo25))
  .	;
  .	Q:VFMQ="Q" 
  .	;
@@ -634,9 +633,9 @@ SVCLEAN ; ;Cleanup Server Slots in Message Tranport Manager
  ;
  ; Display stats and update database
  K DATA
- S DATE=%CurrentDate
- S TIME=%CurrentTime
- F I=1:1 S X=$P(RM,$$FS,I) Q:X=""  D
+ S DATE=$P($H,",",1)
+ S TIME=$P($H,",",2)
+ F I=1:1 S X=$piece(RM,$$FS,I) Q:X=""  D
  .	S DATA(I)=X
  .	Q 
  ;
@@ -645,7 +644,7 @@ SVCLEAN ; ;Cleanup Server Slots in Message Tranport Manager
  S SVTYPS=I-1
  S SID="MTMSVCLEAN"
  ;
- S %ProcessMode=2
+ S %O=2
  I IO'=$I D OPEN^SCAIO I ER Q 
  ;
  S %PG=1
@@ -656,10 +655,10 @@ SVCLEAN ; ;Cleanup Server Slots in Message Tranport Manager
  F I=1:1:%PAGE S VPG(I)=$$^MSG(4316,I)
  F  D  Q:VFMQ="Q" 
  .	S %MODS=((%PG-1)*15)+1
- .	S %REPEAT=$S(%ProcessMode=4:SVTYPS,1:15)
+ .	S %REPEAT=$S(%O=4:SVTYPS,1:15)
  .	I %MODS+15>SVTYPS S %REPEAT=SVTYPS#15
  .	;
- . N vo26 N vo27 N vo28 N vo29 N vo30 D DRV^USID(%ProcessMode,SID,.vo26,.vo27,.vo28,.vo29,.vo30) K vobj(+$G(vo26)) K vobj(+$G(vo27)) K vobj(+$G(vo28)) K vobj(+$G(vo29)) K vobj(+$G(vo30))
+ . N vo26 N vo27 N vo28 N vo29 N vo30 D DRV^USID(%O,SID,.vo26,.vo27,.vo28,.vo29,.vo30) K vobj(+$G(vo26)) K vobj(+$G(vo27)) K vobj(+$G(vo28)) K vobj(+$G(vo29)) K vobj(+$G(vo30))
  .	;
  .	Q:VFMQ="Q" 
  .	;
@@ -747,7 +746,7 @@ STOPSTAT ; Stop MTM Stats Collecting
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^24365" ; Signature - LTD^TIME^USER^SIZE
+ Q "60682^34115^Pete Chenard^24296" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; SEQ FROM MTMSVSTATS WHERE DATE=:DATE AND MTMID=:MTMID AND SVTYPE=:SVTYP ORDER BY SEQ DESC
  ;

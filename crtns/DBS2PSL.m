@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBS2PSL ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL Screen Compiler|DBS2PSL|||||||1
 DBS2PSL(SID,NOLINK) ; V 7.0 - PSL Screen Compiler
  ;
  N %FLGPROT N %MOD N %NAMCUR N %OFF N bkey N BLKSIZ N cmd N cmdDel N codPtr N code N CX N CY N DBOPT N DES N DFID N di N dinam
@@ -17,7 +16,7 @@ DBS2PSL(SID,NOLINK) ; V 7.0 - PSL Screen Compiler
  S NOLINK=$get(NOLINK)
  ;
  ; Which compiler to use - Original or extra crispy (PSL)
- N dbtbl2 S dbtbl2=$$vRCgetRecord0^RecordDBTBL2(%Library,SID,0)
+ N dbtbl2 S dbtbl2=$$vRCgetRecord0^RecordDBTBL2(%LIBS,SID,0)
   S vobj(dbtbl2,0)=$G(^DBTBL(vobj(dbtbl2,-3),2,vobj(dbtbl2,-4),0))
   S vobj(dbtbl2,"v1")=$G(^DBTBL(vobj(dbtbl2,-3),2,vobj(dbtbl2,-4),-1))
  I '$P(vobj(dbtbl2,0),$C(124),22) D ^DBSSCR(SID) K vobj(+$G(dbtbl2)) Q  ;Non-PSL compiler
@@ -33,7 +32,7 @@ DBS2PSL(SID,NOLINK) ; V 7.0 - PSL Screen Compiler
  S %FLGPROT=$P(vobj(dbtbl2,0),$C(124),16)
  ;
  S SEQ=""
- F  S SEQ=$O(DT(SEQ)) Q:SEQ=""  D SEQ(SEQ,.dbtbl2)
+ F  S SEQ=$order(DT(SEQ)) Q:SEQ=""  D SEQ(SEQ,.dbtbl2)
  D END(.dbtbl2)
  K vobj(+$G(dbtbl2)) Q 
  ;
@@ -41,36 +40,36 @@ SEQ(SEQ,dbtbl2) ;
  N vobjref N X N Z
  ;
  S X=DT(SEQ) S secret=0
- S PRO=0 I $P(X,"|",1)["*"!($P(X,"|",2)?1N1"*") S PRO=1 ; Protect flag
- I 'PRO,$P(X,"|",17)'="" S PRO=2 ; Computed operation
- S P(1)=$P(X,"|",1) ; Y*1000+X & Protect_flag & (# or {) & Video_display
- S P(2)=$P(X,"|",18) ; Print edit
- I P(2)="" S P(2)=$P(X,"|",10)
- S P(3)=$P(X,"|",3) ; Field Length
- S P(4)=$P(X,"|",4) ; Default
- S P(5)=$P(X,"|",5) ; [LIB,FID]DI or VAR
- S P(6)=$P(X,"|",6) ; Table lookup
- S P(7)=$P(X,"|",7) ; Pattern match
- S P(10)=$P(X,"|",10) ; Data type
- S P(11)=$P(X,"|",11) ; Prompt
+ S PRO=0 I $piece(X,"|",1)["*"!($piece(X,"|",2)?1N1"*") S PRO=1 ; Protect flag
+ I 'PRO,$piece(X,"|",17)'="" S PRO=2 ; Computed operation
+ S P(1)=$piece(X,"|",1) ; Y*1000+X & Protect_flag & (# or {) & Video_display
+ S P(2)=$piece(X,"|",18) ; Print edit
+ I P(2)="" S P(2)=$piece(X,"|",10)
+ S P(3)=$piece(X,"|",3) ; Field Length
+ S P(4)=$piece(X,"|",4) ; Default
+ S P(5)=$piece(X,"|",5) ; [LIB,FID]DI or VAR
+ S P(6)=$piece(X,"|",6) ; Table lookup
+ S P(7)=$piece(X,"|",7) ; Pattern match
+ S P(10)=$piece(X,"|",10) ; Data type
+ S P(11)=$piece(X,"|",11) ; Prompt
  I P(11)["""",P(11)'?.E1"<<"1E.E1">>".E S P(11)=$$DBLQ(P(11))
- S P(12)=$P(X,"|",12) ; Required flag
- S P(13)=$P(X,"|",13) ; Minimum value
- S P(14)=$P(X,"|",14) ; Maximum value
- S P(15)=$P(X,"|",15) ; Decimal precision
+ S P(12)=$piece(X,"|",12) ; Required flag
+ S P(13)=$piece(X,"|",13) ; Minimum value
+ S P(14)=$piece(X,"|",14) ; Maximum value
+ S P(15)=$piece(X,"|",15) ; Decimal precision
  S P(18)="" ; Subfield Logic
  S P(19)=""
  ;
  I P(5)["[" D
  .	S P(19)=$$LEN^DBSDD(P(5),,.vdd) ; Internal Length
- .	S $P(X,"|",22)=$$POS^DBSDD(P(5)) ; delimeter
- .	I $P(X,"|",22) S $P(X,"|",21)=124 ; position
+ .	S $piece(X,"|",22)=$$POS^DBSDD(P(5)) ; delimeter
+ .	I $piece(X,"|",22) S $piece(X,"|",21)=124 ; position
  .	Q 
  ;
  I P(19)="" S P(19)=P(3)
- S P(21)=$P(X,"|",21) ; Field delimeter
- S P(22)=$P(X,"|",22) ; Column Position
- S P(30)=$P(X,"|",30) ; Orig DINAM
+ S P(21)=$piece(X,"|",21) ; Field delimeter
+ S P(22)=$piece(X,"|",22) ; Column Position
+ S P(30)=$piece(X,"|",30) ; Orig DINAM
  I P(30)?1"@["1A.AN1"]"1A.AN D  ; Help file syntax @[fid]di
  .	S Z=$$LEN^DBSDD($E(P(30),2,99)) ; Use DD internal field length
  .	I $get(ER) S ER=0 S RM="" ; If invalid, reset error flag
@@ -78,17 +77,17 @@ SEQ(SEQ,dbtbl2) ;
  .	Q 
  ;
  I P(10)="T",P(2)'=P(10),P(11)'?1"["1A.AN1"]"1E.E S P(10)=P(2)
-  N V1 S V1=%Library I '$$vDbEx1() S P(8)=0 ; Post processor
+ I '$$vDbEx1() S P(8)=0 ; Post processor
  E  S P(8)=21
-  N V2 S V2=%Library I '$$vDbEx2() S P(9)=0 ; Pre Processor
+ I '$$vDbEx2() S P(9)=0 ; Pre Processor
  E  S P(9)=1
  ;
  S DINAM=P(5)
  I DINAM="",((P(11)?1"<<"1A.AN1">>")!(P(11)?1"<<%"1A.AN1">>")) S DINAM=P(11)
  ;
  ; Data field defaults to HIGHLIGHT mode
- I P(1)'["{" S VPRGI=0 S VPRV1=$$VIDEO($P(P(1),"#",2)) S VDAV1=2
- E  S VPRV1=$$VIDEO($P(P(1),"{",2)) S VDAV1=VPRV1 S VPRGI=1
+ I P(1)'["{" S VPRGI=0 S VPRV1=$$VIDEO($piece(P(1),"#",2)) S VDAV1=2
+ E  S VPRV1=$$VIDEO($piece(P(1),"{",2)) S VDAV1=VPRV1 S VPRGI=1
   S:'$D(vobj(dbtbl2,0)) vobj(dbtbl2,0)=$S(vobj(dbtbl2,-2):$G(^DBTBL(vobj(dbtbl2,-3),2,vobj(dbtbl2,-4),0)),1:"")
  I $P(vobj(dbtbl2,0),$C(124),17) S VDAV1=VPRV1 ; OOE option
  S OLNTB=+P(1) S CY=P(1)\1000 S CX=P(1)#1000
@@ -118,7 +117,7 @@ VDA(dbtbl2) ; Build the data section (VDA) of the program
  ; Cursor position for data
  S PF="" S L=$L(P(11)) S VDACX=CX+L
  F L=L:-1:0 Q:$E(P(11),L)'=" "  S P(11)=$E(P(11),1,L-1)
- S DI=$P(DINAM,"]",2) I DI="" S DI=DINAM S FID=""
+ S DI=$piece(DINAM,"]",2) I DI="" S DI=DINAM S FID=""
  E  D COMPILE(DINAM,.dbtbl2) S vobject=1
  ; Invalid data item name ~ p1
  I $get(NS)="" WRITE $$^MSG(1300,DINAM) Q 
@@ -140,7 +139,7 @@ VDA2(dbtbl2) ;
  N X N zDFT N zt
  S REF=NS
  I PF="" S PF=REF
- I $P(PF,REF,2,99)[REF,REF["," S PF=$$REPLACE(PF,REF,"V") S REF=" set V="_$S(vobject:vobjref,1:REF)
+ I $piece(PF,REF,2,99)[REF,REF["," S PF=$$REPLACE(PF,REF,"V") S REF=" set V="_$S(vobject:vobjref,1:REF)
  E  S REF=""
  I secret S REF=" set V=""""" S PF=""""""
  S len=+P(3)
@@ -163,7 +162,7 @@ VDA2(dbtbl2) ;
   S:'$D(vobj(dbtbl2,0)) vobj(dbtbl2,0)=$S(vobj(dbtbl2,-2):$G(^DBTBL(vobj(dbtbl2,-3),2,vobj(dbtbl2,-4),0)),1:"")
  I $P(vobj(dbtbl2,0),$C(124),7) S RPTCNT=RPTCNT+1 I CY'<$P(vobj(dbtbl2,0),$C(124),7) S X=" set VO(VX+"_(RPTCNT-1)_")="
  E  S X=" set VO(@)="
- S XVO=$E($P(X,"=",1),4,99)
+ S XVO=$E($piece(X,"=",1),4,99)
  I $get(vobject)="" D
  .	D TMPD(REF_X_HEADER_"""_"_PF)
  .	Q 
@@ -172,7 +171,7 @@ VDA2(dbtbl2) ;
  ; Check data item maintenance restrict flag
  I '($D(DI)#2) Q 
  I DINAM="" Q 
- I $E($P(DINAM,"]",1),2,99)="" Q 
+ I $E($piece(DINAM,"]",1),2,99)="" Q 
  D PROT^DBS2PSL0
  Q 
  ;
@@ -200,7 +199,7 @@ EDIT(dbtbl2) ; Build Display Format P(2)=FMT P(3)=SIZE P(15)=PRECISION
  I $P(vobj(dbtbl2,0),$C(124),18),fmt="$" S fmt="E"
  S PF=$$fmt^DBSEXEP(fmt,NS,P(3),P(15))
  I $get(vobjref)'="" S vobjref=$$fmt^DBSEXEP(fmt,vobjref,P(3),P(15))
- I $E(PF,1,3)="$E(" S PF=$E($P(PF,",",1,$L(PF,",")-2),4,999)
+ I $E(PF,1,3)="$E(" S PF=$E($piece(PF,",",1,$L(PF,",")-2),4,999)
  Q 
  ;
 PROTECT ; Build display protection logic
@@ -226,9 +225,9 @@ VPR1(dbtbl2) ;
  I CY<$P(vobj(dbtbl2,0),$C(124),7) Q 
  ;
  ; Repeat Region
- S Z=$P(P11,"<<",2) S Z=$P(Z,">>",1)
+ S Z=$piece(P11,"<<",2) S Z=$piece(Z,">>",1)
  I '((Z?1A.AN)!(Z?1"%".AN)) Q 
- S NS=$P(NS,Z,1)_Z_"(I)"_$P(NS,Z,2,99)
+ S NS=$piece(NS,Z,1)_Z_"(I)"_$piece(NS,Z,2,99)
  Q 
  ;
 HEADER(DY,DX,LEN,VID1,VID2,PRO,GI,TYP,zDFT,dbtbl2) ; Screen Object /REQ/MECH=REF
@@ -238,7 +237,7 @@ HEADER(DY,DX,LEN,VID1,VID2,PRO,GI,TYP,zDFT,dbtbl2) ; Screen Object /REQ/MECH=REF
  ;
  S zDFT=$get(zDFT)
  I $P(vobj(dbtbl2,0),$C(124),7),DY'<$P(vobj(dbtbl2,0),$C(124),7) S DY=$S(DY=$P(vobj(dbtbl2,0),$C(124),7):"DY",1:"DY+"_(DY-$P(vobj(dbtbl2,0),$C(124),7)))
- I $P(VID2,",",6)="" S VID2="0,0,0,0,0,0"
+ I $piece(VID2,",",6)="" S VID2="0,0,0,0,0,0"
  S X="$C("_DY_","_+DX_","_+LEN_","_VID1_","_VID2_")_"
  I $L(TYP)>1 S TYP="T"
  I zDFT S X=X_""""_GI_9_TYP
@@ -263,7 +262,7 @@ VTAB(dbtbl2) ; Build the table section VTAB of the program
  ;
  ; @[FID]DI syntax  ... COPY FILE ID FROM [...]
  I FID="" D
- .	I $get(P(30))?1"@["1E.E1"]"1E.E S DINAM="["_$E($P(P(30),"]",1),3,99)_"]"_DINAM
+ .	I $get(P(30))?1"@["1E.E1"]"1E.E S DINAM="["_$E($piece(P(30),"]",1),3,99)_"]"_DINAM
  .	; Variable name syntax for I(1)
  .	E  S DINAM="[*]"_DINAM
  .	I $get(P(30))?1"@"1E.E S DINAM="[*]"_P(30)
@@ -273,15 +272,15 @@ VTAB(dbtbl2) ; Build the table section VTAB of the program
  S BLKSIZ=BLKSIZ+P(3)
  I P(21) S PRMBL=PRMBL_$E((1000+P(21)),2,4)_$E((100+P(22)),2,3)
  S X=$S(P(30)'="":P(30),1:P(5))
- I X?1"[".E1",".E1"]".E S X="["_$P(X,",",2)
+ I X?1"[".E1",".E1"]".E S X="["_$piece(X,",",2)
  ;
  ; %TAB SEQUENCE
  S %NAMCUR(X)=%NAMCUR(X)_"|"_SAVT
  ;
  I FID'="" D
- .	S z=fsn(FID) S gbl=$P(z,"|",2) S rectyp=$P(z,"|",4)
- .	S bkey=$P($P(gbl,"(",2),",",$L(gbl,","))
- .	I rectyp=1,$P(z,"|",1)[")" S NODE="" S bkey=""
+ .	S z=fsn(FID) S gbl=$piece(z,"|",2) S rectyp=$piece(z,"|",4)
+ .	S bkey=$piece($piece(gbl,"(",2),",",$L(gbl,","))
+ .	I rectyp=1,$piece(z,"|",1)[")" S NODE="" S bkey=""
  .	I NODE?1N1"*" S NODE=1
  .	I CY'<$P(vobj(dbtbl2,0),$C(124),7) S NODE=1
  .	Q 
@@ -294,26 +293,26 @@ VTAB(dbtbl2) ; Build the table section VTAB of the program
  I P(9) S POPT="PR" S PP=1 D PP^DBS2PSL1 S P(9)=PP ; Pre processor
  ;
  ; CYXXRLLTDELPP
- S $P(P,"|",1)=PRMBL
- S $P(P,"|",2)=$S(NODE?1A.E&(NODE=bkey):"",1:NODE)
- I FID'="",DI'="",$$CMP^DBSDD(FID_"."_DI,"",.vdd)'="" S $P(P,"|",2)="*"_DI
+ S $piece(P,"|",1)=PRMBL
+ S $piece(P,"|",2)=$S(NODE?1A.E&(NODE=bkey):"",1:NODE)
+ I FID'="",DI'="",$$CMP^DBSDD(FID_"."_DI,"",.vdd)'="" S $piece(P,"|",2)="*"_DI
  ;
- I NODE="",$$CMP^DBSDD(FID_"."_DI)="" S $P(P,"|",2)="*"_DI
- S $P(P,"|",3)=DINAM ;    [FID]DI
- S $P(P,"|",4)=$$DBLQ(P(6)) ;    Table lookup
- S $P(P,"|",5)=$$DBLQ(P(7)) ;    Pattern match
- S $P(P,"|",6)=$$DBLQ(P(8)) ;    Post processor
- S $P(P,"|",7)=$$DBLQ(P(9)) ;    Pre processor
- S $P(P,"|",8)=P(13) ;    Minimum value
- S $P(P,"|",9)=P(14) ;    Maximum value
- S $P(P,"|",10)=P(15) ;    Decimal precision
- S $P(P,"|",11)=P(18) ;    Sub-Field Definition
- I len<P(19) S $P(P,"|",12)=P(19) ;    Maximum field length
+ I NODE="",$$CMP^DBSDD(FID_"."_DI)="" S $piece(P,"|",2)="*"_DI
+ S $piece(P,"|",3)=DINAM ;    [FID]DI
+ S $piece(P,"|",4)=$$DBLQ(P(6)) ;    Table lookup
+ S $piece(P,"|",5)=$$DBLQ(P(7)) ;    Pattern match
+ S $piece(P,"|",6)=$$DBLQ(P(8)) ;    Post processor
+ S $piece(P,"|",7)=$$DBLQ(P(9)) ;    Pre processor
+ S $piece(P,"|",8)=P(13) ;    Minimum value
+ S $piece(P,"|",9)=P(14) ;    Maximum value
+ S $piece(P,"|",10)=P(15) ;    Decimal precision
+ S $piece(P,"|",11)=P(18) ;    Sub-Field Definition
+ I len<P(19) S $piece(P,"|",12)=P(19) ;    Maximum field length
  ;
  F L=$L(P):-1:0 Q:$E(P,L)'="|"  ;    Strip trailing blanks
  S TAB(SAVT)=" set %TAB("_SAVT_")="_$E(P,1,L)_""""
  S P=""
- S DFID=$E($P(DINAM,"]",1),2,99)
+ S DFID=$E($piece(DINAM,"]",1),2,99)
  I $get(DFID)="" Q 
  ;
  D STATUS^UPID(DFID,DI,.FLGPROT)
@@ -322,7 +321,7 @@ VTAB(dbtbl2) ; Build the table section VTAB of the program
 RPTFLD(NS,dbtbl2) ; Fix NS for repeating fields
  N I N X
  I '($D(RPTDA)#2) D RPTDA(.dbtbl2)
- I $E(NODE,1)="*" S NS=$P(NODE,"*",2)_"(I)" S:P(21) NS="$P("_NS_","""_$char(P(21))_""","_P(22)_")"
+ I $E(NODE,1)="*" S NS=$piece(NODE,"*",2)_"(I)" S:P(21) NS="$P("_NS_","""_$char(P(21))_""","_P(22)_")"
  E  S NS=$$ADDSUB(NS,"I")
  Q NS
  ;
@@ -330,7 +329,7 @@ ADDSUB(expr,var) ; Add subscript var to expr
  N I
  I $get(var)="" S var="I"
  I expr'["(" Q expr_"("_var_")"
- I expr["(1)" Q $P(expr,"(1)",1)_"("_var_")"_$P(expr,"(1)",2,99)
+ I expr["(1)" Q $piece(expr,"(1)",1)_"("_var_")"_$piece(expr,"(1)",2,99)
  I expr[(var_")") Q expr
  F I=1:1:$L(expr) Q:"),"[$E(expr,I) 
  I $E(expr,I)=")" Q $E(expr,1,I-1)_","_var_$E(expr,I,1048575)
@@ -371,7 +370,7 @@ RPTDA(dbtbl2) ; Repeating data subroutine
  D TMPD(" //instantiate new object if necessary")
  ;
  S fid=""
- F  S fid=$O(vFID(fid)) Q:fid=""  D
+ F  S fid=$order(vFID(fid)) Q:fid=""  D
  .	S sn=vFID(fid)_"(I)"
  .	D TMPD("  #ACCEPT;DATE=08/08/06; PGM=Screen Compiler;CR=UNKNOWN;GROUP=DEPRECATED")
  .	D TMPD("  if '"_sn_".getPointer() do {")
@@ -405,7 +404,7 @@ VIDEO(X) ; Build video attribute string (New structure)
  N Z1
  ;
  S VPRGI=0 S VPRV2=0 S secret=0
- I X>63 S VPRV2=$P(X,",",2,99)
+ I X>63 S VPRV2=$piece(X,",",2,99)
  ; Graphic Mode
  I X>128 S VPRGI=1 S X=X-128
  ; Secret Mode
@@ -472,27 +471,27 @@ COMPILE(DINAM,dbtbl2) ; Substitute actual DINAM for explicit image
  ;   Patch NODE,DEL,POS,TABLE,PATTERN,MIN,MAX,DEC
  ;set LIB=$P(DINAM,".",1) set FID=$P(DINAM,".",2) set DI=$P(DINAM,".",3)
  I (","_FILES_",")'[(","_FID_",") S NS="" Q 
- S sn=$P(fsn(FID),"|",1)
+ S sn=$piece(fsn(FID),"|",1)
  I $E(sn,$L(sn))="(" S sn=$E(sn,1,$L(sn)-1)
  I '$P(vobj(dbtbl2,0),$C(124),7) S vobjref=sn_"."_DI ; this DI not in a repeat region
  E  I P(1)/1000<$P(vobj(dbtbl2,0),$C(124),7),($D(vFID(FID))#2) S vobjref=sn_"(1)."_DI ; Repeating file, but this col not in repeat region.  Use 1.
  E  I P(1)/1000<$P(vobj(dbtbl2,0),$C(124),7) S vobjref=sn_"."_DI ; this DI not in a repeat region
  E  S vobjref=sn_"(I)."_DI ; this DI is in a repeat region
- S NODE=$P(X,"|",1) S P(18)=$P(X,"|",18)
- I NODE="",$P(X,"|",16)="" S NS=DI
- I $P(X,"|",21),$P(X,"|",20)="" D
- .	S $P(X,"|",20)=$P(fsn(FID),"|",10)
- .	S P(21)=$P(X,"|",20) ; Update screen attribute
+ S NODE=$piece(X,"|",1) S P(18)=$piece(X,"|",18)
+ I NODE="",$piece(X,"|",16)="" S NS=DI
+ I $piece(X,"|",21),$piece(X,"|",20)="" D
+ .	S $piece(X,"|",20)=$piece(fsn(FID),"|",10)
+ .	S P(21)=$piece(X,"|",20) ; Update screen attribute
  .	Q 
  ;
  ; logic to also check protected data items)
- F I=6,7,10,13,14,15,21,22 I P(I)'=$P(X,"|",I-1) D
- .	S z=$P("\\\\\TABLE\PATTERN\\\TYPE\\\MIN\MAX\DECIMAL\\\\\\DEL\POS","\",I)
+ F I=6,7,10,13,14,15,21,22 I P(I)'=$piece(X,"|",I-1) D
+ .	S z=$piece("\\\\\TABLE\PATTERN\\\TYPE\\\MIN\MAX\DECIMAL\\\\\\DEL\POS","\",I)
  .	I PRO D  Q 
  ..		I '((I=10)!(I=15)) Q 
- ..		WRITE !,"Warning - [",$P(P(5),",",2)," mismatch on attribute ",z," screen=",P(I)," file=",$P(X,"|",I-1) Q 
+ ..		WRITE !,"Warning - [",$piece(P(5),",",2)," mismatch on attribute ",z," screen=",P(I)," file=",$piece(X,"|",I-1) Q 
  ..		Q 
- .	S P(I)=$P(X,"|",I-1)
+ .	S P(I)=$piece(X,"|",I-1)
  .	WRITE !,"Change ",P(5)," attribute ("_z_"="_P(I)_") to match file definition",!
  .	Q 
  Q 
@@ -508,26 +507,26 @@ END(dbtbl2) ; Go to build program
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^19810" ; Signature - LTD^TIME^USER^SIZE
+ Q "60680^50197^Pete Chenard^19758" ; Signature - LTD^TIME^USER^SIZE
  ;
-vDbEx1() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V1 AND SID=:SID AND SEQ=:SEQ AND PSEQ=21
+vDbEx1() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=:SEQ AND PSEQ=21
  ;
- N vsql1
+ N vsql1,vsql2
  S vsql1=$$BYTECHAR^SQLUTL(254)
- ;
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
  ;
  ;
  S SEQ=+SEQ
- I '($D(^DBTBL(V1,2,SID,SEQ,21))#2) Q 0
+ I '($D(^DBTBL(vsql2,2,SID,SEQ,21))#2) Q 0
  Q 1
  ;
-vDbEx2() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:V2 AND SID=:SID AND SEQ=:SEQ AND PSEQ=1
+vDbEx2() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=:SEQ AND PSEQ=1
  ;
- N vsql1
+ N vsql1,vsql2
  S vsql1=$$BYTECHAR^SQLUTL(254)
- ;
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
  ;
  ;
  S SEQ=+SEQ
- I '($D(^DBTBL(V2,2,SID,SEQ,1))#2) Q 0
+ I '($D(^DBTBL(vsql2,2,SID,SEQ,1))#2) Q 0
  Q 1

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSQUE ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Return Report Writer Queries|DBSQUE|||||||1
 DBSQUE ; 
  ;
  Q  ; Can't call from top
@@ -27,7 +26,7 @@ REP(RID,OPT,PROMPTS) ;
  S PROMPTS(1)=$$^MSG(8047) ; Device prompt
  ;
  S SEQ=""
- F CNT=2:1 S SEQ=$O(PQINFO(SEQ)) Q:SEQ=""  D
+ F CNT=2:1 S SEQ=$order(PQINFO(SEQ)) Q:SEQ=""  D
  .	;
  .	N PROMPT
  .	;
@@ -77,7 +76,7 @@ QA ; Private - Test all reports
  .	D REP(RID,0,.PROMPTS)
  .	WRITE !,RID,!
  .	S N=""
- .	F  S N=$O(PROMPTS(N)) Q:N=""  WRITE ?20,PROMPTS(N),!
+ .	F  S N=$order(PROMPTS(N)) Q:N=""  WRITE ?20,PROMPTS(N),!
  .	WRITE !
  .	Q 
  ;
@@ -86,7 +85,7 @@ QA ; Private - Test all reports
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3317" ; Signature - LTD^TIME^USER^SIZE
+ Q "60148^65610^Dan Russell^3257" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; RID FROM DBTBL5H WHERE LIBS='SYSDEV' ORDER BY RID ASC
  ;

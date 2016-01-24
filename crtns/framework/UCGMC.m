@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCGMC ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Compiler commands - Dictionary Group|UCGMC|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -379,14 +378,14 @@ PSL(prsr,str,ptr,tok) ; #PSL settingName value
  E  I name="DateMask" D
  .	N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch4^"_$T(+0)  ; if exception is thrown, the mask is invalid
  .	N ign
- .	I '(value="") S ign=$J(%CurrentDate,0,value)
+ .	I '(value="") S ign=$$vdat2str($P($H,",",1),value)
  .	;
  .	D addSetting^PSLCC(.prsr,"PSL","DateMask",value) ; seems OK !
  .	Q 
  E  I name="TimeMask" D
  .	N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch5^"_$T(+0)  ; if exception is thrown, the mask is invalid
  .	N ign
- .	I '(value="") S ign=$J(%CurrentTime,0,value)
+ .	I '(value="") S ign=$$vtim2str($P($H,",",2),value)
  .	;
  .	D addSetting^PSLCC(.prsr,"PSL","TimeMask",value) ; seems OK !
  .	Q 
@@ -616,7 +615,7 @@ skip(m2src,lptr,cmd) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^41680" ; Signature - LTD^TIME^USER^SIZE
+ Q "61111^17292^Frans S.C. Witte^41613" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim
@@ -634,6 +633,48 @@ vlstPos(object,p1,p2,p3) ; List.position
  S object=p2_object_p2 S p1=p2_p1_p2
  I object'[p1 Q 0
  Q $L($piece(object,p1,1),p2)
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vdat2str(vo,mask) ; Date.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (mask="") S mask="MM/DD/YEAR"
+ N cc N lday N lmon
+ I mask="DL"!(mask="DS") D  ; Long or short weekday
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lday=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="DAY" ; Day of the week
+ .	Q 
+ I mask="ML"!(mask="MS") D  ; Long or short month
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S cc=$get(^DBCTL("SYS","DVFM")) ; Country code
+ .	I (cc="") S cc="US"
+ .	;    #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=GLOBAL
+ .	S lmon=$get(^DBCTL("SYS","*DVFM",cc,"D",mask))
+ .	S mask="MON" ; Month of the year
+ .	Q 
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ set cc=$ZD(vo,mask,$G(lmon),$G(lday))
+ ;*** End of code by-passed by compiler ***
+ Q cc
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vtim2str(vo,vm) ; Time.toString
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ I (vo="") Q ""
+ I (vm="") S vm="24:60:SS"
+ N cc
+ ;  #ACCEPT PGM=FSCW;DATE=2007-03-30;CR=27800;GROUP=BYPASS
+ ;*** Start of code by-passed by compiler
+ SET cc=$ZDATE(","_vo,vm)
+ ;*** End of code by-passed by compiler ***
+ Q cc
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

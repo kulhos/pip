@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure MYAPPUTL ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Utilities to combine MYAPP with PIP|MYAPPUTL|||||||||||||||||||||1
  ;  #OPTION ResultClass ON
  Q 
  ;
@@ -29,7 +28,7 @@ PIP2TIM(pipTime) ;
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1909" ; Signature - LTD^TIME^USER^SIZE
+ Q "61277^26562^e0101572^1826" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrJD(string,mask) ; String.toDate

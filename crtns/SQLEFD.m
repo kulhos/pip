@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SQLEFD ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Update EFD Table from SQLBUF|SQLEFD|||||||1
 SQLEFD(EFDATE,sqlbuff) ; 
  N vTp
  ;
@@ -151,7 +150,7 @@ hostvar(expr,ER,RM) ; Return message if error
  Q expr
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4528" ; Signature - LTD^TIME^USER^SIZE
+ Q "60172^39223^Dan Russell^4468" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDF ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Table/Column Definitions|DBSDF|||||||1
 DBSDF ; 
  ;
  Q  ; No entry from top
@@ -63,7 +62,7 @@ MODIFY ;
  ;
  Q 
  ;
-HEADER(%ProcessMode,FID) ; Table name
+HEADER(%O,FID) ; Table name
  N vTp
  ;
  N VFMQ
@@ -83,7 +82,7 @@ HEADER(%ProcessMode,FID) ; Table name
  .	Q 
  ;
  ;  #ACCEPT Date=11/02/06; Pgm=RussellDS; CR=22719; Group=MISMATCH
- N vo2 N vo3 N vo4 N vo5 D DRV^USID(%ProcessMode,"DBTBL1",.fDBTBL1,.vo2,.vo3,.vo4,.vo5) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4)) K vobj(+$G(vo5))
+ N vo2 N vo3 N vo4 N vo5 D DRV^USID(%O,"DBTBL1",.fDBTBL1,.vo2,.vo3,.vo4,.vo5) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4)) K vobj(+$G(vo5))
  ;
  I VFMQ="Q" K vobj(+$G(fDBTBL1)) Q 0
  ;
@@ -456,7 +455,7 @@ PARCOPY(PARFID,CHILDFID) ; Child table
  ...			Q 
  ..		I $P(vobj(dbtbl1dc),$C(124),18)'=$P(vobj(dbtbl1dp),$C(124),18) D
  ...			;
- ...		  N vSetMf S vSetMf=$P(vobj(dbtbl1dc),$C(124),18) S $P(vobj(dbtbl1dc),$C(124),18)=$P(vobj(dbtbl1dp),$C(124),18),vobj(dbtbl1dc,-100,"0*")=""
+ ...		  N vSetMf S vSetMf=$P(vobj(dbtbl1dc),$C(124),18) S:'$D(vobj(dbtbl1dc,-100,"0*","SFD1")) vobj(dbtbl1dc,-100,"0*","SFD1")="N018"_$P(vSetMf,$C(126),2)_"||~126~~2" S:'$D(vobj(dbtbl1dc,-100,"0*","SFD2")) vobj(dbtbl1dc,-100,"0*","SFD2")="N018"_$P(vSetMf,$C(126),3)_"||~126~~3" S:'$D(vobj(dbtbl1dc,-100,"0*","SFP")) vobj(dbtbl1dc,-100,"0*","SFP")="N018"_$P(vSetMf,$C(126),4)_"||~126~~4" S:'$D(vobj(dbtbl1dc,-100,"0*","SFT")) vobj(dbtbl1dc,-100,"0*","SFT")="U018"_$P(vSetMf,$C(126),1)_"||~126~~1" S $P(vobj(dbtbl1dc),$C(124),18)=$P(vobj(dbtbl1dp),$C(124),18),vobj(dbtbl1dc,-100,"0*")=""
  ...			S hit=1
  ...			Q 
  ..		I $P(vobj(dbtbl1dc),$C(124),19)'=$P(vobj(dbtbl1dp),$C(124),19) D
@@ -727,7 +726,7 @@ DSTMDD(MDDFID,MDDREF) ; MDD column name
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^16987" ; Signature - LTD^TIME^USER^SIZE
+ Q "61161^47911^Dan Russell^16932" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM DBTBL1TBLDOC WHERE %LIBS='SYSDEV' AND FID=:FID

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Map wide tables into smaller for Oracle|DBSDDMAP|||||||1
 	/*
 	
 	   ORIG: CHIANG - 11/05/96
@@ -391,4 +390,4 @@ private writeIt(IO file,		// Output device
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^9315"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61006^63993^Dan Russell^9242"	// Signature - LTD^TIME^USER^SIZE

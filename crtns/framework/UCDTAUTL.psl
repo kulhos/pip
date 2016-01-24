@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL compiler load data UPGRADE group|UCDTAUTL|||||||1
 	/*
 	ORIG: SPIER - 10/23/2002
 	DESC: PSL compiler data loading, Data group, Upgradeable
@@ -345,4 +344,4 @@ public void masks( PSLParser prsr)	// compiler options	/MECH=REFARR:RW
 	}
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^13626"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61530^32638^Frans S.C. Witte^13556"	// Signature - LTD^TIME^USER^SIZE

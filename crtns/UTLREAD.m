@@ -1,25 +1,24 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UTLREAD ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Interactive Form Builder/Mngr for Simplr|UTLREAD|||||||1
 UTLREAD ; 
  ;
- S %OSAVE=+$get(%ProcessMode) S %ProcessMode=0 D START Q 
+ S %OSAVE=+$get(%O) S %O=0 D START Q 
  ;
  ;--------------------------------------------------------------------
 INQ ; Inquiry mode
  ;--------------------------------------------------------------------
  ;
- S %OSAVE=$get(%ProcessMode) S %ProcessMode=$S($get(%ProcessMode)=4:4,1:2)
+ S %OSAVE=$get(%O) S %O=$S($get(%O)=4:4,1:2)
  D START Q 
  ;
  ;--------------------------------------------------------------------
 DEL ; Delete mode
  ;--------------------------------------------------------------------
  ;
- S %OSAVE=$get(%ProcessMode) S %ProcessMode=3
+ S %OSAVE=$get(%O) S %O=3
  ;
  D START
  Q 
@@ -383,7 +382,7 @@ PUSH(v) ; Push Data Structure v elements out
  ;
 END ; 
  ;
- S DFID=PFID S %ProcessMode=%OSAVE
+ S DFID=PFID S %O=%OSAVE
  K OLNTB,%OSAVE,%CTPRMT,%VPP,%VPRE,%FRAME,%TAB
  Q 
  ;
@@ -438,7 +437,7 @@ IO(prompt) ; Private//Is prompt for output device?
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^20352" ; Signature - LTD^TIME^USER^SIZE
+ Q "60764^48607^Sudanthiran S. Kumar^20279" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; PROMPT FROM STBLPROMPT WHERE PROMPTID='MISSING'
  ;

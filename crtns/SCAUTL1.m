@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCAUTL1 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Sanchez Utilities|SCAUTL1|||||||1
  ;
  Q 
  ;
@@ -119,7 +118,7 @@ COMPILE(GBLS) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5117" ; Signature - LTD^TIME^USER^SIZE
+ Q "60269^47694^Dan Russell^5067" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; %LIBS,FID FROM DBTBL1 WHERE %LIBS='SYSDEV'
  ;

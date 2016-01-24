@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL interactive editor|DBSMM|||||||1
 DBSMM	
 		 
 	/*
@@ -277,4 +276,4 @@ command(String help())
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^6328"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60233^64555^Dan Russell^6275"	// Signature - LTD^TIME^USER^SIZE

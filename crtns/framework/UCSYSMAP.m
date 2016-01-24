@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCSYSMAP ****
  ; 
- ; 01/23/2016 14:24 - kulhan
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  File SYSMAP Data - Application Group|UCSYSMAP|||||||1
  ;  #PACKAGE framework.psl
  ;
 UCSYSMAP(PGM,msrc,sysmap,cmperr) ; 
@@ -502,7 +501,7 @@ FILERCHK(TABLE,cmperr) ; Error array (*2)
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^25141" ; Signature - LTD^TIME^USER^SIZE
+ Q "61530^32570^Frans S.C. Witte^25071" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SYSMAPCALLS

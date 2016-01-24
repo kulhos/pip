@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Compiler - Runtime system|UCGMR|||||||1
 	/*
 	ORIG: FSANCHEZ - 01/15/98
 	DESC: Library of runtime utilities (with target language dependent code)
@@ -380,4 +379,4 @@ public LOG(String vLabref, Error vErr) // Entry point to call error logger
 	/* ======== END TARGET = M ======== */
 	#END
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^15166"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61293^42583^Frans S.C. Witte^15106"	// Signature - LTD^TIME^USER^SIZE

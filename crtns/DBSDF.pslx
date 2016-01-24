@@ -9,7 +9,7 @@
 ,	{ "class" : "DBSDF",	"method" : "DELETE",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "" }
 ,	{ "class" : "DBSDF",	"method" : "DOC",	"resultClass" : "",	"formalList" : "ret String FID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "" }
 ,	{ "class" : "DBSDF",	"method" : "DSTMDD",	"resultClass" : "",	"formalList" : "ret String MDDFID;ret String MDDREF",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "MDD column name" }
-,	{ "class" : "DBSDF",	"method" : "HEADER",	"resultClass" : "",	"formalList" : "ret Number %ProcessMode;ret String FID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "Table name" }
+,	{ "class" : "DBSDF",	"method" : "HEADER",	"resultClass" : "",	"formalList" : "ret Integer %O;ret String FID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "Table name" }
 ,	{ "class" : "DBSDF",	"method" : "MDD",	"resultClass" : "",	"formalList" : "ret String FID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "Table name" }
 ,	{ "class" : "DBSDF",	"method" : "MODIFY",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 3,	"comment" : "" }
 ,	{ "class" : "DBSDF",	"method" : "PARCOPY",	"resultClass" : "",	"formalList" : "ret String PARFID;ret String CHILDFID",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "Child table" }

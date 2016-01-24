@@ -1,10 +1,10 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Screen DBTBL22C ****
  ; 
- ; 01/20/2016 11:55 - kulhan
+ ; 02/24/2010 18:33 - pip
  ; 
 V00S065(%O,dbtbl22c) ; DBS -  - SID= <DBTBL22C> DATA-QWIK Aggregate Column definition
- ;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+ ;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
  ;
  N KEYS N KVAR N VFSN N VO N VODFT N VPGM N vPSL N VSID N VSNAME
  ;

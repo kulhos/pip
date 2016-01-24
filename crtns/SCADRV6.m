@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV6 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Function Authorization|SCADRV6|||||||1
  ;
  Q 
  ;
@@ -16,7 +15,7 @@ INQ ;
  D INIT(2)
  Q 
  ;
-INIT(%ProcessMode) ; init variables
+INIT(%O) ; init variables
  N FINISH S FINISH=0
  N %PG S %PG=0 N %PAGE S %PAGE=10
  N SEC
@@ -44,11 +43,11 @@ VPG00(fSCATBL,fSCATBL3) ;
  N I
  ;
  S %TAB("FUN")=".FUN1/TBL=[SCATBL]"
- I %ProcessMode=2 S %TAB("IO")=$$IO^SCATAB($I)
+ I %O=2 S %TAB("IO")=$$IO^SCATAB($I)
  ;
  S %READ="@@%FN,,,FUN/REQ"
  S %NOPRMT="N"
- I %ProcessMode=2 S %READ=%READ_",IO/REQ"
+ I %O=2 S %READ=%READ_",IO/REQ"
  ;
  D ^UTLREAD
  I VFMQ="Q" S ER=1 Q 
@@ -75,9 +74,9 @@ VPG01(fSCATBL,fSCATBL3) ; actual authorize info
  ;
  S %MODS=((%PG*%REPEAT)-%REPEAT)+1
  ;
- I %ProcessMode=2 D OPEN^SCAIO I ER S VFMQ="Q" Q 
+ I %O=2 D OPEN^SCAIO I ER S VFMQ="Q" Q 
  ;
- N vo1 N vo2 N vo3 D DRV^USID(%ProcessMode,"SCADRV6",.fSCATBL,.fSCATBL3,.vo1,.vo2,.vo3) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3))
+ N vo1 N vo2 N vo3 D DRV^USID(%O,"SCADRV6",.fSCATBL,.fSCATBL3,.vo1,.vo2,.vo3) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3))
  ;
  I "DFQ"[VFMQ D VER(.fSCATBL3)
  ;
@@ -85,7 +84,7 @@ VPG01(fSCATBL,fSCATBL3) ; actual authorize info
  ;
 VER(fSCATBL3) ; verify and process
  ;
- I %ProcessMode=2!(%ProcessMode=4)!(VFMQ="Q") D VEXIT Q 
+ I %O=2!(%O=4)!(VFMQ="Q") D VEXIT Q 
  ;
  D FILE(.fSCATBL3)
  ;
@@ -114,7 +113,7 @@ FILE(fSCATBL3) ;
  ;
 VEXIT ; 
  ;
- I ER!(%ProcessMode=2)!(%ProcessMode=4) Q 
+ I ER!(%O=2)!(%O=4) Q 
  ;
  ; Authorization not modified
  I VFMQ="Q" S RM=$$^MSG("312")
@@ -125,7 +124,7 @@ VEXIT ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3625" ; Signature - LTD^TIME^USER^SIZE
+ Q "60620^27431^Renga SP^3570" ; Signature - LTD^TIME^USER^SIZE
  ;
 vKill1(ex1) ; Delete objects fSCATBL3()
  ;

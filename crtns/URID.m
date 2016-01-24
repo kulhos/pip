@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure URID ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Program name/report id linkage utility|URID|||||||1
 URID ; 
  ;
  D GET
@@ -75,4 +74,4 @@ ERR ; Private
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2858" ; Signature - LTD^TIME^USER^SIZE
+ Q "59973^70888^Chad Smith^2790" ; Signature - LTD^TIME^USER^SIZE

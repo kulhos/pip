@@ -1,10 +1,10 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Screen DBTBL1K ****
  ; 
- ; 01/20/2016 11:55 - kulhan
+ ; 02/24/2010 18:33 - pip
  ; 
 V00S061(%O,fDBTBL1F,fDBTBL1) ; DBS - DBS - SID= <DBTBL1K> Foreign Key Definition
- ;;Copyright(c)2016 Sanchez Computer Associates, Inc.  All Rights Reserved - 01/20/2016 11:55 - kulhan
+ ;;Copyright(c)2010 Sanchez Computer Associates, Inc.  All Rights Reserved - 02/24/2010 18:33 - pip
  ; The DBTBL1K screen enables the institution to establish referential
  ; relationships between data item values in multiple files.  For example, the
  ; institution may indicate that a user cannot delete a data item value if another

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure TBXTypeInterface ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  TBX Type Interface|TBXTypeInterface|||||||1
  ;  #PACKAGE framework.tbx
  ;  #CLASSDEF extends=Primitive
  ;
@@ -163,9 +162,9 @@ getLastMod(this,lmu,lmd,lmt) ; polymorphism dispatch
  I $D(vPslPoly(vC,"getLastMod")) D v0getLastMod^@vPslPoly(vC,"getLastMod")(.this,.lmu,.lmd,.lmt) Q
  D v0getLastMod(.this,.lmu,.lmd,.lmt) Q
 v0getLastMod(this,lmu,lmd,lmt) ; return the user, date and time of last modification
- S lmu=%UserID
- S lmd=%CurrentDate
- S lmt=%CurrentTime
+ S lmu=%UID
+ S lmd=$P($H,",",1)
+ S lmt=$P($H,",",2)
  Q 
  ;
  ; ---------------------------------------------------------------------
@@ -201,7 +200,7 @@ mrpcLastMod(this) ; return the user, date and time of last modification
  ;
  ; ---------------------------------------------------------------------
 mrpcPut(this,tmpfile,lmu) ; 
- N retval S retval=$$elemPut(.this,$$getMrpcDir(),tmpfile,3,lmu,%CurrentDate,%CurrentTime)
+ N retval S retval=$$elemPut(.this,$$getMrpcDir(),tmpfile,3,lmu,$P($H,",",1),$P($H,",",2))
  Q $$vStrRep(retval,"|",$$MRPCTERM(),0,0,"")
  ;
  ; ---------------------------------------------------------------------
@@ -240,7 +239,7 @@ vSIG(this) ; polymorphism dispatch
  I $D(vPslPoly(vC,"vSIG")) Q $$v0vSIG^@vPslPoly(vC,"vSIG")(.this)
  Q $$v0vSIG(.this)
 v0vSIG(this) ; 
- Q "^^^18044" ; Signature - LTD^TIME^USER^SIZE
+ Q "61495^37421^e0101572^17984" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vlstPos(object,p1,p2,p3) ; List.position

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL compiler load data DATA group|UCDTASYS|||||||1
 	/*
 	ORIG: SPIER - 10/23/2002
 	DESC: PSL compiler data loading, System group (non Upgradable)
@@ -173,4 +172,4 @@ private void xiniPSLFUNSUB()	// 1st initialization of table in MDB
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^6466"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61565^25471^Sha H Mirza^6399"	// Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Aggregate definitions|DBSAG|||||||1
 DBSAG	
 		 
 	/*
@@ -464,4 +463,4 @@ GETDB()	//
 	
 	quit DB
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^9418"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60913^31094^Dan Russell^9366"	// Signature - LTD^TIME^USER^SIZE

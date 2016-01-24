@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSTBLA ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA QWIK Interpretive Table verification|DBSTBLA|||||||1
 DBSTBLA(vREF,vSTR,vFMT) ; 
  ;
  N vINFO N vRETURN
@@ -127,7 +126,7 @@ DBSTBLA(vREF,vSTR,vFMT) ;
  Q $E(vRETURN,1,80)
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4201" ; Signature - LTD^TIME^USER^SIZE
+ Q "60579^13625^Badrinath Giridharan^4127" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen0(exe,vsql,vSelect,vFrom,vWhere,vOrderby,vGroupby,vParlist,vOff) ; Dynamic MDB ResultSet
  ;

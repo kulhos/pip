@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Method Library - Schema Class|UCSCHEMA|||||||1
 	/*
 	ORIG:	FSANCHEZ - 10/02/2003
 	DESC:	PSL Method Library - Schema Class
@@ -190,4 +189,4 @@ delTable	// method Schema.deleteTable()
 	do PSL.error("Invalid table name")
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^7305"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61058^29762^Frans S.C. Witte^7238"	// Signature - LTD^TIME^USER^SIZE

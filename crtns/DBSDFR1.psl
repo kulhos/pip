@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Data Dictionary List|DBSDFR1|||||||1
 DBSDFR1	/* Public - Data Dictionary List
 	ORIG: Kathie Jalbuena (7070) - 05/18/87
 	PROCEDURE ID: DBSDFR1
@@ -120,4 +119,4 @@ private VALIDWHR	// Validate where clause entered
 	quit
 	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^2842"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60527^73806^Dan Russell^2789"	// Signature - LTD^TIME^USER^SIZE

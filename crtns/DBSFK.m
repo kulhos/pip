@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSFK ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Foreign key definition|DBSFK|||||||1
 DBSFK ; 
  N vpc,vTp
  ;
@@ -48,7 +47,7 @@ DBSFK ;
  K vobj(+$G(fDBTBL1)),vobj(+$G(fDBTBL1F)) Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^1463" ; Signature - LTD^TIME^USER^SIZE
+ Q "61161^48265^Dan Russell^1410" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM DBTBL1F WHERE %LIBS='SYSDEV' AND FID=:V1 AND FKEYS=:V2

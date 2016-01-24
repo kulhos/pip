@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSPROT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Data Item Protection Utility|DBSPROT|||||||1
 DBSPROT ; 
  ;
  Q  ; No entry from top
@@ -68,7 +67,7 @@ BUILD0(rebuild) ; List of element to rebuild
  ;
  Q 
  ;
-SCREEN(%ProcessMode,rebuild,FID,DINAM,GROUP) ; Protection group /NOREQ/MECH=REF:W
+SCREEN(%O,rebuild,FID,DINAM,GROUP) ; Protection group /NOREQ/MECH=REF:W
  N vTp
  ;
  N %FRAME N %REPEAT N I N OLNTB N PRTOPT
@@ -79,7 +78,7 @@ SCREEN(%ProcessMode,rebuild,FID,DINAM,GROUP) ; Protection group /NOREQ/MECH=REF:
  S (DINAM,FID,GROUP)=""
  ;
  S %REPEAT=12
- S PRTOPT=%ProcessMode
+ S PRTOPT=%O
  ;
  ; Read Access
  S DIPROT(1)=$$^MSG(6357)
@@ -92,7 +91,7 @@ SCREEN(%ProcessMode,rebuild,FID,DINAM,GROUP) ; Protection group /NOREQ/MECH=REF:
  S %TAB("DINAM")=".ORGDI1/TBL=[DBTBL1D]:QUERY ""[DBTBL1D]FID=<<FID>>"""
  S %TAB("GROUP")=".DQGRP1/TBL=[DBTBL14]:QUERY ""[DBTBL14]FID=<<FID>> AND [DBTBL14]DINAM=<<DINAM>>""/XPP=D PP3^DBSPROT/MIN=1/MAX=99"
  ;
- I (%ProcessMode=0) S %TAB("DINAM")=%TAB("DINAM")_"/XPP=D PP2^DBSPROT"
+ I (%O=0) S %TAB("DINAM")=%TAB("DINAM")_"/XPP=D PP2^DBSPROT"
  E  D
  .	;
  .	; Create look-up table for modify/delete
@@ -127,7 +126,7 @@ SCREEN(%ProcessMode,rebuild,FID,DINAM,GROUP) ; Protection group /NOREQ/MECH=REF:
  ;
  F I=1:1:%REPEAT  K vobj(+$G(dbtbl14q(I))) S dbtbl14q(I)=$$vRCgetRecord1^RecordDBTBL14Q("SYSDEV",FID,DINAM,GROUP,I,0)
  ;
- N vo1 N vo2 N vo3 D DRV^USID(%ProcessMode,"DBTBL14",.dbtbl14q,.dbtbl14,.vo1,.vo2,.vo3) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3))
+ N vo1 N vo2 N vo3 D DRV^USID(%O,"DBTBL14",.dbtbl14q,.dbtbl14,.vo1,.vo2,.vo3) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3))
  ;
  I (VFMQ="Q") D vKill1("") K vobj(+$G(dbtbl14)) Q 0 ; Done
  ;
@@ -145,8 +144,8 @@ SCREEN(%ProcessMode,rebuild,FID,DINAM,GROUP) ; Protection group /NOREQ/MECH=REF:
  .	;
  .	N SEQ
  .	;
- .  S $P(vobj(dbtbl14),$C(124),6)=%CurrentDate
- .  S $P(vobj(dbtbl14),$C(124),15)=%UserID
+ .  S $P(vobj(dbtbl14),$C(124),6)=$P($H,",",1)
+ .  S $P(vobj(dbtbl14),$C(124),15)=%UID
  .	;
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordDBTBL14(dbtbl14,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(dbtbl14,-100) S vobj(dbtbl14,-2)=1 TC:vTp  
  .	;
@@ -236,7 +235,7 @@ PP3 ; GROUP post processor
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5795" ; Signature - LTD^TIME^USER^SIZE
+ Q "60257^34885^Dan Russell^5734" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM DBTBL14Q WHERE PLIBS='SYSDEV' AND FID=:FID AND DINAM=:DINAM AND GROUP=:GROUP

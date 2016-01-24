@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PBSNSM ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Non-Standard Message Handler|PBSNSM|||||||1
 PBSNSM(vzpkt,vznsmpgm,vstart,vtprest) ; 
  ;
  ;---------------------------------------------------------------------
@@ -18,7 +17,7 @@ PBSNSM(vzpkt,vznsmpgm,vstart,vtprest) ;
  N cuvar S cuvar=$$vRCgetRecord0Opt^RecordCUVAR(0,"")
   S cuvar=$G(^CUVAR(2))
  ;
- I %SystemDate'=$P(cuvar,$C(124),1) D
+ I TJD'=$P(cuvar,$C(124),1) D
  .	S vzsav=$$INIT^PBSUTL
  .	D VLOD^PBSUTL(vzsav)
  .	Q 
@@ -60,11 +59,11 @@ NSMLOG(msgtyp,msgid,clmsg,reply,status) ; Public/Log non-standard message
   S vop2=msgtyp
   S vop1=msgid
  ;
-  S $P(nsmlog,$C(124),1)=%ProcessID
-  S $P(nsmlog,$C(124),2)=%CurrentDate
-  S $P(nsmlog,$C(124),3)=%CurrentTime
+  S $P(nsmlog,$C(124),1)=$J
+  S $P(nsmlog,$C(124),2)=$P($H,",",1)
+  S $P(nsmlog,$C(124),3)=$P($H,",",2)
   S $P(nsmlog,$C(124),4)=$get(status)
-  S $P(nsmlog,$C(124),5)=%SystemDate
+  S $P(nsmlog,$C(124),5)=TJD
   S $P(nsmlog,$C(124),8)=vztime
   S $P(nsmlog,$C(124),9)=$get(vztprest)
  ;
@@ -138,7 +137,7 @@ MSGOUT(reply,fields) ; Private//Build server reply
  Q 0
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5362" ; Signature - LTD^TIME^USER^SIZE
+ Q "60876^56527^Dan Russell^5302" ; Signature - LTD^TIME^USER^SIZE
  ;
 vKill1(ex1) ; Delete objects rec()
  ;

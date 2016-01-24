@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure TBXINTERP ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Interpreter for remote invocation of PSL|TBXINTERP|||||||||||||||||||||1
 TBXINTERP ; 
  ;
  Q 
@@ -147,7 +146,7 @@ SQL(vinput,voutput) ; output
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^6267" ; Signature - LTD^TIME^USER^SIZE
+ Q "61003^41614^e0101711^6178" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

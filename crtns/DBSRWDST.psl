@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Report Writer Distribution|DBSRWDST|||||||1
 DBSRWDST	/* Private - DATA-QWIK Report Writer Distribution
 	ORIG: CHIANG - 05/2L8/93
 	PROCEDURE ID: DBSRWDST
@@ -186,4 +185,4 @@ BBMBIO(String RID,  // Private - Custom report distribution IO for BBMB
 	do ^SCAIO
 	quit IO
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^4366"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60107^27446^Viji Skariah^4296"	// Signature - LTD^TIME^USER^SIZE

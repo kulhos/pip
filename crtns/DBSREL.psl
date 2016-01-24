@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Validate File Relationship Linkage|DBSREL|||||||1
 DBSREL
  
 	/*
@@ -451,4 +450,4 @@ public TBLORD(List TABLES)	// List of tables to validate and order
 	
 	quit {List}TBLORD
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^10164"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61254^68988^Dan Russell^10098"	// Signature - LTD^TIME^USER^SIZE

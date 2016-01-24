@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Log table changes to LOG table|DBSLOGIT|||||||1
 public DBSLOGIT(Record recobj, Number mode, String vx())	// Log table changes to LOG table
 
 	/*
@@ -251,4 +250,4 @@ LOG1(Number SEQ,	// SEQ
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^6155"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61254^68964^Dan Russell^6091"	// Signature - LTD^TIME^USER^SIZE

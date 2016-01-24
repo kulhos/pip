@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSCLIN ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  CALL IN STUB FOR COMPUTEDS|DBSCLIN|||||||1
  ;
  Q 
  ;
@@ -89,7 +88,7 @@ LOGERROR(err) ; Log error
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2707" ; Signature - LTD^TIME^USER^SIZE
+ Q "61311^54346^Dan Russell^2648" ; Signature - LTD^TIME^USER^SIZE
  ;
 vCatch1 ; Error trap
  ;

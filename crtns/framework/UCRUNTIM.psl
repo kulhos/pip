@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Code generators for class Runtime - Insensitive Group|UCRUNTIM|||||||1
 	/*
 	ORIG: FSANCHEZ - 04/06/98
 	DESC: Library of Runtime methods
@@ -584,4 +583,4 @@ static void xbad() // code gewnerator for Runtime.setErrXBAD()
 	#ENDBYPASS
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^23485"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61298^29758^Frans S.C. Witte^23398"	// Signature - LTD^TIME^USER^SIZE

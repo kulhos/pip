@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBS2PSL4 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL Screen Compiler|DBS2PSL4|||||||1
 DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ;
  N CN N DE N DF N file N i N I N K N KEYNM N LL N N N OM N P N PMT N SAVC N SAVD N SCRVLOD N sn N TT N X N XY N Y N z N Z
@@ -12,7 +11,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  S SAVC=C
  ;
  ; check for user-defined vlod section
-  N V1 S V1=%Library S USERVLOD=($D(^DBTBL(V1,2,SID,0,101))#2)
+ S USERVLOD=$$vDbEx1()
  S C(2)=C(2)_",PGM=$T(+0),DLIB="_Q_"SYSDEV"_Q_",DFID="_Q_PFID_Q
  ;
  ; Record level protection
@@ -21,8 +20,8 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  E  D ^DBSPROT4($P(vobj(dbtbl2,0),$C(124),1),"*",.C3P,,,.vobjlst)
  ;
  ; Data entry post proc
-  N V2 S V2=%Library I ($D(^DBTBL(V2,2,SID,0,21))#2) S C(2)=C(2)_",VSCRPP=1"
-  N V3 S V3=%Library  N V4 S V4=%Library I ($D(^DBTBL(V3,2,SID,0,21))#2)!($D(^DBTBL(V4,2,SID,0,41))#2) S C(2)=C(2)_",VSCRPP=1"
+ I $$vDbEx2() S C(2)=C(2)_",VSCRPP=1"
+ I $$vDbEx3()!$$vDbEx4() S C(2)=C(2)_",VSCRPP=1"
  ;
  S RPCFLG=1 I ($P(vobj(dbtbl2,0),$C(124),4)+$P(vobj(dbtbl2,0),$C(124),7)) S RPCFLG=0
  I RPCFLG,"US" ;* if RPCFLG,CUVAR.editmask set RPCFLG=0
@@ -67,14 +66,14 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  I USERVLOD D
  .	; Insert VCOM first
  .	N I N X
- .	S X="" F  S X=$O(SCRVLOD(X)) Q:X=""  I SCRVLOD(X)?1"VCOM".E Q 
+ .	S X="" F  S X=$order(SCRVLOD(X)) Q:X=""  I SCRVLOD(X)?1"VCOM".E Q 
  .	I X>0 D
- ..		S X=$O(SCRVLOD(X),-1)
- ..		F I=1:1 S X=$O(SCRVLOD(X)) Q:X=""  S BLD(Z+I)=SCRVLOD(X) K SCRVLOD(X)
+ ..		S X=$order(SCRVLOD(X),-1)
+ ..		F I=1:1 S X=$order(SCRVLOD(X)) Q:X=""  S BLD(Z+I)=SCRVLOD(X) K SCRVLOD(X)
  ..		Q 
  .	;
  .	N Z
- .	S Z=$O(BLD(""),-1)+1
+ .	S Z=$order(BLD(""),-1)+1
  .	S BLD(Z)=" #ACCEPT date=11/05/03;pgm=Screen compiler;CR=UNKNOWN;GROUP=SYNTAX"
  .	S BLD(Z+1)=" quit"
  .	S BLD(Z+2)="VLODDQ("_vobjlst("formal")_") //Original VLOD section"
@@ -83,16 +82,16 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	Q 
  ;
  S X=""
- F I=1:1 S X=$O(SCRVLOD(X)) Q:X=""  S BLD(Z+I)=SCRVLOD(X)
+ F I=1:1 S X=$order(SCRVLOD(X)) Q:X=""  S BLD(Z+I)=SCRVLOD(X)
  ;
  ; Build Run-time program
  K XLT,SCREEN
  D ^ULODTMPL("DBS2PSLT","TMPZ") ;load template procedure
  S N=""
- F  S N=$O(TMPZ(N)) Q:N=""  D
+ F  S N=$order(TMPZ(N)) Q:N=""  D
  .	Q:$E(TMPZ(N),1)=" "!($E(TMPZ(N),1)=$char(9))!(TMPZ(N)="") 
  .	S TMPZ(N)=$TR(TMPZ(N),$char(9)," ")
- .	S XLT($P(TMPZ(N)," ",1))=N
+ .	S XLT($piece(TMPZ(N)," ",1))=N
  .	Q 
  ; Remove VLOD entry
  S X=XLT("VLOD") K TMPZ(X)
@@ -117,8 +116,8 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  . Q  ; while ...
  ;
  N ppre,ppro
-  N V5 S V5=%Library S ppre=($D(^DBTBL(V5,2,SID,0,61))#2) ;Screen Pre-proc
-  N V6 S V6=%Library S ppro=($D(^DBTBL(V6,2,SID,0,121))#2) ;Screen display pre-proc
+ S ppre=$$vDbEx5() ;Screen Pre-proc
+ S ppro=$$vDbEx6() ;Screen display pre-proc
  S X1=XLT("V5")
  S TMPZ(X1)="" S X1=X1+1
  S TMPZ(X1)=" if %ProcessMode=5 do VPR("_vobjlst("actual")_"),VDA1("_vobjlst("actual")_"),^DBSPNT() quit"
@@ -163,9 +162,9 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	Q  ; else do ..
  ;
  S VFSN="" S file=""
- F  S file=$O(fsn(file)) Q:file=""  D
- .	S sn=$P(fsn(file),"|",1)
- .	I $E(sn,$L(sn))'=")" S sn=$P(sn,"(",1)
+ F  S file=$order(fsn(file)) Q:file=""  D
+ .	S sn=$piece(fsn(file),"|",1)
+ .	I $E(sn,$L(sn))'=")" S sn=$piece(sn,"(",1)
  .	S VFSN=VFSN_",VFSN("""_file_""")=""z"_$TR(sn,"%")_""""
  .	Q  ; for ..
  ;
@@ -229,7 +228,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	N n N new N new5 N set
  .	S n="" S new="" S new5="" S set=""
  .	;
- .	F  S n=$O(lvns(n)) Q:n=""  D
+ .	F  S n=$order(lvns(n)) Q:n=""  D
  ..		S lvn=lvns(n)
  ..		I lvn="%O" Q 
  ..		I lvn="%ProcessMode" Q 
@@ -249,8 +248,8 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ..		; Split the list
  ..		S z=$L(set,",")\2
  ..		; in half
- ..		S TMPD(.4)=" else  set "_$P(set,",",1,z)
- ..		S TMPD(.41)=" else  set "_$P(set,",",z+1,9999)
+ ..		S TMPD(.4)=" else  set "_$piece(set,",",1,z)
+ ..		S TMPD(.41)=" else  set "_$piece(set,",",z+1,9999)
  ..		Q 
  .	;
  .	S TMPD(.5)=" "
@@ -262,7 +261,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	S n="" S new="" S new5="" S set="" S set1="" S set2=""
  .	S RPTDA=RPTDA-1
  .	;
- .	F  S n=$O(rptlvns(n)) Q:n=""  D
+ .	F  S n=$order(rptlvns(n)) Q:n=""  D
  ..		S lvn=rptlvns(n)
  ..		I lvn="%O" Q 
  ..		; Not valid
@@ -289,8 +288,8 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	Q 
  ;
  ; Init user-defined variables
- S X1=$O(TMPD(1),-1)+.0001 S N=""
- F  S N=$O(VARLIST(N)) Q:N=""  D
+ S X1=$order(TMPD(1),-1)+.0001 S N=""
+ F  S N=$order(VARLIST(N)) Q:N=""  D
  .	N var
  .	S var="" F  S var=$order(fsn(var)) Q:var=""  Q:$E($piece(fsn(var),"|",1),1,$L(N))=N 
  .	I var'="" Q 
@@ -300,7 +299,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  S X1=XLT("VDA") S N=""
  S X1=X1+.001 S TMPZ(X1)=" new V" ; *** 08/03/94 BC
  ;
- F  S N=$O(TMPD(N)) Q:N=""  S X1=X1+.001 S TMPZ(X1)=TMPD(N)
+ F  S N=$order(TMPD(N)) Q:N=""  S X1=X1+.001 S TMPZ(X1)=TMPD(N)
  ;
  S X1=XLT("VDA1")
  ;mas
@@ -312,7 +311,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	F i=1:1:$L(FILES,",") D
  ..		N file N sn
  ..		S file=$piece(FILES,",",i)
- ..		S sn=$P(vobjlst(i),"|",1)
+ ..		S sn=$piece(vobjlst(i),"|",1)
  ..		I $E(sn,$L(sn))="(" S sn=$E(sn,1,$L(sn)-1)
  ..		S X1=X1+.001
  ..		S TMPZ(X1)=" type Public Record"_file_" "_sn_$S(($D(vFID(file))#2):"()",1:"")
@@ -329,14 +328,14 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	F i=1:1:$L(FILES,",") D
  ..		N file N sn
  ..		S file=$piece(FILES,",",i)
- ..		S sn=$P(vobjlst(i),"|",1)
+ ..		S sn=$piece(vobjlst(i),"|",1)
  ..		I $E(sn,$L(sn))="(" S sn=$E(sn,1,$L(sn)-1)
  ..		S X1=X1+.001
  ..		S TMPZ(X1)=" type Public Record"_file_" "_sn_$S(($D(vFID(file))#2):"()",1:"")
  ..		Q 
  .	Q 
  ; Add protection logic
- I $O(C3P(1))>0 D
+ I $order(C3P(1))>0 D
  .	S X1=X1+.001
  .	S TMPZ(X1)=" do VPROT("_vobjlst("actual")_") quit:ER"
  .	Q 
@@ -403,7 +402,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	Q 
  ;
  S X=""
- F  S X=$O(FX(X)) Q:X=""  S TMPZ(X1)=FX(X) S X1=X1+.001
+ F  S X=$order(FX(X)) Q:X=""  S TMPZ(X1)=FX(X) S X1=X1+.001
  S X1=X1+.001
  ;
  K FX
@@ -413,7 +412,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	S TMPZ(X1)=X41
  .	S X1=X1+2.001
  .	S N=""
- .	F  S N=$O(TAB(N)) Q:N=""  S TMPZ(X1)=TAB(N) S X1=X1+.001
+ .	F  S N=$order(TAB(N)) Q:N=""  S TMPZ(X1)=TAB(N) S X1=X1+.001
  .	;
  .	I $D(VPTBL) D
  ..		; ========== data item protection logic
@@ -426,7 +425,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ;
  ; Data entry pre-processor
  N vspre
-  N V7 S V7=%Library S vspre=($D(^DBTBL(V7,2,SID,0,1))#2)
+ S vspre=$$vDbEx7()
  ;set X1=XLT("VTAB1")
  S TMPZ(X1)=" do VTBL("_vobjlst("actual")_")"
  I vspre D
@@ -436,7 +435,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ;
  ; Required data item set definitions
  N vspp
-  N V8 S V8=%Library S vspp=($D(^DBTBL(V8,2,SID,0,41))#2)
+ S vspp=$$vDbEx8()
  I vspp D
  .	S VZSEQ=40 S X=""
  .	N pproc,vos13,vos14,vos15,vos16 S pproc=$$vOpen4()
@@ -449,13 +448,13 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ..  Q  ; while ...
  .	;
  .	S VZSEQ=""
- .	F  S VZSEQ=$O(diset(VZSEQ)) Q:VZSEQ=""  D
+ .	F  S VZSEQ=$order(diset(VZSEQ)) Q:VZSEQ=""  D
  ..		S X=diset(VZSEQ) I X?." " Q 
  ..		I X'[";" D ^DBS2PSL5 Q:ER  Q 
  ..		; (DI,DI...)  OR (...) OR ;
  ..		;
- ..		S X=$P(X,";",1)
- ..		F  S VZSEQ=$O(diset(VZSEQ)) Q:VZSEQ=""  S X=X_diset(VZSEQ) Q:X'[";"  S X=$P(X,";",1)
+ ..		S X=$piece(X,";",1)
+ ..		F  S VZSEQ=$order(diset(VZSEQ)) Q:VZSEQ=""  S X=X_diset(VZSEQ) Q:X'[";"  S X=$piece(X,";",1)
  ..		;
  ..		; Process set definitions
  ..		D ^DBS2PSL5 Q:ER  Q 
@@ -465,7 +464,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ; Data entry post processor
  S X1=XLT("VSPP")
  S TMPZ(X1)="VSPP  // Post Processor"
-  N V9 S V9=%Library S vspp=($D(^DBTBL(V9,2,SID,0,21))#2)
+ S vspp=$$vDbEx9()
  I 'vspp D
  .	D DELETE("VSPP")
  .	Q 
@@ -479,7 +478,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ..		F i=1:1:$L(FILES,",") D
  ...			N file N sn
  ...			S file=$piece(FILES,",",i)
- ...			S sn=$P(vobjlst(i),"|",1)
+ ...			S sn=$piece(vobjlst(i),"|",1)
  ...			I $E(sn,$L(sn))="(" S sn=$E(sn,1,$L(sn)-1)
  ...			S TMPZ(X1)=" type Public Record"_file_" "_sn_$S(($D(vFID(file))#2):"()",1:"")
  ...			S X1=X1+.001
@@ -494,14 +493,14 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	S TMPZ(X1)="VSPP1("_vobjlst("formal")_")"
  .	S X1=X1+.001
  .	;
- .	 N V10 S V10=%Library S vspp=($D(^DBTBL(V10,2,SID,0,41))#2)
+ .	S vspp=$$vDbEx10()
  .	I vspp D
  ..		S X1=X1+.001 S TMPZ(X1)=" D VSPPREQ("_vobjlst("actual")_") I ER Q" S X1=X1+.001
  ..		S TMPZ(X1)=" ;" S X1=X1+.001
  ..		Q 
  .	;
  .	S X=""
- .	F  S X=$O(TMP(999,X)) Q:X=""  S TMPZ(X1)=TMP(999,X) S X1=X1+.001
+ .	F  S X=$order(TMP(999,X)) Q:X=""  S TMPZ(X1)=TMP(999,X) S X1=X1+.001
  .	S TMPZ(X1)=" #ACCEPT Date=11/5/03;PGM=Screen Compiler;CR=UNKNOWN;GROUP=SYNTAX"
  .	S X1=X1+.001
  .	S TMPZ(X1)=" quit"
@@ -509,13 +508,13 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	Q  ; else ...
  ;
  S X=""
- F  S X=$O(TMP(1000,X)) Q:X=""  D
+ F  S X=$order(TMP(1000,X)) Q:X=""  D
  .	S TMPZ(X1)=TMP(1000,X)
  .	S X1=X1+.001
  .	Q 
  ;
  S X=""
- F  S X=$O(TMP(998,X)) Q:X=""  D
+ F  S X=$order(TMP(998,X)) Q:X=""  D
  .	S TMPZ(X1)=TMP(998,X)
  .	S X1=X1+.001
  .	Q 
@@ -533,7 +532,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	; split VNEW into two sections
  .	S VNEW(1)=" do VLOD("_vobjlst("actual")_")"
  .	S X=0
- .	F I=1:1 S X=$O(VNEW(X)) Q:X=""!(+X>99)  D
+ .	F I=1:1 S X=$order(VNEW(X)) Q:X=""!(+X>99)  D
  ..		S TMPZ(X1)=VNEW(X)
  ..		S X1=X1+.001 K VNEW(X)
  ..		Q 
@@ -541,7 +540,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ;
  E  D  ; Set up VNEW section
  .	S X=""
- .	F  S X=$O(VNEW(X)) Q:X=""  D
+ .	F  S X=$order(VNEW(X)) Q:X=""  D
  ..		S TMPZ(X1)=VNEW(X)
  ..		S X1=X1+.001
  ..		Q 
@@ -562,10 +561,10 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  I FILES'="" D
  .	F i=1:1:$L(FILES,",") D
  ..		N file,sn
- ..		S file=$P(FILES,",",i)
+ ..		S file=$piece(FILES,",",i)
  ..		Q:file="" 
  ..		S X1=X1+.001
- ..		S sn=$P(vobjlst(i),"|",1)
+ ..		S sn=$piece(vobjlst(i),"|",1)
  ..		I $E(sn,$L(sn))="(" S sn=$E(sn,1,$L(sn)-1)
  ..		S TMPZ(X1)=" type Public Record"_file_" "_sn_$S(($D(vFID(file))#2):"()",1:"")
  ..		S X1=X1+.001
@@ -580,9 +579,9 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ;
  I FILES'="" D
  .	F i=1:1:$L(FILES,",") D
- ..		S file=$P(FILES,",",i)
+ ..		S file=$piece(FILES,",",i)
  ..		Q:file="" 
- ..		S sn=$P(vobjlst(i),"|",1)
+ ..		S sn=$piece(vobjlst(i),"|",1)
  ..		I $E(sn,$L(sn))="(" S sn=$E(sn,1,$L(sn)-1)
  ..		S X1=X1+.001
  ..		S TMPZ(X1)="vSET"_i_"(Record"_file_" "_sn_",di,X)"
@@ -604,10 +603,10 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  I FILES'="" D
  .	F i=1:1:$L(FILES,",") D
  ..		N file,sn
- ..		S file=$P(FILES,",",i)
+ ..		S file=$piece(FILES,",",i)
  ..		Q:file="" 
  ..		S X1=X1+.001
- ..		S sn=$P(vobjlst(i),"|",1)
+ ..		S sn=$piece(vobjlst(i),"|",1)
  ..		I $E(sn,$L(sn))="(" S sn=$E(sn,1,$L(sn)-1)
  ..		S TMPZ(X1)=" type Public Record"_file_" "_sn_$S(($D(vFID(file))#2):"()",1:"")
  ..		S X1=X1+.001
@@ -620,9 +619,9 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  ;
  I FILES'="" D
  .	F i=1:1:$L(FILES,",") D
- ..		S file=$P(FILES,",",i)
+ ..		S file=$piece(FILES,",",i)
  ..		Q:file="" 
- ..		S sn=$P(vobjlst(i),"|",1)
+ ..		S sn=$piece(vobjlst(i),"|",1)
  ..		I $E(sn,$L(sn))="(" S sn=$E(sn,1,$L(sn)-1)
  ..		S X1=X1+.001
  ..		S TMPZ(X1)="vREAD"_i_"(Record"_file_" "_sn_",di)"
@@ -639,7 +638,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  N zdft
  I '(FILES="") D DEFAULT($piece(FILES,",",1),.zdft)
  S i=""
- F  S i=$O(zdft(i)) Q:i=""  S TMPZ(X1)=zdft(i) S X1=X1+.001
+ F  S i=$order(zdft(i)) Q:i=""  S TMPZ(X1)=zdft(i) S X1=X1+.001
  S TMPZ(X1)=" #ACCEPT Date=11/5/03;PGM=Screen Compiler;CR=UNKNOWN;GROUP=SYNTAX"
  S X1=X1+.001
  S TMPZ(X1)=" quit" ; temp patch until default section of filer works
@@ -651,7 +650,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	S TMPZ(X1)=" quit"
  .	S TMPZ(X1+.001)="VNEWDQ("_vobjlst("formal")_") // Original VNEW section"
  .	S TMPZ(X1+.002)=" " S X1=X1+.003
- .	S X="" F  S X=$O(VNEW(X)) Q:X=""  S TMPZ(X1)=VNEW(X) S X1=X1+.001
+ .	S X="" F  S X=$order(VNEW(X)) Q:X=""  S TMPZ(X1)=VNEW(X) S X1=X1+.001
  .	S TMPZ(X1)=" #ACCEPT Date=11/5/03;PGM=Screen Compiler;CR=UNKNOWN;GROUP=SYNTAX"
  .	S X1=X1+.001
  .	S TMPZ(X1)=" quit" S X1=X1+.001
@@ -659,7 +658,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	Q  ; if USERVLOD
  ;
  S X=""
- F  S X=$O(BLD(X)) Q:X=""  S TMPZ(X1)=BLD(X) S X1=X1+.001
+ F  S X=$order(BLD(X)) Q:X=""  S TMPZ(X1)=BLD(X) S X1=X1+.001
  K BLD
  K C,C1,C2,C3,Z,NL,NS,OS,P,PMT,PO,PRO,REQ,TT,Y,XY,SEQ,LF,BLD,DFV,FX
  K LL,LINE,AR,CN,DE,DEC,DF,DI,DILNM,DINAM,FMT,ER,I,LEN,VNEW,TMPX
@@ -673,7 +672,7 @@ DBS2PSL4(dbtbl2) ; DBS2PSL4; - V7.0 - PSL Screen compiler
  .	S TMPZ(X1)="  //user-defined post procs"
  .	S X1=X1+.001
  .	S TMPZ(X1)=" //" S X1=X1+.001
- .	S X="" F  S X=$O(TMP("PO",X)) Q:X=""  S TMPZ(X1)=TMP("PO",X) S X1=X1+.0001
+ .	S X="" F  S X=$order(TMP("PO",X)) Q:X=""  S TMPZ(X1)=TMP("PO",X) S X1=X1+.0001
  .	Q 
  ;
  K %FDBL,%XDB,%XDBL,AKEY,CT,DB,DFT,FMT,K,KEYNM,KVAR,LEN,LN,PP,REF,TBL,LOOP,MAX,MIN,SFC,%DBL,CTL
@@ -686,7 +685,7 @@ DELETE(SUB) ; Delete a Subroutine and any following lines
  ;
  I '($D(XLT(SUB))#2) Q 
  S N=XLT(SUB) K XLT(SUB),TMPZ(N)
- F  S N=$O(TMPZ(N)) Q:N=""  S X=TMPZ(N) Q:$P(X," ",1)'=""  K TMPZ(N)
+ F  S N=$order(TMPZ(N)) Q:N=""  S X=TMPZ(N) Q:$piece(X," ",1)'=""  K TMPZ(N)
  Q 
  ;
  ; Change every " to ""
@@ -715,12 +714,12 @@ PPUTIL(node,tag) ; PP Label   /REQ/MECH=VAL
  ;
  D PPLIB(.OM) ; parse for PP Libs
  ;
- S X1=$O(TMPZ(""),-1)+100 S TMPZ(X1)=" //" S X1=X1+.001
+ S X1=$order(TMPZ(""),-1)+100 S TMPZ(X1)=" //" S X1=X1+.001
  S TMPZ(X1)=tag S X1=X1+.001
  S TMPZ(X1)=" new %TAB,vtab // Disable .MACRO. references to %TAB()" S X1=X1+.001
  S TMPZ(X1)=" //" S X1=X1+.001
  ;
- S X="" F I=1:1 S X=$O(OM(X)) Q:X=""  S TMPZ(X1)=OM(X) S X1=X1+.001
+ S X="" F I=1:1 S X=$order(OM(X)) Q:X=""  S TMPZ(X1)=OM(X) S X1=X1+.001
  S TMPZ(X1)=" #ACCEPT date=11/05/03;PGM=Screen Compiler;CR=UNKNOWN;GROUP=SYNTAX"
  S X1=X1+.001
  S TMPZ(X1)=" quit"
@@ -731,14 +730,14 @@ PPLIB(PP) ; Post Processor Library Array  /REQ/MECH=REF
  N code N end N i N ppnam N ptr
  ;set pseq=0
  S i=""
- S end=$O(PP(""),-1)+10 ; init pointer to last line of code +10
+ S end=$order(PP(""),-1)+10 ; init pointer to last line of code +10
  ; that's where the PP code will be inserted.
- F  S i=$O(PP(i)) Q:i=""  D
+ F  S i=$order(PP(i)) Q:i=""  D
  .	S code=PP(i)
  .	S code=$$REPEATCK(code) ;check if this DI is in a repeat region
  .	S PP(i)=code
  .	;
- .	I $P(code,"//",1)'["@[" Q  ; not pre/post processor library, so quit
+ .	I $piece(code,"//",1)'["@[" Q  ; not pre/post processor library, so quit
  .	S ptr=0
  .	F  S ptr=$F(code,"@[",ptr) Q:ptr=0  I $L($E(code,1,ptr),"""")#2 D
  ..		N ptrz
@@ -758,15 +757,15 @@ PPLIB1(ppnam,code,i) ; Sequence Pointer  /REQ/MECH=VAL
  ;
  ; insert pp lib code into post processor array
  S linenum=0
- I ($D(PSEQ(ppnam))#2) S code=$P(code,"@"_ppnam,1)_"VPO"_PSEQ(ppnam)_"("_vobjlst("actual")_")"_$P(code,"@"_ppnam,2,99) Q 
+ I ($D(PSEQ(ppnam))#2) S code=$piece(code,"@"_ppnam,1)_"VPO"_PSEQ(ppnam)_"("_vobjlst("actual")_")"_$piece(code,"@"_ppnam,2,99) Q 
  S xpp=$E(ppnam,2,$L(ppnam)-1) ; strip off [ ]
-  N V1,V2 S V1=%Library,V2=xpp I '($D(^DBTBL(V1,13,V2))) S ER=1 S RM=$$^MSG(1425,xpp) Q  ; invalid library name
+  N V1 S V1=xpp I '$$vDbEx11() S ER=1 S RM=$$^MSG(1425,xpp) Q  ; invalid library name
  S vpseq=$get(vpseq)+1
  ;
  I ZNQ="" S PP(end+1)="VPO"_vpseq_"("_vobjlst("formal")_")  // user library "_xpp S end=end+1 ; add tag for pp code
  ;
  ;open result set to read code from DBTBL13D
- N ds,vos1,vos2,vos3,vos4  N V3 S V3=xpp S ds=$$vOpen6()
+ N ds,vos1,vos2,vos3,vos4  N V2 S V2=xpp S ds=$$vOpen6()
  F  Q:'$$vFetch6()  D
  . N dbtbl13d S dbtbl13d=$$vRCgetRecord1Opt^RecordDBTBL13D($P(ds,$C(9),1),$P(ds,$C(9),2),$P(ds,$C(9),3),1,"")
  .	S line=$P(dbtbl13d,$C(12),1)
@@ -800,7 +799,7 @@ SUBNAME(code) ;
  S OM(194.99)=" #ACCEPT Date=11/5/03;PGM=Screen Compiler;CR=UNKNOWN;GROUP=SYNTAX"
  S OM(195)=" quit"
  ;
- S code=$P(code,"@"_ppnam,1)_"VPO"_vpseq_"("_vobjlst("actual")_")"_$P(code,"@"_ppnam,2,99)
+ S code=$piece(code,"@"_ppnam,1)_"VPO"_vpseq_"("_vobjlst("actual")_")"_$piece(code,"@"_ppnam,2,99)
  S PSEQ(ppnam)=vpseq
  S vpseq=vpseq+1
  Q 
@@ -813,9 +812,9 @@ REPEATCK(X) ;
  .	I """(|"[$E(X,ptr) Q 
  .	S DILIST(di)=""
  .	S dinam=di
- .	I $$vREPEAT(di,$get(P(5))) S dinam=$P(di,".",1)_"(I(1))."_$P(di,".",2)
+ .	I $$vREPEAT(di,$get(P(5))) S dinam=$piece(di,".",1)_"(I(1))."_$piece(di,".",2)
  .	;if $D(REPEAT($$UPPER^%ZFUNC(di)))!$$vREPEAT(P(5).get()) set dinam=$P(di,".",1)_"(I(1))."_$P(di,".",2) // add row subscript
- .	S X=$P(X,di,1)_dinam_$P(X,di,2,99)
+ .	S X=$piece(X,di,1)_dinam_$piece(X,di,2,99)
  .	Q 
  Q X
 vREPEAT(di,field) ; field on the screen where the post processor
@@ -888,7 +887,7 @@ COMPILE(TMPZ,PGM,SID) ; Screen Name  /REQ/MECH=VAL
  ;
  F I="VNEWDQ","VLODDQ" D DELETE(I)
  F I="F","D","C" I '$D(TB(I)) D DELETE("V"_I)
- S I="" F  S I=$O(TMPZ(I)) Q:I=""  S src(I)=TMPZ(I)
+ S I="" F  S I=$order(TMPZ(I)) Q:I=""  S src(I)=TMPZ(I)
  ;
  D cmpA2F^UCGM(.src,PGM,,,,,,SID_"~Screen")
  Q 
@@ -956,7 +955,106 @@ value(v,typ,var) ; Convert internal to external format
  Q v
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^34690" ; Signature - LTD^TIME^USER^SIZE
+ Q "61569^11634^Sha H Mirza^34637" ; Signature - LTD^TIME^USER^SIZE
+ ;
+vDbEx1() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=101
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,101))#2) Q 0
+ Q 1
+ ;
+vDbEx10() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=41
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,41))#2) Q 0
+ Q 1
+ ;
+vDbEx11() ; min(1): DISTINCT LIBS,PID FROM DBTBL13 WHERE LIBS=:%LIBS AND PID=:V1
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,13,V1))) Q 0
+ Q 1
+ ;
+vDbEx2() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=21
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,21))#2) Q 0
+ Q 1
+ ;
+vDbEx3() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=21
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,21))#2) Q 0
+ Q 1
+ ;
+vDbEx4() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=41
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,41))#2) Q 0
+ Q 1
+ ;
+vDbEx5() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=61
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,61))#2) Q 0
+ Q 1
+ ;
+vDbEx6() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=121
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,121))#2) Q 0
+ Q 1
+ ;
+vDbEx7() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=1
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,1))#2) Q 0
+ Q 1
+ ;
+vDbEx8() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=41
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,41))#2) Q 0
+ Q 1
+ ;
+vDbEx9() ; min(1): DISTINCT LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS=:%LIBS AND SID=:SID AND SEQ=0 AND PSEQ=21
+ ;
+ N vsql1,vsql2
+ S vsql1=$$BYTECHAR^SQLUTL(254)
+ S vsql2=$G(%LIBS) I vsql2="" Q 0
+ ;
+ I '($D(^DBTBL(vsql2,2,SID,0,21))#2) Q 0
+ Q 1
  ;
 vOpen1() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS='SYSDEV' AND SID=:SID AND SEQ=0 AND PSEQ BETWEEN 69.999 AND 80.999
  ;
@@ -1095,7 +1193,7 @@ vFetch5() ;
  ;
  Q 1
  ;
-vOpen6() ; LIBS,PID,SEQ FROM DBTBL13D WHERE LIBS='SYSDEV' AND PID=:V3 AND SEQ>0
+vOpen6() ; LIBS,PID,SEQ FROM DBTBL13D WHERE LIBS='SYSDEV' AND PID=:V2 AND SEQ>0
  ;
  ;
  S vos1=2
@@ -1104,7 +1202,7 @@ vOpen6() ; LIBS,PID,SEQ FROM DBTBL13D WHERE LIBS='SYSDEV' AND PID=:V3 AND SEQ>0
  ;
 vL6a0 S vos1=0 Q
 vL6a1 S vos2=$$BYTECHAR^SQLUTL(254)
- S vos3=$G(V3) I vos3="" G vL6a0
+ S vos3=$G(V2) I vos3="" G vL6a0
  S vos4=0
 vL6a4 S vos4=$O(^DBTBL("SYSDEV",13,vos3,vos4),1) I vos4="" G vL6a0
  Q

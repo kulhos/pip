@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV7 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Userclass Maintenance|SCADRV7|||||||1
 SCADRV7 ; Userclass Maintenance
  ;
  Q 
@@ -32,12 +31,12 @@ DEL ; Userclass Deletion
  ;
  Q 
  ;
-INIT(%ProcessMode) ; Screen Control
+INIT(%O) ; Screen Control
  ;
  N %OSAVE
  N UCLS N VFMQ
  ;
- S %OSAVE=%ProcessMode
+ S %OSAVE=%O
  ;
  D QUERY
  ;
@@ -56,11 +55,11 @@ QUERY ; Set up query screen for Userclass selection
  N %NOPRMT N %READ N %TAB
  ;
  S %TAB("UCLS")=".UCLS4/HLP=[SCAU0]UCLS/XPP=D PPUCLS^SCADRV7"
- I %ProcessMode S %TAB("UCLS")=%TAB("UCLS")_"/TBL=[SCAU0]"
- I %ProcessMode=2 S %TAB("IO")=$$IO^SCATAB($I)
+ I %O S %TAB("UCLS")=%TAB("UCLS")_"/TBL=[SCAU0]"
+ I %O=2 S %TAB("IO")=$$IO^SCATAB($I)
  ;
  S %READ="@@%FN,,,UCLS/REQ"
- I %ProcessMode=2 S %READ=%READ_",IO/REQ"
+ I %O=2 S %READ=%READ_",IO/REQ"
  ;
  S %NOPRMT="N"
  ;
@@ -95,20 +94,20 @@ SCREEN(scau0) ; Userclass screen
  ;
   K vobj(+$G(scau0)) S scau0=$$vRCgetRecord1^RecordSCAU0(UCLS,0)
  ;
- I %ProcessMode=2 D OPEN^SCAIO
+ I %O=2 D OPEN^SCAIO
  ;
  I ER S VFMQ="Q" Q 
  ;
- N vo1 N vo2 N vo3 N vo4 D DRV^USID(%ProcessMode,"SCAUSRC",.scau0,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
+ N vo1 N vo2 N vo3 N vo4 D DRV^USID(%O,"SCAUSRC",.scau0,.vo1,.vo2,.vo3,.vo4) K vobj(+$G(vo1)) K vobj(+$G(vo2)) K vobj(+$G(vo3)) K vobj(+$G(vo4))
  ;
  Q 
  ;
 FILE(scau0) ; File/Delete the Userclass
  N vTp
  ;
- I %ProcessMode=2!(VFMQ="Q") D END Q 
+ I %O=2!(VFMQ="Q") D END Q 
  ;
- I %ProcessMode=3 D  Q 
+ I %O=3 D  Q 
  .	 N V1 S V1=vobj(scau0,-3) D vDbDe1()
  .	D END
  .	Q 
@@ -121,37 +120,37 @@ FILE(scau0) ; File/Delete the Userclass
  ;
 END ; Finish up
  ;
- I ER!(%ProcessMode=2) Q 
+ I ER!(%O=2) Q 
  ;
  S UCLS=$get(UCLS)
  S ER="W"
  I VFMQ="Q" D
  .	;
  .	; Userclass ~p1 not created
- .	I %ProcessMode=0 S RM=$$^MSG(2903,UCLS) Q 
+ .	I %O=0 S RM=$$^MSG(2903,UCLS) Q 
  .	;
  .	; Userclass ~p1 not modified
- .	I %ProcessMode=1 S RM=$$^MSG(2905,UCLS) Q 
+ .	I %O=1 S RM=$$^MSG(2905,UCLS) Q 
  .	;
  .	; Userclass ~p1 not deleted
- .	I %ProcessMode=3 S RM=$$^MSG(2904,UCLS) Q 
+ .	I %O=3 S RM=$$^MSG(2904,UCLS) Q 
  .	Q 
  E  D
  .	;
  .	; Userclass ~p1 created
- .	I %ProcessMode=0 S RM=$$^MSG(4886,UCLS) Q 
+ .	I %O=0 S RM=$$^MSG(4886,UCLS) Q 
  .	;
  .	; Userclass ~p1 modified
- .	I %ProcessMode=1 S RM=$$^MSG(4887,UCLS)
+ .	I %O=1 S RM=$$^MSG(4887,UCLS)
  .	;
  .	; Userclass ~p1 deleted
- .	I %ProcessMode=3 S RM=$$^MSG(5431,UCLS) Q 
+ .	I %O=3 S RM=$$^MSG(5431,UCLS) Q 
  .	Q 
  Q 
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3339" ; Signature - LTD^TIME^USER^SIZE
+ Q "60275^61883^kellytp^3285" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SCAU0 WHERE UCLS=:V1

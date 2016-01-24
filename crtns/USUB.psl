@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Sub Field Get/Put Utility|USUB|||||||1
 USUB
 	/* 
  	 PROCEDURE ID:	USUB
@@ -76,4 +75,4 @@ public	PARSE(expr,value,mode)	// Change $$GET^USUB format into SET $P format
 	quit " S v="_zexp_",$P(v,"_del_","_pos_")="_value_","_exp_"=v"
 	// I18N=ON
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^1659"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "59495^75670^Lik Kwan^1604"	// Signature - LTD^TIME^USER^SIZE

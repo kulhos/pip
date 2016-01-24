@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCQRYBLD ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL query code generator|UCQRYBLD|||||||1
  ;  #PACKAGE framework
  ;
 UCQRYBLD(INPUT,INSTANTS,TABLES,PSLOBJ,PSLQRY) ; 
@@ -267,7 +266,7 @@ GETFROM(WHERE,INSTANTS) ;
  Q FROM
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^13615" ; Signature - LTD^TIME^USER^SIZE
+ Q "61293^42704^Frans S.C. Witte^13557" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

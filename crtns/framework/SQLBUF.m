@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SQLBUF ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Parse MSQL Buffer|SQLBUF|||||||||||||||||||||1
  ;  #PACKAGE framework
 SQLBUF(expr,par,sqlsta,sqldta,sqlcnt,sqlind,tok) ; 
  N vTp
@@ -14,7 +13,7 @@ SQLBUF(expr,par,sqlsta,sqldta,sqlcnt,sqlind,tok) ;
  S ER=0
  S rec=0
  ;
- I ($get(%TOKEN)="") S %TOKEN=%ProcessID
+ I ($get(%TOKEN)="") S %TOKEN=$J
  S arg=$piece(expr," ",1) ; Buffer keyword
  ;
  ; Default to ADD if not included
@@ -279,7 +278,7 @@ LOGERR(err) ; Error handler
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^9740" ; Signature - LTD^TIME^USER^SIZE
+ Q "61347^84830^Gordon Joyner^9677" ; Signature - LTD^TIME^USER^SIZE
  ;
 vCatch1 ; Error trap
  ;

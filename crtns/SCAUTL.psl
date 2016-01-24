@@ -1,4 +1,3 @@
-//DO NOT MODIFY  SCA Utilities|SCAUTL|||||||1
 	/*
 	--------------------- Revision History --------------------------
 	
@@ -387,4 +386,4 @@ public LOWER(String str)	// Convert string to lower case
 
 	quit str.lowerCase()
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^8480"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60739^33854^Dan Russell^8435"	// Signature - LTD^TIME^USER^SIZE

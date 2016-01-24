@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Interactive Form Builder/Mngr for Simplr|UTLREAD|||||||1
 public UTLREAD	//
 	/*
 	ORIG: chhabris - 08/04/2005
@@ -637,4 +636,4 @@ IO(prompt)	//Private//Is prompt for output device?
  
  
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^20352"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60764^48607^Sudanthiran S. Kumar^20279"	// Signature - LTD^TIME^USER^SIZE

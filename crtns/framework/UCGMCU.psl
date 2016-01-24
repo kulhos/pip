@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Psl compiler - compiler upgrades|UCGMCU|||||||1
 	/*
 	ORIG: Frans S.C. Witte - 2005-04-07
 	DESC: PSL compiler, Insensitive Group - compiler upgrade utilities
@@ -2013,4 +2012,4 @@ public Time time( String vStr	// string representation of time
 	*/
 	quit vStr.toTime()
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^84144"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61530^32515^Frans S.C. Witte^84080"	// Signature - LTD^TIME^USER^SIZE

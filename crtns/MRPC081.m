@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure MRPC081 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Compile DQ Runtime Routines|MRPC081|||||||1
  ;  #OPTION ResultClass ON
  ;
 MRPC081(RETURN,versn,TABLE,elements) ; Elements to compile
@@ -111,4 +110,4 @@ DEPLN(NAME) ; "DEP" or "LN" to compile
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3712" ; Signature - LTD^TIME^USER^SIZE
+ Q "61237^74513^Dan Russell^3652" ; Signature - LTD^TIME^USER^SIZE

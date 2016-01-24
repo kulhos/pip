@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Report Compiler|DBSRW|||||||1
 public DBSRW(String RID,	// Report ID
 	     Number NOMSG,	// Skip Compiler Message	/NOREQ
 	     String PGM)	// Generated program name	/NOREQ/MECH=REFNAM:W
@@ -1165,4 +1164,4 @@ GETRWRS(String INPUT,			// Private - Substitute variable names
 
 	quit INPUT
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^37038"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61288^63984^Dan Russell^36982"	// Signature - LTD^TIME^USER^SIZE

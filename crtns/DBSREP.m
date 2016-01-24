@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSREP ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Report Conversion Functions|DBSREP|||||||1
  Q 
  ;
 KEY(tbl,init,order,fmt) ; Return first or last key value in table
@@ -15,8 +14,8 @@ KEY(tbl,init,order,fmt) ; Return first or last key value in table
  ;
  D fsn^DBSDD(.fsn,tbl)
  I ER Q ""
- S keys=$P(fsn(tbl),"|",3)
- S key1=$P(keys,",",1)
+ S keys=$piece(fsn(tbl),"|",3)
+ S key1=$piece(keys,",",1)
  S ER=$$^SQL("SELECT "_key1_" FROM "_tbl_" ORDER BY "_key1_" "_$S(order:"DESC",1:"ASC"),.par,.sqlsta,.sqldta)
  I ER Q ""
  ;
@@ -29,11 +28,11 @@ EXISTS(tbl,key) ; Returns indicator of whether the record exists
  ;
  D fsn^DBSDD(.fsn,tbl)
  I ER Q ""
- S keys=$P(fsn(tbl),"|",3)
- S key1=$P(keys,",",1)
+ S keys=$piece(fsn(tbl),"|",3)
+ S key1=$piece(keys,",",1)
  S ER=$$^SQL("SELECT "_key1_" FROM "_tbl_" WHERE "_key1_"="_key,.par,.sqlsta,.sqldta)
  I sqldta'="" Q 1
  Q 0
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2275" ; Signature - LTD^TIME^USER^SIZE
+ Q "60264^15442^P.R. Swarnalatha^2216" ; Signature - LTD^TIME^USER^SIZE

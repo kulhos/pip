@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Screen Compiler|DBS2PSL3|||||||1
 DBS2PSL3(RecordDBTBL2 dbtbl2)	// DBS - U - V7.0 - PSL Screen compiler
 	/*
 	       ORIG:  CHIANG - 1/15/86
@@ -123,4 +122,4 @@ SUBVLOD(RecordDBTBL2 dbtbl2)	// Substitute VLOD with user defined access section
 		}  //isEmpty
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3571"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60108^20902^Viji Skariah^3518"	// Signature - LTD^TIME^USER^SIZE

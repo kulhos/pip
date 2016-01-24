@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDBASE ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Oracle/DB2 Database Utilities|DBSDBASE|||||||1
 DBSDBASE ; 
  ;
  ; *******************************************************************
@@ -90,8 +89,8 @@ CREATESP(RTBL,METHOD,INPUT,REGEN) ; Force regeneration [*]
  .	; This will only occur if we change our naming conventions.
  .  S $P(vobj(dbspid),$C(124),1)=spname
  .  S vobj(dbspid,1,1)=procdata
- .  S $P(vobj(dbspid),$C(124),2)=%CurrentDate
- .  S $P(vobj(dbspid),$C(124),3)=%CurrentTime
+ .  S $P(vobj(dbspid),$C(124),2)=$P($H,",",1)
+ .  S $P(vobj(dbspid),$C(124),3)=$P($H,",",2)
  .	;
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordDBSPID(dbspid,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(dbspid,-100) S vobj(dbspid,-2)=1 TC:vTp  
  .	K vobj(+$G(dbspid)) Q 
@@ -162,14 +161,14 @@ BUILD ; Build Stored procedures for all tables in the DB
  ;
  S dbid=$$TRNLNM^%ZFUNC("SCAU_DB")
  ;
-  N V1 S V1=%ProcessID D vDbDe1()
+  N V1 S V1=$J D vDbDe1()
  ;
  S CNT=$$LIST^DBSGETID("DBTBL1") ; Select table names
  Q:(+CNT=0) 
  ;
  I dbid="GTM" WRITE $$MSG^%TRMVT("",,1) Q 
  ;
- N ds,vos1,vos2,vos3,vos4  N V2 S V2=%ProcessID S ds=$$vOpen4()
+ N ds,vos1,vos2,vos3,vos4  N V2 S V2=$J S ds=$$vOpen4()
  F  Q:'$$vFetch4()  D
  . N tmpdq,vop1 S vop1=$P(ds,$C(9),2),tmpdq=$$vRCgetRecord1Opt^RecordTMPDQ($P(ds,$C(9),1),vop1,1,"")
  .	S rfid=vop1
@@ -199,7 +198,7 @@ BUILD ; Build Stored procedures for all tables in the DB
  ..		Q 
  . Q 
  ;
-  N V3 S V3=%ProcessID D vDbDe2()
+  N V3 S V3=$J D vDbDe2()
  ;
  ; Press any key message and pause
  WRITE $$MSG^%TRMVT("",,1)
@@ -207,7 +206,7 @@ BUILD ; Build Stored procedures for all tables in the DB
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^9893" ; Signature - LTD^TIME^USER^SIZE
+ Q "60955^55454^Dan Russell^9830" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID=:V1

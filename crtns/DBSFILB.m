@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSFILB ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  RecordTABLE code generator|DBSFILB|||||||1
 DBSFILB ; 
  ;
  Q 
@@ -22,11 +21,11 @@ BUILD ; Build select RecordTABLE code
  S COUNT=$$LIST^DBSGETID("DBTBL1") ; Interactive select
  Q:(COUNT'>0) 
  ;
- N tmpdqrs,vos1,vos2,vos3,vos4  N V1 S V1=%ProcessID S tmpdqrs=$$vOpen2()
+ N tmpdqrs,vos1,vos2,vos3,vos4  N V1 S V1=$J S tmpdqrs=$$vOpen2()
  ;
  F  Q:'$$vFetch2()  D COMPILE(tmpdqrs)
  ;
-  N V2 S V2=%ProcessID D vDbDe1()
+  N V2 S V2=$J D vDbDe1()
  ;
  Q 
  ;
@@ -61,7 +60,7 @@ SYSMAPLB(tag,comment) ; Comment on the line
  Q RETURN
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2326" ; Signature - LTD^TIME^USER^SIZE
+ Q "61282^64286^Dan Russell^2267" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID=:V2

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCDB ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Class Db methods - DD Group|UCDB|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -2510,7 +2509,7 @@ mapPSLvar(expr) ; local String; Map PSL variables into SQL variables
  Q expr
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^180563" ; Signature - LTD^TIME^USER^SIZE
+ Q "61473^50060^Frans S.C. Witte^180506" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vaddBuff(object,p1) ; PSLBuffer.add

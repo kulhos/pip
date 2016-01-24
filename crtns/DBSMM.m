@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSMM ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL interactive editor|DBSMM|||||||1
 DBSMM ; 
  ;
  N cmd N hlp N initfl N key N par
@@ -251,7 +250,7 @@ command(help) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^6328" ; Signature - LTD^TIME^USER^SIZE
+ Q "60233^64555^Dan Russell^6275" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; KEYWORD FROM STBLSYSKEYWD ORDER BY KEYWORD ASC
  ;

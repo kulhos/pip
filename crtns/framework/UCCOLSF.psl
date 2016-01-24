@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Masterfield and Subfield related|UCCOLSF|||||||1
 	/*
 	 ORIG: Frans S.C. Witte, 2005-03-11
 	 DESC: This unit contains subroutines and functions that deal with
@@ -911,4 +910,4 @@ private void sortSfd( String sfd(),		// Array of rows as returned by $$getSfd%UC
 	}
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^36653"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61233^52291^Dan Russell^36588"	// Signature - LTD^TIME^USER^SIZE

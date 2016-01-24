@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Parse MSQL Buffer|SQLBUF|||||||||||||||||||||1
 	#PACKAGE framework
 SQLBUF(expr,par(),sqlsta,sqldta,sqlcnt,sqlind,tok())
 	/*
@@ -347,4 +346,4 @@ public LOGERR(Error err)      // Error handler
         
         quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^9740"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61347^84830^Gordon Joyner^9677"	// Signature - LTD^TIME^USER^SIZE

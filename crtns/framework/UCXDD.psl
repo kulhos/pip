@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DQ DD access - DD Group|UCXDD|||||||1
 	/*
 	ORIG:	Frans S.C. Witte, 2005-03-11
 	DESC:	This unit contains subroutines and functions that deal with
@@ -4104,4 +4103,4 @@ private Number toValMod( String typ,	// DQ datatype
 private String fromPSLColumn( PSLColumn cd) quit cd
 private String fromPSLTable( PSLTable td) quit td
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^167327"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61397^34727^Frans S.C. Witte^167273"	// Signature - LTD^TIME^USER^SIZE

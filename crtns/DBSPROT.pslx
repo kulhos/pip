@@ -11,7 +11,7 @@
 ,	{ "class" : "DBSPROT",	"method" : "PP1",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "FID post processor" }
 ,	{ "class" : "DBSPROT",	"method" : "PP2",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "DINAM post processor" }
 ,	{ "class" : "DBSPROT",	"method" : "PP3",	"resultClass" : "",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 3,	"comment" : "GROUP post processor" }
-,	{ "class" : "DBSPROT",	"method" : "SCREEN",	"resultClass" : "",	"formalList" : "ret Number %ProcessMode;ret String rebuild();ret String FID;ret String DINAM;ret String GROUP",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "Protection group /NOREQ/MECH=REF:W" }
+,	{ "class" : "DBSPROT",	"method" : "SCREEN",	"resultClass" : "",	"formalList" : "ret Integer %O;ret String rebuild();ret String FID;ret String DINAM;ret String GROUP",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 0,	"methodType" : 2,	"comment" : "Protection group /NOREQ/MECH=REF:W" }
 ,	{ "class" : "DBSPROT",	"method" : "vSIG",	"resultClass" : "String",	"formalList" : "",	"methodProc" : "",	"inLiteral" : false,	"accessLevel" : 2,	"methodType" : 2,	"comment" : "" }
   ]
 }

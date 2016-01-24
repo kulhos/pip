@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCDATE ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL Date Method Library UPGRADE Group|UCDATE|||||||1
  ;  #PACKAGE  framework.psl
  ;  #OPTIMIZE FUNCTIONS OFF
  ;
@@ -281,7 +280,7 @@ nxFreDat ; method: Date.nextFregDate(String frequency,Number AF,String control)
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^17407" ; Signature - LTD^TIME^USER^SIZE
+ Q "61058^29283^Frans S.C. Witte^17338" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vopenBuf(v1,v2) ; PSL.openBuffer
@@ -357,7 +356,7 @@ vdatBD(vo,v1) ; Date.isBusDate
  ;
  ;  #OPTIMIZE FUNCTIONS OFF
  ;  #OPTIMIZE
- I ($get(vo)="") S vo=%SystemDate
+ I ($get(vo)="") S vo=TJD
  I ($get(v1)="") S v1="IBS"
  ;
  N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch1^"_$T(+0)

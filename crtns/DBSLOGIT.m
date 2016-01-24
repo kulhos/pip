@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSLOGIT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Log table changes to LOG table|DBSLOGIT|||||||1
 DBSLOGIT(recobj,mode,vx) ; Log table changes to LOG table
  ;
  N I
@@ -135,7 +134,7 @@ LOG(table,keys,keyvals,mode) ; Access mode (%O)
  ..		;
  ..		S SEQ=(GETSEQ*100)+CNT
  ..		;
- ..		N log S log=$$vRCgetRecord1^RecordLOG(%CurrentDate,SEQ,0)
+ ..		N log S log=$$vRCgetRecord1^RecordLOG($P($H,",",1),SEQ,0)
  ..		;
  ..		I ($G(vobj(log,-2))>0) D
  ...			;
@@ -157,10 +156,10 @@ LOG(table,keys,keyvals,mode) ; Access mode (%O)
  ...		  S $P(vobj(log),$C(124),2)=keys
  ...		  S $P(vobj(log),$C(124),3)=keyvals
  ...		  S $P(vobj(log),$C(124),4)=mode
- ...		  S $P(vobj(log),$C(124),5)=$get(%UserID)
- ...		  S $P(vobj(log),$C(124),6)=$get(%UserStation)
+ ...		  S $P(vobj(log),$C(124),5)=$get(%UID)
+ ...		  S $P(vobj(log),$C(124),6)=$get(TLO)
  ...		  S $P(vobj(log),$C(124),7)="SYSDEV"
- ...		  S $P(vobj(log),$C(124),8)=%CurrentTime
+ ...		  S $P(vobj(log),$C(124),8)=$P($H,",",2)
  ...			;
  ...		 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordLOG(log,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(log,-100) S vobj(log,-2)=1 TC:vTp  
  ...			Q 
@@ -172,7 +171,7 @@ LOG(table,keys,keyvals,mode) ; Access mode (%O)
 LOG1(SEQ,SUBSEQ,columns,newvals,oldvals) ; New value(s)
  N vTp
  ;
- N log1 S log1=$$vcdmNew^RecordLOG1() S vobj(log1,-3)=%CurrentDate S vobj(log1,-4)=SEQ S vobj(log1,-5)=SUBSEQ
+ N log1 S log1=$$vcdmNew^RecordLOG1() S vobj(log1,-3)=$P($H,",",1) S vobj(log1,-4)=SEQ S vobj(log1,-5)=SUBSEQ
   S $P(vobj(log1),$C(124),1)=columns
   S $P(vobj(log1),$C(124),2)=newvals
   S $P(vobj(log1),$C(124),3)=oldvals
@@ -182,4 +181,4 @@ LOG1(SEQ,SUBSEQ,columns,newvals,oldvals) ; New value(s)
  K vobj(+$G(log1)) Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^6155" ; Signature - LTD^TIME^USER^SIZE
+ Q "61254^68964^Dan Russell^6091" ; Signature - LTD^TIME^USER^SIZE

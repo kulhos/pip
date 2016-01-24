@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Create column attributes array|DBSITEM|||||||1
 private DBSITEM(List TABLES,		// Tables to use
 		List ITEMS,		// Elements [*]
 		String DBSATT())	// Attribute array [*]	/MECH=REFARR:RW
@@ -220,4 +219,4 @@ private DBSITEM(List TABLES,		// Tables to use
 	
 	quit return	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^5014"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61276^62572^Dan Russell^4951"	// Signature - LTD^TIME^USER^SIZE

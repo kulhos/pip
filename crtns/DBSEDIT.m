@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSEDIT ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK database editor|DBSEDIT|||||||1
 DBSEDIT(opt,fid,sel,nu1,nu2,frame) ; 
  ;
  ; I18N=QUIT
@@ -667,7 +666,7 @@ PROMPT ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^20362" ; Signature - LTD^TIME^USER^SIZE
+ Q "61185^65717^Dan Russell^20304" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrRep(object,p1,p2,p3,p4,qt) ; String.replace

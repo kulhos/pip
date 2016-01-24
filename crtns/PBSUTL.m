@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PBSUTL ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PROFILE Client/Server Utilities|PBSUTL|||||||1
 PBSUTL ; Public;PROFILE Client/Server Utilities
  ;
  Q 
@@ -1113,7 +1112,7 @@ STOP2 ; Stops an Individual/Interactive Server
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^37070" ; Signature - LTD^TIME^USER^SIZE
+ Q "61495^38597^Badrinath Giridharan^37007" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SVCTRL WHERE SVTYP=:SVTYP AND SVID=:SVID

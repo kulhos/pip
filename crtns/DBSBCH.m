@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSBCH ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Batch Definition Compiler|DBSBCH|||||||1
  ;
 VERSION() ; Batch compiler Version ID
  ;
@@ -613,7 +612,7 @@ ERRLOG(vErr) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^25015" ; Signature - LTD^TIME^USER^SIZE
+ Q "61571^56930^Dan Russell^24958" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM MPROF WHERE BCHID=:BCHID AND PID='ALL'

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Archive Driver and Functions|DBARCHIVE|||||||1
 DBARCHIVE	
 		 
 	/*
@@ -772,4 +771,4 @@ private INCLUDEDCHK( String ARCHTBL,	// Archive table name
 
 	quit ERRMSG
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^22716"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61254^68475^Dan Russell^22653"	// Signature - LTD^TIME^USER^SIZE

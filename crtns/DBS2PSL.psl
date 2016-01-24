@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Screen Compiler|DBS2PSL|||||||1
 DBS2PSL(String SID,String NOLINK)	// V 7.0 - PSL Screen Compiler
 	/*
 	       ORIG: Frank R. Sanchez (2497)
@@ -592,4 +591,4 @@ private END(RecordDBTBL2 dbtbl2)	// Go to build program
 	do ^DBS2PSL1(.dbtbl2)
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^19810"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60680^50197^Pete Chenard^19758"	// Signature - LTD^TIME^USER^SIZE

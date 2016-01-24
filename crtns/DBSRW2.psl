@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Report Compiler - Part 2|DBSRW2|||||||1
 private DBSRW2(RecordDBTBL5H dbtbl5h,String ddmap(),String RPTINFO(,,,),String PQINFO())	/* Private - Part 2 of DBSRW
 	ORIG: CHIANG
 	PROCEDURE ID: DBSRW2
@@ -1047,4 +1046,4 @@ ISVAR(String X)	// Private - Return 1 if X is a valid variable name
 		}
 	quit OK
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^34972"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61431^64028^Dan Russell^34906"	// Signature - LTD^TIME^USER^SIZE

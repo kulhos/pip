@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Object tables access - Insensitive Group|UCXOBJ|||||||1
 	/*
 	ORIG:	Frans S.C. Witte, 2005-11-30
 	DESC:	This unit contains the remaining runtime functions and
@@ -191,4 +190,4 @@ public String omTryPrim( PSLParser prsr,	// Parser
 
 	quit retval
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^7761"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61058^29773^Frans S.C. Witte^7689"	// Signature - LTD^TIME^USER^SIZE

@@ -1,4 +1,3 @@
-//DO NOT MODIFY  C-S-UTBL Table Maintenance|DBSTBLM|||||||1
 DBSTBLM(String TABLETYP)	// System, User, and Common Table Maintenance
 
 	/*
@@ -927,4 +926,4 @@ ACCESS	// Post processor for access mode
 	quit
 	
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^20357"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61219^67049^Dan Russell^20298"	// Signature - LTD^TIME^USER^SIZE

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSDI ****
  ; 
- ; 01/23/2016 20:02 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  General purpose data item lookup|DBSDI|||||||1
 DBSDI ; 
  ;
  ; **********************************************************************
@@ -195,7 +194,7 @@ getColInfo(table,column,colInfo) ; Schema column record
  Q return
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^7210" ; Signature - LTD^TIME^USER^SIZE
+ Q "61254^68579^Dan Russell^7147" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vOpen2() ; PSLBOOT result set for STBLSYSKEYWD

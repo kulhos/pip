@@ -1,15 +1,14 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure USID ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Program name/screen id linkage utility|USID|||||||1
  ; Program name/screen id linkage utility
  ;
  I $get(SID)="" S PGM="" Q 
  N mode
  ;
- S mode=$get(%ProcessMode)
+ S mode=$get(%O)
  I mode="" S mode=0
  ;
  N dbtbl2 S dbtbl2=$$vRCgetRecord0^RecordDBTBL2("SYSDEV",SID,0)
@@ -20,7 +19,7 @@
  S %LINK=$$LINK(.dbtbl2,mode)
  K vobj(+$G(dbtbl2)) Q 
  ;
-DRV(%ProcessMode,SID,Obj1,Obj2,Obj3,Obj4,Obj5) ; 
+DRV(%O,SID,Obj1,Obj2,Obj3,Obj4,Obj5) ; 
  ;
  N I
  N PFID N X
@@ -31,7 +30,7 @@ DRV(%ProcessMode,SID,Obj1,Obj2,Obj3,Obj4,Obj5) ;
  S PGM=$P(vobj(dbtbl2,0),$C(124),2)
  ;
  I PGM="" D ^DBSSCR(SID,.PGM) I PGM="" K vobj(+$G(dbtbl2)) Q 
- S %LINK=$$LINK(.dbtbl2,%ProcessMode)
+ S %LINK=$$LINK(.dbtbl2,%O)
  ;
  S X="^"_PGM_"(%O"
  I PFID'="" F I=1:1:$L(PFID,",") S X=X_",.Obj"_I
@@ -39,14 +38,14 @@ DRV(%ProcessMode,SID,Obj1,Obj2,Obj3,Obj4,Obj5) ;
  D @X
  K vobj(+$G(dbtbl2)) Q 
  ;
-LINK(dbtbl2,%ProcessMode) ; 
+LINK(dbtbl2,%O) ; 
   S:'$D(vobj(dbtbl2,"v1")) vobj(dbtbl2,"v1")=$S(vobj(dbtbl2,-2):$G(^DBTBL(vobj(dbtbl2,-3),2,vobj(dbtbl2,-4),-1)),1:"")
  ;
  N %LINK S %LINK=0
  ;
  I $P(vobj(dbtbl2,"v1"),$C(124),1)="" D
- .	I %ProcessMode=2 S %LINK=1
- .	E  I %ProcessMode=3 S %LINK=1
+ .	I %O=2 S %LINK=1
+ .	E  I %O=3 S %LINK=1
  .	Q 
  ;
  E  I $P(vobj(dbtbl2,"v1"),$C(124),2)="" S %LINK=1
@@ -80,4 +79,4 @@ LINK(dbtbl2,%ProcessMode) ;
  Q %LINK
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^3522" ; Signature - LTD^TIME^USER^SIZE
+ Q "59922^59214^Dan Russell^3454" ; Signature - LTD^TIME^USER^SIZE

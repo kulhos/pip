@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PSLC ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL Compiler|PSLC|||||||1
  ;
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
@@ -87,7 +86,7 @@ cmp0begin(mod,src,commands,log,cma) ; initiated command argument array
  ;
  ; write commands(,) to file srcdir_ %RoutineName_ "_"_ %ProcessID_ ".ini"
  I $D(commands) D
- .	S cma("ucopts")=$$toUcopts(srcdir,%RoutineName_"ucopts",.commands)
+ .	S cma("ucopts")=$$toUcopts(srcdir,$T(+0)_"ucopts",.commands)
  .	S del=del_","_cma("ucopts")
  .	Q 
  ;
@@ -126,7 +125,7 @@ cmp0end(mod,del,log,cma) ; initiated command argument array
  ;
  ; ---------------------------------------------------------------------
 cmp0mod() ; return default fileName
- Q "_"_%ProcessID_"_"
+ Q "_"_$J_"_"
  ;
  ; ---------------------------------------------------------------------
 cmpA2A(mod,src,commands,dst,log) ; error log
@@ -483,7 +482,7 @@ toUcopts(srcdir,mod,commands) ; write commands(,) to file srcdir_ mod_ "_"_ %Pro
  I (mod="") S mod=$$cmp0mod()
  ;
  N rIO S rIO=$$vClVobj($ST,"IO")
- S $P(vobj(rIO,1),"|",1)=srcdir_mod_"_"_%ProcessID_".ini" S $P(vobj(rIO,1),"|",3)="NEWVERSION"
+ S $P(vobj(rIO,1),"|",1)=srcdir_mod_"_"_$J_".ini" S $P(vobj(rIO,1),"|",3)="NEWVERSION"
  D open^UCIO(rIO,$T(+0),"toUcopts","rIO")
  ;
  N l1 S l1="" N l2 S l2="" N val
@@ -526,7 +525,7 @@ zlink(mod) ; try to ZLINK the module and tell if it succeeded
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^36105" ; Signature - LTD^TIME^USER^SIZE
+ Q "61374^48893^Frans S.C. Witte^36063" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim

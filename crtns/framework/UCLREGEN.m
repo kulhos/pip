@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCLREGEN ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  Auto Literal Code Regenerator, DATA group|UCLREGEN|||||||1
  ;  #PACKAGE framework
  ;
  Q  ; No entry at top
@@ -17,7 +16,7 @@ PURGE ;
  N %READ N %TAB N VFMQ
  ;
  S %TAB("PURGEDT")=".DATE1"
- S PURGEDT=%CurrentDate
+ S PURGEDT=$P($H,",",1)
  S %READ="@@%FN,,PURGEDT/REQ"
  ;
  D ^UTLREAD I VFMQ="Q" Q 
@@ -42,9 +41,9 @@ SET(table,column,func) ; Function name /NOREQ
   S $P(vobj(uclregen),$C(124),1)=$get(table)
   S $P(vobj(uclregen),$C(124),2)=$get(column)
   S $P(vobj(uclregen),$C(124),3)=$get(func)
-  S $P(vobj(uclregen),$C(124),4)=%CurrentDate
-  S $P(vobj(uclregen),$C(124),5)=%CurrentTime
-  S $P(vobj(uclregen),$C(124),6)=$get(%UserID)
+  S $P(vobj(uclregen),$C(124),4)=$P($H,",",1)
+  S $P(vobj(uclregen),$C(124),5)=$P($H,",",2)
+  S $P(vobj(uclregen),$C(124),6)=$get(%UID)
  ;
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordUCLREGEN(uclregen,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(uclregen,-100) S vobj(uclregen,-2)=1 TC:vTp  
  ;
@@ -80,7 +79,7 @@ START(interval) ; Seconds to hibernate between cycles /NOREQ/DFT=600
  ;
  ; Set process name
  S procname="UCLREGEN_"_$$^UCXCUVAR("PTMDIRID")
- S outfile=procname_"_"_%CurrentDate_"_"_%CurrentTime_".log"
+ S outfile=procname_"_"_$P($H,",",1)_"_"_$P($H,",",2)_".log"
  ;
  ;  #ACCEPT GROUP=ACCESS;CR=27800;DATE=2008-02-27;PGM=Frans S.C. Witte
  S params=$$JOBPARAM^%OSSCRPT(procname,,,,outfile)
@@ -330,8 +329,8 @@ REGEN ;
  ; ---------------------------------------------------------------------
 SETTIME(offset) ; Offset from now
  ;
- N date S date=%CurrentDate
- N seconds S seconds=%CurrentTime+offset
+ N date S date=$P($H,",",1)
+ N seconds S seconds=$P($H,",",2)+offset
  ;
  I (seconds>86400) D
  .	S date=date+1
@@ -380,7 +379,7 @@ STOP ;
  K vobj(+$G(uclregen)) Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^12631" ; Signature - LTD^TIME^USER^SIZE
+ Q "61293^42610^Frans S.C. Witte^12556" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM UCLREGEN WHERE CHGDATE <= :PURGEDT

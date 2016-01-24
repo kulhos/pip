@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure MSG ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Generic Message Handler|MSG|||||||1
 MSG(MSGID,p1,p2,p3,p4,p5) ; 
  ;
  N v N vmsg N vret
@@ -213,4 +212,4 @@ NEXTVAL ; Returns the highest key value +1
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^9406" ; Signature - LTD^TIME^USER^SIZE
+ Q "61403^56841^FSCW^9354" ; Signature - LTD^TIME^USER^SIZE

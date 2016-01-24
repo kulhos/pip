@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Table Relationship Verification|DBSFVER|||||||1
 DBSFVER	
 		 
 	/*
@@ -109,4 +108,4 @@ public VALIDATE(String TABLES,		// Access tables [*]
 	
 	quit ER
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^1993"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60425^2727^Dan Russell^1929"	// Signature - LTD^TIME^USER^SIZE

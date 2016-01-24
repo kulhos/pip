@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PSL Date Method Library UPGRADE Group|UCDATE|||||||1
 	/*
 	ORIG: FSANCHEZ - 02/17/2003
 	DESC: PSL Date Method library, System Group (uses Cache.getRecord())
@@ -447,4 +446,4 @@ nxFreDat	// method: Date.nextFregDate(String frequency,Number AF,String control)
 	set PSL.return="$$"_label_"("_PSL.objectName_","_PSL.actual(1)_","_PSL.actual(2)_","_PSL.actual(3)_")"
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^17407"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61058^29283^Frans S.C. Witte^17338"	// Signature - LTD^TIME^USER^SIZE

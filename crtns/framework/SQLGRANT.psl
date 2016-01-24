@@ -1,4 +1,3 @@
-//DO NOT MODIFY  SQL Grant/Revoke Command Support|SQLGRANT|||||||1
 	#PACKAGE framework
 	#OPTION ResultClass ON
 
@@ -281,4 +280,4 @@ public void REVOKE(String expr,		// REVOKE expression, without REVOKE keyword
 	
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^8265"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61332^71489^Dan Russell^8199"	// Signature - LTD^TIME^USER^SIZE

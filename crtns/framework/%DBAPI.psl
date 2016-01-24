@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Relational Database APIs|%DBAPI|||||||1
 		 
 	/*
 	Relational Database APIs
@@ -1118,4 +1117,4 @@ private String transermsg(String ermsg)	// Error message
 	
 	quit ermsg.translate(10.char()_44.char(),32.char()_126.char())
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^27368"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61298^36638^Dan Russell^27312"	// Signature - LTD^TIME^USER^SIZE

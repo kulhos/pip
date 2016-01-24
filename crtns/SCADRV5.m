@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADRV5 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Menu driver and maintenance|SCADRV5|||||||1
  ;
  D INIT
  Q 
@@ -13,7 +12,7 @@ INIT ;
  N I
  ;
  K OLNTB
- S %ProcessMode=1
+ S %O=1
  S %TAB("MENU")=".MENU1/TBL=[SCAMENU0]"
  S %READ="@@%FN,,,MENU/REQ" S %NOPRMT="F"
  D ^UTLREAD
@@ -244,7 +243,7 @@ DSPFUN ; Function SELECT
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5644" ; Signature - LTD^TIME^USER^SIZE
+ Q "60187^24547^Sanjay Chhrabria^5584" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SCAMENU0 WHERE MENU=:MENU

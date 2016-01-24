@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Interpreter for remote invocation of PSL|TBXINTERP|||||||||||||||||||||1
 TBXINTERP
 	/*
 	 ORIG: Frank Sanchez
@@ -215,4 +214,4 @@ SQL(String vinput(),			// SELECT statement
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^6267"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61003^41614^e0101711^6178"	// Signature - LTD^TIME^USER^SIZE

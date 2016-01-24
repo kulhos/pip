@@ -1,4 +1,3 @@
-//DO NOT MODIFY  DATA-QWIK Report Banner Print|DBSRWBNR|||||||1
 public DBSRWBNR(String IO,String BNRINFO(,))	/* Part DBSRW*
 	ORIG: CHIANG - 8/8/88
 	PROCEDURE ID: DBSRWBNR
@@ -123,4 +122,4 @@ public DBSRWBNR(String IO,String BNRINFO(,))	/* Part DBSRW*
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^3007"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61288^63986^Dan Russell^2944"	// Signature - LTD^TIME^USER^SIZE

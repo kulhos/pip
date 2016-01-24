@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Database Mapping procedure|DBMAP|||||||1
 	#PACKAGE framework	
 
 	// *******************************************************************
@@ -936,4 +935,4 @@ private ADDMISNG(String dbid,	// Database ID
 	
 	quit			
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^24774"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61382^49569^Dan Russell^24717"	// Signature - LTD^TIME^USER^SIZE

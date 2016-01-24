@@ -1,4 +1,3 @@
-//DO NOT MODIFY  SQL Utilities|SQLUTL|||||||1
 	/*
 	ORIG: 6915 - 09/19/2002
 	DESC: SQL Utilities
@@ -337,4 +336,4 @@ String VALID24X7(String ROUTINE)
 	
 	quit utblrtns.valid24x7
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^8201"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61461^41316^Frans S.C. Witte^8156"	// Signature - LTD^TIME^USER^SIZE

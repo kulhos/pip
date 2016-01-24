@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PBSFSSP ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  FSSP Service Class Driver|PBSFSSP|||||||1
 PBSFSSP(reply,stfflg,record,rectyp,contxt) ; FSSP Service Class Driver
  ;
  N field,FN,i,INPUT,MSGS,ptr,sub
@@ -20,7 +19,7 @@ PBSFSSP(reply,stfflg,record,rectyp,contxt) ; FSSP Service Class Driver
  ;
  S ptr=$$LV2V^MSG($get(field(2)),.sub)
  S INPUT=""
- F i=1:1 Q:'$D(sub(i))  S $P(INPUT,"|",i)=sub(i)
+ F i=1:1 Q:'$D(sub(i))  S $piece(INPUT,"|",i)=sub(i)
  ;
  ;I18N=OFF
  I rectyp D
@@ -53,7 +52,7 @@ PBSFSSP(reply,stfflg,record,rectyp,contxt) ; FSSP Service Class Driver
  ;
  I $get(MSGS)'="" D
  .	K field
- .	F i=1:1:$L(MSGS,"|") S field(i)=$P(MSGS,"|",i)
+ .	F i=1:1:$L(MSGS,"|") S field(i)=$piece(MSGS,"|",i)
  .	S reply=$$V2LV^MSG(.field)
  .	;
  .	Q 
@@ -65,7 +64,7 @@ EXEC ; Execute function
  N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch1^"_$T(+0)
  ;
  ; Execute standard function call
- D EXT^SCADRV0(%UserID,FN) L 
+ D EXT^SCADRV0(%UID,FN) L 
  ;
  Q 
  ;
@@ -75,7 +74,7 @@ STF(pkt,reply) ; Private; Log original message and reply in exception file
  ;
  N CONT,fn,JD,x,X
  ;
- S JD=%CurrentDate
+ S JD=$P($H,",",1)
  S X=$$DAY^SCADAT(JD,1)_$$MON^SCADAT(JD,1)_$$YEAR^SCADAT(JD,1)
  S fn=$$SCAU^%TRNLNM("SPOOL","STF_"_X_".FSSP")
  ;
@@ -109,7 +108,7 @@ STFGBL(pkt,reply) ; File record to global
  N I,SEQ,STFMSG,SQ,UID
  ;
  S SQ=0
- S UID=%UserID
+ S UID=%UID
  L +STF(UID)
  ;
  S SQ=$O(^STF(UID,""),-1)+1
@@ -117,7 +116,7 @@ STFGBL(pkt,reply) ; File record to global
  N stf1,vop1,vop2,vop3 S stf1="",vop3=0
   S vop2=UID
   S vop1=SQ
-  S $P(stf1,$C(124),6)=%UserStation
+  S $P(stf1,$C(124),6)=TLO
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" S ^STF(vop2,vop1)=$$RTBAR^%ZFUNC(stf1) S vop3=1 TC:vTp  
  L -STF(UID)
  ;
@@ -149,7 +148,7 @@ STFGBL(pkt,reply) ; File record to global
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^4049" ; Signature - LTD^TIME^USER^SIZE
+ Q "59886^43595^Sanchez SCM Administrator^3991" ; Signature - LTD^TIME^USER^SIZE
  ;
 vClVobj(vSt,vCls) ; Create a new object
  ;

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCDTAUTL ****
  ; 
- ; 01/23/2016 20:03 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PSL compiler load data UPGRADE group|UCDTAUTL|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -36,6 +35,32 @@ getSysKwd(KWD,caKwd) ; Get the keyword translation from the cache, load if neede
  ;
  ; ---------------------------------------------------------------------
 keywords(KWDS) ; Load table STBLSYSKEYWD into supplied array
+ ;
+ S KWDS("%BatchExit")="vEXIT|0|Boolean"
+ S KWDS("%BatchRestart")="vRESTART|0|Boolean"
+ S KWDS("%ClientVersionID")="%VNC|1|String"
+ S KWDS("%CompanyName")="%CO|1|String"
+ S KWDS("%CurrentDate")="$P($H,"","",1)|-1|Date"
+ S KWDS("%CurrentTime")="$P($H,"","",2)|-1|Time"
+ S KWDS("%EffectiveDate")="EFD|0|Date"
+ S KWDS("%Identifier")="%IDENT|1|String"
+ S KWDS("%InputTimeOut")="%TO|1|Number"
+ S KWDS("%Library")="%LIBS|0|String"
+ S KWDS("%ModuleName")="$T(+0)|-1|String"
+ S KWDS("%ProcessID")="$J|-1|Integer"
+ S KWDS("%ProcessMode")="%O|0|Integer"
+ S KWDS("%RoutineName")="$T(+0)|-1|String"
+ S KWDS("%ServerChannelID")="%SVCHNID|1|String"
+ S KWDS("%SessionID")="%TOKEN|1|String"
+ S KWDS("%SystemCurrency")="%CRCD|1|String"
+ S KWDS("%SystemDate")="TJD|1|Date"
+ S KWDS("%UserClass")="%UCLS|0|String"
+ S KWDS("%UserDirectory")="$ZDIR|-1|String"
+ S KWDS("%UserID")="%UID|0|String"
+ S KWDS("%UserName")="$$USERNAM^%ZFUNC|-1|String"
+ S KWDS("%UserStation")="TLO|0|String"
+ S KWDS("%VerifyMode")="(%O=2)|-1|Boolean"
+ S KWDS("%VersionID")="%VN|1|String"
  ;
  Q 
  ;
@@ -110,7 +135,22 @@ masks(prsr) ; compiler options /MECH=REFARR:RW
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^13626" ; Signature - LTD^TIME^USER^SIZE
+ Q "61530^32638^Frans S.C. Witte^13556" ; Signature - LTD^TIME^USER^SIZE
+ ; ----------------
+ ;  #OPTION ResultClass 1
+vRsRowGC(vNms,vTps) ; Runtime ResultSet.getRow().getColumns()
+ ;
+ ;  #OPTIMIZE FUNCTIONS OFF
+ ;
+ N vL S vL="" N vN N vT N vO
+ F vO=1:1:$S((vNms=""):0,1:$L(vNms,",")) D
+ .	S vN=$piece(vNms,",",vO)
+ .	S vT=$E(vTps,(vO-1)*2+1)
+ .	I "TUF"[vT S vT="String"
+ .	E  S vT=$piece("ByteString,Boolean,Date,Memo,Number,Number,Time",",",$F("BLDMN$C",vT)-1)
+ .	S $piece(vL,",",v0)=vT_" "_vN
+ .	Q 
+ Q vL
  ;
 vOpen1() ; MSK FROM DBCTLDVFM WHERE TYP='L'
  ;

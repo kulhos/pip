@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCDBRT ****
  ; 
- ; 01/23/2016 20:03 - kulhan
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Db class, Runtime code|UCDBRT|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -1150,7 +1149,7 @@ RsSelList(select) ; SELECT-clause (*1)
  Q expr
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^111808" ; Signature - LTD^TIME^USER^SIZE
+ Q "61480^60691^Dan Russell^111754" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vStrTrim(object,p1,p2) ; String.trim

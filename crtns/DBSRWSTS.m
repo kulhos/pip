@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRWSTS ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Statistics Print|DBSRWSTS|||||||1
 DBSRWSTS(VSTATS) ; 
  ;
  N LOW N HIGH N TOTAMT N TOTCNT N vcrt
@@ -211,7 +210,7 @@ VBRSAVE(LINE,DATA) ; Private - Save for report browser
  ;
  N tmprptbr,vop1,vop2,vop3,vop4,vop5 S tmprptbr="",vop5=0
  ;
-  S vop4=%ProcessID
+  S vop4=$J
   S vop3=LINE
   S vop2=0
   S vop1=0
@@ -220,4 +219,4 @@ VBRSAVE(LINE,DATA) ; Private - Save for report browser
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^6358" ; Signature - LTD^TIME^USER^SIZE
+ Q "61288^64007^Dan Russell^6291" ; Signature - LTD^TIME^USER^SIZE

@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBS2PSL1 ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DBSSCR1 - Procedure|DBS2PSL1|||||||1
 DBS2PSL1(dbtbl2) ; DBSDS5A DBS - U - V7.0 PSL Screen Compiler
  ;
  N I
@@ -38,7 +37,7 @@ RPTDA(dbtbl2) ; Clean up coding for repeating data items
  N REGION N X N Y
  ;
  S VDAOBJ=VPROBJ+1
- S D=$O(TMPD(""),-1)
+ S D=$order(TMPD(""),-1)
  I $get(RPTPR)="" S TMPD(1)=" set VX="_VPROBJ
  E  D
  .	S TMPD(1)=" set VX=$P(VO,""|"",2)"
@@ -78,7 +77,7 @@ OBJ2(X,Z) ;
  S quit=0
  F  Q:quit  D
  .	S VPTBL=1
- .	I X["@%MOD" S X=$P(X,"@%MOD",1)_%MOD_$P(X,"@%MOD",2,99)
+ .	I X["@%MOD" S X=$piece(X,"@%MOD",1)_%MOD_$piece(X,"@%MOD",2,99)
  .	;
  .	S Y=$F(X,"(@)",Z) I 'Y S quit=1 Q 
  .	S X=$E(X,1,Y-3)_(VDAOBJ-1)_$E(X,Y-1,999)
@@ -112,7 +111,7 @@ PP ; Merge post processor into compiled program
  ;
  S PXSEQ=PXSEQ+1
  S PON=PON+1 S TMP("PO",PON)="VP"_PXSEQ_"("_vobjlst("formal")_") //"
- S N="" F  S N=$O(OM(N)) Q:N=""  S PON=PON+1 S TMP("PO",PON)=OM(N)
+ S N="" F  S N=$order(OM(N)) Q:N=""  S PON=PON+1 S TMP("PO",PON)=OM(N)
  S PP="do VP"_PXSEQ_"^"_PGM_"("_vobjlst("tab")_")"
  Q 
  ;
@@ -123,10 +122,10 @@ VARSUB(dbtbl2) ; Build correct variable syntax V
  S V="" S Y=0 S X=P(11) S P(11)=""
  F  D  Q:Y=0 
  .	S Y=$F(X,"<<",Y) Q:Y=0 
- .	I $P($E(X,Y+1,999),"<<",1)[">>" D
- ..		S var=$P($E(X,Y,999),">>",1)
+ .	I $piece($E(X,Y+1,999),"<<",1)[">>" D
+ ..		S var=$piece($E(X,Y,999),">>",1)
  ..		S X=$E(X,1,Y-3)_"""_"_$$DGET(var,.dbtbl2)
- ..		S X=X_"_"""_$P($E(X,Y+1,999),">>",2,99)
+ ..		S X=X_"_"""_$piece($E(X,Y+1,999),">>",2,99)
  ..		Q 
  .	Q 
  ;
@@ -145,7 +144,7 @@ DGET(X,dbtbl2) ; Insert $G() around variable references
  N Y
  N I
  ;
- I X[",%,",$L($P(X,",%,",1),"""")#2 S X=$P(X,",%,",1)_",""|"","_$P(X,",%,",2,99)
+ I X[",%,",$L($piece(X,",%,",1),"""")#2 S X=$piece(X,",%,",1)_",""|"","_$piece(X,",%,",2,99)
  ;
  ; Global or /0
  I X?.E1"^".E!(X?.E1"/".E) Q "$S(%ProcessMode=5:"""",1:"_X_")"
@@ -172,7 +171,7 @@ VAR(dbtbl2,X,I) ; Place $G() around variables
  S ar=$S($P(vobj(dbtbl2,0),$C(124),7)&(CY'<$P(vobj(dbtbl2,0),$C(124),7)):"rptlvns(lvn)",1:"lvns(lvn)")
  ;
  ;  #ACCEPT DATE=10/01/03;PGM=Pete Chenard;CR=UNKNOWN;GROUP=SYNTAX
- I $E(X,I,1048575)'["(" S lvn=$P($E(X,I,1048575),",",1) S:'$D(@ar) @ar=lvn Q 
+ I $E(X,I,1048575)'["(" S lvn=$piece($E(X,I,1048575),",",1) S:'$D(@ar) @ar=lvn Q 
  S II=I
  F I=I+1:1:$L(X)+1 Q:$E(X,I)'?1AN 
  I $E(X,I)="(" F  S I=$F(X,")",I) Q:'I  S z=$E(X,II,I-1) I $L(z,"(")=$L(z,")") Q 
@@ -190,7 +189,7 @@ VAR(dbtbl2,X,I) ; Place $G() around variables
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^6346" ; Signature - LTD^TIME^USER^SIZE
+ Q "60662^55394^Pete Chenard^6293" ; Signature - LTD^TIME^USER^SIZE
  ;
 vOpen1() ; LIBS,SID,SEQ,PSEQ FROM DBTBL2PP WHERE LIBS='SYSDEV' AND SID=:SID AND SEQ=:SEQ AND PSEQ BETWEEN :PP AND :NN
  ;

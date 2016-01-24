@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PBSSRV ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PROFILE Server|PBSSRV|||||||1
 PBSSRV ; Private;PROFILE(SCA$IBS) Server
  ;
  ; I18N=QUIT
@@ -71,9 +70,9 @@ SVCNCT(vzsvtyp,vzsvid,vzdebug) ; Server debug mode /NOREQ
   S vop2=vzsvid
   S $P(svctrl,$C(124),1)=$piece(vzcsid,"|",1)
   S $P(svctrl,$C(124),2)=$piece(vzcsid,"|",2)
-  S $P(svctrl,$C(124),3)=$$DECHEX^%ZHEX(%ProcessID)
+  S $P(svctrl,$C(124),3)=$$DECHEX^%ZHEX($J)
   S $P(svctrl,$C(124),4)=vzrole
-  S $P(svctrl,$C(124),5)=%CurrentDate_","_%CurrentTime
+  S $P(svctrl,$C(124),5)=$P($H,",",1)_","_$P($H,",",2)
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" S ^SVCTRL(vop3,vop2)=$$RTBAR^%ZFUNC(svctrl) S vop4=1 TC:vTp  
  ;
  ; Register M process
@@ -89,7 +88,7 @@ SVCNCT(vzsvtyp,vzsvid,vzdebug) ; Server debug mode /NOREQ
  ;
  N $ET,$ES,$ZYER S $ZYER="ZE^UCGMR",$ZE="",$EC="",$ET="N voxEr S voxEr=$ZE D:'+voxEr LOG^UCGMR(""LOGERR^UTLERR"",.voxEr) S $ZE=voxEr D:$TL>"_$TL_" rollback^vRuntime("_$TL_") Q:$Q&$ES """" Q:$ES  N voxMrk s voxMrk="_+$O(vobj(""),-1)_" G vCatch1^"_$T(+0)
  ;
- S vztimer=$$TIM^PBSUTL(%CurrentDate_","_%CurrentTime)+(vzsttim*60)
+ S vztimer=$$TIM^PBSUTL($P($H,",",1)_","_$P($H,",",2))+(vzsttim*60)
  S vzsav=$$INIT^PBSUTL
  S vzgbldir=""
  ;
@@ -142,10 +141,10 @@ LOOP ; Message Processing Loop
  .	;
  .	; Trap last message received for this server process ID
  .	I $get(vztrap) D
- ..	  K ^SVTRAP(%ProcessID)
+ ..	  K ^SVTRAP($J)
  ..		N svtrap S svtrap=$$vcdmNew^RecordSVTRAP()
  ..		 S vobj(svtrap,1,1)=""
- ..	  S vobj(svtrap,-3)=%ProcessID
+ ..	  S vobj(svtrap,-3)=$J
  ..		I vzermsg'=""  S $P(vobj(svtrap),$C(124),1)=vzermsg
  ..	  S vobj(svtrap,1,1)=vzpkt
  ..	 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordSVTRAP(svtrap,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(svtrap,-100) S vobj(svtrap,-2)=1 TC:vTp  
@@ -407,13 +406,13 @@ EXEC(vzrec,vzrm) ; Reply message /MECH=REFNAM:W
  ; Execute service class layer entry FAP
  S vzrm=$$FAPINP(.vzrec,vzfap,vzsrvcls,vzstfflg) I vzrm'="" Q 1
  ;
- I ($get(%UserClass)'=$get(vzucls)) D vKill1("") K %CACHE
+ I ($get(%UCLS)'=$get(vzucls)) D vKill1("") K %CACHE
  ;
  I vzsrvcls D
  .	S %IPMODE="NOINT"
- .	S %UserID=vzuid
- .	S %UserClass=vzucls
- .	S %UserStation=vzstn
+ .	S %UID=vzuid
+ .	S %UCLS=vzucls
+ .	S TLO=vzstn
  .	S vzctxt=$piece(vzcontxt,$char(28),vzsrvcls)
  .	Q 
  E  S vzctxt="/TRUST="_$S(vzsvsec:1,1:0)
@@ -423,12 +422,12 @@ EXEC(vzrec,vzrm) ; Reply message /MECH=REFNAM:W
  D VLOD^PBSUTL(vzsav)
  ;
  I ($get(vzlasttjd)="") S vzlasttjd=99999 ; Default
- S now=%CurrentTime
+ S now=$P($H,",",2)
  I (((now-vzlasttjd)>30)!((now-vzlasttjd)<0)) D
  .	;
  .	N rs,vos1,vos2,vos3 S rs=$$vOpen1()
  .	;
- . I $$vFetch1(),%SystemDate'=rs D
+ . I $$vFetch1(),TJD'=rs D
  ..		;
  ..		S vzsav=$$INIT^PBSUTL
  ..		D VLOD^PBSUTL(vzsav)
@@ -441,20 +440,20 @@ EXEC(vzrec,vzrm) ; Reply message /MECH=REFNAM:W
  . Q 
  ;
  ;  #ACCEPT PGM=Erik Scheetz;DATE=11/22/02;CR=unknown
- S %SessionID=vzcltokn
+ S %TOKEN=vzcltokn
  S %STFHOST=$$%STFHOST^PBSUTL()
  ;
  ;  #ACCEPT PGM=Erik Scheetz;DATE=11/22/02;CR=unknown
- S %ClientVersionID=vzclvrsn
+ S %VNC=vzclvrsn
  ;
  ;  #ACCEPT PGM=Erik Scheetz;DATE=11/22/02;CR=unknown
- I %ClientVersionID="" S %ClientVersionID=%VersionID
+ I %VNC="" S %VNC=%VN
  ;
  ;  #ACCEPT PGM=Erik Scheetz;DATE=11/22/02;CR=unknown
- S %Identifier=vzident
+ S %IDENT=vzident
  ;
  ;  #ACCEPT PGM=Erik Scheetz;DATE=11/22/02;CR=unknown
- S %ServerChannelID=vzsvchnl
+ S %SVCHNID=vzsvchnl
  ;
  ; Process the record
  D
@@ -550,7 +549,7 @@ REPLY(vzreply,vzstatus) ; Message status code
  S vzfld(1)=$get(vzcltokn)
  S vzfld(2)=$get(vzmssgid)
  S vzfld(3)=$get(vzstatus)
- S vzfld(4)=$get(%VersionID)
+ S vzfld(4)=$get(%VN)
  ;
  S vzhdr=$$V2LV^MSG(.vzfld,"",1)
  S vzpkt=vzhdr_vzreply_$char(0)_$char(0)
@@ -711,7 +710,7 @@ LOGEREXEC(err) ; Error logging from EXEC
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^32268" ; Signature - LTD^TIME^USER^SIZE
+ Q "61397^62610^Dan Russell^32222" ; Signature - LTD^TIME^USER^SIZE
  ;
 vKill1(ex1) ; Delete objects %CACHE()
  ;

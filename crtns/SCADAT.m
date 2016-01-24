@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure SCADAT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  PROFILE Standard Date Utilities|SCADAT|||||||1
 SCADAT ; 
  ;
  S %DAT=$S(%DT'="":$ZD(%DT,"MM/DD/YEAR"),1:"")
@@ -32,7 +31,7 @@ MNAM(D,PURE) ;
  ;
  S TYPE="ML"
  N dvfmcal S dvfmcal=$G(^DBCTL("SYS","DVFM","D",TYPE))
- S vret=$P($P(dvfmcal,$C(124),1),",",M) Q vret
+ S vret=$piece($P(dvfmcal,$C(124),1),",",M) Q vret
  ;
 DOW(D,PURE) ; 
  ;
@@ -48,7 +47,7 @@ DOW(D,PURE) ;
  ;
  I D<3 S D=D+5
  E  S D=D-2
- Q $P(X,",",D)
+ Q $piece(X,",",D)
  ;
 MON(D,PURE) ; 
  S ER=0
@@ -262,11 +261,11 @@ NOM(D1,D2,FRACTION,PURE) ;
  ; Remove negative
  I $E(DD,1)="-" S DD=$E(DD,2,1048575)
  ; Months in the delta
- S MONS=$P(DD,"/",1)
+ S MONS=$piece(DD,"/",1)
  ; Days...
- S DAYS=$P(DD,"/",2)
+ S DAYS=$piece(DD,"/",2)
  ; Years...
- S YEARS=$P(DD,"/",3)
+ S YEARS=$piece(DD,"/",3)
  ;
  I YEARS S MONS=MONS+(YEARS*12)
  ;
@@ -289,10 +288,10 @@ NOY(D1,D2,FRACTION,PURE) ;
  ; Error converting
  I ER Q 0
  ;
- S MONS=$P(DD,"/",1)
- S DAYS=$P(DD,"/",2)
+ S MONS=$piece(DD,"/",1)
+ S DAYS=$piece(DD,"/",2)
  ; Years in the delta
- S YEARS=$P(DD,"/",3)
+ S YEARS=$piece(DD,"/",3)
  ;
  ; No days left over?
  I 'DAYS,'MONS Q YEARS
@@ -325,9 +324,9 @@ DDT(DD) ;
  ; Check if negative
  I $E(DD,1)="-" S SIGN=1 S DD=$E(DD,2,1048575)
  E  S SIGN=""
- S YEARS=+$P(DD,"/",3)
- S MONS=+$P(DD,"/",1)
- S DAYS=+$P(DD,"/",2)
+ S YEARS=+$piece(DD,"/",3)
+ S MONS=+$piece(DD,"/",1)
+ S DAYS=+$piece(DD,"/",2)
  S DDT=""
  ;
  I YEARS=0 S YEARS=""
@@ -400,9 +399,9 @@ DDMATH(DATE,DD,PURE) ;
  I $E(DD,1)="-" S MODE=-1 S DD=$E(DD,2,1048575)
  E  S MODE=1
  ;
- S MONS=+$P(DD,"/",1)
- S DAYS=+$P(DD,"/",2)
- S YEARS=+$P(DD,"/",3)
+ S MONS=+$piece(DD,"/",1)
+ S DAYS=+$piece(DD,"/",2)
+ S YEARS=+$piece(DD,"/",3)
  ; Add days to the Julian number directly
  S DATE=DATE+(MODE*DAYS)
  ; Is it the end of a month?
@@ -427,7 +426,7 @@ DDMATH(DATE,DD,PURE) ;
 TEST(beg,end,io) ; Test SCADAT
  ;
  S x=$$FILE^%ZOPEN(io,"write/new",2,1024) I 'x Q 
- S x=$h S t1=x*1E5+$P(x,",",2)
+ S x=$h S t1=x*1E5+$piece(x,",",2)
  ;
  USE io
  F jd=beg:1:end D
@@ -446,7 +445,7 @@ TEST(beg,end,io) ; Test SCADAT
  .	WRITE $char(9),$$EOFY^SCADAT(jd,1)
  .	Q 
  ;
- S x=$h S t2=x*1E5+$P(x,",",2)
+ S x=$h S t2=x*1E5+$piece(x,",",2)
  ; I18N=OFF
  WRITE !,"Elapsed time=",t2-t1
  ; I18N=ON
@@ -454,4 +453,4 @@ TEST(beg,end,io) ; Test SCADAT
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^25457" ; Signature - LTD^TIME^USER^SIZE
+ Q "60425^3222^Dan Russell^25394" ; Signature - LTD^TIME^USER^SIZE

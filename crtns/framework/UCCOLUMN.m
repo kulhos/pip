@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCCOLUMN ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Column class - DD Group|UCCOLUMN|||||||1
  ;  #PACKAGE framework.psl
  ;  #OPTION  ResultClass ON
  ;
@@ -318,7 +317,7 @@ dynamic(external,var,table,property,fset) ; set (1) or get (0)
  Q "$$propGet^DBSDYNRA("_var_","_property_")"
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^36747" ; Signature - LTD^TIME^USER^SIZE
+ Q "61348^60532^Frans S.C. Witte^36690" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vaddSubr(p1,p2,p3,p4) ; PSL.addSubrou

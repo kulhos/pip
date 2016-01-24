@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure UCNUMBER ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:24 - root
  ; 
- ;DO NOT MODIFY  PSL Number Class Method Library|UCNUMBER|||||||1
  ;  #PACKAGE framework.psl
  ;
  ; I18N=QUIT
@@ -151,7 +150,7 @@ zero ; Method Number.zero - returns zero fill
  ;
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^10642" ; Signature - LTD^TIME^USER^SIZE
+ Q "61537^60709^Frans S.C. Witte^10577" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vopenBuf(v1,v2) ; PSL.openBuffer

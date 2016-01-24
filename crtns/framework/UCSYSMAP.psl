@@ -1,4 +1,3 @@
-//DO NOT MODIFY  File SYSMAP Data - Application Group|UCSYSMAP|||||||1
 	#PACKAGE framework.psl
 
 public UCSYSMAP( String PGM, String msrc(), String sysmap(,,), String cmperr())	//
@@ -770,4 +769,4 @@ private FILERCHK( String TABLE,		// Table to check
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^25141"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "61530^32570^Frans S.C. Witte^25071"	// Signature - LTD^TIME^USER^SIZE

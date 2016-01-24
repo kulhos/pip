@@ -1,4 +1,3 @@
-//DO NOT MODIFY  PROFILE Standard Date Utilities|SCADAT|||||||1
 SCADAT
  	/*
  	 PROCEDURE ID:	SCADAT
@@ -1075,4 +1074,4 @@ TEST(beg,end,io) // Test SCADAT
 	do CLOSE^SCAIO
 	quit 
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^25457"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60425^3222^Dan Russell^25394"	// Signature - LTD^TIME^USER^SIZE

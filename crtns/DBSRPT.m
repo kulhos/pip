@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRPT ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  General purpose report writer|DBSRPT|||||||1
 DBSRPT(from,select,where,orderby,rptnam) ; 
  N vTp
  ;
@@ -15,7 +14,7 @@ DBSRPT(from,select,where,orderby,rptnam) ;
  I '($get(orderby)="") S expr=expr_"ORDER BY "_orderby
  ;
  ; Generate QWIK report
- S QRID="TMP"_%ProcessID
+ S QRID="TMP"_$J
  D SQLRW^DBSRWQR(expr,QRID,6)
  ;
  I ER D
@@ -46,7 +45,7 @@ DBSRPT(from,select,where,orderby,rptnam) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^2137" ; Signature - LTD^TIME^USER^SIZE
+ Q "60659^41667^Dan Russell^2076" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM DBTBL6F WHERE LIBS='SYSDEV' AND QRID=:QRID

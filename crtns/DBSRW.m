@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DBSRW ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DATA-QWIK Report Compiler|DBSRW|||||||1
 DBSRW(RID,NOMSG,PGM) ; Generated program name /NOREQ/MECH=REFNAM:W
  N vTp
  ;
@@ -615,7 +614,7 @@ EXT ;
  N STOP S STOP=0
  N PID N RID
  ;
- S PID=%ProcessID
+ S PID=$J
  ;
  N tmpdqrs,vos1,vos2,vos3,vos4 S tmpdqrs=$$vOpen2()
  ;
@@ -640,7 +639,7 @@ CMPALL ; Private - Mass compile client/server reports
  F  Q:'$$vFetch3()  D
  .	N RID
  . S RID=rptrs
- .	N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=%ProcessID S vobj(tmpdq,-4)=RID
+ .	N tmpdq S tmpdq=$$vcdmNew^RecordTMPDQ() S vobj(tmpdq,-3)=$J S vobj(tmpdq,-4)=RID
  .	;
  . S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" D vSave^RecordTMPDQ(tmpdq,"/CASDEL/INDEX/JOURNAL/LOG/TRIGAFT/TRIGBEF/UPDATE/VALDD/VALFK/VALREQ/VALRI/VALST/") K vobj(tmpdq,-100) S vobj(tmpdq,-2)=1 TC:vTp  
  .	K vobj(+$G(tmpdq)) Q 
@@ -901,7 +900,7 @@ GETRWRS(INPUT,VARS,ddmap) ;
  Q INPUT
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^37038" ; Signature - LTD^TIME^USER^SIZE
+ Q "61288^63984^Dan Russell^36982" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM TMPDQ WHERE PID=:PID

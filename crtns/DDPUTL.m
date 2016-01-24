@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure DDPUTL ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  DDP Function/Utility Library|DDPUTL|||||||1
  ;
  Q 
  ;
@@ -64,4 +63,4 @@ SPOOL(DIR) ; Return the spool directory
  Q $$SUBDIR^%TRNLNM(DIR,"SPOOL")
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^5903" ; Signature - LTD^TIME^USER^SIZE
+ Q "60269^49577^kellytp^5843" ; Signature - LTD^TIME^USER^SIZE

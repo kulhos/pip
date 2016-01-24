@@ -1,9 +1,8 @@
  ; 
  ; **** Routine compiled from DATA-QWIK Procedure PBSCURS ****
  ; 
- ;  0.000000000000000000000000 - 
+ ; 01/19/2016 12:23 - root
  ; 
- ;DO NOT MODIFY  Profile Server Cursor Prool Process|PBSCURS|||||||1
 PBSCURS ; 
  ;
  Q 
@@ -36,14 +35,14 @@ MAIN(QNAME,CPID) ;
  ;
  ; Register Cursor Pool process in table SVCTRLCP
  N svctrlcp,vop1,vop2,vop3 S vop2=QNAME,vop1=CPID,svctrlcp=$$vRCgetRecord1Opt^RecordSVCTRLCP(QNAME,CPID,0,.vop3)
- I $G(vop3)=1,$$DECHEX^%ZHEX(%ProcessID)'=$P(svctrlcp,$C(124),1) D  Q:vzEXIT 
+ I $G(vop3)=1,$$DECHEX^%ZHEX($J)'=$P(svctrlcp,$C(124),1) D  Q:vzEXIT 
  .	I $$VALID^%ZPID($P(svctrlcp,$C(124),1),1)=0 Q 
  .	S vzERMSG=$$CPDSCNCT^%DBAPI()
  .	D ERRLOG("CS_CPIDEXISTS")
  .	S vzEXIT=1
  .	Q 
  ;
-  S $P(svctrlcp,$C(124),1)=$$DECHEX^%ZHEX(%ProcessID)
+  S $P(svctrlcp,$C(124),1)=$$DECHEX^%ZHEX($J)
  S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" S ^SVCTRLCP(vop2,vop1)=$$RTBAR^%ZFUNC(svctrlcp) S vop3=1 TC:vTp  
  ;
  ; Register M process
@@ -69,7 +68,7 @@ MAIN(QNAME,CPID) ;
  .	I $get(%INTRPT)="CTRL" D LINK
  .	;
  .	; Get message from server process
- .	S vzERMSG=$$CPGETMSG^%DBAPI(%ProcessID,.vzMSG,15)
+ .	S vzERMSG=$$CPGETMSG^%DBAPI($J,.vzMSG,15)
  .	I vzERMSG="CS_TIMEOUT" Q 
  .	I vzERMSG="CS_NOCNCT" S vzEXIT=1 Q 
  .	;
@@ -94,7 +93,7 @@ MAIN(QNAME,CPID) ;
  D CLOSE(.cpCACHE,"")
  ;
  ; Remove cursor entries for the process.
-  N V1 S V1=%ProcessID D vDbDe1()
+  N V1 S V1=$J D vDbDe1()
  ;
  ; Unregister from cursor control table.
   K ^SVCTRLCP(QNAME,CPID)
@@ -202,7 +201,7 @@ EXEC(MSG,REPLY,SERVERID,cpCACHE) ;
  ..		;
  ..	  K ^SQLCUR(clientToken,curName)
  ..		;
- ..		N sqlcur0,vop1,vop2,vop3,vop4 S sqlcur0="",vop4=0 S vop3=clientToken S vop2=curName S vop1=%ProcessID
+ ..		N sqlcur0,vop1,vop2,vop3,vop4 S sqlcur0="",vop4=0 S vop3=clientToken S vop2=curName S vop1=$J
  ..		;
  ..	 S vTp=($TL=0) TS:vTp (vobj):transactionid="CS" S ^SQLCUR(vop3,vop2,vop1)=$$RTBAR^%ZFUNC(sqlcur0) S vop4=1 TC:vTp  
  ..  Q 
@@ -309,7 +308,7 @@ CLOSE(CACHE,DATETIME) ;
  ..		I '(oldCID="") S ER=$$CLOSECUR^%DBAPI("",oldCID)
  ..		;
  ..		; Clean out the sqlcur0 table.
- ..	  K ^SQLCUR(%TOKEN,CURSOR,%ProcessID)
+ ..	  K ^SQLCUR(%TOKEN,CURSOR,$J)
  ..		;
  ..		; Delete cursor entry in CACHE array
  ..		K CACHE("CURSOR",%TOKEN,CURSOR)
@@ -331,7 +330,7 @@ LINK ; link changes specified in the CP control table.
  .	S RM=$$^MSG(7146,"SCA_CS_ST_SCA_IBS")
  .	Q 
  ;
- S PID=%ProcessID
+ S PID=$J
  ;
  N rs,vos1,vos2,vos3,vos4,vos5,vos6,vos7 S rs=$$vOpen2()
  ;
@@ -352,7 +351,7 @@ ERRLOG(ET) ;
  Q 
  ;  #OPTION ResultClass ON
 vSIG() ; 
- Q "^^^15316" ; Signature - LTD^TIME^USER^SIZE
+ Q "61380^47623^Badrinath Giridharan^15248" ; Signature - LTD^TIME^USER^SIZE
  ; ----------------
  ;  #OPTION ResultClass 1
 vDbDe1() ; DELETE FROM SQLCUR0 WHERE CPID=:V1

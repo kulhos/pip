@@ -1,4 +1,3 @@
-//DO NOT MODIFY  Generate DI Protection Code for Screens|DBSPROT4|||||||1
 DBSPROT4(String FILES, String DINAM, String %MCODE(), String TYPE, Number VTABNO, String vobjlst)	
 		 
 	/*
@@ -214,4 +213,4 @@ DBSPROT4(String FILES, String DINAM, String %MCODE(), String TYPE, Number VTABNO
 
 	quit
  #OPTION ResultClass ON
-public String vSIG()	quit "^^^6076"	// Signature - LTD^TIME^USER^SIZE
+public String vSIG()	quit "60541^55254^Dan Russell^6003"	// Signature - LTD^TIME^USER^SIZE
