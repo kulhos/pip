@@ -100,8 +100,45 @@ for file in ${DIR}/dataqwik/procedure/*.PROC
 done
 echo "\n$cnt procedures loaded."
 
+cnt=0
+for file in ${DIR}/dataqwik/screen/*.SCR
+ do
+       # echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXSCRN(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt screens loaded."
+
+cnt=0
+for file in ${DIR}/dataqwik/pre_post_lib/*.PPL
+ do
+       # echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXPPL(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt processors loaded."
+
+
+cnt=0
+for file in ${DIR}/dataqwik/report/*.RPT
+ do
+       # echo "Loading file ${file}"
+	fname=$(basename ${file})
+       $gtm_dist/mumps -r %XCMD \
+	"do READFILE^TBXINST(.code,\"${file}\") s x=\$\$LOAD^TBXRPT(.code,\"${fname}\",3,\"$(whoami)\",+\$H)"
+	cnt=$(($cnt+1))
+done
+echo "\n$cnt reports loaded."
+
 echo "Recompiling procedures"
 $gtm_dist/mumps -r %XCMD "do BUILDALL^DBSPROC"
+
+echo "Recompiling screens"
+$gtm_dist/mumps -r %XCMD "do BUILDALL^DBSDSMC"
 
 echo "Recompiling filers"
 $gtm_dist/mumps -r %XCMD "do BUILDALL^DBSFILB"
