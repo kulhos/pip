@@ -868,7 +868,7 @@ TYPEINIT(TYPES)	; Build TYPES array
 	;
 	S TYPES("AGR")="aggregate|TBXAGGR|dataqwik"
 	S TYPES("BATCH")="batch|TBXBATCH|dataqwik"
-	S TYPES("COL")="column|TBXCOL"
+	S TYPES("COL")="table|TBXCOL|dataqwik"
 	S TYPES("DAT")="data|TBXDATA"
 	S TYPES("FKY")="foreign_key|TBXFKEY|dataqwik"
 	S TYPES("G")="data|TBXG"
@@ -883,7 +883,7 @@ TYPEINIT(TYPES)	; Build TYPES array
 	S TYPES("RPT")="report|TBXRPT|dataqwik"
 	S TYPES("SCR")="screen|TBXSCRN|dataqwik"
 	S TYPES("SQL")="scripts|TBXSQL"
-	S TYPES("TBL")="table|TBXTBL"
+	S TYPES("TBL")="table|TBXTBL|dataqwik"
 	S TYPES("TRIG")="trigger|TBXTRIG|dataqwik"
 	;
 	Q
