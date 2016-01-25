@@ -385,7 +385,7 @@ OUT(CODE,FILE)        ;
         N CMD,FOLDER,IO,SEQ,TYPE,X
   	;
 	I '$D(CODE) W !,"-ERROR- FAILED TO EXTRACT "_FILE,! Q
-	S FILE=$$UPPER^%ZFUNC(FILE)
+	; S FILE=$$UPPER^%ZFUNC(FILE)
 	W !,"    extracting "_FILE,!
 	S FILE=$$TRIM^%ZS(FILE)
 	I FILE[" " S FILE=$TR(FILE," ","_")
