@@ -134,6 +134,9 @@ for file in ${DIR}/dataqwik/report/*.RPT
 done
 echo "\n$cnt reports loaded."
 
+echo "Rebuilding indexes"
+$gtm_dist/mumps -r %XCMD "do ADD^DBSINDXZ("DBTBL1F"),BUILD^DBSINDXZ(1),%EXT^DBSUTL9"
+
 echo "Recompiling procedures"
 $gtm_dist/mumps -r %XCMD "do BUILDALL^DBSPROC"
 
