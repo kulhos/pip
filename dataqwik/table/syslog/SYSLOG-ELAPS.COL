@@ -17,7 +17,7 @@ CMP=($S(LOGOFFDT="":"",1:LOGDIF))
 ISMASTER=
 SFD=
 SIZ=
-DEL=124
+DEL=
 POS=
 RHD=Elapsed@Time
 SRL=
