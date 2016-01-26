@@ -3,7 +3,7 @@
 bipdir=${1}
 extrdir=${2}
 
-[ "${extrdir}" = "" ] extrdir=${bipdir}
+[ "${extrdir}" = "" ] && extrdir=${bipdir}
 
 if [ ! -f ${bipdir}/gtmenv ]
  then

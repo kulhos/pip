@@ -158,7 +158,7 @@ EXTDATA(TARGETDIR); This section extracts all "Profile supplied" data.
 	.	Q:(+X=0)
 	.	D OUT(.CODE,FILENAME)
 	;       
-	F KEY1=0,2 D
+	F KEY1=2 D
 	.	F  S KEY2=$O(^SCATBL(KEY1,KEY2)) Q:KEY2=""  D
 	..		S OBJECTID="SCATBL-"_KEY1_"-"_KEY2
 	..		S X=$$GETCODE^TBXDATA(OBJECTID,.CODE,.FILENAME)
