@@ -202,6 +202,7 @@ EXTDATA(TARGETDIR); This section extracts all "Profile supplied" data.
 	.	I "MBAR,MTBLS,PROMPT"[KEY1 S X=$$GETCODE^TBXG("STBL-"_KEY1,.CODE,.FILENAME)
 	.	E  S X=$$GETCODE^TBXDATA("STBL"_KEY1,.CODE,.FILENAME)
 	.	Q:(+X=0)
+	.	K CODE	; something went wrong
 	.	S X=$$GETCODE^TBXG("STBL-"_KEY1,.CODE,.FILENAME)
 	.	D OUT(.CODE,FILENAME)
 	;
