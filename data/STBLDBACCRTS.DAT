@@ -1,0 +1,4 @@
+DESCRIPTION	OPTION
+Privilege not granted	0
+Privilege granted, without GRANT OPTION	1
+Privilege granted, with GRANT OPTION	2
